@@ -1299,3 +1299,15 @@ html, body {
     flex: 1 !important;
   }
 }
+
+/* View Mode Overrides */
+body.mode-dual .app-layout { bottom: 0 !important; }
+body.mode-dual .bottom-nav-bar { display: none !important; }
+body.mode-dual .panel-chat { display: flex !important; flex: 4 !important; border-right: 1px solid var(--border-subtle) !important; }
+body.mode-dual .panel-viewer { display: flex !important; flex: 6 !important; min-width: 0 !important; }
+body.mode-dual .viewer-content-card.active { display: flex !important; }
+
+body.mode-single .app-layout { bottom: var(--nav-height) !important; }
+body.mode-single .bottom-nav-bar { display: flex !important; }
+body.mode-single .panel-chat { flex: 1 !important; border-right: none !important; }
+body.mode-single .panel-viewer { flex: 1 !important; }

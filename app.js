@@ -21,7 +21,8 @@ const AppState = {
   isSyncing: false,
   lastSyncTime: null,
   activeTab: 'chat',
-  selectedQuotNo: null
+  selectedQuotNo: null,
+  viewMode: window.innerWidth >= 681 ? 'dual' : 'single'
 };
 
 // --- DOM 엘리먼트 ---
@@ -146,7 +147,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   setTimeout(() => {
     syncLiveDatabases(false);
   }, 2000);
+
+  // 초기 뷰 모드 적용
+  applyViewMode();
 });
+
+function applyViewMode() {
+  const btn = document.getElementById('btnViewMode');
+  if (AppState.viewMode === 'dual') {
+    document.body.classList.remove('mode-single');
+    document.body.classList.add('mode-dual');
+    if (btn) btn.textContent = '싱글 스크린 변경';
+  } else {
+    document.body.classList.remove('mode-dual');
+    document.body.classList.add('mode-single');
+    if (btn) btn.textContent = '듀얼 스크린 변경';
+  }
+  switchMobileTab(AppState.activeTab || 'chat');
+}
 
 // --- 1. 초기 데이터베이스 로드 (Zero-Latency 번들 우선 + 캐시 병합) ---
 async function loadInitialDatabases() {
@@ -287,6 +305,15 @@ function initUI() {
     DOM.chatInput.value = '';
     handleLocalChatCommand(msg);
   });
+
+  // 뷰 모드 토글 버튼
+  const btnViewMode = document.getElementById('btnViewMode');
+  if (btnViewMode) {
+    btnViewMode.addEventListener('click', () => {
+      AppState.viewMode = AppState.viewMode === 'dual' ? 'single' : 'dual';
+      applyViewMode();
+    });
+  }
 
   // 퀵 액션 칩
   document.querySelectorAll('.quick-chip').forEach(btn => {
@@ -982,8 +1009,7 @@ function switchMobileTab(tab) {
     b.classList.toggle('active', b.getAttribute('data-tab') === tab);
   });
 
-  const isLargeScreen = window.innerWidth >= 681;
-  if (!isLargeScreen) {
+  if (AppState.viewMode === 'single') {
     // 📱 모바일 스마트폰: 단일 화면 모드
     if (tab === 'chat') {
       DOM.panelChat.style.display = 'flex';
@@ -1015,13 +1041,17 @@ function switchMobileTab(tab) {
   }
 }
 
-// 윈도우 리사이즈 시 PC 대화면 듀얼 뷰 복원 보장
-window.addEventListener('resize', () => {
-  if (window.innerWidth >= 681) {
-    if (DOM.panelChat) DOM.panelChat.style.display = '';
-    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
+// 윈도우 리사이즈 시 PC 대화면 자동 모드 전환 보장
+window.addEventListener('resize', debounce(() => {
+  const isLarge = window.innerWidth >= 681;
+  if (isLarge && AppState.viewMode !== 'dual') {
+    AppState.viewMode = 'dual';
+    applyViewMode();
+  } else if (!isLarge && AppState.viewMode !== 'single') {
+    AppState.viewMode = 'single';
+    applyViewMode();
   }
-});
+}, 300));
 
 function switchViewerCard(targetId) {
   if (!targetId) return;
