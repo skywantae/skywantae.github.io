@@ -1,0 +1,1021 @@
+/* ==========================================================================
+   KOSTAT ERP Registrar Mobile - Galaxy Z Fold 8 Optimized Styling
+   Theme: Modern Dark Glassmorphism
+   ========================================================================== */
+
+:root {
+  --bg-app: #0c0e14;
+  --bg-surface: #141721;
+  --bg-panel: rgba(22, 26, 38, 0.9);
+  --bg-card: rgba(30, 35, 51, 0.75);
+  --bg-card-hover: rgba(40, 47, 68, 0.9);
+  --bg-input: #1a1e2b;
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(59, 130, 246, 0.5);
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --accent-blue: #3b82f6;
+  --accent-blue-hover: #2563eb;
+  --accent-purple: #8b5cf6;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #ef4444;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.5);
+  --glass-blur: blur(16px);
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+  
+  --font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --header-height: 58px;
+  --nav-height: 64px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  user-select: none;
+}
+
+/* --- 상단 앱 헤더 --- */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  padding: env(safe-area-inset-top, 0) 16px 0 16px;
+  background: rgba(18, 22, 32, 0.85);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-img {
+  height: 24px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.logo-badge {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: #fff;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+}
+
+.logo-title {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+  background: linear-gradient(to right, #ffffff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.connection-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-rose);
+}
+
+.status-dot.online {
+  background-color: var(--accent-emerald);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fold-panel-toggle {
+  display: none;
+}
+
+.fold-badge {
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #c4b5fd;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.icon-btn:active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  transform: scale(0.94);
+}
+
+/* --- 메인 레이아웃 --- */
+.app-layout {
+  position: absolute;
+  top: var(--header-height);
+  bottom: var(--nav-height);
+  left: 0;
+  right: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* --- 좌측/주 패널: 챗봇 화면 --- */
+.panel-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 퀵 액션 칩 바 */
+.quick-actions-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  overflow-x: auto;
+  white-space: nowrap;
+  background: rgba(18, 22, 32, 0.6);
+  border-bottom: 1px solid var(--border-subtle);
+  scrollbar-width: none;
+}
+.quick-actions-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.quick-chip:active {
+  background: var(--accent-blue);
+  color: #fff;
+  border-color: var(--accent-blue);
+  transform: scale(0.95);
+}
+
+.quick-chip.highlight {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+/* 채팅 메시지 컨테이너 */
+.chat-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-behavior: smooth;
+}
+
+.chat-bubble {
+  max-width: 88%;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  line-height: 1.55;
+  box-shadow: var(--shadow-sm);
+  animation: bubblePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  word-break: break-word;
+}
+
+@keyframes bubblePop {
+  0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.bot-msg {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-bottom-left-radius: 4px;
+}
+
+.user-msg {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.bubble-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.bot-badge {
+  font-weight: 700;
+  font-size: 11px;
+  color: #60a5fa;
+}
+
+.msg-time {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.user-msg .msg-time {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.welcome-guide-box {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent-blue);
+  font-size: 12px;
+}
+
+.welcome-guide-box ul {
+  padding-left: 18px;
+  margin-top: 5px;
+}
+
+.welcome-guide-box li {
+  margin-bottom: 3px;
+}
+
+/* 채팅 내 인라인 카드 (견적서/출하 리스트) */
+.inline-data-card {
+  margin-top: 10px;
+  background: rgba(14, 18, 27, 0.8);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.inline-card-header {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+}
+
+.inline-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.inline-table th {
+  padding: 6px 8px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.inline-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.inline-table tr:active {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* 채팅 입력 폼 */
+.chat-input-wrapper {
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0)) 14px;
+  background: rgba(18, 22, 32, 0.95);
+  backdrop-filter: var(--glass-blur);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.chat-input-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 4px 6px 4px 16px;
+  transition: border-color 0.2s;
+}
+
+.chat-input-form:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.chat-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.chat-input::placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.send-btn {
+  background: var(--accent-blue);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.send-btn:active {
+  background: var(--accent-blue-hover);
+  transform: scale(0.92);
+}
+
+/* --- 우측/보조 패널: 데이터 뷰어 --- */
+.panel-viewer {
+  display: none; /* 스마트폰 기본 단일 모드에서는 숨김 */
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-app);
+  border-left: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.viewer-nav-bar {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(18, 22, 32, 0.85);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+}
+
+.viewer-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.viewer-tab-btn.active {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.viewer-content-card {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 14px;
+}
+
+.viewer-content-card.active {
+  display: flex;
+}
+
+.viewer-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.viewer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.viewer-title-group h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.count-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.viewer-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compact-search, .compact-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  outline: none;
+}
+
+.action-btn-sm {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn-sm:active {
+  transform: scale(0.95);
+}
+
+.action-btn-sm.primary {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #fff;
+}
+
+.action-btn-sm.secondary {
+  background: transparent;
+  border-color: var(--border-subtle);
+}
+
+/* 테이블 뷰 */
+.table-responsive-wrapper {
+  flex: 1;
+  overflow: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.modern-table thead {
+  position: sticky;
+  top: 0;
+  background: #1a1e2b;
+  z-index: 10;
+}
+
+.modern-table th {
+  padding: 10px 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.modern-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.modern-table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.modern-table tbody tr:active {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* 트렐로 칸반 보드 */
+.kanban-board-container {
+  flex: 1;
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.kanban-column {
+  min-width: 250px;
+  max-width: 300px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.kanban-column-header {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.kanban-cards-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kanban-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  cursor: grab;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.kanban-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-md);
+}
+
+.kanban-card-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.kanban-card-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* 하단 탭 바 (커버 화면 모드 전용) */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background: rgba(18, 22, 32, 0.95);
+  backdrop-filter: var(--glass-blur);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 100;
+}
+
+.nav-tab-item {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 20%;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-tab-item span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.nav-tab-item.active {
+  color: var(--accent-blue);
+}
+
+.nav-tab-item.active svg {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
+}
+
+/* --- 모달 다이얼로그 --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 200;
+  animation: fadeIn 0.2s;
+}
+
+.modal-backdrop.show {
+  display: flex;
+}
+
+.modal-dialog {
+  background: #171b26;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* PC 버전 100% 동일 ERP 견적서 대화면 다이얼로그 */
+.modal-dialog.quotation-dialog-lg {
+  max-width: 880px;
+  max-height: 90vh;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.modal-dialog.quotation-dialog-lg .modal-header {
+  background: #ffffff;
+  border-bottom: 2px solid #cbd5e1;
+  color: #0f172a;
+}
+
+.modal-dialog.quotation-dialog-lg .modal-header h3 {
+  color: #1e3a8a;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.modal-dialog.quotation-dialog-lg .modal-body {
+  padding: 16px;
+  background: #f1f5f9;
+}
+
+.modal-dialog.quotation-dialog-lg .modal-footer {
+  background: #ffffff;
+  border-top: 1px solid #cbd5e1;
+}
+
+/* ERP 공식 견적서 격자 양식 */
+.erp-quotation-sheet {
+  background: #ffffff;
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Segoe UI", sans-serif;
+  color: #0f172a;
+  font-size: 12px;
+}
+
+.erp-sheet-header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid #1e3a8a;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.erp-sheet-header-title h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e3a8a;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.erp-sheet-header-title .sub-meta {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.erp-grid-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 14px;
+  border: 1px solid #000000;
+}
+
+.erp-grid-table td, .erp-grid-table th {
+  border: 1px solid #000000;
+  padding: 5px 8px;
+  font-size: 11.5px;
+  vertical-align: middle;
+}
+
+.erp-lbl-blue {
+  background: #a8cbf1 !important;
+  font-weight: 700;
+  color: #000000;
+  width: 14%;
+  white-space: nowrap;
+}
+
+.erp-lbl-gray-dark {
+  background: #d4d4d4 !important;
+  font-weight: 700;
+  color: #000000;
+  width: 14%;
+  white-space: nowrap;
+}
+
+.erp-lbl-gray-light {
+  background: #e5e5e5 !important;
+  font-weight: 600;
+  color: #000000;
+  width: 14%;
+  white-space: nowrap;
+}
+
+.erp-val-cell {
+  background: #ffffff;
+  color: #000000;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.erp-val-highlight {
+  background: #d4d4d4;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* ERP 품목 디테일 테이블 */
+.erp-detail-table-wrapper {
+  overflow-x: auto;
+  margin-top: 10px;
+  border: 1px solid #000000;
+}
+
+.erp-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.erp-detail-table th {
+  background: #d4d4d4;
+  color: #000000;
+  font-weight: 700;
+  border: 1px solid #000000;
+  padding: 6px 8px;
+  text-align: center;
+  font-size: 11.5px;
+}
+
+.erp-detail-table td {
+  border: 1px solid #000000;
+  padding: 6px 8px;
+  font-size: 11.5px;
+  background: #ffffff;
+  color: #000000;
+}
+
+.erp-copyable-cell {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.erp-copyable-cell:hover {
+  background: #e0f2fe !important;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleUp { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.modal-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-item label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.input-with-btn {
+  display: flex;
+  gap: 8px;
+}
+
+.modern-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  outline: none;
+}
+
+.setting-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.version-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-input);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   📱 갤럭시 Z 폴드 8 대화면 (Unfolded Main Screen) 반응형 미디어 쿼리
+   폭 681px 이상: 듀얼 패널 Master-Detail 분할 뷰
+   ========================================================================== */
+@media (min-width: 681px) {
+  .app-layout {
+    bottom: 0; /* 대화면에서는 하단 탭 바 제거하고 전체 영역 확장 */
+  }
+
+  .bottom-nav-bar {
+    display: none !important;
+  }
+
+  .fold-panel-toggle {
+    display: flex;
+  }
+
+  /* 좌측 40% (챗봇) + 우측 60% (데이터 뷰어) 듀얼 분할 */
+  .panel-chat {
+    flex: 4;
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  .panel-viewer {
+    display: flex !important;
+    flex: 6;
+  }
+}
+
+/* ==========================================================================
+   📱 플렉스 모드 (힌지 반접힘 각도) 최적화
+   ========================================================================== */
+@media (horizontal-viewport-segments: 2) {
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
