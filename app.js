@@ -21,8 +21,25 @@ const AppState = {
   isSyncing: false,
   lastSyncTime: null,
   activeTab: 'shipplan',
+  dataDate: '2026년 9월 3일',
   currentQuotNo: null
 };
+
+function formatKoreanDate(dateStr) {
+  if (!dateStr) {
+    const d = new Date();
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+  }
+  const m = String(dateStr).match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+  if (m) {
+    return `${parseInt(m[1], 10)}년 ${parseInt(m[2], 10)}월 ${parseInt(m[3], 10)}일`;
+  }
+  return dateStr;
+}
+
+function getDataDateStatusText() {
+  return `${AppState.dataDate} 자 데이터 적용 중`;
+}
 
 // --- DOM 엘리먼트 ---
 const DOM = {
@@ -31,6 +48,7 @@ const DOM = {
   chatContainer: document.getElementById('chatContainer'),
   statusDot: document.getElementById('statusDot'),
   statusText: document.getElementById('statusText'),
+  connStatusPill: document.getElementById('connStatusPill'),
   panelChat: document.getElementById('panelChat'),
   panelViewer: document.getElementById('panelViewer'),
   bottomNavBar: document.getElementById('bottomNavBar'),
@@ -177,9 +195,19 @@ async function loadInitialDatabases() {
     const cachedQuot = await IDB.get('quotations');
     if (cachedQuot && cachedQuot.length >= AppState.quotationsData.length) AppState.quotationsData = cachedQuot;
 
+    // 메타데이터(version.json)에서 릴리즈 일자 로드
+    try {
+      const vRes = await fetch('version.json?t=' + Date.now()).catch(() => null);
+      if (vRes && vRes.ok) {
+        const vData = await vRes.json();
+        if (vData && vData.release_date) {
+          AppState.dataDate = formatKoreanDate(vData.release_date);
+        }
+      }
+    } catch (e) {}
+
     AppState.dbReady = true;
-    const total = AppState.skyworksData.length + AppState.shipPlanData.length + AppState.quotationsData.length;
-    updateStatus(true, `내장 DB 준비됨 (${total.toLocaleString()}건)`);
+    updateStatus(true, getDataDateStatusText());
     
     // UI 초기 렌더링
     renderSkyworksTable(AppState.skyworksData);
@@ -189,7 +217,7 @@ async function loadInitialDatabases() {
     console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
   } catch (err) {
     console.error('DB Load Error:', err);
-    updateStatus(true, '내장 DB 준비 완료');
+    updateStatus(true, getDataDateStatusText());
   }
 }
 
@@ -255,17 +283,17 @@ async function syncLiveDatabases(isManual = false) {
       renderSkyworksTable(AppState.skyworksData);
       initSkyworksYears();
       renderQuotHistory();
-      updateStatus(true, `실시간 최신화 완료 (${totalCount.toLocaleString()}건)`);
-      showToast(`최신 데이터(${totalCount.toLocaleString()}건)가 실시간 반영되었습니다.`);
+      AppState.dataDate = formatKoreanDate(new Date().toISOString().slice(0, 10));
+      updateStatus(true, getDataDateStatusText());
+      showToast(`최신 데이터가 실시간 반영되었습니다. (${getDataDateStatusText()})`);
     } else {
-      updateStatus(true, `최신 데이터 작동 중 (${totalCount.toLocaleString()}건)`);
+      updateStatus(true, getDataDateStatusText());
       if (isManual) {
-        showToast('이미 최신 데이터베이스 상태입니다.');
+        showToast(`이미 최신 데이터베이스 상태입니다. (${getDataDateStatusText()})`);
       }
     }
   } catch (e) {
-    const totalCount = AppState.skyworksData.length + AppState.shipPlanData.length + AppState.quotationsData.length;
-    updateStatus(true, `내장 데이터 작동 중 (${totalCount.toLocaleString()}건)`);
+    updateStatus(true, getDataDateStatusText());
     if (isManual) {
       showToast('오프라인 상태입니다. (내장 DB 정상 작동)');
     }
@@ -277,6 +305,10 @@ async function syncLiveDatabases(isManual = false) {
 function updateStatus(isOnline, text) {
   DOM.statusDot.className = isOnline ? 'status-dot online' : 'status-dot';
   DOM.statusText.textContent = text;
+  const total = (AppState.skyworksData?.length || 0) + (AppState.shipPlanData?.length || 0) + (AppState.quotationsData?.length || 0);
+  if (DOM.connStatusPill && total > 0) {
+    DOM.connStatusPill.setAttribute('title', `총 ${total.toLocaleString()}건 ERP 데이터 탑재`);
+  }
 }
 
 // --- UI 이벤트 바인딩 ---
