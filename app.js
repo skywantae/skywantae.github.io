@@ -1023,12 +1023,30 @@ window.addEventListener('resize', () => {
 });
 
 function switchViewerCard(targetId) {
+  if (!targetId) return;
+
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-target') === targetId);
+    const isTarget = btn.getAttribute('data-target') === targetId;
+    btn.classList.toggle('active', isTarget);
   });
+  
   document.querySelectorAll('.viewer-content-card').forEach(card => {
-    card.classList.toggle('active', card.id === targetId);
+    const isTarget = card.id === targetId;
+    card.classList.toggle('active', isTarget);
+    card.style.display = isTarget ? 'flex' : 'none';
   });
+
+  // 탭 전환 시 각 뷰어 데이터 렌더링 보장
+  if (targetId === 'viewQuotations') {
+    if (!AppState.quotFilteredRows || AppState.quotFilteredRows.length === 0) {
+      AppState.quotFilteredRows = AppState.quotationsData || [];
+    }
+    renderQuotationsPage(AppState.quotCurrentPage || 1);
+  } else if (targetId === 'viewSkyworks') {
+    if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
+      renderSkyworksTable(AppState.skyworksData);
+    }
+  }
 }
 
 // --- 메시지 출력 헬퍼 ---

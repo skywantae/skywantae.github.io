@@ -3,7 +3,7 @@
  * 사용자가 번거롭게 새로고침할 필요 없이 신규 배포 시 0.1초 만에 자동 갱신
  */
 
-const APP_CURRENT_VERSION = "v1.0.121";
+const APP_CURRENT_VERSION = "v1.0.122";
 
 async function autoCheckAndApplyUpdate() {
   try {

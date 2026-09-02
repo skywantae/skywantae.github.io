@@ -477,7 +477,7 @@ html, body {
 }
 
 .viewer-content-card.active {
-  display: flex;
+  display: flex !important;
 }
 
 .viewer-card-header {
