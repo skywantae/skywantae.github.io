@@ -1012,11 +1012,11 @@ function switchMobileTab(tab) {
   if (AppState.viewMode === 'single') {
     // 📱 모바일 스마트폰: 단일 화면 모드
     if (tab === 'chat') {
-      DOM.panelChat.style.display = 'flex';
-      DOM.panelViewer.style.display = 'none';
+      DOM.panelChat.style.setProperty('display', 'flex', 'important');
+      DOM.panelViewer.style.setProperty('display', 'none', 'important');
     } else {
-      DOM.panelChat.style.display = 'none';
-      DOM.panelViewer.style.display = 'flex';
+      DOM.panelChat.style.setProperty('display', 'none', 'important');
+      DOM.panelViewer.style.setProperty('display', 'flex', 'important');
       
       const tabTargetMap = {
         'shipplan': 'viewShipPlan',
@@ -1027,8 +1027,8 @@ function switchMobileTab(tab) {
     }
   } else {
     // 💻 PC 대화면: 듀얼 분할 화면 유지 (좌측 챗봇 40% + 우측 뷰어 60%)
-    if (DOM.panelChat) DOM.panelChat.style.display = '';
-    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
+    if (DOM.panelChat) DOM.panelChat.style.removeProperty('display');
+    if (DOM.panelViewer) DOM.panelViewer.style.removeProperty('display');
     
     const tabTargetMap = {
       'shipplan': 'viewShipPlan',
