@@ -887,90 +887,197 @@ html, body {
 }
 
 .erp-sheet-header-title .sub-meta {
-  font-size: 11px;
-  color: #64748b;
-  font-weight: 500;
+/* ==========================================================================
+   공식 KOSTAT 견적서 (QUOTATION) PDF 100% 동일 복제 서식 스타일
+   ========================================================================== */
+.kostat-official-sheet {
+  background: #ffffff;
+  color: #000000;
+  border: 1.5px solid #000000;
+  padding: 20px 24px;
+  font-family: 'Arial', 'Noto Sans KR', sans-serif;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  border-radius: 2px;
+  margin: 0 auto;
+  max-width: 820px;
 }
 
-.erp-grid-table {
+.kostat-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 12px;
+}
+
+.kostat-logo-area {
+  width: 220px;
+}
+
+.kostat-red-title {
+  color: #c91414;
+  font-size: 21px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.5px;
+}
+
+.kostat-address-text {
+  font-size: 9.5px;
+  line-height: 1.35;
+  color: #000000;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.kostat-doc-title {
+  flex: 1;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #000000;
+  padding-top: 15px;
+}
+
+.kostat-approval-box {
+  width: 210px;
+}
+
+.kostat-approval-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 14px;
   border: 1px solid #000000;
+  text-align: center;
+  font-size: 9.5px;
 }
 
-.erp-grid-table td, .erp-grid-table th {
+.kostat-approval-table th {
   border: 1px solid #000000;
-  padding: 5px 8px;
-  font-size: 11.5px;
+  padding: 3px 4px;
+  font-weight: 700;
+  background: #ffffff;
+  color: #000000;
+}
+
+.kostat-approval-table td {
+  border: 1px solid #000000;
+  padding: 2px;
+  background: #ffffff;
+  color: #000000;
+}
+
+.kostat-meta-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #000000;
+}
+
+.kostat-meta-left {
+  flex: 1;
+}
+
+.kostat-meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+}
+
+.kostat-meta-table td {
+  padding: 1px 4px;
+  border: none;
+  font-size: 11px;
+  color: #000000;
+  vertical-align: top;
+}
+
+.kostat-meta-table .k-lbl {
+  font-weight: 600;
+  width: 90px;
+  color: #000000;
+}
+
+.kostat-meta-table .k-colon {
+  width: 15px;
+  color: #000000;
+}
+
+.kostat-meta-table .k-val {
+  font-weight: 500;
+  color: #000000;
+}
+
+.kostat-meta-right {
+  width: 190px;
+  text-align: right;
+  font-size: 11px;
+  color: #000000;
+}
+
+.kostat-terms-section {
+  margin-top: 8px;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: #000000;
+}
+
+.kostat-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #000000;
+  margin-top: 14px;
+  font-size: 10.5px;
+}
+
+.kostat-items-table th {
+  border: 1px solid #000000;
+  padding: 5px 6px;
+  text-align: center;
+  font-weight: 700;
+  background: #ffffff;
+  color: #000000;
+  font-size: 10.5px;
+}
+
+.kostat-items-table td {
+  border: 1px solid #000000;
+  padding: 6px 8px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 10.5px;
   vertical-align: middle;
 }
 
-.erp-lbl-blue {
-  background: #a8cbf1 !important;
-  font-weight: 700;
-  color: #000000;
-  width: 14%;
-  white-space: nowrap;
-}
-
-.erp-lbl-gray-dark {
-  background: #d4d4d4 !important;
-  font-weight: 700;
-  color: #000000;
-  width: 14%;
-  white-space: nowrap;
-}
-
-.erp-lbl-gray-light {
-  background: #e5e5e5 !important;
-  font-weight: 600;
-  color: #000000;
-  width: 14%;
-  white-space: nowrap;
-}
-
-.erp-val-cell {
-  background: #ffffff;
-  color: #000000;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.erp-val-highlight {
-  background: #d4d4d4;
-  font-weight: 700;
-  color: #000000;
-}
-
-/* ERP 품목 디테일 테이블 */
-.erp-detail-table-wrapper {
-  overflow-x: auto;
-  margin-top: 10px;
-  border: 1px solid #000000;
-}
-
-.erp-detail-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
-}
-
-.erp-detail-table th {
-  background: #d4d4d4;
-  color: #000000;
-  font-weight: 700;
-  border: 1px solid #000000;
-  padding: 6px 8px;
+.kostat-sign-section {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
   text-align: center;
-  font-size: 11.5px;
 }
 
-.erp-detail-table td {
-  border: 1px solid #000000;
-  padding: 6px 8px;
-  font-size: 11.5px;
-  background: #ffffff;
+.kostat-sign-box {
+  width: 220px;
+  text-align: center;
+}
+
+.kostat-sign-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 2px;
+}
+
+.kostat-footer-row {
+  border-top: 2px solid #000000;
+  margin-top: 14px;
+  padding-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
   color: #000000;
 }
 
@@ -981,6 +1088,79 @@ html, body {
 
 .erp-copyable-cell:hover {
   background: #e0f2fe !important;
+}
+
+/* ==========================================================================
+   인쇄 및 PDF 저장 전용 @media print CSS (A4 용지 규격 완벽 정렬)
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+  
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .app-header,
+  .panel-chat,
+  .viewer-nav-bar,
+  .viewer-tools,
+  .pagination-container,
+  .bottom-nav-bar,
+  .modal-header,
+  .modal-footer,
+  .close-btn,
+  .toast-notification,
+  #panelChat,
+  #panelViewer {
+    display: none !important;
+  }
+
+  .modal-backdrop {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .modal-dialog {
+    max-width: 100% !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  .modal-body {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .kostat-official-sheet {
+    border: 2px solid #000000 !important;
+    padding: 16px 20px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+  }
+
+  .kostat-red-title {
+    color: #c91414 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

@@ -754,105 +754,176 @@ function openQuotationDetail(quotNo) {
   }
 
   const h = found[0];
+  const quotDateFormatted = h.quot_date ? h.quot_date.slice(2).replace(/-/g, '/') : '//';
   
-  // PC 버전(QuotationViewerWindow)과 100% 동일한 ERP 격자 테이블 구성
+  // 공식 KOSTAT 견적서 (QUOTATION) 원본 PDF 100% 동일 복제 렌더링
   DOM.modalQuotBody.innerHTML = `
-    <div class="erp-quotation-sheet" id="printableQuotation">
-      <div class="erp-sheet-header-title">
-        <div>
-          <h2>QUOTATION (견적서)</h2>
-          <div class="sub-meta">KOSTAT CO., LTD. Official Quotation Document</div>
+    <div class="kostat-official-sheet" id="printableQuotation">
+      <!-- 1. 상단 공식 헤더: 로고/주소 + QUOTATION + 우측 결재란 -->
+      <div class="kostat-header-row">
+        <div class="kostat-logo-area">
+          <div class="kostat-red-title">KOSTAT, INC</div>
+          <div class="kostat-address-text">
+            60, GOGANG-RO 154BEON-GIL,<br>
+            BUCHON-CITY,KYONG KI-DO,KOREA<br>
+            TEL : 82-32-671-8100(REP)<br>
+            FAX : 82-32-671-0259
+          </div>
         </div>
-        <div style="text-align:right;">
-          <div style="font-weight:700;font-size:13px;color:#1e3a8a;">No: ${escapeHtml(h.quot_no)}</div>
-          <div style="font-size:11px;color:#64748b;">Date: ${escapeHtml(h.quot_date || '-')} | Issuer: ${escapeHtml(h.username || '-')}</div>
+        <div class="kostat-doc-title">QUOTATION</div>
+        <div class="kostat-approval-box">
+          <table class="kostat-approval-table">
+            <thead>
+              <tr>
+                <th style="width:33%;">WRITTEN</th>
+                <th style="width:33%;">REVIEWED</th>
+                <th style="width:34%;">APPROVED</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="height:34px;">
+                <td style="vertical-align:middle;position:relative;">
+                  <span style="font-size:11px;color:#1e3a8a;font-weight:700;">//</span>
+                </td>
+                <td style="vertical-align:middle;position:relative;">
+                  <span style="font-size:11px;color:#1e3a8a;font-weight:700;">//</span>
+                </td>
+                <td style="vertical-align:middle;position:relative;">
+                  <span style="font-size:11px;color:#1e3a8a;font-weight:700;">//</span>
+                </td>
+              </tr>
+              <tr style="height:16px;font-size:9px;border-top:1px solid #000;">
+                <td>${escapeHtml(quotDateFormatted)}</td>
+                <td>${escapeHtml(quotDateFormatted)}</td>
+                <td>//</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <!-- ERP 공식 격자 헤더 테이블 (PC 버전 100% 동일) -->
-      <table class="erp-grid-table">
+      <!-- 2. 문서 메타 정보 (2단 좌우 배치) -->
+      <div class="kostat-meta-section">
+        <div class="kostat-meta-left">
+          <table class="kostat-meta-table">
+            <tr>
+              <td class="k-lbl">No.</td>
+              <td class="k-colon">:</td>
+              <td class="k-val erp-copyable-cell" style="font-weight:700;" onclick="copyCellText('${escapeHtml(h.quot_no)}')">${escapeHtml(h.quot_no)}</td>
+            </tr>
+            <tr>
+              <td class="k-lbl">Messers</td>
+              <td class="k-colon">:</td>
+              <td class="k-val erp-copyable-cell" style="font-weight:700;" onclick="copyCellText('${escapeHtml(h.vend_name || '')}')">${escapeHtml(h.vend_name || '-')}</td>
+            </tr>
+            <tr>
+              <td class="k-lbl">Attention</td>
+              <td class="k-colon">:</td>
+              <td class="k-val erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.attention || '')}')">${escapeHtml(h.attention || '-')}</td>
+            </tr>
+            <tr>
+              <td class="k-lbl">Subject</td>
+              <td class="k-colon">:</td>
+              <td class="k-val erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.title || '')}')">${escapeHtml(h.title || 'Kostat quotation for TnR, Cover tape and Reel')}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="kostat-meta-right">
+          <div><strong>Page :</strong> 1 of 1</div>
+          <div style="margin-top:2px;"><strong>Issuing Date :</strong> ${escapeHtml(h.quot_date || '-')}</div>
+        </div>
+      </div>
+
+      <!-- 3. 약관 및 거래 조건 (1~6번) -->
+      <div class="kostat-terms-section">
+        <table class="kostat-meta-table">
+          <tr>
+            <td style="width:115px;font-weight:600;">1) Leadtime</td>
+            <td style="width:12px;">:</td>
+            <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.delivery || '')}')">${escapeHtml(h.delivery || 'ARO 4~5 weeks')}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">2) Payment Term</td>
+            <td>:</td>
+            <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.payment_term || '')}')">${escapeHtml(h.payment_term || 'T/T 30DAYS')}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">3) Price Term</td>
+            <td>:</td>
+            <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.price_term || '')}')">${escapeHtml(h.price_term || 'EXW, DDP')}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">4) Origin</td>
+            <td>:</td>
+            <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.origin || '')}')">${escapeHtml(h.origin || 'KR, PH')}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">5) Validity</td>
+            <td>:</td>
+            <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.validity || '')}')">${escapeHtml(h.validity || 'Valid until 31.Dec.2026')}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">6) Remark</td>
+            <td>:</td>
+            <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.remark || '')}')">${escapeHtml(h.remark || 'EXW: below than MOQ or less than USD 2,000 per shipment')}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 4. 품목 세부 격자 테이블 -->
+      <table class="kostat-items-table">
+        <thead>
+          <tr>
+            <th style="width:18%;">PART NO.</th>
+            <th style="width:42%;">DESCRIPTION</th>
+            <th style="width:12%;">PRICE</th>
+            <th style="width:12%;">UNIT</th>
+            <th style="width:16%;">REMARKS</th>
+          </tr>
+        </thead>
         <tbody>
+          ${found.map(d => `
+            <tr>
+              <td class="erp-copyable-cell" style="font-weight:700;text-align:center;" onclick="copyCellText('${escapeHtml(d.part_no || '')}')">${escapeHtml(d.part_no || '-')}</td>
+              <td class="erp-copyable-cell" style="text-align:center;line-height:1.4;" onclick="copyCellText('${escapeHtml(d.description || '')}')">${escapeHtml(d.description || '-')}</td>
+              <td class="erp-copyable-cell" style="text-align:center;font-weight:600;" onclick="copyCellText('${escapeHtml(d.price || '')}')">${escapeHtml(d.price || '-')}</td>
+              <td class="erp-copyable-cell" style="text-align:center;" onclick="copyCellText('${escapeHtml(d.unit || '')}')">${escapeHtml(d.unit || 'USD/PCS')}</td>
+              <td class="erp-copyable-cell" style="text-align:left;font-size:10px;line-height:1.35;" onclick="copyCellText('${escapeHtml(d.remarks || '')}')">${escapeHtml(d.remarks || '-').replace(/\\n/g, '<br>')}</td>
+            </tr>
+          `).join('')}
           <tr>
-            <td class="erp-lbl-blue">Quotation No. :</td>
-            <td class="erp-val-cell erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.quot_no)}')" style="font-weight:700;color:#1e40af;">${escapeHtml(h.quot_no)}</td>
-            <td class="erp-lbl-blue">User Name :</td>
-            <td class="erp-val-cell erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.username || '')}')">${escapeHtml(h.username || '-')}</td>
-            <td class="erp-lbl-blue">Approved :</td>
-            <td class="erp-val-cell"></td>
+            <td colspan="5" style="border:1px solid #000;padding:2px;text-align:center;font-size:8px;letter-spacing:-0.5px;color:#000;line-height:1;overflow:hidden;white-space:nowrap;">
+              ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            </td>
           </tr>
           <tr>
-            <td class="erp-lbl-gray-light">Country :</td>
-            <td class="erp-val-cell erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.country || '')}')">${escapeHtml(h.country || '-')}</td>
-            <td class="erp-lbl-gray-light">Issuing Date :</td>
-            <td class="erp-val-cell erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.quot_date || '')}')">${escapeHtml(h.quot_date || '-')}</td>
-            <td class="erp-lbl-gray-light"></td>
-            <td class="erp-val-cell"></td>
-          </tr>
-          <tr>
-            <td class="erp-lbl-gray-light">Messers :</td>
-            <td class="erp-val-cell erp-copyable-cell" colspan="5" onclick="copyCellText('${escapeHtml(h.vend_name || '')}')" style="font-weight:700;">${escapeHtml(h.vend_name || '-')}</td>
-          </tr>
-          <tr>
-            <td class="erp-lbl-gray-light">Attention :</td>
-            <td class="erp-val-cell erp-copyable-cell" colspan="5" onclick="copyCellText('${escapeHtml(h.attention || '')}')">${escapeHtml(h.attention || '-')}</td>
-          </tr>
-          <tr>
-            <td class="erp-lbl-gray-dark">Subject :</td>
-            <td class="erp-val-cell erp-val-highlight erp-copyable-cell" colspan="5" onclick="copyCellText('${escapeHtml(h.title || '')}')">${escapeHtml(h.title || 'KOSTAT Tray quotation')}</td>
-          </tr>
-          <tr style="height:3px;background:#cbd5e1;"><td colspan="6" style="padding:0;border:none;background:#cbd5e1;height:3px;"></td></tr>
-          <tr>
-            <td class="erp-lbl-gray-dark">1) Leadtime :</td>
-            <td class="erp-val-cell erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.delivery || '')}')">${escapeHtml(h.delivery || '-')}</td>
-            <td class="erp-lbl-gray-light">6) Validity :</td>
-            <td class="erp-val-cell erp-copyable-cell" colspan="3" onclick="copyCellText('${escapeHtml(h.validity || '')}')">${escapeHtml(h.validity || '-')}</td>
-          </tr>
-          <tr>
-            <td class="erp-lbl-gray-dark">2) Payment Term :</td>
-            <td class="erp-val-cell erp-copyable-cell" onclick="copyCellText('${escapeHtml(h.payment_term || '')}')">${escapeHtml(h.payment_term || '-')}</td>
-            <td class="erp-lbl-gray-light">7) Remark :</td>
-            <td class="erp-val-cell erp-copyable-cell" colspan="3" onclick="copyCellText('${escapeHtml(h.remark || '')}')">${escapeHtml(h.remark || '-')}</td>
-          </tr>
-          <tr>
-            <td class="erp-lbl-gray-dark">3) Price Term :</td>
-            <td class="erp-val-cell erp-copyable-cell" colspan="5" onclick="copyCellText('${escapeHtml(h.price_term || '')}')">${escapeHtml(h.price_term || '-')}</td>
-          </tr>
-          <tr>
-            <td class="erp-lbl-gray-dark">4) Origin :</td>
-            <td class="erp-val-cell erp-copyable-cell" colspan="5" onclick="copyCellText('${escapeHtml(h.origin || '')}')">${escapeHtml(h.origin || '-')}</td>
+            <td colspan="5" style="border:1px solid #000;padding:5px;text-align:center;font-weight:700;font-size:10px;color:#000;">
+              UNDER BLANK
+            </td>
           </tr>
         </tbody>
       </table>
 
-      <!-- ERP 품목 디테일 테이블 (PC 버전 100% 동일) -->
-      <div style="font-weight:700;margin:10px 0 6px 0;color:#1e3a8a;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;">
-        <span>📋 ITEM DETAILS (총 ${found.length}개 품목)</span>
-        <span style="font-size:11px;color:#64748b;font-weight:400;">각 칸을 터치하면 내용이 복사됩니다</span>
+      <!-- 5. 하단 서명란 (공식 영문 필기체 싸인 100% 동일 복제) -->
+      <div class="kostat-sign-section">
+        <div class="kostat-sign-box">
+          <div class="kostat-sign-label">YOURS FAITHFULLY</div>
+          <div style="display:flex;justify-content:center;align-items:center;min-height:52px;padding:4px 0;">
+            <svg viewBox="0 0 220 65" style="width:185px;height:55px;" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round">
+              <!-- 첨부 원본 PDF 공식 서명(Signature) 정밀 벡터 패스 -->
+              <path d="M 18 38 C 22 22, 28 16, 33 44 C 36 50, 40 52, 45 32 C 50 14, 54 39, 58 44 C 62 48, 68 26, 78 30 C 86 32, 83 45, 72 45 C 62 45, 56 34, 66 26 C 76 19, 98 23, 115 34 C 122 39, 132 42, 142 37 C 152 32, 162 27, 172 40 C 178 44, 188 46, 202 42" stroke-width="3.6" />
+              <path d="M 30 26 L 55 23" stroke-width="3.2" />
+              <path d="M 92 25 C 102 19, 118 16, 130 30 C 138 40, 152 44, 180 40 L 206 40" stroke-width="3.2" />
+              <path d="M 136 32 C 146 16, 158 16, 168 37 C 174 47, 184 50, 206 48" stroke-width="3.4" />
+            </svg>
+          </div>
+        </div>
       </div>
 
-      <div class="erp-detail-table-wrapper">
-        <table class="erp-detail-table">
-          <thead>
-            <tr>
-              <th style="width:22%;">PART NO.</th>
-              <th style="width:40%;">DESCRIPTION</th>
-              <th style="width:14%;text-align:right;">PRICE</th>
-              <th style="width:10%;">UNIT</th>
-              <th style="width:14%;">REMARKS</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${found.map(d => `
-              <tr>
-                <td class="erp-copyable-cell" style="font-weight:700;text-align:center;color:#1e40af;" onclick="copyCellText('${escapeHtml(d.part_no || '')}')">${escapeHtml(d.part_no || '-')}</td>
-                <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(d.description || '')}')">${escapeHtml(d.description || '-')}</td>
-                <td class="erp-copyable-cell" style="text-align:right;font-weight:700;color:#047857;" onclick="copyCellText('${escapeHtml(d.price || '')}')">${escapeHtml(d.price || '-')}</td>
-                <td class="erp-copyable-cell" style="text-align:center;" onclick="copyCellText('${escapeHtml(d.unit || '')}')">${escapeHtml(d.unit || 'USD')}</td>
-                <td class="erp-copyable-cell" onclick="copyCellText('${escapeHtml(d.remarks || '')}')">${escapeHtml(d.remarks || '-')}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+      <!-- 6. 최하단 공식 문서 규격 푸터 -->
+      <div class="kostat-footer-row">
+        <div>F-P03-02-R.0</div>
+        <div>KOSTAT, INC</div>
       </div>
     </div>
   `;
