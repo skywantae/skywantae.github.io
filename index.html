@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.127" />
+  <link rel="stylesheet" href="app.css?v=1.0.128" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,6 +138,7 @@
             </select>
             <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
             <button class="action-btn-sm" id="btnReloadQuotHistory">새로고침</button>
+            <button class="action-btn-sm warning" id="btnPrintQuotation" style="display: none;">PDF 인쇄</button>
           </div>
         </div>
         <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
@@ -246,7 +247,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.127</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.128</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -259,13 +260,13 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.127"></script>
-  <script src="data/shipplan_data.js?v=1.0.127"></script>
-  <script src="data/quotations_data.js?v=1.0.127"></script>
-  <script src="data/knowledge_data.js?v=1.0.127"></script>
+  <script src="data/skyworks_data.js?v=1.0.128"></script>
+  <script src="data/shipplan_data.js?v=1.0.128"></script>
+  <script src="data/quotations_data.js?v=1.0.128"></script>
+  <script src="data/knowledge_data.js?v=1.0.128"></script>
   
-  <script src="updater.js?v=1.0.127"></script>
-  <script src="app.js?v=1.0.127"></script>
+  <script src="updater.js?v=1.0.128"></script>
+  <script src="app.js?v=1.0.128"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
@@ -279,5 +280,8 @@
       });
     }
   </script>
+  
+  <!-- 인쇄 전용 컨테이너 (숨김 처리됨, 인쇄시에만 노출) -->
+  <div id="printContainer" class="print-only"></div>
 </body>
 </html>

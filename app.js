@@ -21,8 +21,8 @@ const AppState = {
   isSyncing: false,
   lastSyncTime: null,
   activeTab: 'chat',
-  selectedQuotNo: null,
-  viewMode: window.innerWidth >= 681 ? 'dual' : 'single'
+  viewMode: window.innerWidth >= 681 ? 'dual' : 'single',
+  currentQuotNo: null
 };
 
 // --- DOM 엘리먼트 ---
@@ -57,6 +57,8 @@ const DOM = {
   quotationSearchInput: document.getElementById('quotationSearchInput'),
   btnSearchQuotations: document.getElementById('btnSearchQuotations'),
   btnReloadQuotHistory: document.getElementById('btnReloadQuotHistory'),
+  btnPrintQuotation: document.getElementById('btnPrintQuotation'),
+  btnModalPrintQuot: document.getElementById('btnModalPrintQuot'),
   quotationsTable: document.getElementById('quotationsTable'),
   quotationsTbody: document.getElementById('quotationsTbody'),
   quotPagination: document.getElementById('quotPagination'),
@@ -349,6 +351,37 @@ function initUI() {
   // Skyworks 필터
   DOM.skyworksSearchInput.addEventListener('input', debounce(filterSkyworksTable, 200));
   DOM.skyworksYearSelect.addEventListener('change', filterSkyworksTable);
+  
+  // 견적서 검색 이벤트
+  if (DOM.btnSearchQuotations) DOM.btnSearchQuotations.addEventListener('click', searchQuotations);
+  if (DOM.quotationSearchInput) DOM.quotationSearchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') searchQuotations();
+  });
+  if (DOM.quotCustomerInput) DOM.quotCustomerInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') searchQuotations();
+  });
+  if (DOM.btnReloadQuotHistory) DOM.btnReloadQuotHistory.addEventListener('click', loadQuotationsTop);
+  
+  // PDF 인쇄 버튼
+  if (DOM.btnPrintQuotation) {
+    DOM.btnPrintQuotation.addEventListener('click', () => {
+      if (!AppState.currentQuotNo) {
+        showToast('출력할 견적서를 먼저 검색해 주세요.', 'error');
+        return;
+      }
+      printQuotation(AppState.currentQuotNo);
+    });
+  }
+  
+  // 모달 인쇄 버튼 바인딩
+  if (DOM.btnModalPrintQuot) {
+    DOM.btnModalPrintQuot.addEventListener('click', () => {
+      if (AppState.selectedQuotNo) {
+        printQuotation(AppState.selectedQuotNo);
+      }
+    });
+  }
+  
   DOM.btnSkyworksReload.addEventListener('click', () => {
     DOM.skyworksSearchInput.value = '';
     DOM.skyworksYearSelect.value = '';
@@ -936,13 +969,7 @@ function openQuotationDetail(quotNo) {
         <div class="kostat-sign-box">
           <div class="kostat-sign-label">YOURS FAITHFULLY</div>
           <div style="display:flex;justify-content:center;align-items:center;min-height:52px;padding:4px 0;">
-            <svg viewBox="0 0 220 65" style="width:185px;height:55px;" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round">
-              <!-- 첨부 원본 PDF 공식 서명(Signature) 정밀 벡터 패스 -->
-              <path d="M 18 38 C 22 22, 28 16, 33 44 C 36 50, 40 52, 45 32 C 50 14, 54 39, 58 44 C 62 48, 68 26, 78 30 C 86 32, 83 45, 72 45 C 62 45, 56 34, 66 26 C 76 19, 98 23, 115 34 C 122 39, 132 42, 142 37 C 152 32, 162 27, 172 40 C 178 44, 188 46, 202 42" stroke-width="3.6" />
-              <path d="M 30 26 L 55 23" stroke-width="3.2" />
-              <path d="M 92 25 C 102 19, 118 16, 130 30 C 138 40, 152 44, 180 40 L 206 40" stroke-width="3.2" />
-              <path d="M 136 32 C 146 16, 158 16, 168 37 C 174 47, 184 50, 206 48" stroke-width="3.4" />
-            </svg>
+            <img src="data:image/png;base64,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" style="width:185px; height:auto; mix-blend-mode: multiply; opacity: 0.9;" />
           </div>
         </div>
       </div>
@@ -1003,6 +1030,25 @@ function copyCurrentQuotationSummary() {
 }
 
 // --- 8. 탭 및 네비게이션 ---
+
+function printQuotation(quotNo) {
+  const printContainer = document.getElementById('printContainer');
+  const printableQuotation = document.getElementById('printableQuotation');
+  
+  if (!printContainer) return;
+  
+  if (printableQuotation) {
+    // If the modal is already open and rendering this quote, just use its HTML
+    printContainer.innerHTML = printableQuotation.outerHTML;
+  } else {
+    // We would need to generate it, but btnModalPrintQuot is inside the modal, so printableQuotation is always present
+    return;
+  }
+
+  // Trigger print
+  window.print();
+}
+
 function switchMobileTab(tab) {
   AppState.activeTab = tab;
   document.querySelectorAll('.nav-tab-item').forEach(b => {
