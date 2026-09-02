@@ -20,8 +20,7 @@ const AppState = {
   dbReady: false,
   isSyncing: false,
   lastSyncTime: null,
-  activeTab: 'chat',
-  viewMode: window.innerWidth >= 681 ? 'dual' : 'single',
+  activeTab: 'shipplan',
   currentQuotNo: null
 };
 
@@ -149,24 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setTimeout(() => {
     syncLiveDatabases(false);
   }, 2000);
-
-  // 초기 뷰 모드 적용
-  applyViewMode();
 });
-
-function applyViewMode() {
-  const btn = document.getElementById('btnViewMode');
-  if (AppState.viewMode === 'dual') {
-    document.body.classList.remove('mode-single');
-    document.body.classList.add('mode-dual');
-    if (btn) btn.textContent = '싱글 스크린 변경';
-  } else {
-    document.body.classList.remove('mode-dual');
-    document.body.classList.add('mode-single');
-    if (btn) btn.textContent = '듀얼 스크린 변경';
-  }
-  switchMobileTab(AppState.activeTab || 'chat');
-}
 
 // --- 1. 초기 데이터베이스 로드 (Zero-Latency 번들 우선 + 캐시 병합) ---
 async function loadInitialDatabases() {
@@ -308,15 +290,6 @@ function initUI() {
     handleLocalChatCommand(msg);
   });
 
-  // 뷰 모드 토글 버튼
-  const btnViewMode = document.getElementById('btnViewMode');
-  if (btnViewMode) {
-    btnViewMode.addEventListener('click', () => {
-      AppState.viewMode = AppState.viewMode === 'dual' ? 'single' : 'dual';
-      applyViewMode();
-    });
-  }
-
   // 퀵 액션 칩
   document.querySelectorAll('.quick-chip').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -327,15 +300,6 @@ function initUI() {
       } else {
         handleLocalChatCommand(cmd);
       }
-    });
-  });
-
-  // 하단 탭 바 (커버 화면 모드)
-  document.querySelectorAll('.nav-tab-item').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tab = btn.getAttribute('data-tab');
-      switchMobileTab(tab);
     });
   });
 
@@ -1041,53 +1005,15 @@ function printQuotation(quotNo) {
 
 function switchMobileTab(tab) {
   AppState.activeTab = tab;
-  document.querySelectorAll('.nav-tab-item').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('data-tab') === tab);
-  });
-
-  if (AppState.viewMode === 'single') {
-    // 📱 모바일 스마트폰: 단일 화면 모드
-    if (tab === 'chat') {
-      DOM.panelChat.style.setProperty('display', 'flex', 'important');
-      DOM.panelViewer.style.setProperty('display', 'none', 'important');
-    } else {
-      DOM.panelChat.style.setProperty('display', 'none', 'important');
-      DOM.panelViewer.style.setProperty('display', 'flex', 'important');
-      
-      const tabTargetMap = {
-        'shipplan': 'viewShipPlan',
-        'quotations': 'viewQuotations',
-        'skyworks': 'viewSkyworks'
-      };
-      switchViewerCard(tabTargetMap[tab] || 'viewShipPlan');
-    }
-  } else {
-    // 💻 PC 대화면: 듀얼 분할 화면 유지 (좌측 챗봇 40% + 우측 뷰어 60%)
-    if (DOM.panelChat) DOM.panelChat.style.removeProperty('display');
-    if (DOM.panelViewer) DOM.panelViewer.style.removeProperty('display');
-    
-    const tabTargetMap = {
-      'shipplan': 'viewShipPlan',
-      'quotations': 'viewQuotations',
-      'skyworks': 'viewSkyworks'
-    };
-    if (tabTargetMap[tab]) {
-      switchViewerCard(tabTargetMap[tab]);
-    }
+  const tabTargetMap = {
+    'shipplan': 'viewShipPlan',
+    'quotations': 'viewQuotations',
+    'skyworks': 'viewSkyworks'
+  };
+  if (tabTargetMap[tab]) {
+    switchViewerCard(tabTargetMap[tab]);
   }
 }
-
-// 윈도우 리사이즈 시 PC 대화면 자동 모드 전환 보장
-window.addEventListener('resize', debounce(() => {
-  const isLarge = window.innerWidth >= 681;
-  if (isLarge && AppState.viewMode !== 'dual') {
-    AppState.viewMode = 'dual';
-    applyViewMode();
-  } else if (!isLarge && AppState.viewMode !== 'single') {
-    AppState.viewMode = 'single';
-    applyViewMode();
-  }
-}, 300));
 
 function switchViewerCard(targetId) {
   if (!targetId) return;

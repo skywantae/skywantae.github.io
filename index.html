@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.130" />
+  <link rel="stylesheet" href="app.css?v=1.0.131" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,10 +35,6 @@
     </div>
     
     <div class="header-right">
-      <!-- 뷰 모드 토글 버튼 (듀얼 스크린 / 싱글 스크린) -->
-      <button class="action-btn-sm secondary" id="btnViewMode" style="margin-right: 4px; font-size: 11px; padding: 4px 8px; border-radius: 6px;">
-        듀얼 스크린
-      </button>
       <button class="icon-btn" id="btnRefresh" title="새로고침">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
       </button>
@@ -195,22 +191,6 @@
 
   </main>
 
-  <!-- 커버 화면(스마트폰 모드) 전용 하단 탭 바 (출하계획 -> 견적서 -> Skyworks 순서) -->
-  <nav class="bottom-nav-bar" id="bottomNavBar">
-    <button class="nav-tab-item active" data-tab="chat">
-      <span>FAQ 챗봇</span>
-    </button>
-    <button class="nav-tab-item" data-tab="shipplan">
-      <span>출하계획</span>
-    </button>
-    <button class="nav-tab-item" data-tab="quotations">
-      <span>견적서</span>
-    </button>
-    <button class="nav-tab-item" data-tab="skyworks">
-      <span>Skyworks</span>
-    </button>
-  </nav>
-
   <!-- 견적서 상세 모달 다이얼로그 (PC 버전 100% 동일 포맷) -->
   <div class="modal-backdrop" id="quotDetailModal">
     <div class="modal-dialog quotation-dialog-lg">
@@ -247,7 +227,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.130</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.131</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -260,13 +240,13 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.130"></script>
-  <script src="data/shipplan_data.js?v=1.0.130"></script>
-  <script src="data/quotations_data.js?v=1.0.130"></script>
-  <script src="data/knowledge_data.js?v=1.0.130"></script>
+  <script src="data/skyworks_data.js?v=1.0.131"></script>
+  <script src="data/shipplan_data.js?v=1.0.131"></script>
+  <script src="data/quotations_data.js?v=1.0.131"></script>
+  <script src="data/knowledge_data.js?v=1.0.131"></script>
   
-  <script src="updater.js?v=1.0.130"></script>
-  <script src="app.js?v=1.0.130"></script>
+  <script src="updater.js?v=1.0.131"></script>
+  <script src="app.js?v=1.0.131"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

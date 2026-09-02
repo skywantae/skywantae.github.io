@@ -181,26 +181,30 @@ html, body {
   transform: scale(0.94);
 }
 
-/* --- 메인 레이아웃 --- */
+/* --- 메인 레이아웃 (갤럭시 Z 폴드 8 & PC 듀얼 화면 기본) --- */
 .app-layout {
   position: absolute;
   top: var(--header-height);
-  bottom: var(--nav-height);
+  bottom: 0;
   left: 0;
   right: 0;
   display: flex;
+  flex-direction: row;
   overflow: hidden;
 }
 
-/* --- 좌측/주 패널: 챗봇 화면 --- */
+/* --- 좌측/주 패널: 챗봇 화면 (38% 분할, 최소 280px) --- */
 .panel-chat {
-  flex: 1;
+  flex: 38 0 320px;
+  max-width: 45%;
+  min-width: 280px;
   display: flex;
   flex-direction: column;
   height: 100%;
   background: var(--bg-surface);
   position: relative;
   overflow: hidden;
+  border-right: 1px solid var(--border-subtle);
 }
 
 /* 퀵 액션 칩 바 */
@@ -428,13 +432,14 @@ html, body {
   transform: scale(0.92);
 }
 
-/* --- 우측/보조 패널: 데이터 뷰어 --- */
+/* --- 우측/보조 패널: 데이터 뷰어 (62% 분할) --- */
 .panel-viewer {
-  display: none; /* 스마트폰 기본 단일 모드에서는 숨김 */
+  display: flex;
+  flex: 62 1 400px;
+  min-width: 0;
   flex-direction: column;
   height: 100%;
   background: var(--bg-app);
-  border-left: 1px solid var(--border-subtle);
   overflow: hidden;
 }
 
@@ -1246,71 +1251,69 @@ html, body {
 }
 
 /* ==========================================================================
-   💻 PC 데스크톱 및 대화면 (681px 이상): 듀얼 분할 화면 (좌측 40% 챗봇 + 우측 60% 데이터 뷰어)
+   📱 갤럭시 Z 폴드 8 및 대화면 영구 듀얼 스크린 (Left Chatbot + Right Viewer)
    ========================================================================== */
-@media (min-width: 681px) {
-  .app-layout {
-    bottom: 0 !important;
-  }
+.bottom-nav-bar {
+  display: none !important;
+}
 
-  .bottom-nav-bar {
-    display: none !important;
-  }
+.fold-panel-toggle {
+  display: none !important;
+}
 
-  .fold-panel-toggle {
-    display: none !important;
-  }
+.viewer-content-card.active {
+  display: flex !important;
+}
 
-  /* 좌측 40% (FAQ 챗봇) */
+/* 터치스크린 및 모바일 부드러운 스크롤 */
+.table-responsive-wrapper {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.chat-messages-container {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 상단 뷰어 탭 터치 최적화 */
+.viewer-nav-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(18, 22, 32, 0.95);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.viewer-tab-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* 갤럭시 Z 폴드 8 세로/커버 화면 등 좁은 화면에서도 듀얼 스크린 비율 최적 유지 */
+@media (max-width: 768px) {
   .panel-chat {
-    display: flex !important;
-    flex: 4 !important;
-    border-right: 1px solid var(--border-subtle) !important;
+    flex: 40 0 260px !important;
+    max-width: 48% !important;
+    min-width: 240px !important;
   }
-
-  /* 우측 60% (출하계획 / 견적서 / Skyworks PO 뷰어) */
   .panel-viewer {
-    display: flex !important;
-    flex: 6 !important;
+    flex: 60 1 300px !important;
     min-width: 0 !important;
   }
-
-  .viewer-content-card.active {
-    display: flex !important;
+  .quick-chip {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .viewer-tab-btn {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }
-
-/* 📱 모바일 스마트폰 화면 (680px 이하) */
-@media (max-width: 680px) {
-  .app-layout {
-    bottom: var(--nav-height) !important;
-  }
-
-  .bottom-nav-bar {
-    display: flex !important;
-  }
-
-  .panel-chat {
-    flex: 1 !important;
-    border-right: none !important;
-  }
-
-  .panel-viewer {
-    flex: 1 !important;
-  }
-}
-
-/* View Mode Overrides */
-body.mode-dual .app-layout { bottom: 0 !important; }
-body.mode-dual .bottom-nav-bar { display: none !important; }
-body.mode-dual .panel-chat { display: flex !important; flex: 4 !important; border-right: 1px solid var(--border-subtle) !important; }
-body.mode-dual .panel-viewer { display: flex !important; flex: 6 !important; min-width: 0 !important; }
-body.mode-dual .viewer-content-card.active { display: flex !important; }
-
-body.mode-single .app-layout { bottom: var(--nav-height) !important; }
-body.mode-single .bottom-nav-bar { display: flex !important; }
-body.mode-single .panel-chat { flex: 1 !important; border-right: none !important; }
-body.mode-single .panel-viewer { flex: 1 !important; }
 
 /* ==========================================================================
    PRINT STYLES FOR QUOTATION PDF EXPORT
