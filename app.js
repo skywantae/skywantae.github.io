@@ -999,16 +999,28 @@ function switchMobileTab(tab) {
       switchViewerCard(tabTargetMap[tab] || 'viewShipPlan');
     }
   } else {
+    // PC 대화면: 인라인 스타일을 깨끗이 비워 CSS 듀얼 분할 화면(좌 챗봇 + 우 데이터뷰어)이 100% 작동
+    if (DOM.panelChat) DOM.panelChat.style.display = '';
+    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
+    
     const tabTargetMap = {
-      'skyworks': 'viewSkyworks',
       'shipplan': 'viewShipPlan',
-      'quotations': 'viewQuotations'
+      'quotations': 'viewQuotations',
+      'skyworks': 'viewSkyworks'
     };
     if (tabTargetMap[tab]) {
       switchViewerCard(tabTargetMap[tab]);
     }
   }
 }
+
+// 윈도우 리사이즈 시 PC 대화면 듀얼 뷰 복원 보장
+window.addEventListener('resize', () => {
+  if (window.innerWidth >= 681) {
+    if (DOM.panelChat) DOM.panelChat.style.display = '';
+    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
+  }
+});
 
 function switchViewerCard(targetId) {
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
