@@ -429,36 +429,64 @@ function handleLocalChatCommand(text) {
   });
 }
 
-// 사내 FAQ 로컬 키워드/토큰 검색
+// 사내 FAQ 로컬 키워드/토큰 검색 (지능형 매칭 엔진)
 function searchLocalFAQ(query) {
-  if (!AppState.knowledgeData || AppState.knowledgeData.length === 0) return null;
-  const qClean = query.toLowerCase().replace(/[^a-z0-9가-힣\s]/g, ' ').trim();
-  if (!qClean) return null;
+  const data = (AppState.knowledgeData && AppState.knowledgeData.length > 0)
+    ? AppState.knowledgeData 
+    : (window.KOSTAT_KNOWLEDGE_DATA || []);
+  if (!data || data.length === 0) return null;
 
-  const tokens = qClean.split(/\s+/).filter(t => t.length >= 1);
-  if (tokens.length === 0) return null;
+  const qLower = query.toLowerCase().trim();
+  if (!qLower) return null;
+
+  // 불용어 및 일상 질문 어미 제거하여 핵심 키워드 추출
+  const cleanQ = qLower
+    .replace(/[?？!！.,~]/g, ' ')
+    .replace(/(뜻이\s*뭐야|뜻이\s*무엇인가요|이란|에\s*대해|에\s*대해서|알려줘|설명해줘|알고싶어|가\s*뭐야|는\s*뭐야|가\s*무엇인가요|은\s*무엇인가요|의\s*차이점|의\s*차이|하는\s*법|어떻게\s*해|어떻게\s*작성해|어디에\s*있나요|어디서\s*확인)/g, ' ')
+    .trim();
+
+  const tokens = cleanQ.split(/\s+/).filter(t => t.length >= 1);
+  if (tokens.length === 0 && qLower.length < 2) return null;
 
   let bestMatch = null;
   let maxScore = 0;
 
-  for (const item of AppState.knowledgeData) {
-    const title = (item.question || item.title || '').toLowerCase();
-    const answer = (item.answer || item.content || '').toLowerCase();
-    
+  for (const item of data) {
+    const qText = (item.Q || item.question || item.title || '').trim();
+    const aText = (item.A || item.answer || item.content || '').trim();
+    const qLow = qText.toLowerCase();
+    const aLow = aText.toLowerCase();
+
     let score = 0;
+
+    // 1. 전체 질문 및 정제 키워드 직접 포함 가중치
+    if (qLow.includes(qLower) || (qLower.length >= 3 && qLower.includes(qLow))) {
+      score += 60;
+    }
+    if (cleanQ && (qLow.includes(cleanQ) || (cleanQ.length >= 3 && cleanQ.includes(qLow)))) {
+      score += 40;
+    }
+
+    // 2. 단어/토큰별 가중치 매칭
     for (const token of tokens) {
-      if (title.includes(token)) score += 10;
-      if (answer.includes(token)) score += 3;
+      if (token.length <= 1 && !/^[a-z0-9]$/i.test(token)) continue;
+
+      if (qLow.includes(token)) {
+        score += 25;
+      }
+      if (aLow.includes(token)) {
+        score += 8;
+      }
     }
 
     if (score > maxScore) {
       maxScore = score;
-      bestMatch = item;
+      bestMatch = { q: qText, a: aText, images: item.Images || [] };
     }
   }
 
-  if (bestMatch && maxScore >= 3) {
-    return `**[사내 규정/FAQ] ${bestMatch.question || bestMatch.title}**\n\n${bestMatch.answer || bestMatch.content}`;
+  if (bestMatch && maxScore >= 5) {
+    return `**[사내 규정/FAQ] ${bestMatch.q}**\n\n${bestMatch.a}`;
   }
   return null;
 }
