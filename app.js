@@ -293,7 +293,8 @@ function initUI() {
 
   // 하단 탭 바 (커버 화면 모드)
   document.querySelectorAll('.nav-tab-item').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       const tab = btn.getAttribute('data-tab');
       switchMobileTab(tab);
     });
@@ -301,7 +302,8 @@ function initUI() {
 
   // 우측 뷰어 상단 탭
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       const targetId = btn.getAttribute('data-target');
       switchViewerCard(targetId);
     });

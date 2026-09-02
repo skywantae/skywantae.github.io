@@ -277,36 +277,15 @@
   <script src="updater.js?v=1.0.114"></script>
   <script src="app.js?v=1.0.114"></script>
   
-  <!-- Service Worker Registration for PWA Offline Mode (Auto-Refresh on Update) -->
+  <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js?t=' + Date.now())
+        navigator.serviceWorker.register('./service-worker.js')
           .then(reg => {
             console.log('[PWA] Service Worker registered:', reg.scope);
-            reg.update(); // 강제 업데이트 체크
-
-            reg.onupdatefound = () => {
-              const installingWorker = reg.installing;
-              installingWorker.onstatechange = () => {
-                if (installingWorker.state === 'installed') {
-                  if (navigator.serviceWorker.controller) {
-                    console.log('[PWA] New version detected! Auto-reloading...');
-                    window.location.reload();
-                  }
-                }
-              };
-            };
           })
           .catch(err => console.log('[PWA] Service Worker error:', err));
-          
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (!refreshing) {
-            refreshing = true;
-            window.location.reload();
-          }
-        });
       });
     }
   </script>
