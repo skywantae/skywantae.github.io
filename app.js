@@ -352,15 +352,8 @@ function initUI() {
   DOM.skyworksSearchInput.addEventListener('input', debounce(filterSkyworksTable, 200));
   DOM.skyworksYearSelect.addEventListener('change', filterSkyworksTable);
   
-  // 견적서 검색 이벤트
-  if (DOM.btnSearchQuotations) DOM.btnSearchQuotations.addEventListener('click', searchQuotations);
-  if (DOM.quotationSearchInput) DOM.quotationSearchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') searchQuotations();
-  });
-  if (DOM.quotCustomerInput) DOM.quotCustomerInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') searchQuotations();
-  });
-  if (DOM.btnReloadQuotHistory) DOM.btnReloadQuotHistory.addEventListener('click', loadQuotationsTop);
+  // 견적서 검색 이벤트 (아래 404~435에서 올바르게 등록됨)
+
   
   // PDF 인쇄 버튼
   if (DOM.btnPrintQuotation) {
@@ -433,11 +426,8 @@ function initUI() {
     renderQuotHistory();
     syncLiveDatabases(true);
   });
-  if (DOM.btnModalPrintQuot) {
-    DOM.btnModalPrintQuot.addEventListener('click', () => {
-      window.print();
-    });
-  }
+  // (btnModalPrintQuot은 위쪽 369~376에서 이미 등록됨)
+
   if (DOM.btnModalCopyQuotText) {
     DOM.btnModalCopyQuotText.addEventListener('click', () => {
       copyCurrentQuotationSummary();

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#12141a" />
-  <meta name="description" content="KOSTAT ERP Registrar 챗봇 및 원격 업무 지원 모바일 시스템" />
-  <title>KOSTAT ERP 모바일 챗봇</title>
+  <meta name="description" content="KOSTAT ERP Registrar 梨쀫큸 諛??먭꺽 ?낅Т 吏??紐⑤컮???쒖뒪?? />
+  <title>KOSTAT ERP 紐⑤컮??梨쀫큸</title>
   <link rel="manifest" href="manifest.json" />
   
   <!-- iOS PWA (Progressive Web App) Native Support -->
@@ -14,14 +14,14 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.128" />
+  <link rel="stylesheet" href="app.css?v=1.0.129" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="dark-theme">
-  <!-- 최상단 상태바 및 헤더 -->
+  <!-- 理쒖긽???곹깭諛?諛??ㅻ뜑 -->
   <header class="app-header">
     <div class="header-left">
       <div class="brand-logo">
@@ -30,52 +30,52 @@
       </div>
       <div class="connection-pill" id="connStatusPill">
         <span class="status-dot online" id="statusDot"></span>
-        <span class="status-text" id="statusText">연결됨</span>
+        <span class="status-text" id="statusText">以鍮?以?..</span>
       </div>
     </div>
     
     <div class="header-right">
-      <!-- 뷰 모드 토글 버튼 (듀얼 스크린 / 싱글 스크린) -->
+      <!-- 酉?紐⑤뱶 ?좉? 踰꾪듉 (????ㅽ겕由?/ ?깃? ?ㅽ겕由? -->
       <button class="action-btn-sm secondary" id="btnViewMode" style="margin-right: 4px; font-size: 11px; padding: 4px 8px; border-radius: 6px;">
-        듀얼 스크린
+        ????ㅽ겕由?
       </button>
-      <button class="icon-btn" id="btnRefresh" title="새로고침">
+      <button class="icon-btn" id="btnRefresh" title="?덈줈怨좎묠">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
       </button>
-      <button class="icon-btn" id="btnSettings" title="설정/업데이트">
+      <button class="icon-btn" id="btnSettings" title="?ㅼ젙/?낅뜲?댄듃">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
     </div>
   </header>
 
-  <!-- 메인 레이아웃 컨테이너 -->
+  <!-- 硫붿씤 ?덉씠?꾩썐 而⑦뀒?대꼫 -->
   <main class="app-layout" id="appLayout">
     
-    <!-- [좌측 / 주 패널] 사내 규정 & FAQ 지식 질의응답 챗봇 -->
+    <!-- [醫뚯륫 / 二??⑤꼸] ?щ궡 洹쒖젙 & FAQ 吏??吏덉쓽?묐떟 梨쀫큸 -->
     <section class="panel-chat active" id="panelChat">
-      <!-- 채팅 메시지 스크롤 영역 -->
+      <!-- 梨꾪똿 硫붿떆吏 ?ㅽ겕濡??곸뿭 -->
       <div class="chat-messages-container" id="chatContainer">
-        <!-- 초기 환영 메시지 -->
+        <!-- 珥덇린 ?섏쁺 硫붿떆吏 -->
         <div class="chat-bubble bot-msg">
           <div class="bubble-header">
-            <span class="bot-badge">KOSTAT 봇</span>
-            <span class="msg-time" id="welcomeTime">방금</span>
+            <span class="bot-badge">KOSTAT 遊?/span>
+            <span class="msg-time" id="welcomeTime">諛⑷툑</span>
           </div>
           <div class="bubble-content">
-            안녕하세요! <strong>KOSTAT 사내 규정 및 업무 지식(FAQ) 챗봇</strong>입니다.<br>
-            사내 규정, 인코텀즈 무역 조건, 위탁재고, 출장 규정 등에 대해 자유롭게 질문해 주세요.
+            ?덈뀞?섏꽭?? <strong>KOSTAT ?щ궡 洹쒖젙 諛??낅Т 吏??FAQ) 梨쀫큸</strong>?낅땲??<br>
+            ?щ궡 洹쒖젙, ?몄퐫?利?臾댁뿭 議곌굔, ?꾪긽?ш퀬, 異쒖옣 洹쒖젙 ?깆뿉 ????먯쑀濡?쾶 吏덈Ц??二쇱꽭??
           </div>
         </div>
       </div>
 
-      <!-- 하단 메시지 입력 바 -->
+      <!-- ?섎떒 硫붿떆吏 ?낅젰 諛?-->
       <div class="chat-input-wrapper">
         <form class="chat-input-form" id="chatForm">
           <input 
             type="text" 
             id="chatInput" 
             class="chat-input" 
-            placeholder="사내 규정 및 업무 지식 질문 입력... (예: EXW 조건, 위탁재고)" 
+            placeholder="?щ궡 洹쒖젙 諛??낅Т 吏??吏덈Ц ?낅젰... (?? EXW 議곌굔, ?꾪긽?ш퀬)" 
             autocomplete="off"
           />
           <button type="submit" class="send-btn" id="btnSend">
@@ -85,107 +85,107 @@
       </div>
     </section>
 
-    <!-- [우측 / 보조 패널] 데이터 뷰어 (출하계획 -> 견적서 -> Skyworks 순서) -->
+    <!-- [?곗륫 / 蹂댁“ ?⑤꼸] ?곗씠??酉곗뼱 (異쒗븯怨꾪쉷 -> 寃ъ쟻??-> Skyworks ?쒖꽌) -->
     <section class="panel-viewer" id="panelViewer">
       
-      <!-- 서브 뷰 네비게이션 헤더 -->
+      <!-- ?쒕툕 酉??ㅻ퉬寃뚯씠???ㅻ뜑 -->
       <div class="viewer-nav-bar">
-        <button class="viewer-tab-btn active" data-target="viewShipPlan">출하 계획</button>
-        <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
+        <button class="viewer-tab-btn active" data-target="viewShipPlan">異쒗븯 怨꾪쉷</button>
+        <button class="viewer-tab-btn" data-target="viewQuotations">寃ъ쟻??/button>
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
       </div>
 
-      <!-- 1. 출하 계획 뷰 (기본 활성) -->
+      <!-- 1. 異쒗븯 怨꾪쉷 酉?(湲곕낯 ?쒖꽦) -->
       <div class="viewer-content-card active" id="viewShipPlan">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>출하 계획 (Ship Plan)</h3>
-            <span class="count-badge" id="shipPlanStatusBadge">DB 정상</span>
+            <h3>異쒗븯 怨꾪쉷 (Ship Plan)</h3>
+            <span class="count-badge" id="shipPlanStatusBadge">DB ?뺤긽</span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명 검색..." />
-            <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
+            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="遺?덈챸 寃??.." />
+            <button class="action-btn-sm primary" id="btnSearchShipPlan">議고쉶</button>
           </div>
         </div>
         <div class="table-responsive-wrapper">
           <table class="modern-table" id="shipPlanTable">
             <thead>
               <tr>
-                <th>출고일</th><th>선적일</th><th>고객사</th><th>PO번호</th><th>부품번호</th><th>수량</th><th>잔여</th>
+                <th>異쒓퀬??/th><th>?좎쟻??/th><th>怨좉컼??/th><th>PO踰덊샇</th><th>遺?덈쾲??/th><th>?섎웾</th><th>?붿뿬</th>
               </tr>
             </thead>
             <tbody id="shipPlanTbody">
-              <tr><td colspan="7" class="text-center py-4">조회할 부품번호를 입력하세요.</td></tr>
+              <tr><td colspan="7" class="text-center py-4">議고쉶??遺?덈쾲?몃? ?낅젰?섏꽭??</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- 2. 견적서 뷰어 -->
+      <!-- 2. 寃ъ쟻??酉곗뼱 -->
       <div class="viewer-content-card" id="viewQuotations">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>견적서</h3>
-            <span class="count-badge" id="quotHistoryCount">0건</span>
+            <h3>寃ъ쟻??/h3>
+            <span class="count-badge" id="quotHistoryCount">0嫄?/span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="quotCustomerInput" class="compact-search" placeholder="고객사 검색 (직접 입력)..." style="width: 160px;" />
-            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/견적번호..." />
-            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="50">50개씩</option>
-              <option value="100">100개씩</option>
-              <option value="150">150개씩</option>
+            <input type="text" id="quotCustomerInput" class="compact-search" placeholder="怨좉컼??寃??(吏곸젒 ?낅젰)..." style="width: 160px;" />
+            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="遺?덈챸/寃ъ쟻踰덊샇..." />
+            <select id="quotPageSizeSelect" class="compact-select" title="?섏씠吏???쒖떆 嫄댁닔">
+              <option value="50">50媛쒖뵫</option>
+              <option value="100">100媛쒖뵫</option>
+              <option value="150">150媛쒖뵫</option>
             </select>
-            <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
-            <button class="action-btn-sm" id="btnReloadQuotHistory">새로고침</button>
-            <button class="action-btn-sm warning" id="btnPrintQuotation" style="display: none;">PDF 인쇄</button>
+            <button class="action-btn-sm primary" id="btnSearchQuotations">議고쉶</button>
+            <button class="action-btn-sm" id="btnReloadQuotHistory">?덈줈怨좎묠</button>
+            <button class="action-btn-sm warning" id="btnPrintQuotation" style="display: none;">PDF ?몄뇙</button>
           </div>
         </div>
         <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
           <table class="modern-table" id="quotationsTable">
             <thead>
               <tr>
-                <th>견적번호</th><th>견적일</th><th>고객사</th><th>부품번호</th><th>규격/설명</th><th>단가</th><th>비고</th>
+                <th>寃ъ쟻踰덊샇</th><th>寃ъ쟻??/th><th>怨좉컼??/th><th>遺?덈쾲??/th><th>洹쒓꺽/?ㅻ챸</th><th>?④?</th><th>鍮꾧퀬</th>
               </tr>
             </thead>
             <tbody id="quotationsTbody">
-              <tr><td colspan="7" class="text-center py-4">견적서 데이터를 불러오는 중입니다...</td></tr>
+              <tr><td colspan="7" class="text-center py-4">寃ъ쟻???곗씠?곕? 遺덈윭?ㅻ뒗 以묒엯?덈떎...</td></tr>
             </tbody>
           </table>
         </div>
-        <!-- 견적서 하단 페이지네이션 컨트롤러 -->
+        <!-- 寃ъ쟻???섎떒 ?섏씠吏?ㅼ씠??而⑦듃濡ㅻ윭 -->
         <div class="pagination-container" id="quotPagination">
-          <div class="pagination-info" id="quotPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-info" id="quotPageInfo">0 / 0 ?섏씠吏 (珥?0嫄?</div>
           <div class="pagination-controls" id="quotPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
+            <!-- ?숈쟻 ?섏씠吏 踰덊샇 踰꾪듉 ?앹꽦 -->
           </div>
         </div>
       </div>
 
-      <!-- 3. Skyworks PO 뷰 -->
+      <!-- 3. Skyworks PO 酉?-->
       <div class="viewer-content-card" id="viewSkyworks">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>Skyworks PO 현황</h3>
-            <span class="count-badge" id="skyworksCount">0건</span>
+            <h3>Skyworks PO ?꾪솴</h3>
+            <span class="count-badge" id="skyworksCount">0嫄?/span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="skyworksSearchInput" class="compact-search" placeholder="PO/부품명 필터..." />
+            <input type="text" id="skyworksSearchInput" class="compact-search" placeholder="PO/遺?덈챸 ?꾪꽣..." />
             <select id="skyworksYearSelect" class="compact-select">
-              <option value="">전체 연도</option>
+              <option value="">?꾩껜 ?곕룄</option>
             </select>
-            <button class="action-btn-sm" id="btnSkyworksReload">새로고침</button>
+            <button class="action-btn-sm" id="btnSkyworksReload">?덈줈怨좎묠</button>
           </div>
         </div>
         <div class="table-responsive-wrapper">
           <table class="modern-table" id="skyworksTable">
             <thead id="skyworksThead">
               <tr>
-                <th>발주일</th><th>납기일</th><th>PO번호</th><th>부품명</th><th>수량</th><th>단가</th><th>금액</th><th>상태</th>
+                <th>諛쒖＜??/th><th>?⑷린??/th><th>PO踰덊샇</th><th>遺?덈챸</th><th>?섎웾</th><th>?④?</th><th>湲덉븸</th><th>?곹깭</th>
               </tr>
             </thead>
             <tbody id="skyworksTbody">
-              <tr><td colspan="8" class="text-center py-4">데이터를 불러오는 중입니다...</td></tr>
+              <tr><td colspan="8" class="text-center py-4">?곗씠?곕? 遺덈윭?ㅻ뒗 以묒엯?덈떎...</td></tr>
             </tbody>
           </table>
         </div>
@@ -195,78 +195,78 @@
 
   </main>
 
-  <!-- 커버 화면(스마트폰 모드) 전용 하단 탭 바 (출하계획 -> 견적서 -> Skyworks 순서) -->
+  <!-- 而ㅻ쾭 ?붾㈃(?ㅻ쭏?명룿 紐⑤뱶) ?꾩슜 ?섎떒 ??諛?(異쒗븯怨꾪쉷 -> 寃ъ쟻??-> Skyworks ?쒖꽌) -->
   <nav class="bottom-nav-bar" id="bottomNavBar">
     <button class="nav-tab-item active" data-tab="chat">
-      <span>FAQ 챗봇</span>
+      <span>FAQ 梨쀫큸</span>
     </button>
     <button class="nav-tab-item" data-tab="shipplan">
-      <span>출하계획</span>
+      <span>異쒗븯怨꾪쉷</span>
     </button>
     <button class="nav-tab-item" data-tab="quotations">
-      <span>견적서</span>
+      <span>寃ъ쟻??/span>
     </button>
     <button class="nav-tab-item" data-tab="skyworks">
       <span>Skyworks</span>
     </button>
   </nav>
 
-  <!-- 견적서 상세 모달 다이얼로그 (PC 버전 100% 동일 포맷) -->
+  <!-- 寃ъ쟻???곸꽭 紐⑤떖 ?ㅼ씠?쇰줈洹?(PC 踰꾩쟾 100% ?숈씪 ?щ㎎) -->
   <div class="modal-backdrop" id="quotDetailModal">
     <div class="modal-dialog quotation-dialog-lg">
       <div class="modal-header">
-        <h3 id="modalQuotTitle">견적서 상세 정보</h3>
+        <h3 id="modalQuotTitle">寃ъ쟻???곸꽭 ?뺣낫</h3>
         <button class="close-btn" id="btnCloseQuotModal">&times;</button>
       </div>
       <div class="modal-body" id="modalQuotBody">
-        <!-- PC 버전 동일 ERP 격자 렌더링 -->
+        <!-- PC 踰꾩쟾 ?숈씪 ERP 寃⑹옄 ?뚮뜑留?-->
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm" id="btnModalPrintQuot" style="background:#27ae60;border-color:#27ae60;color:#fff;">인쇄 / PDF</button>
-        <button class="action-btn-sm" id="btnModalCopyQuotText" style="background:#3b82f6;border-color:#3b82f6;color:#fff;">전체 복사</button>
-        <button class="action-btn-sm secondary" id="btnModalClose">닫기</button>
+        <button class="action-btn-sm" id="btnModalPrintQuot" style="background:#27ae60;border-color:#27ae60;color:#fff;">?몄뇙 / PDF</button>
+        <button class="action-btn-sm" id="btnModalCopyQuotText" style="background:#3b82f6;border-color:#3b82f6;color:#fff;">?꾩껜 蹂듭궗</button>
+        <button class="action-btn-sm secondary" id="btnModalClose">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 설정 및 업데이트 모달 다이얼로그 -->
+  <!-- ?ㅼ젙 諛??낅뜲?댄듃 紐⑤떖 ?ㅼ씠?쇰줈洹?-->
   <div class="modal-backdrop" id="settingsModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>시스템 정보 & 업데이트</h3>
+        <h3>?쒖뒪???뺣낫 & ?낅뜲?댄듃</h3>
         <button class="close-btn" id="btnCloseSettingsModal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="setting-item">
-          <label>동작 환경 (오프라인 지원):</label>
+          <label>?숈옉 ?섍꼍 (?ㅽ봽?쇱씤 吏??:</label>
           <div style="background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;font-size:12px;color:#cbd5e1;line-height:1.6;">
-            • <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>
-            • <strong>탑재 데이터</strong>: Skyworks PO 7,300+건, 출하 계획 58,000+건, 견적서 20,000+건, 사내 FAQ 내장.
+            ??<strong>?낅┰ ?ㅽ뻾 紐⑤뱶</strong>: ?щ궡 Wi-Fi??PC ?곌껐 ?놁씠 ?ㅻ쭏?명룿 ?⑤룆?쇰줈 ?묐룞?⑸땲??<br>
+            ??<strong>?묒옱 ?곗씠??/strong>: Skyworks PO 7,300+嫄? 異쒗븯 怨꾪쉷 58,000+嫄? 寃ъ쟻??20,000+嫄? ?щ궡 FAQ ?댁옣.
           </div>
         </div>
         <div class="setting-item">
-          <label>앱 버전 정보:</label>
+          <label>??踰꾩쟾 ?뺣낫:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.128</strong></span>
-            <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
+            <span>?꾩옱 踰꾩쟾: <strong id="currentAppVersion">v1.0.129</strong></span>
+            <button class="action-btn-sm" id="btnCheckAppUpdate">?낅뜲?댄듃 ?뺤씤</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm secondary" id="btnCloseSettings">닫기</button>
+        <button class="action-btn-sm secondary" id="btnCloseSettings">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.128"></script>
-  <script src="data/shipplan_data.js?v=1.0.128"></script>
-  <script src="data/quotations_data.js?v=1.0.128"></script>
-  <script src="data/knowledge_data.js?v=1.0.128"></script>
+  <!-- ?댁옣 濡쒖뺄 ?곗씠?곕쿋?댁뒪 踰덈뱾 (0.001珥?吏곹넻 濡쒕뜑) -->
+  <script src="data/skyworks_data.js?v=1.0.129"></script>
+  <script src="data/shipplan_data.js?v=1.0.129"></script>
+  <script src="data/quotations_data.js?v=1.0.129"></script>
+  <script src="data/knowledge_data.js?v=1.0.129"></script>
   
-  <script src="updater.js?v=1.0.128"></script>
-  <script src="app.js?v=1.0.128"></script>
+  <script src="updater.js?v=1.0.129"></script>
+  <script src="app.js?v=1.0.129"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
@@ -281,7 +281,8 @@
     }
   </script>
   
-  <!-- 인쇄 전용 컨테이너 (숨김 처리됨, 인쇄시에만 노출) -->
+  <!-- ?몄뇙 ?꾩슜 而⑦뀒?대꼫 (?④? 泥섎━?? ?몄뇙?쒖뿉留??몄텧) -->
   <div id="printContainer" class="print-only"></div>
 </body>
 </html>
+
