@@ -10,7 +10,6 @@ const AppState = {
   shipPlanData: [],
   quotationsData: [],
   knowledgeData: [],
-  trelloData: { lists: [] },
   
   // 상태
   dbReady: false,
@@ -56,10 +55,6 @@ const DOM = {
   btnModalClose: document.getElementById('btnModalClose'),
   btnModalPrintQuot: document.getElementById('btnModalPrintQuot'),
   btnModalCopyQuotText: document.getElementById('btnModalCopyQuotText'),
-
-  // Trello
-  kanbanBoard: document.getElementById('kanbanBoard'),
-  btnTrelloAddCard: document.getElementById('btnTrelloAddCard'),
 
   // Settings & Refresh
   btnSettings: document.getElementById('btnSettings'),
@@ -157,24 +152,6 @@ async function loadInitialDatabases() {
     if (window.KOSTAT_KNOWLEDGE_DATA && window.KOSTAT_KNOWLEDGE_DATA.length > 0) {
       AppState.knowledgeData = window.KOSTAT_KNOWLEDGE_DATA;
     }
-    if (window.KOSTAT_TRELLO_DATA) {
-      AppState.trelloData = window.KOSTAT_TRELLO_DATA;
-    }
-
-    // 2. 만약 전역 객체가 없으면 Fetch 폴백
-    if (AppState.quotationsData.length === 0 || AppState.shipPlanData.length === 0) {
-      const [skyRes, shipRes, quotRes, knowRes] = await Promise.all([
-        fetch('data/skyworks_data.json').then(r => r.json()).catch(() => []),
-        fetch('data/shipplan_data.json').then(r => r.json()).catch(() => []),
-        fetch('data/quotations_data.json').then(r => r.json()).catch(() => []),
-        fetch('data/knowledge_data.json').then(r => r.json()).catch(() => [])
-      ]);
-      if (skyRes && skyRes.length) AppState.skyworksData = skyRes;
-      if (shipRes && shipRes.length) AppState.shipPlanData = shipRes;
-      if (quotRes && quotRes.length) AppState.quotationsData = quotRes;
-      if (knowRes && knowRes.length) AppState.knowledgeData = knowRes;
-    }
-
     // 3. IndexedDB의 더 최신 캐시가 있다면 갱신
     const cachedSky = await IDB.get('skyworks');
     if (cachedSky && cachedSky.length >= AppState.skyworksData.length) AppState.skyworksData = cachedSky;
@@ -185,12 +162,6 @@ async function loadInitialDatabases() {
     const cachedQuot = await IDB.get('quotations');
     if (cachedQuot && cachedQuot.length >= AppState.quotationsData.length) AppState.quotationsData = cachedQuot;
 
-    // 트렐로 로컬스토리지 병합
-    const localTrello = localStorage.getItem('kostat_trello_saved');
-    if (localTrello) {
-      AppState.trelloData = JSON.parse(localTrello);
-    }
-
     AppState.dbReady = true;
     const total = AppState.skyworksData.length + AppState.shipPlanData.length + AppState.quotationsData.length;
     updateStatus(true, `✈️ 내장 DB 준비됨 (${total.toLocaleString()}건)`);
@@ -199,7 +170,6 @@ async function loadInitialDatabases() {
     renderSkyworksTable(AppState.skyworksData);
     initSkyworksYears();
     renderQuotHistory();
-    renderTrelloBoard();
 
     console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
   } catch (err) {
@@ -898,40 +868,6 @@ function copyCurrentQuotationSummary() {
   }
 }
 
-// --- 7. 트렐로 칸반 보드 로컬 관리 ---
-function renderTrelloBoard() {
-  const lists = AppState.trelloData.lists || [];
-  DOM.kanbanBoard.innerHTML = lists.map((col, colIdx) => `
-    <div class="kanban-column">
-      <div class="kanban-column-header">
-        <span>${col.name}</span>
-        <span class="count-badge">${col.cards ? col.cards.length : 0}</span>
-      </div>
-      <div class="kanban-cards-wrapper">
-        ${(col.cards || []).map((card, cIdx) => `
-          <div class="kanban-card" onclick="moveTrelloCard(${colIdx}, ${cIdx})">
-            <div class="kanban-card-title">${escapeHtml(card.title || card.name || '제목 없음')}</div>
-            <div class="kanban-card-desc">${escapeHtml(card.desc || card.content || '')}</div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
-}
-
-function moveTrelloCard(colIdx, cIdx) {
-  const lists = AppState.trelloData.lists;
-  if (!lists || lists.length <= 1) return;
-  
-  const card = lists[colIdx].cards.splice(cIdx, 1)[0];
-  const nextCol = (colIdx + 1) % lists.length;
-  lists[nextCol].cards.push(card);
-  
-  localStorage.setItem('kostat_trello_saved', JSON.stringify(AppState.trelloData));
-  renderTrelloBoard();
-  showToast(`카드가 '${lists[nextCol].name}'(으)로 이동되었습니다.`);
-}
-
 // --- 8. 탭 및 네비게이션 ---
 function switchMobileTab(tab) {
   AppState.activeTab = tab;
@@ -951,8 +887,7 @@ function switchMobileTab(tab) {
       const tabTargetMap = {
         'skyworks': 'viewSkyworks',
         'shipplan': 'viewShipPlan',
-        'quotations': 'viewQuotations',
-        'trello': 'viewTrello'
+        'quotations': 'viewQuotations'
       };
       switchViewerCard(tabTargetMap[tab] || 'viewSkyworks');
     }
@@ -960,8 +895,7 @@ function switchMobileTab(tab) {
     const tabTargetMap = {
       'skyworks': 'viewSkyworks',
       'shipplan': 'viewShipPlan',
-      'quotations': 'viewQuotations',
-      'trello': 'viewTrello'
+      'quotations': 'viewQuotations'
     };
     if (tabTargetMap[tab]) {
       switchViewerCard(tabTargetMap[tab]);

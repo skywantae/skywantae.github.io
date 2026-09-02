@@ -12,8 +12,7 @@ const ASSETS_TO_CACHE = [
   './data/skyworks_data.js',
   './data/shipplan_data.js',
   './data/quotations_data.js',
-  './data/knowledge_data.js',
-  './data/trello_data.js'
+  './data/knowledge_data.js'
 ];
 
 // 1. Install Event: 초기 캐싱 및 즉시 skipWaiting
