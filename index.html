@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css" />
+  <link rel="stylesheet" href="app.css?v=1.0.114" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -278,34 +278,45 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js"></script>
-  <script src="data/shipplan_data.js"></script>
-  <script src="data/quotations_data.js"></script>
-  <script src="data/knowledge_data.js"></script>
-  <script src="data/trello_data.js"></script>
+  <script src="data/skyworks_data.js?v=1.0.114"></script>
+  <script src="data/shipplan_data.js?v=1.0.114"></script>
+  <script src="data/quotations_data.js?v=1.0.114"></script>
+  <script src="data/knowledge_data.js?v=1.0.114"></script>
+  <script src="data/trello_data.js?v=1.0.114"></script>
   
-  <script src="updater.js"></script>
-  <script src="app.js"></script>
+  <script src="updater.js?v=1.0.114"></script>
+  <script src="app.js?v=1.0.114"></script>
   
-  <!-- Service Worker Registration for PWA Offline Mode -->
+  <!-- Service Worker Registration for PWA Offline Mode (Auto-Refresh on Update) -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
+        navigator.serviceWorker.register('./service-worker.js?t=' + Date.now())
           .then(reg => {
-            console.log('[PWA] Service Worker registered successfully:', reg.scope);
-            // 업데이트 발견 시 자동 리로드 로직 등 처리 가능
+            console.log('[PWA] Service Worker registered:', reg.scope);
+            reg.update(); // 강제 업데이트 체크
+
             reg.onupdatefound = () => {
               const installingWorker = reg.installing;
               installingWorker.onstatechange = () => {
-                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('[PWA] New update available! Please refresh.');
-                  // 업데이트 상태바 등에 노출 가능
+                if (installingWorker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    console.log('[PWA] New version detected! Auto-reloading...');
+                    window.location.reload();
+                  }
                 }
               };
             };
           })
-          .catch(err => console.log('[PWA] Service Worker registration failed:', err));
+          .catch(err => console.log('[PWA] Service Worker error:', err));
+          
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       });
     }
   </script>

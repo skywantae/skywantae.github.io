@@ -385,9 +385,16 @@ function initUI() {
     DOM.btnCloseSettings.addEventListener('click', () => DOM.settingsModal.classList.remove('show'));
   }
 
-  // 상단 헤더 새로고침 (실시간 OTA 동기화 트리거)
-  DOM.btnRefresh.addEventListener('click', () => {
-    syncLiveDatabases(true);
+  // 상단 헤더 새로고침 (PWA 캐시 초기화 + 실시간 OTA 동기화)
+  DOM.btnRefresh.addEventListener('click', async () => {
+    if ('caches' in window) {
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      } catch (e) {}
+    }
+    showToast('🔄 최신 버전으로 화면을 새로고침합니다...');
+    setTimeout(() => window.location.reload(), 400);
   });
 }
 

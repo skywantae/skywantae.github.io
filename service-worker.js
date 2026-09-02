@@ -16,63 +16,58 @@ const ASSETS_TO_CACHE = [
   './data/trello_data.js'
 ];
 
-// 1. Install Event: 초기 에셋 캐싱
+// 1. Install Event: 초기 캐싱 및 즉시 skipWaiting
 self.addEventListener('install', event => {
-  self.skipWaiting(); // 즉시 활성화
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('[Service Worker] Caching all assets');
-        return cache.addAll(ASSETS_TO_CACHE);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('[Service Worker] Caching updated assets');
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
 });
 
-// 2. Activate Event: 구버전 캐시 삭제
+// 2. Activate Event: 구버전의 모든 캐시를 강제 삭제 및 즉시 제어권 획득
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cache => {
           if (cache !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', cache);
+            console.log('[Service Worker] Purging old cache:', cache);
             return caches.delete(cache);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// 3. Fetch Event: 네트워크 우선, 실패 시 캐시 폴백 (Stale-While-Revalidate 변형)
+// 3. Fetch Event: Network-First (네트워크 우선 조회 -> 실패 시 오프라인 캐시 폴백)
 self.addEventListener('fetch', event => {
-  // GET 요청만 캐시 처리
   if (event.request.method !== 'GET') return;
   
-  // 외부 도메인 API 호출(GitHub Raw 등)은 캐싱에서 제외하고 네트워크만 사용
+  // 외부 API 호출은 캐시 제외
   if (event.request.url.includes('api.github.com') || event.request.url.includes('raw.githubusercontent.com')) {
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
-        // 응답이 유효한 경우 캐시 갱신
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseToCache = networkResponse.clone();
+    fetch(event.request)
+      .then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, responseClone);
           });
         }
         return networkResponse;
-      }).catch(err => {
-        // 네트워크 오프라인 시 무조건 캐시 반환
-        return cachedResponse;
-      });
-
-      // 캐시가 있으면 즉시 반환(제로 지연), 없으면 네트워크 응답 대기
-      return cachedResponse || fetchPromise;
-    })
+      })
+      .catch(() => {
+        // 오프라인(비행기 모드) 시 캐시 반환
+        return caches.match(event.request).then(cachedResponse => {
+          return cachedResponse || new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+        });
+      })
   );
 });
