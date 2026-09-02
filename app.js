@@ -51,6 +51,7 @@ const DOM = {
 
   // Quotations
   quotHistoryCount: document.getElementById('quotHistoryCount'),
+  quotCustomerSelect: document.getElementById('quotCustomerSelect'),
   quotPageSizeSelect: document.getElementById('quotPageSizeSelect'),
   quotationSearchInput: document.getElementById('quotationSearchInput'),
   btnSearchQuotations: document.getElementById('btnSearchQuotations'),
@@ -181,6 +182,7 @@ async function loadInitialDatabases() {
     // UI 초기 렌더링
     renderSkyworksTable(AppState.skyworksData);
     initSkyworksYears();
+    initQuotationCustomers();
     renderQuotHistory();
 
     console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
@@ -251,6 +253,7 @@ async function syncLiveDatabases(isManual = false) {
     if (updated) {
       renderSkyworksTable(AppState.skyworksData);
       initSkyworksYears();
+      initQuotationCustomers();
       renderQuotHistory();
       updateStatus(true, `⚡ 실시간 최신화 완료 (${totalCount.toLocaleString()}건)`);
       showToast(`🎉 최신 데이터(${totalCount.toLocaleString()}건)가 실시간 반영되었습니다!`);
@@ -341,6 +344,9 @@ function initUI() {
   });
 
   // 견적서 검색 & 필터 & 페이지 크기
+  if (DOM.quotCustomerSelect) {
+    DOM.quotCustomerSelect.addEventListener('change', filterQuotationsTable);
+  }
   if (DOM.quotPageSizeSelect) {
     DOM.quotPageSizeSelect.addEventListener('change', () => {
       AppState.quotPageSize = parseInt(DOM.quotPageSizeSelect.value, 10) || 50;
@@ -560,35 +566,59 @@ function searchShipPlanLocal(pn) {
   `).join('');
 }
 
-// --- 6. 견적서 뷰어 & 상세 모달 (로컬 + 다중 페이지네이션) ---
+// --- 6. 견적서 뷰어 & 상세 모달 (로컬 + 다중 페이지네이션 & 고객사 필터) ---
+function initQuotationCustomers() {
+  if (!DOM.quotCustomerSelect) return;
+  const custMap = {};
+  AppState.quotationsData.forEach(r => {
+    const v = (r.vend_name || '').trim();
+    if (v) {
+      custMap[v] = (custMap[v] || 0) + 1;
+    }
+  });
+
+  const sortedCusts = Object.keys(custMap).sort((a, b) => custMap[b] - custMap[a]);
+  const optionsHtml = `<option value="">전체 고객사 (${AppState.quotationsData.length.toLocaleString()}건)</option>` +
+    sortedCusts.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)} (${custMap[c].toLocaleString()}건)</option>`).join('');
+  
+  DOM.quotCustomerSelect.innerHTML = optionsHtml;
+}
+
 function renderQuotHistory() {
+  if (DOM.quotCustomerSelect) DOM.quotCustomerSelect.value = '';
+  if (DOM.quotationSearchInput) DOM.quotationSearchInput.value = '';
   AppState.quotFilteredRows = AppState.quotationsData || [];
   AppState.quotCurrentPage = 1;
   renderQuotationsPage(1);
 }
 
 function filterQuotationsTable() {
-  if (!DOM.quotationSearchInput) return;
-  const search = DOM.quotationSearchInput.value.toLowerCase().trim();
+  const selectedCust = DOM.quotCustomerSelect ? DOM.quotCustomerSelect.value.trim().toLowerCase() : '';
+  const search = DOM.quotationSearchInput ? DOM.quotationSearchInput.value.toLowerCase().trim() : '';
   const searchNorm = search.replace(/[-_\s]/g, '');
 
-  if (!search) {
-    AppState.quotFilteredRows = AppState.quotationsData || [];
-  } else {
-    AppState.quotFilteredRows = AppState.quotationsData.filter(r => {
-      const p = (r.part_no || '').toLowerCase();
-      const d = (r.description || '').toLowerCase();
-      const v = (r.vend_name || '').toLowerCase();
-      const n = (r.quot_no || '').toLowerCase();
-      const rm = (r.remarks || '').toLowerCase();
+  AppState.quotFilteredRows = AppState.quotationsData.filter(r => {
+    // 1. 고객사 필터 (선택되어 있는 경우)
+    if (selectedCust) {
+      const v = (r.vend_name || '').toLowerCase().trim();
+      if (v !== selectedCust) return false;
+    }
 
-      if (p.includes(search) || d.includes(search) || v.includes(search) || n.includes(search) || rm.includes(search)) return true;
-      if (searchNorm.length >= 2) {
-        if (p.replace(/[-_\s]/g, '').includes(searchNorm) || d.replace(/[-_\s]/g, '').includes(searchNorm) || n.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
-      }
-      return false;
-    });
-  }
+    // 2. 검색어 필터 (입력되어 있는 경우)
+    if (!search) return true;
+
+    const p = (r.part_no || '').toLowerCase();
+    const d = (r.description || '').toLowerCase();
+    const v = (r.vend_name || '').toLowerCase();
+    const n = (r.quot_no || '').toLowerCase();
+    const rm = (r.remarks || '').toLowerCase();
+
+    if (p.includes(search) || d.includes(search) || v.includes(search) || n.includes(search) || rm.includes(search)) return true;
+    if (searchNorm.length >= 2) {
+      if (p.replace(/[-_\s]/g, '').includes(searchNorm) || d.replace(/[-_\s]/g, '').includes(searchNorm) || n.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
+    }
+    return false;
+  });
 
   AppState.quotCurrentPage = 1;
   renderQuotationsPage(1);
@@ -871,11 +901,11 @@ function switchMobileTab(tab) {
       DOM.panelViewer.style.display = 'flex';
       
       const tabTargetMap = {
-        'skyworks': 'viewSkyworks',
         'shipplan': 'viewShipPlan',
-        'quotations': 'viewQuotations'
+        'quotations': 'viewQuotations',
+        'skyworks': 'viewSkyworks'
       };
-      switchViewerCard(tabTargetMap[tab] || 'viewSkyworks');
+      switchViewerCard(tabTargetMap[tab] || 'viewShipPlan');
     }
   } else {
     const tabTargetMap = {

@@ -53,15 +53,6 @@
     
     <!-- [좌측 / 주 패널] 사내 규정 & FAQ 지식 질의응답 챗봇 -->
     <section class="panel-chat active" id="panelChat">
-      <!-- FAQ 빠른 질문 툴바 -->
-      <div class="quick-actions-bar">
-        <button class="quick-chip highlight" data-cmd="EXW 조건">❓ EXW 조건</button>
-        <button class="quick-chip" data-cmd="위탁재고">📦 위탁재고</button>
-        <button class="quick-chip" data-cmd="출장여비 규정">✈️ 출장여비 규정</button>
-        <button class="quick-chip" data-cmd="견적서 유효기간">📋 견적 유효기간</button>
-        <button class="quick-chip" data-cmd="FOB 조건">🚢 FOB 조건</button>
-      </div>
-
       <!-- 채팅 메시지 스크롤 영역 -->
       <div class="chat-messages-container" id="chatContainer">
         <!-- 초기 환영 메시지 -->
@@ -72,7 +63,7 @@
           </div>
           <div class="bubble-content">
             안녕하세요! <strong>KOSTAT 사내 규정 및 업무 지식(FAQ) 챗봇</strong>입니다.<br>
-            인코텀즈 무역 조건, 위탁재고, 출장 규정 등에 대해 자유롭게 질문해 주세요.
+            사내 규정, 인코텀즈 무역 조건, 위탁재고, 출장 규정 등에 대해 자유롭게 질문해 주세요.
           </div>
         </div>
       </div>
@@ -94,18 +85,86 @@
       </div>
     </section>
 
-    <!-- [우측 / 보조 패널] 데이터 뷰어 (Skyworks / 출하계획 / 견적서 / 트렐로) -->
+    <!-- [우측 / 보조 패널] 데이터 뷰어 (출하계획 -> 견적서 -> Skyworks 순서) -->
     <section class="panel-viewer" id="panelViewer">
       
       <!-- 서브 뷰 네비게이션 헤더 -->
       <div class="viewer-nav-bar">
-        <button class="viewer-tab-btn active" data-target="viewSkyworks">✈️ Skyworks PO</button>
-        <button class="viewer-tab-btn" data-target="viewShipPlan">📊 출하 계획</button>
+        <button class="viewer-tab-btn active" data-target="viewShipPlan">📊 출하 계획</button>
         <button class="viewer-tab-btn" data-target="viewQuotations">📋 견적서 뷰어</button>
+        <button class="viewer-tab-btn" data-target="viewSkyworks">✈️ Skyworks PO</button>
       </div>
 
-      <!-- 1. Skyworks PO 뷰 -->
-      <div class="viewer-content-card active" id="viewSkyworks">
+      <!-- 1. 출하 계획 뷰 (기본 활성) -->
+      <div class="viewer-content-card active" id="viewShipPlan">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>📊 전체 선적/출하 계획 (Ship Plan)</h3>
+            <span class="count-badge" id="shipPlanStatusBadge">DB 정상</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명 검색..." />
+            <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
+          </div>
+        </div>
+        <div class="table-responsive-wrapper">
+          <table class="modern-table" id="shipPlanTable">
+            <thead>
+              <tr>
+                <th>출고일</th><th>선적일</th><th>고객사</th><th>PO번호</th><th>부품번호</th><th>수량</th><th>잔여</th>
+              </tr>
+            </thead>
+            <tbody id="shipPlanTbody">
+              <tr><td colspan="7" class="text-center py-4">조회할 부품번호를 입력하세요.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. 견적서 검색 & 뷰어 -->
+      <div class="viewer-content-card" id="viewQuotations">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>📋 견적서 통합 검색 & 뷰어</h3>
+            <span class="count-badge" id="quotHistoryCount">0건</span>
+          </div>
+          <div class="viewer-tools">
+            <select id="quotCustomerSelect" class="compact-select" title="고객사 선택 필터">
+              <option value="">전체 고객사</option>
+            </select>
+            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
+              <option value="50">50개씩 보기</option>
+              <option value="100">100개씩 보기</option>
+              <option value="150">150개씩 보기</option>
+            </select>
+            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/견적번호..." />
+            <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
+            <button class="action-btn-sm" id="btnReloadQuotHistory">🔄</button>
+          </div>
+        </div>
+        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
+          <table class="modern-table" id="quotationsTable">
+            <thead>
+              <tr>
+                <th>견적번호</th><th>견적일</th><th>고객사</th><th>부품번호</th><th>규격/설명</th><th>단가</th><th>비고</th>
+              </tr>
+            </thead>
+            <tbody id="quotationsTbody">
+              <tr><td colspan="7" class="text-center py-4">견적서 데이터를 불러오는 중입니다...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- 견적서 하단 페이지네이션 컨트롤러 -->
+        <div class="pagination-container" id="quotPagination">
+          <div class="pagination-info" id="quotPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-controls" id="quotPageControls">
+            <!-- 동적 페이지 번호 버튼 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Skyworks PO 뷰 -->
+      <div class="viewer-content-card" id="viewSkyworks">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
             <h3>✈️ Skyworks PO 출하 현황</h3>
@@ -133,92 +192,27 @@
         </div>
       </div>
 
-      <!-- 2. 출하 계획 뷰 -->
-      <div class="viewer-content-card" id="viewShipPlan">
-        <div class="viewer-card-header">
-          <div class="viewer-title-group">
-            <h3>📊 전체 선적/출하 계획 (Ship Plan)</h3>
-            <span class="count-badge" id="shipPlanStatusBadge">DB 정상</span>
-          </div>
-          <div class="viewer-tools">
-            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명 검색..." />
-            <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
-          </div>
-        </div>
-        <div class="table-responsive-wrapper">
-          <table class="modern-table" id="shipPlanTable">
-            <thead>
-              <tr>
-                <th>출고일</th><th>선적일</th><th>고객사</th><th>PO번호</th><th>부품번호</th><th>수량</th><th>잔여</th>
-              </tr>
-            </thead>
-            <tbody id="shipPlanTbody">
-              <tr><td colspan="7" class="text-center py-4">조회할 부품번호를 입력하세요.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 3. 견적서 검색 & 뷰어 -->
-      <div class="viewer-content-card" id="viewQuotations">
-        <div class="viewer-card-header">
-          <div class="viewer-title-group">
-            <h3>📋 견적서 통합 검색 & 뷰어</h3>
-            <span class="count-badge" id="quotHistoryCount">0건</span>
-          </div>
-          <div class="viewer-tools">
-            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="50">50개씩 보기</option>
-              <option value="100">100개씩 보기</option>
-              <option value="150">150개씩 보기</option>
-            </select>
-            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/고객사/견적번호..." />
-            <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
-            <button class="action-btn-sm" id="btnReloadQuotHistory">🔄</button>
-          </div>
-        </div>
-        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
-          <table class="modern-table" id="quotationsTable">
-            <thead>
-              <tr>
-                <th>견적번호</th><th>견적일</th><th>고객사</th><th>부품번호</th><th>규격/설명</th><th>단가</th><th>비고</th>
-              </tr>
-            </thead>
-            <tbody id="quotationsTbody">
-              <tr><td colspan="7" class="text-center py-4">견적서 데이터를 불러오는 중입니다...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- 견적서 하단 페이지네이션 컨트롤러 -->
-        <div class="pagination-container" id="quotPagination">
-          <div class="pagination-info" id="quotPageInfo">0 / 0 페이지 (총 0건)</div>
-          <div class="pagination-controls" id="quotPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
-          </div>
-        </div>
-      </div>
-
     </section>
 
   </main>
 
-  <!-- 커버 화면(스마트폰 모드) 전용 하단 탭 바 -->
+  <!-- 커버 화면(스마트폰 모드) 전용 하단 탭 바 (출하계획 -> 견적서 -> Skyworks 순서) -->
   <nav class="bottom-nav-bar" id="bottomNavBar">
     <button class="nav-tab-item active" data-tab="chat">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      <span>챗봇</span>
-    </button>
-    <button class="nav-tab-item" data-tab="skyworks">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-      <span>Skyworks</span>
+      <span>FAQ 챗봇</span>
     </button>
     <button class="nav-tab-item" data-tab="shipplan">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span>출하조회</span>
+      <span>출하계획</span>
     </button>
     <button class="nav-tab-item" data-tab="quotations">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       <span>견적서</span>
+    </button>
+    <button class="nav-tab-item" data-tab="skyworks">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      <span>Skyworks</span>
     </button>
   </nav>
 
@@ -271,13 +265,13 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.114"></script>
-  <script src="data/shipplan_data.js?v=1.0.114"></script>
-  <script src="data/quotations_data.js?v=1.0.114"></script>
-  <script src="data/knowledge_data.js?v=1.0.114"></script>
+  <script src="data/skyworks_data.js?v=1.0.115"></script>
+  <script src="data/shipplan_data.js?v=1.0.115"></script>
+  <script src="data/quotations_data.js?v=1.0.115"></script>
+  <script src="data/knowledge_data.js?v=1.0.115"></script>
   
-  <script src="updater.js?v=1.0.114"></script>
-  <script src="app.js?v=1.0.114"></script>
+  <script src="updater.js?v=1.0.115"></script>
+  <script src="app.js?v=1.0.115"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
