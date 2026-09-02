@@ -1246,12 +1246,11 @@ html, body {
 }
 
 /* ==========================================================================
-   📱 갤럭시 Z 폴드 8 대화면 (Unfolded Main Screen) 반응형 미디어 쿼리
-   폭 681px 이상: 듀얼 패널 Master-Detail 분할 뷰
+   💻 PC 데스크톱 및 태블릿/폴더블 반응형 레이아웃 최적화
    ========================================================================== */
 @media (min-width: 681px) {
   .app-layout {
-    bottom: 0; /* 대화면에서는 하단 탭 바 제거하고 전체 영역 확장 */
+    bottom: 0;
   }
 
   .bottom-nav-bar {
@@ -1259,28 +1258,83 @@ html, body {
   }
 
   .fold-panel-toggle {
-    display: flex;
+    display: none;
   }
 
-  /* 좌측 40% (챗봇) + 우측 60% (데이터 뷰어) 듀얼 분할 */
+  /* 태블릿/폴더블: 좌측 사이드바 320px + 우측 풀 와이드 뷰어 */
   .panel-chat {
-    flex: 4;
+    flex: 0 0 320px;
+    max-width: 340px;
     border-right: 1px solid var(--border-subtle);
   }
 
   .panel-viewer {
     display: flex !important;
-    flex: 6;
+    flex: 1;
+    min-width: 0;
   }
 }
 
-/* ==========================================================================
-   📱 플렉스 모드 (힌지 반접힘 각도) 최적화
-   ========================================================================== */
-@media (horizontal-viewport-segments: 2) {
-  .app-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+/* 💻 PC 대화면 데스크톱 (1024px 이상): 고해상도 모니터 풀 와이드 최적화 */
+@media (min-width: 1024px) {
+  .panel-chat {
+    flex: 0 0 360px;
+    max-width: 380px;
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  .panel-viewer {
+    display: flex !important;
+    flex: 1;
+    min-width: 0;
+    padding: 16px 20px;
+  }
+
+  .viewer-content-card {
+    padding: 0;
+  }
+
+  .viewer-card-header {
+    margin-bottom: 14px;
+  }
+
+  .viewer-title-group h3 {
+    font-size: 18px;
+  }
+
+  .modern-table th {
+    padding: 11px 14px;
+    font-size: 13px;
+  }
+
+  .modern-table td {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .compact-search {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .compact-select {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .action-btn-sm {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .pagination-container {
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+
+  .page-btn {
+    min-width: 34px;
+    height: 34px;
+    font-size: 13px;
   }
 }
