@@ -401,201 +401,35 @@ function initUI() {
   });
 }
 
-// --- 3. 로컬 챗봇 엔진 (오프라인 실시간 검색) ---
+// --- 3. 로컬 챗봇 엔진 (사내 규정 및 FAQ 지식 Q&A 전용) ---
 function handleLocalChatCommand(text) {
   appendUserMessage(text);
   
   const clean = text.trim();
-  const lower = clean.replace(/ /g, '').toLowerCase();
+  if (!clean) return;
 
-  // 1. Skyworks
-  if (lower.includes('스카이웍스') || lower.includes('skyworks')) {
-    appendBotMessage({
-      sender: 'KOSTAT 봇',
-      text: `✈️ **[Skyworks PO 현황]**\n내장된 **${AppState.skyworksData.length.toLocaleString()}건**의 Skyworks PO 데이터를 우측 패널 또는 'Skyworks' 탭에서 즉시 확인하실 수 있습니다.`
-    });
-    switchMobileTab('skyworks');
-    return;
-  }
-
-  // 2. 출하조회 / 선적조회
-  if (['출하조회', '출하검색', '선적조회', '선적검색', '선적계획', '출하', '선적'].some(p => lower.startsWith(p))) {
-    let query = clean;
-    for (const prefix of ['출하조회', '출하검색', '출하 조회', '출하 검색', '선적조회', '선적 조회', '선적계획', '선적 계획', '출하', '선적']) {
-      if (query.startsWith(prefix)) {
-        query = query.slice(prefix.length).trim();
-        break;
-      }
-    }
-    const pn = query.replace(/^[: ]+/, '');
-    if (!pn) {
-      appendBotMessage({ sender: 'KOSTAT 봇', text: '조회할 부품번호(Part No)를 입력해주세요. (예: 출하조회 880520)' });
-    } else {
-      searchShipPlanInChat(pn);
-    }
-    return;
-  }
-
-  // 3. 견적서 검색
-  if (['견적서검색', '견적서조회', '견적검색', '견적조회', '견적서열기', '견적서', '견적'].some(p => lower.startsWith(p)) || (lower.includes('견적') && (lower.includes('검색') || lower.includes('조회') || lower.includes('단가')))) {
-    let query = clean;
-    for (const prefix of ['견적서 검색', '견적서검색', '견적서 조회', '견적서조회', '견적 검색', '견적검색', '견적 조회', '견적조회', '견적서', '견적']) {
-      if (query.startsWith(prefix)) {
-        query = query.slice(prefix.length).trim();
-        break;
-      }
-    }
-    for (const suffix of ['견적서 검색', '견적서검색', '검색', '조회', '찾아줘', '보여줘']) {
-      if (query.endsWith(suffix)) {
-        query = query.slice(0, -suffix.length).trim();
-        break;
-      }
-    }
-    const part = query.replace(/^[: ]+/, '');
-    if (!part) {
-      appendBotMessage({ 
-        sender: 'KOSTAT 봇', 
-        text: `📋 **[견적서 검색 화면으로 이동합니다]**\n내장된 **${AppState.quotationsData.length.toLocaleString()}건**의 견적서 뷰어에서 부품번호 또는 고객사명을 검색하세요.` 
-      });
-      switchMobileTab('quotations');
-      if (DOM.quotationSearchInput) {
-        setTimeout(() => DOM.quotationSearchInput.focus(), 150);
-      }
-    } else {
-      searchQuotationsInChat(part);
-    }
-    return;
-  }
-
-  // 4. 견적서 이력
-  if (clean.startsWith('/견적서이력') || lower.includes('견적서이력') || lower.includes('생성이력')) {
-    appendBotMessage({
-      sender: 'KOSTAT 봇',
-      text: `📋 **[견적서 이력]**\n내장된 **${AppState.quotationsData.length.toLocaleString()}건**의 견적서 데이터베이스를 확인하실 수 있습니다.`
-    });
-    switchMobileTab('quotations');
-    return;
-  }
-
-  // 5. 사내 FAQ / RAG 지식 검색
+  // 사내 FAQ / 지식 검색 수행
   const faqResult = searchLocalFAQ(clean.replace(/^\/질문\s*/, ''));
   if (faqResult) {
     appendBotMessage({ sender: 'KOSTAT 봇', text: faqResult });
     return;
   }
 
-  // 6. 만약 부품번호를 직접 입력한 경우 자동 검색 (예: '880520', 'KS-880520')
-  if (/^[a-zA-Z0-9\-_]{3,}$/.test(clean)) {
-    const qNorm = clean.replace(/[-_\s]/g, '').toLowerCase();
-    const hasQuot = AppState.quotationsData.some(r => (r.part_no || '').replace(/[-_\s]/g, '').toLowerCase().includes(qNorm));
-    const hasShip = AppState.shipPlanData.some(r => (r.k || '').replace(/[-_\s]/g, '').toLowerCase().includes(qNorm));
-
-    if (hasQuot || hasShip) {
-      if (hasQuot) searchQuotationsInChat(clean);
-      if (hasShip) searchShipPlanInChat(clean);
-      return;
-    }
-  }
-
-  // 7. 기본 안내
+  // 매칭되는 답변이 없을 때 안내
   appendBotMessage({
     sender: 'KOSTAT 봇',
-    text: `💡 **명령어 안내**\n• **출하조회 [부품명]** (예: 출하조회 880520)\n• **견적서 검색 [부품명]** (예: 견적서 검색 880520)\n• **스카이웍스** - Skyworks 7,300+건 PO 현황\n• **/질문 [검색어]** (예: /질문 EXW, /질문 위탁재고)`
+    text: `❓ **'${escapeHtml(clean)}'**에 대한 사내 규정 또는 FAQ 정보를 찾지 못했습니다.\n\n다른 키워드로 질문해 주세요. (예: EXW 조건, 위탁재고, 출장여비 규정, 견적 유효기간 등)\n※ Skyworks PO, 출하 계획, 견적서 검색은 우측 탭 메뉴에서 바로 이용하실 수 있습니다.`
   });
 }
 
-// 출하 계획 로컬 고속 검색 (채팅용 - 하이픈/공백 정규화 지원)
-function searchShipPlanInChat(pn) {
-  const qClean = pn.toLowerCase().trim();
-  const qNorm = qClean.replace(/[-_\s]/g, '');
-
-  const matched = AppState.shipPlanData.filter(r => {
-    const k = (r.k || '').toLowerCase();
-    const p = (r.p || '').toLowerCase();
-    const c = (r.c || '').toLowerCase();
-
-    if (k.includes(qClean) || p.includes(qClean) || c.includes(qClean)) return true;
-    if (qNorm.length >= 2) {
-      if (k.replace(/[-_\s]/g, '').includes(qNorm) || p.replace(/[-_\s]/g, '').includes(qNorm)) return true;
-    }
-    return false;
-  });
-
-  if (matched.length === 0) {
-    appendBotMessage({
-      sender: 'KOSTAT 봇',
-      text: `❌ '${pn}' 관련 출하/선적 계획 데이터를 찾을 수 없습니다.`
-    });
-    return;
-  }
-
-  const shipPlans = matched.slice(0, 10).map(r => ({
-    ex_date: r.e,
-    ship_date: r.s,
-    customer: r.c,
-    po_no: r.p,
-    part_no: r.k,
-    po_qty: r.q ? Number(r.q).toLocaleString() : '0',
-    balance: r.b ? Number(r.b).toLocaleString() : '0'
-  }));
-
-  appendBotMessage({
-    sender: 'KOSTAT 봇',
-    text: `📦 **'${pn}' 출하 계획 검색 결과 (총 ${matched.length.toLocaleString()}건 중 최신 10건)**`,
-    ship_plans: shipPlans
-  });
-}
-
-// 견적서 로컬 고속 검색 (채팅용 - 하이픈/공백 정규화 지원)
-function searchQuotationsInChat(part) {
-  const qClean = part.toLowerCase().trim();
-  const qNorm = qClean.replace(/[-_\s]/g, '');
-
-  const matched = AppState.quotationsData.filter(r => {
-    const p = (r.part_no || '').toLowerCase();
-    const d = (r.description || '').toLowerCase();
-    const v = (r.vend_name || '').toLowerCase();
-    const n = (r.quot_no || '').toLowerCase();
-    const rm = (r.remarks || '').toLowerCase();
-
-    if (p.includes(qClean) || d.includes(qClean) || v.includes(qClean) || n.includes(qClean) || rm.includes(qClean)) return true;
-    if (qNorm.length >= 2) {
-      if (p.replace(/[-_\s]/g, '').includes(qNorm) || d.replace(/[-_\s]/g, '').includes(qNorm) || n.replace(/[-_\s]/g, '').includes(qNorm)) return true;
-    }
-    return false;
-  });
-
-  if (matched.length === 0) {
-    appendBotMessage({
-      sender: 'KOSTAT 봇',
-      text: `❌ '${part}' 관련 견적서 데이터를 찾을 수 없습니다.`
-    });
-    return;
-  }
-
-  const quots = matched.slice(0, 8).map(r => ({
-    quot_no: r.quot_no,
-    quot_date: r.quot_date,
-    vend_name: r.vend_name,
-    part_no: r.part_no,
-    description: r.description,
-    price: r.price,
-    unit: r.unit || 'USD',
-    remarks: r.remarks
-  }));
-
-  appendBotMessage({
-    sender: 'KOSTAT 봇',
-    text: `💰 **'${part}' 견적서 검색 결과 (총 ${matched.length.toLocaleString()}건 중 최신 8건)**`,
-    quotations: quots
-  });
-}
-
-// 사내 FAQ 로컬 2-gram 검색
+// 사내 FAQ 로컬 키워드/토큰 검색
 function searchLocalFAQ(query) {
   if (!AppState.knowledgeData || AppState.knowledgeData.length === 0) return null;
-  const qClean = query.toLowerCase().replace(/[^a-z0-9가-힣]/g, '');
+  const qClean = query.toLowerCase().replace(/[^a-z0-9가-힣\s]/g, ' ').trim();
   if (!qClean) return null;
+
+  const tokens = qClean.split(/\s+/).filter(t => t.length >= 1);
+  if (tokens.length === 0) return null;
 
   let bestMatch = null;
   let maxScore = 0;
@@ -605,8 +439,10 @@ function searchLocalFAQ(query) {
     const answer = (item.answer || item.content || '').toLowerCase();
     
     let score = 0;
-    if (title.includes(qClean)) score += 10;
-    if (answer.includes(qClean)) score += 3;
+    for (const token of tokens) {
+      if (title.includes(token)) score += 10;
+      if (answer.includes(token)) score += 3;
+    }
 
     if (score > maxScore) {
       maxScore = score;
