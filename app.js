@@ -984,6 +984,7 @@ function switchMobileTab(tab) {
 
   const isLargeScreen = window.innerWidth >= 681;
   if (!isLargeScreen) {
+    // 📱 모바일 스마트폰: 단일 화면 모드
     if (tab === 'chat') {
       DOM.panelChat.style.display = 'flex';
       DOM.panelViewer.style.display = 'none';
@@ -999,10 +1000,14 @@ function switchMobileTab(tab) {
       switchViewerCard(tabTargetMap[tab] || 'viewShipPlan');
     }
   } else {
+    // 💻 PC 대화면: 듀얼 분할 화면 유지 (좌측 챗봇 40% + 우측 뷰어 60%)
+    if (DOM.panelChat) DOM.panelChat.style.display = '';
+    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
+    
     const tabTargetMap = {
-      'skyworks': 'viewSkyworks',
       'shipplan': 'viewShipPlan',
-      'quotations': 'viewQuotations'
+      'quotations': 'viewQuotations',
+      'skyworks': 'viewSkyworks'
     };
     if (tabTargetMap[tab]) {
       switchViewerCard(tabTargetMap[tab]);
@@ -1010,13 +1015,38 @@ function switchMobileTab(tab) {
   }
 }
 
+// 윈도우 리사이즈 시 PC 대화면 듀얼 뷰 복원 보장
+window.addEventListener('resize', () => {
+  if (window.innerWidth >= 681) {
+    if (DOM.panelChat) DOM.panelChat.style.display = '';
+    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
+  }
+});
+
 function switchViewerCard(targetId) {
+  if (!targetId) return;
+
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-target') === targetId);
   });
+  
   document.querySelectorAll('.viewer-content-card').forEach(card => {
-    card.classList.toggle('active', card.id === targetId);
+    const isTarget = card.id === targetId;
+    card.classList.toggle('active', isTarget);
+    card.style.display = isTarget ? 'flex' : 'none';
   });
+
+  // 탭 전환 시 데이터 렌더링
+  if (targetId === 'viewQuotations') {
+    if (!AppState.quotFilteredRows || AppState.quotFilteredRows.length === 0) {
+      AppState.quotFilteredRows = AppState.quotationsData || [];
+    }
+    renderQuotationsPage(AppState.quotCurrentPage || 1);
+  } else if (targetId === 'viewSkyworks') {
+    if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
+      renderSkyworksTable(AppState.skyworksData);
+    }
+  }
 }
 
 // --- 메시지 출력 헬퍼 ---
