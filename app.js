@@ -45,9 +45,12 @@ const DOM = {
   btnSearchShipPlan: document.getElementById('btnSearchShipPlan'),
 
   // Quotations
-  quotHistoryList: document.getElementById('quotHistoryList'),
   quotHistoryCount: document.getElementById('quotHistoryCount'),
+  quotationSearchInput: document.getElementById('quotationSearchInput'),
+  btnSearchQuotations: document.getElementById('btnSearchQuotations'),
   btnReloadQuotHistory: document.getElementById('btnReloadQuotHistory'),
+  quotationsTable: document.getElementById('quotationsTable'),
+  quotationsTbody: document.getElementById('quotationsTbody'),
   quotDetailModal: document.getElementById('quotDetailModal'),
   modalQuotTitle: document.getElementById('modalQuotTitle'),
   modalQuotBody: document.getElementById('modalQuotBody'),
@@ -326,10 +329,22 @@ function initUI() {
     }
   });
 
+  // 견적서 검색 & 필터
+  if (DOM.btnSearchQuotations) {
+    DOM.btnSearchQuotations.addEventListener('click', filterQuotationsTable);
+  }
+  if (DOM.quotationSearchInput) {
+    DOM.quotationSearchInput.addEventListener('input', debounce(filterQuotationsTable, 200));
+    DOM.quotationSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterQuotationsTable();
+    });
+  }
+
   // 견적서 모달 이벤트
   DOM.btnCloseQuotModal.addEventListener('click', () => DOM.quotDetailModal.classList.remove('show'));
   DOM.btnModalClose.addEventListener('click', () => DOM.quotDetailModal.classList.remove('show'));
   DOM.btnReloadQuotHistory.addEventListener('click', () => {
+    if (DOM.quotationSearchInput) DOM.quotationSearchInput.value = '';
     renderQuotHistory();
     syncLiveDatabases(true);
   });
@@ -420,7 +435,14 @@ function handleLocalChatCommand(text) {
     }
     const part = query.replace(/^[: ]+/, '');
     if (!part) {
-      appendBotMessage({ sender: 'KOSTAT 봇', text: '검색할 부품번호, 규격(Description) 또는 고객사명을 입력해주세요. (예: 견적서 검색 880520)' });
+      appendBotMessage({ 
+        sender: 'KOSTAT 봇', 
+        text: `📋 **[견적서 검색 화면으로 이동합니다]**\n내장된 **${AppState.quotationsData.length.toLocaleString()}건**의 견적서 뷰어에서 부품번호 또는 고객사명을 검색하세요.` 
+      });
+      switchMobileTab('quotations');
+      if (DOM.quotationSearchInput) {
+        setTimeout(() => DOM.quotationSearchInput.focus(), 150);
+      }
     } else {
       searchQuotationsInChat(part);
     }
@@ -686,24 +708,59 @@ function searchShipPlanLocal(pn) {
 
 // --- 6. 견적서 뷰어 & 상세 모달 (로컬) ---
 function renderQuotHistory() {
-  const history = AppState.quotationsData.slice(0, 50);
-  DOM.quotHistoryCount.textContent = `${AppState.quotationsData.length.toLocaleString()}건`;
+  renderQuotationsTable(AppState.quotationsData);
+}
+
+function renderQuotationsTable(rows) {
+  if (!DOM.quotationsTbody) return;
   
-  if (history.length === 0) {
-    DOM.quotHistoryList.innerHTML = `<div class="empty-state">내장된 견적서 데이터가 없습니다.</div>`;
+  if (!rows || rows.length === 0) {
+    DOM.quotationsTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">일치하는 견적서 데이터가 없습니다.</td></tr>`;
+    DOM.quotHistoryCount.textContent = '0건';
     return;
   }
-  
-  DOM.quotHistoryList.innerHTML = history.map(item => `
-    <div class="inline-data-card" style="margin-bottom:10px;padding:12px;cursor:pointer;" onclick="openQuotationDetail('${item.quot_no}')">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-        <strong style="color:#60a5fa;font-size:14px;">${item.quot_no}</strong>
-        <span style="font-size:11px;color:#94a3b8;">${item.quot_date || ''}</span>
-      </div>
-      <div style="font-size:12px;color:#cbd5e1;">${item.vend_name || '-'} | ${item.part_no || ''} (${item.price || '-'} ${item.unit || 'USD'})</div>
-      ${item.remarks ? `<div style="font-size:11px;color:#94a3b8;margin-top:2px;">비고: ${item.remarks}</div>` : ''}
-    </div>
+
+  DOM.quotHistoryCount.textContent = `${rows.length.toLocaleString()}건`;
+  const sliced = rows.slice(0, 150);
+
+  DOM.quotationsTbody.innerHTML = sliced.map(q => `
+    <tr onclick="openQuotationDetail('${escapeHtml(q.quot_no)}')" style="cursor:pointer;" class="erp-copyable-cell">
+      <td style="font-weight:700;color:#60a5fa;">${escapeHtml(q.quot_no)}</td>
+      <td>${escapeHtml(q.quot_date || '-')}</td>
+      <td style="font-weight:600;">${escapeHtml(q.vend_name || '-')}</td>
+      <td style="color:#38bdf8;">${escapeHtml(q.part_no || '-')}</td>
+      <td>${escapeHtml(q.description || '-')}</td>
+      <td style="text-align:right;color:#34d399;font-weight:600;">${escapeHtml(q.price)} ${escapeHtml(q.unit || 'USD')}</td>
+      <td style="color:#94a3b8;font-size:11px;">${escapeHtml(q.remarks || '-')}</td>
+    </tr>
   `).join('');
+}
+
+function filterQuotationsTable() {
+  if (!DOM.quotationSearchInput) return;
+  const search = DOM.quotationSearchInput.value.toLowerCase().trim();
+  const searchNorm = search.replace(/[-_\s]/g, '');
+
+  if (!search) {
+    renderQuotationsTable(AppState.quotationsData);
+    return;
+  }
+
+  const filtered = AppState.quotationsData.filter(r => {
+    const p = (r.part_no || '').toLowerCase();
+    const d = (r.description || '').toLowerCase();
+    const v = (r.vend_name || '').toLowerCase();
+    const n = (r.quot_no || '').toLowerCase();
+    const rm = (r.remarks || '').toLowerCase();
+
+    if (p.includes(search) || d.includes(search) || v.includes(search) || n.includes(search) || rm.includes(search)) return true;
+    if (searchNorm.length >= 2) {
+      if (p.replace(/[-_\s]/g, '').includes(searchNorm) || d.replace(/[-_\s]/g, '').includes(searchNorm) || n.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
+    }
+    return false;
+  });
+
+  renderQuotationsTable(filtered);
 }
 
 function openQuotationDetail(quotNo) {

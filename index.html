@@ -169,19 +169,30 @@
         </div>
       </div>
 
-      <!-- 3. 견적서 히스토리 & 뷰어 -->
+      <!-- 3. 견적서 검색 & 뷰어 -->
       <div class="viewer-content-card" id="viewQuotations">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>📋 챗봇 견적서 생성 이력 & 관리</h3>
+            <h3>📋 견적서 통합 검색 & 뷰어</h3>
             <span class="count-badge" id="quotHistoryCount">0건</span>
           </div>
           <div class="viewer-tools">
-            <button class="action-btn-sm" id="btnReloadQuotHistory">새로고침</button>
+            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/고객사/견적번호..." />
+            <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
+            <button class="action-btn-sm" id="btnReloadQuotHistory">🔄</button>
           </div>
         </div>
-        <div class="history-card-list" id="quotHistoryList">
-          <div class="empty-state">견적서 복사 및 생성 이력을 불러오는 중...</div>
+        <div class="table-responsive-wrapper">
+          <table class="modern-table" id="quotationsTable">
+            <thead>
+              <tr>
+                <th>견적번호</th><th>견적일</th><th>고객사</th><th>부품번호</th><th>규격/설명</th><th>단가</th><th>비고</th>
+              </tr>
+            </thead>
+            <tbody id="quotationsTbody">
+              <tr><td colspan="7" class="text-center py-4">견적서 데이터를 불러오는 중입니다...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 

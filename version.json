@@ -1,9 +1,6 @@
 {
   "version": "1.0.113",
-  "version_code": 10113,
   "release_date": "2026-09-02",
-  "apk_filename": "Kostat_Chatbot_Mobile_v1.0.113.apk",
-  "download_url": "https://github.com/skywantae/KOSTAT-ERP-Chatbot/releases/download/v1.0.113/Kostat_Chatbot_Mobile_v1.0.113.apk",
-  "fallback_download_url": "https://api.github.com/repos/skywantae/KOSTAT-ERP-Chatbot/releases/latest",
-  "release_notes": "갤럭시 Z 폴드 8 최적화 및 85,000건 해외출장 전용 내장 로컬 DB 탑재, 실시간 클라우드 동기화 지원"
+  "web_url": "https://skywantae.github.io/",
+  "release_notes": "갤럭시 Z 폴드 8 및 iOS 최적화, 85,000건 오프라인 DB 탑재"
 }
