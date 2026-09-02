@@ -68,11 +68,11 @@ async function checkForAppUpdates(isManualCheck = false) {
           statusMsgEl.innerHTML = `
             <div style="margin-top:8px;padding:12px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:10px;">
               <div style="font-weight:700;color:#34d399;font-size:13px;display:flex;align-items:center;gap:6px;">
-                <span>🚀 새 버전 (v${latestVer}) 발견!</span>
+                <span>새 버전 (v${latestVer}) 발견!</span>
               </div>
               <p style="font-size:11px;color:#cbd5e1;margin:6px 0 10px 0;line-height:1.4;">${escapeHtml(notes)}</p>
               <button onclick="downloadApkInApp('${downloadUrl}', '${filename}')" class="action-btn-sm primary" style="width:100%;font-size:12px;padding:8px;text-align:center;">
-                📥 최신 APK 즉시 다운로드 (앱 내 처리)
+                최신 APK 즉시 다운로드 (앱 내 처리)
               </button>
             </div>
           `;
@@ -89,11 +89,11 @@ async function checkForAppUpdates(isManualCheck = false) {
     if (statusMsgEl) {
       statusMsgEl.innerHTML = `
         <div style="margin-top:6px;padding:10px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:8px;">
-          <div style="color:#34d399;font-weight:600;font-size:12px;">✅ 현재 최신 버전(v${currentVer})을 사용 중입니다.</div>
+          <div style="color:#34d399;font-weight:600;font-size:12px;">현재 최신 버전(v${currentVer})을 사용 중입니다.</div>
           <div style="margin-top:8px;">
             ${directApkUrl ? `
             <button onclick="downloadApkInApp('${directApkUrl}', '${filename}')" class="action-btn-sm secondary" style="font-size:11px;padding:5px 12px;">
-              📥 강제 재다운로드
+              강제 재다운로드
             </button>` : ''}
           </div>
         </div>
@@ -120,7 +120,7 @@ async function checkForAppUpdates(isManualCheck = false) {
 async function downloadApkInApp(url, filename) {
   const statusMsgEl = document.getElementById('updateStatusMsg');
   if (statusMsgEl) {
-    statusMsgEl.innerHTML = `<div style="padding:10px;color:#3b82f6;font-size:12px;font-weight:bold;">⏳ 백그라운드 다운로드 중... 잠시만 기다려주세요 (약 4MB).</div>`;
+    statusMsgEl.innerHTML = `<div style="padding:10px;color:#3b82f6;font-size:12px;font-weight:bold;">백그라운드 다운로드 중... 잠시만 기다려주세요 (약 4MB).</div>`;
   }
   showToast('다운로드를 시작합니다...');
   
@@ -153,13 +153,13 @@ async function downloadApkInApp(url, filename) {
     }, 1000);
     
     if (statusMsgEl) {
-      statusMsgEl.innerHTML = `<div style="padding:10px;color:#10b981;font-size:12px;font-weight:bold;">✅ 다운로드 완료! 상단 알림창(또는 내 파일 > 다운로드)에서 실행해 주세요.</div>`;
+      statusMsgEl.innerHTML = `<div style="padding:10px;color:#10b981;font-size:12px;font-weight:bold;">다운로드 완료! 상단 알림창(또는 내 파일 > 다운로드)에서 실행해 주세요.</div>`;
     }
     showToast('다운로드가 완료되었습니다. 내 파일 앱에서 실행해 주세요.');
   } catch (err) {
     console.error('Download error:', err);
     if (statusMsgEl) {
-      statusMsgEl.innerHTML = `<div style="padding:10px;color:#ef4444;font-size:12px;">❌ 다운로드 실패. 관리자에게 문의하세요.</div>`;
+      statusMsgEl.innerHTML = `<div style="padding:10px;color:#ef4444;font-size:12px;">다운로드 실패. 관리자에게 문의하세요.</div>`;
     }
     showToast('다운로드 실패: ' + err.message);
   }
@@ -195,7 +195,7 @@ function showUpdateNotification(newVersion, downloadUrl, filename) {
   `;
   noti.innerHTML = `
     <div>
-      <strong style="color:#60a5fa;font-size:13px;">🚀 새 버전 v${newVersion} 출시</strong>
+      <strong style="color:#60a5fa;font-size:13px;">새 버전 v${newVersion} 출시</strong>
       <p style="font-size:11px;color:#94a3b8;margin:2px 0 0 0;">새로운 기능 및 출하 데이터가 업데이트되었습니다.</p>
     </div>
     <div style="display:flex;gap:6px;">

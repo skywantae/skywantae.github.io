@@ -263,7 +263,7 @@ async function syncLiveDatabases(isManual = false) {
     }
   } catch (e) {
     const totalCount = AppState.skyworksData.length + AppState.shipPlanData.length + AppState.quotationsData.length;
-    updateStatus(true, `✈️ 내장 데이터 작동 중 (${totalCount.toLocaleString()}건)`);
+    updateStatus(true, `내장 데이터 작동 중 (${totalCount.toLocaleString()}건)`);
     if (isManual) {
       showToast('오프라인 상태입니다. (내장 DB 정상 작동)');
     }
@@ -1109,7 +1109,7 @@ function renderInlineQuotations(quotations) {
   return `
     <div class="inline-data-card">
       <div class="inline-card-header">
-        <span>💰 조회된 견적서 (${quotations.length}건)</span>
+        <span>조회된 견적서 (${quotations.length}건)</span>
         <span style="font-size:10px;color:#94a3b8;">터치하여 상세 보기</span>
       </div>
       <table class="inline-table">
@@ -1136,7 +1136,7 @@ function renderInlineShipPlans(shipPlans) {
   return `
     <div class="inline-data-card">
       <div class="inline-card-header">
-        <span>📦 출하/선적 계획 (${shipPlans.length}건)</span>
+        <span>출하/선적 계획 (${shipPlans.length}건)</span>
       </div>
       <table class="inline-table">
         <thead>

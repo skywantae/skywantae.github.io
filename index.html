@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.124" />
+  <link rel="stylesheet" href="app.css?v=1.0.125" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -121,11 +121,11 @@
         </div>
       </div>
 
-      <!-- 2. 견적서 검색 & 뷰어 -->
+      <!-- 2. 견적서 뷰어 -->
       <div class="viewer-content-card" id="viewQuotations">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>견적서 검색 & 뷰어</h3>
+            <h3>견적서</h3>
             <span class="count-badge" id="quotHistoryCount">0건</span>
           </div>
           <div class="viewer-tools">
@@ -197,19 +197,15 @@
   <!-- 커버 화면(스마트폰 모드) 전용 하단 탭 바 (출하계획 -> 견적서 -> Skyworks 순서) -->
   <nav class="bottom-nav-bar" id="bottomNavBar">
     <button class="nav-tab-item active" data-tab="chat">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       <span>FAQ 챗봇</span>
     </button>
     <button class="nav-tab-item" data-tab="shipplan">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span>출하계획</span>
     </button>
     <button class="nav-tab-item" data-tab="quotations">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       <span>견적서</span>
     </button>
     <button class="nav-tab-item" data-tab="skyworks">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
       <span>Skyworks</span>
     </button>
   </nav>
@@ -250,7 +246,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.124</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.125</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -263,13 +259,13 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.124"></script>
-  <script src="data/shipplan_data.js?v=1.0.124"></script>
-  <script src="data/quotations_data.js?v=1.0.124"></script>
-  <script src="data/knowledge_data.js?v=1.0.124"></script>
+  <script src="data/skyworks_data.js?v=1.0.125"></script>
+  <script src="data/shipplan_data.js?v=1.0.125"></script>
+  <script src="data/quotations_data.js?v=1.0.125"></script>
+  <script src="data/knowledge_data.js?v=1.0.125"></script>
   
-  <script src="updater.js?v=1.0.124"></script>
-  <script src="app.js?v=1.0.124"></script>
+  <script src="updater.js?v=1.0.125"></script>
+  <script src="app.js?v=1.0.125"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
