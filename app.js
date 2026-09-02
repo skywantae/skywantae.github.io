@@ -51,7 +51,7 @@ const DOM = {
 
   // Quotations
   quotHistoryCount: document.getElementById('quotHistoryCount'),
-  quotCustomerSelect: document.getElementById('quotCustomerSelect'),
+  quotCustomerInput: document.getElementById('quotCustomerInput'),
   quotPageSizeSelect: document.getElementById('quotPageSizeSelect'),
   quotationSearchInput: document.getElementById('quotationSearchInput'),
   btnSearchQuotations: document.getElementById('btnSearchQuotations'),
@@ -177,12 +177,11 @@ async function loadInitialDatabases() {
 
     AppState.dbReady = true;
     const total = AppState.skyworksData.length + AppState.shipPlanData.length + AppState.quotationsData.length;
-    updateStatus(true, `✈️ 내장 DB 준비됨 (${total.toLocaleString()}건)`);
+    updateStatus(true, `내장 DB 준비됨 (${total.toLocaleString()}건)`);
     
     // UI 초기 렌더링
     renderSkyworksTable(AppState.skyworksData);
     initSkyworksYears();
-    initQuotationCustomers();
     renderQuotHistory();
 
     console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
@@ -198,7 +197,7 @@ async function syncLiveDatabases(isManual = false) {
   AppState.isSyncing = true;
 
   if (isManual) {
-    showToast('🔄 최신 데이터베이스 동기화 확인 중...');
+    showToast('최신 데이터베이스 동기화 확인 중...');
     updateStatus(false, '동기화 확인 중...');
   }
 
@@ -253,14 +252,13 @@ async function syncLiveDatabases(isManual = false) {
     if (updated) {
       renderSkyworksTable(AppState.skyworksData);
       initSkyworksYears();
-      initQuotationCustomers();
       renderQuotHistory();
-      updateStatus(true, `⚡ 실시간 최신화 완료 (${totalCount.toLocaleString()}건)`);
-      showToast(`🎉 최신 데이터(${totalCount.toLocaleString()}건)가 실시간 반영되었습니다!`);
+      updateStatus(true, `실시간 최신화 완료 (${totalCount.toLocaleString()}건)`);
+      showToast(`최신 데이터(${totalCount.toLocaleString()}건)가 실시간 반영되었습니다.`);
     } else {
-      updateStatus(true, `✈️ 최신 데이터 작동 중 (${totalCount.toLocaleString()}건)`);
+      updateStatus(true, `최신 데이터 작동 중 (${totalCount.toLocaleString()}건)`);
       if (isManual) {
-        showToast('✅ 이미 최신 데이터베이스 상태입니다.');
+        showToast('이미 최신 데이터베이스 상태입니다.');
       }
     }
   } catch (e) {
@@ -344,8 +342,11 @@ function initUI() {
   });
 
   // 견적서 검색 & 필터 & 페이지 크기
-  if (DOM.quotCustomerSelect) {
-    DOM.quotCustomerSelect.addEventListener('change', filterQuotationsTable);
+  if (DOM.quotCustomerInput) {
+    DOM.quotCustomerInput.addEventListener('input', debounce(filterQuotationsTable, 200));
+    DOM.quotCustomerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterQuotationsTable();
+    });
   }
   if (DOM.quotPageSizeSelect) {
     DOM.quotPageSizeSelect.addEventListener('change', () => {
@@ -424,7 +425,7 @@ function handleLocalChatCommand(text) {
   // 매칭되는 답변이 없을 때 안내
   appendBotMessage({
     sender: 'KOSTAT 봇',
-    text: `❓ **'${escapeHtml(clean)}'**에 대한 사내 규정 또는 FAQ 정보를 찾지 못했습니다.\n\n다른 키워드로 질문해 주세요. (예: EXW 조건, 위탁재고, 출장여비 규정, 견적 유효기간 등)\n※ Skyworks PO, 출하 계획, 견적서 검색은 우측 탭 메뉴에서 바로 이용하실 수 있습니다.`
+    text: `**'${escapeHtml(clean)}'**에 대한 사내 규정 또는 FAQ 정보를 찾지 못했습니다.\n\n다른 키워드로 질문해 주세요. (예: EXW 조건, 위탁재고, 출장여비 규정, 견적 유효기간 등)\n※ Skyworks PO, 출하 계획, 견적서 검색은 우측 탭 메뉴에서 바로 이용하실 수 있습니다.`
   });
 }
 
@@ -457,7 +458,7 @@ function searchLocalFAQ(query) {
   }
 
   if (bestMatch && maxScore >= 3) {
-    return `📚 **[사내 규정/FAQ] ${bestMatch.question || bestMatch.title}**\n\n${bestMatch.answer || bestMatch.content}`;
+    return `**[사내 규정/FAQ] ${bestMatch.question || bestMatch.title}**\n\n${bestMatch.answer || bestMatch.content}`;
   }
   return null;
 }
@@ -566,26 +567,9 @@ function searchShipPlanLocal(pn) {
   `).join('');
 }
 
-// --- 6. 견적서 뷰어 & 상세 모달 (로컬 + 다중 페이지네이션 & 고객사 필터) ---
-function initQuotationCustomers() {
-  if (!DOM.quotCustomerSelect) return;
-  const custMap = {};
-  AppState.quotationsData.forEach(r => {
-    const v = (r.vend_name || '').trim();
-    if (v) {
-      custMap[v] = (custMap[v] || 0) + 1;
-    }
-  });
-
-  const sortedCusts = Object.keys(custMap).sort((a, b) => custMap[b] - custMap[a]);
-  const optionsHtml = `<option value="">전체 고객사 (${AppState.quotationsData.length.toLocaleString()}건)</option>` +
-    sortedCusts.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)} (${custMap[c].toLocaleString()}건)</option>`).join('');
-  
-  DOM.quotCustomerSelect.innerHTML = optionsHtml;
-}
-
+// --- 6. 견적서 뷰어 & 상세 모달 (로컬 + 다중 페이지네이션 & 고객사 직접 입력 필터) ---
 function renderQuotHistory() {
-  if (DOM.quotCustomerSelect) DOM.quotCustomerSelect.value = '';
+  if (DOM.quotCustomerInput) DOM.quotCustomerInput.value = '';
   if (DOM.quotationSearchInput) DOM.quotationSearchInput.value = '';
   AppState.quotFilteredRows = AppState.quotationsData || [];
   AppState.quotCurrentPage = 1;
@@ -593,29 +577,32 @@ function renderQuotHistory() {
 }
 
 function filterQuotationsTable() {
-  const selectedCust = DOM.quotCustomerSelect ? DOM.quotCustomerSelect.value.trim().toLowerCase() : '';
-  const search = DOM.quotationSearchInput ? DOM.quotationSearchInput.value.toLowerCase().trim() : '';
-  const searchNorm = search.replace(/[-_\s]/g, '');
+  const custSearch = DOM.quotCustomerInput ? DOM.quotCustomerInput.value.toLowerCase().trim() : '';
+  const custNorm = custSearch.replace(/[-_\s]/g, '');
+
+  const partSearch = DOM.quotationSearchInput ? DOM.quotationSearchInput.value.toLowerCase().trim() : '';
+  const partNorm = partSearch.replace(/[-_\s]/g, '');
 
   AppState.quotFilteredRows = AppState.quotationsData.filter(r => {
-    // 1. 고객사 필터 (선택되어 있는 경우)
-    if (selectedCust) {
-      const v = (r.vend_name || '').toLowerCase().trim();
-      if (v !== selectedCust) return false;
+    // 1. 고객사 필터 (직접 타이핑 입력 시 실시간 매칭)
+    if (custSearch) {
+      const v = (r.vend_name || '').toLowerCase();
+      if (!v.includes(custSearch) && (custNorm.length < 2 || !v.replace(/[-_\s]/g, '').includes(custNorm))) {
+        return false;
+      }
     }
 
-    // 2. 검색어 필터 (입력되어 있는 경우)
-    if (!search) return true;
+    // 2. 부품명/견적번호 검색어 필터
+    if (!partSearch) return true;
 
     const p = (r.part_no || '').toLowerCase();
     const d = (r.description || '').toLowerCase();
-    const v = (r.vend_name || '').toLowerCase();
     const n = (r.quot_no || '').toLowerCase();
     const rm = (r.remarks || '').toLowerCase();
 
-    if (p.includes(search) || d.includes(search) || v.includes(search) || n.includes(search) || rm.includes(search)) return true;
-    if (searchNorm.length >= 2) {
-      if (p.replace(/[-_\s]/g, '').includes(searchNorm) || d.replace(/[-_\s]/g, '').includes(searchNorm) || n.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
+    if (p.includes(partSearch) || d.includes(partSearch) || n.includes(partSearch) || rm.includes(partSearch)) return true;
+    if (partNorm.length >= 2) {
+      if (p.replace(/[-_\s]/g, '').includes(partNorm) || d.replace(/[-_\s]/g, '').includes(partNorm) || n.replace(/[-_\s]/g, '').includes(partNorm)) return true;
     }
     return false;
   });
@@ -672,13 +659,18 @@ function renderQuotationsPage(page) {
 function renderPaginationControls(currentPage, totalPages) {
   if (!DOM.quotPageControls) return;
 
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
   let btnsHtml = '';
 
-  // << (처음으로)
-  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToQuotPage(1)" title="첫 페이지">&laquo;</button>`;
+  // 처음으로 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToQuotPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
   
-  // < (이전)
-  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToQuotPage(${currentPage - 1})" title="이전 페이지">&lsaquo;</button>`;
+  // 이전 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToQuotPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
 
   // 페이지 번호 (슬라이딩 윈도우)
   const delta = 2;
@@ -687,11 +679,11 @@ function renderPaginationControls(currentPage, totalPages) {
     range.push(i);
   }
 
-  // 1페이지
+  // 1페이지 버튼
   btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToQuotPage(1)">1</button>`;
 
   if (range.length > 0 && range[0] > 2) {
-    btnsHtml += `<span style="padding:0 3px;color:#64748b;">...</span>`;
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
   }
 
   range.forEach(p => {
@@ -699,19 +691,19 @@ function renderPaginationControls(currentPage, totalPages) {
   });
 
   if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
-    btnsHtml += `<span style="padding:0 3px;color:#64748b;">...</span>`;
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
   }
 
-  // 마지막 페이지
+  // 마지막 페이지 버튼
   if (totalPages > 1) {
     btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToQuotPage(${totalPages})">${totalPages}</button>`;
   }
 
-  // > (다음)
-  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToQuotPage(${currentPage + 1})" title="다음 페이지">&rsaquo;</button>`;
+  // 다음 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToQuotPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
 
-  // >> (마지막으로)
-  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToQuotPage(${totalPages})" title="마지막 페이지">&raquo;</button>`;
+  // 마지막으로 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToQuotPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
 
   DOM.quotPageControls.innerHTML = btnsHtml;
 }
@@ -724,7 +716,7 @@ function goToQuotPage(page) {
 
 function openQuotationDetail(quotNo) {
   AppState.selectedQuotNo = quotNo;
-  DOM.modalQuotTitle.textContent = `📋 견적서 상세 정보 [${quotNo}]`;
+  DOM.modalQuotTitle.textContent = `견적서 상세 정보 [${quotNo}]`;
   
   const found = AppState.quotationsData.filter(r => r.quot_no === quotNo);
   if (found.length === 0) {
@@ -877,10 +869,10 @@ function copyCurrentQuotationSummary() {
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast('🎉 견적서 전체 요약이 클립보드에 복사되었습니다!');
+      showToast('견적서 전체 요약이 클립보드에 복사되었습니다.');
     });
   } else {
-    showToast('클립보드 복사 완료!');
+    showToast('클립보드 복사 완료');
   }
 }
 

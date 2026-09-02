@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.114" />
+  <link rel="stylesheet" href="app.css?v=1.0.116" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,16 +90,16 @@
       
       <!-- 서브 뷰 네비게이션 헤더 -->
       <div class="viewer-nav-bar">
-        <button class="viewer-tab-btn active" data-target="viewShipPlan">📊 출하 계획</button>
-        <button class="viewer-tab-btn" data-target="viewQuotations">📋 견적서 뷰어</button>
-        <button class="viewer-tab-btn" data-target="viewSkyworks">✈️ Skyworks PO</button>
+        <button class="viewer-tab-btn active" data-target="viewShipPlan">출하 계획</button>
+        <button class="viewer-tab-btn" data-target="viewQuotations">견적서 뷰어</button>
+        <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
       </div>
 
       <!-- 1. 출하 계획 뷰 (기본 활성) -->
       <div class="viewer-content-card active" id="viewShipPlan">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>📊 전체 선적/출하 계획 (Ship Plan)</h3>
+            <h3>출하 계획 (Ship Plan)</h3>
             <span class="count-badge" id="shipPlanStatusBadge">DB 정상</span>
           </div>
           <div class="viewer-tools">
@@ -125,21 +125,19 @@
       <div class="viewer-content-card" id="viewQuotations">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>📋 견적서 통합 검색 & 뷰어</h3>
+            <h3>견적서 검색 & 뷰어</h3>
             <span class="count-badge" id="quotHistoryCount">0건</span>
           </div>
           <div class="viewer-tools">
-            <select id="quotCustomerSelect" class="compact-select" title="고객사 선택 필터">
-              <option value="">전체 고객사</option>
-            </select>
-            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="50">50개씩 보기</option>
-              <option value="100">100개씩 보기</option>
-              <option value="150">150개씩 보기</option>
-            </select>
+            <input type="text" id="quotCustomerInput" class="compact-search" placeholder="고객사 검색 (직접 입력)..." style="width: 160px;" />
             <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/견적번호..." />
+            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
+              <option value="50">50개씩</option>
+              <option value="100">100개씩</option>
+              <option value="150">150개씩</option>
+            </select>
             <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
-            <button class="action-btn-sm" id="btnReloadQuotHistory">🔄</button>
+            <button class="action-btn-sm" id="btnReloadQuotHistory">새로고침</button>
           </div>
         </div>
         <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
@@ -167,7 +165,7 @@
       <div class="viewer-content-card" id="viewSkyworks">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>✈️ Skyworks PO 출하 현황</h3>
+            <h3>Skyworks PO 현황</h3>
             <span class="count-badge" id="skyworksCount">0건</span>
           </div>
           <div class="viewer-tools">
@@ -175,7 +173,7 @@
             <select id="skyworksYearSelect" class="compact-select">
               <option value="">전체 연도</option>
             </select>
-            <button class="action-btn-sm" id="btnSkyworksReload">🔄</button>
+            <button class="action-btn-sm" id="btnSkyworksReload">새로고침</button>
           </div>
         </div>
         <div class="table-responsive-wrapper">
@@ -220,15 +218,15 @@
   <div class="modal-backdrop" id="quotDetailModal">
     <div class="modal-dialog quotation-dialog-lg">
       <div class="modal-header">
-        <h3 id="modalQuotTitle">📋 견적서 상세 정보</h3>
+        <h3 id="modalQuotTitle">견적서 상세 정보</h3>
         <button class="close-btn" id="btnCloseQuotModal">&times;</button>
       </div>
       <div class="modal-body" id="modalQuotBody">
         <!-- PC 버전 동일 ERP 격자 렌더링 -->
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm" id="btnModalPrintQuot" style="background:#27ae60;border-color:#27ae60;color:#fff;">🖨️ 인쇄 / PDF 저장</button>
-        <button class="action-btn-sm" id="btnModalCopyQuotText" style="background:#3b82f6;border-color:#3b82f6;color:#fff;">📋 전체 복사</button>
+        <button class="action-btn-sm" id="btnModalPrintQuot" style="background:#27ae60;border-color:#27ae60;color:#fff;">인쇄 / PDF</button>
+        <button class="action-btn-sm" id="btnModalCopyQuotText" style="background:#3b82f6;border-color:#3b82f6;color:#fff;">전체 복사</button>
         <button class="action-btn-sm secondary" id="btnModalClose">닫기</button>
       </div>
     </div>
@@ -238,12 +236,12 @@
   <div class="modal-backdrop" id="settingsModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>📱 시스템 정보 & 업데이트</h3>
+        <h3>시스템 정보 & 업데이트</h3>
         <button class="close-btn" id="btnCloseSettingsModal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="setting-item">
-          <label>🌐 동작 환경 (해외출장 지원):</label>
+          <label>동작 환경 (오프라인 지원):</label>
           <div style="background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;font-size:12px;color:#cbd5e1;line-height:1.6;">
             • <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>
             • <strong>탑재 데이터</strong>: Skyworks PO 7,300+건, 출하 계획 58,000+건, 견적서 20,000+건, 사내 FAQ 내장.
@@ -252,7 +250,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.110</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.115</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -265,13 +263,13 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.115"></script>
-  <script src="data/shipplan_data.js?v=1.0.115"></script>
-  <script src="data/quotations_data.js?v=1.0.115"></script>
-  <script src="data/knowledge_data.js?v=1.0.115"></script>
+  <script src="data/skyworks_data.js?v=1.0.116"></script>
+  <script src="data/shipplan_data.js?v=1.0.116"></script>
+  <script src="data/quotations_data.js?v=1.0.116"></script>
+  <script src="data/knowledge_data.js?v=1.0.116"></script>
   
-  <script src="updater.js?v=1.0.115"></script>
-  <script src="app.js?v=1.0.115"></script>
+  <script src="updater.js?v=1.0.116"></script>
+  <script src="app.js?v=1.0.116"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
