@@ -177,12 +177,17 @@
             <span class="count-badge" id="quotHistoryCount">0건</span>
           </div>
           <div class="viewer-tools">
+            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
+              <option value="50">50개씩 보기</option>
+              <option value="100">100개씩 보기</option>
+              <option value="150">150개씩 보기</option>
+            </select>
             <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/고객사/견적번호..." />
             <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
             <button class="action-btn-sm" id="btnReloadQuotHistory">🔄</button>
           </div>
         </div>
-        <div class="table-responsive-wrapper">
+        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
           <table class="modern-table" id="quotationsTable">
             <thead>
               <tr>
@@ -193,6 +198,13 @@
               <tr><td colspan="7" class="text-center py-4">견적서 데이터를 불러오는 중입니다...</td></tr>
             </tbody>
           </table>
+        </div>
+        <!-- 견적서 하단 페이지네이션 컨트롤러 -->
+        <div class="pagination-container" id="quotPagination">
+          <div class="pagination-info" id="quotPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-controls" id="quotPageControls">
+            <!-- 동적 페이지 번호 버튼 생성 -->
+          </div>
         </div>
       </div>
 

@@ -11,6 +11,11 @@ const AppState = {
   quotationsData: [],
   knowledgeData: [],
   
+  // 견적서 페이징 상태
+  quotCurrentPage: 1,
+  quotPageSize: 50,
+  quotFilteredRows: [],
+
   // 상태
   dbReady: false,
   isSyncing: false,
@@ -46,11 +51,15 @@ const DOM = {
 
   // Quotations
   quotHistoryCount: document.getElementById('quotHistoryCount'),
+  quotPageSizeSelect: document.getElementById('quotPageSizeSelect'),
   quotationSearchInput: document.getElementById('quotationSearchInput'),
   btnSearchQuotations: document.getElementById('btnSearchQuotations'),
   btnReloadQuotHistory: document.getElementById('btnReloadQuotHistory'),
   quotationsTable: document.getElementById('quotationsTable'),
   quotationsTbody: document.getElementById('quotationsTbody'),
+  quotPagination: document.getElementById('quotPagination'),
+  quotPageInfo: document.getElementById('quotPageInfo'),
+  quotPageControls: document.getElementById('quotPageControls'),
   quotDetailModal: document.getElementById('quotDetailModal'),
   modalQuotTitle: document.getElementById('modalQuotTitle'),
   modalQuotBody: document.getElementById('modalQuotBody'),
@@ -331,7 +340,14 @@ function initUI() {
     }
   });
 
-  // 견적서 검색 & 필터
+  // 견적서 검색 & 필터 & 페이지 크기
+  if (DOM.quotPageSizeSelect) {
+    DOM.quotPageSizeSelect.addEventListener('change', () => {
+      AppState.quotPageSize = parseInt(DOM.quotPageSizeSelect.value, 10) || 50;
+      AppState.quotCurrentPage = 1;
+      renderQuotationsPage(1);
+    });
+  }
   if (DOM.btnSearchQuotations) {
     DOM.btnSearchQuotations.addEventListener('click', filterQuotationsTable);
   }
@@ -708,24 +724,70 @@ function searchShipPlanLocal(pn) {
   `).join('');
 }
 
-// --- 6. 견적서 뷰어 & 상세 모달 (로컬) ---
+// --- 6. 견적서 뷰어 & 상세 모달 (로컬 + 다중 페이지네이션) ---
 function renderQuotHistory() {
-  renderQuotationsTable(AppState.quotationsData);
+  AppState.quotFilteredRows = AppState.quotationsData || [];
+  AppState.quotCurrentPage = 1;
+  renderQuotationsPage(1);
 }
 
-function renderQuotationsTable(rows) {
+function filterQuotationsTable() {
+  if (!DOM.quotationSearchInput) return;
+  const search = DOM.quotationSearchInput.value.toLowerCase().trim();
+  const searchNorm = search.replace(/[-_\s]/g, '');
+
+  if (!search) {
+    AppState.quotFilteredRows = AppState.quotationsData || [];
+  } else {
+    AppState.quotFilteredRows = AppState.quotationsData.filter(r => {
+      const p = (r.part_no || '').toLowerCase();
+      const d = (r.description || '').toLowerCase();
+      const v = (r.vend_name || '').toLowerCase();
+      const n = (r.quot_no || '').toLowerCase();
+      const rm = (r.remarks || '').toLowerCase();
+
+      if (p.includes(search) || d.includes(search) || v.includes(search) || n.includes(search) || rm.includes(search)) return true;
+      if (searchNorm.length >= 2) {
+        if (p.replace(/[-_\s]/g, '').includes(searchNorm) || d.replace(/[-_\s]/g, '').includes(searchNorm) || n.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
+      }
+      return false;
+    });
+  }
+
+  AppState.quotCurrentPage = 1;
+  renderQuotationsPage(1);
+}
+
+function renderQuotationsPage(page) {
+  const rows = AppState.quotFilteredRows || [];
+  const totalRows = rows.length;
+  const pageSize = AppState.quotPageSize || 50;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.quotCurrentPage = page;
+
+  // 카운트 뱃지 & 페이지 인포
+  if (DOM.quotHistoryCount) {
+    DOM.quotHistoryCount.textContent = `${totalRows.toLocaleString()}건`;
+  }
+  if (DOM.quotPageInfo) {
+    DOM.quotPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
   if (!DOM.quotationsTbody) return;
-  
-  if (!rows || rows.length === 0) {
+
+  if (totalRows === 0) {
     DOM.quotationsTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">일치하는 견적서 데이터가 없습니다.</td></tr>`;
-    DOM.quotHistoryCount.textContent = '0건';
+    if (DOM.quotPageControls) DOM.quotPageControls.innerHTML = '';
     return;
   }
 
-  DOM.quotHistoryCount.textContent = `${rows.length.toLocaleString()}건`;
-  const sliced = rows.slice(0, 150);
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageRows = rows.slice(start, end);
 
-  DOM.quotationsTbody.innerHTML = sliced.map(q => `
+  DOM.quotationsTbody.innerHTML = pageRows.map(q => `
     <tr onclick="openQuotationDetail('${escapeHtml(q.quot_no)}')" style="cursor:pointer;" class="erp-copyable-cell">
       <td style="font-weight:700;color:#60a5fa;">${escapeHtml(q.quot_no)}</td>
       <td>${escapeHtml(q.quot_date || '-')}</td>
@@ -736,33 +798,62 @@ function renderQuotationsTable(rows) {
       <td style="color:#94a3b8;font-size:11px;">${escapeHtml(q.remarks || '-')}</td>
     </tr>
   `).join('');
+
+  // 페이지네이션 컨트롤러 렌더링
+  renderPaginationControls(page, totalPages);
 }
 
-function filterQuotationsTable() {
-  if (!DOM.quotationSearchInput) return;
-  const search = DOM.quotationSearchInput.value.toLowerCase().trim();
-  const searchNorm = search.replace(/[-_\s]/g, '');
+function renderPaginationControls(currentPage, totalPages) {
+  if (!DOM.quotPageControls) return;
 
-  if (!search) {
-    renderQuotationsTable(AppState.quotationsData);
-    return;
+  let btnsHtml = '';
+
+  // << (처음으로)
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToQuotPage(1)" title="첫 페이지">&laquo;</button>`;
+  
+  // < (이전)
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToQuotPage(${currentPage - 1})" title="이전 페이지">&lsaquo;</button>`;
+
+  // 페이지 번호 (슬라이딩 윈도우)
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
   }
 
-  const filtered = AppState.quotationsData.filter(r => {
-    const p = (r.part_no || '').toLowerCase();
-    const d = (r.description || '').toLowerCase();
-    const v = (r.vend_name || '').toLowerCase();
-    const n = (r.quot_no || '').toLowerCase();
-    const rm = (r.remarks || '').toLowerCase();
+  // 1페이지
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToQuotPage(1)">1</button>`;
 
-    if (p.includes(search) || d.includes(search) || v.includes(search) || n.includes(search) || rm.includes(search)) return true;
-    if (searchNorm.length >= 2) {
-      if (p.replace(/[-_\s]/g, '').includes(searchNorm) || d.replace(/[-_\s]/g, '').includes(searchNorm) || n.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
-    }
-    return false;
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span style="padding:0 3px;color:#64748b;">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToQuotPage(${p})">${p}</button>`;
   });
 
-  renderQuotationsTable(filtered);
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span style="padding:0 3px;color:#64748b;">...</span>`;
+  }
+
+  // 마지막 페이지
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToQuotPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  // > (다음)
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToQuotPage(${currentPage + 1})" title="다음 페이지">&rsaquo;</button>`;
+
+  // >> (마지막으로)
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToQuotPage(${totalPages})" title="마지막 페이지">&raquo;</button>`;
+
+  DOM.quotPageControls.innerHTML = btnsHtml;
+}
+
+function goToQuotPage(page) {
+  renderQuotationsPage(page);
+  const wrapper = document.querySelector('#viewQuotations .table-responsive-wrapper');
+  if (wrapper) wrapper.scrollTop = 0;
 }
 
 function openQuotationDetail(quotNo) {
@@ -1120,3 +1211,8 @@ function debounce(func, wait) {
     timeout = setTimeout(() => func.apply(this, args), wait);
   };
 }
+
+// 전역 스코프 바인딩
+window.openQuotationDetail = openQuotationDetail;
+window.goToQuotPage = goToQuotPage;
+window.copyCellText = copyCellText;
