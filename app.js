@@ -999,14 +999,10 @@ function switchMobileTab(tab) {
       switchViewerCard(tabTargetMap[tab] || 'viewShipPlan');
     }
   } else {
-    // PC 대화면: 인라인 스타일을 깨끗이 비워 CSS 듀얼 분할 화면(좌 챗봇 + 우 데이터뷰어)이 100% 작동
-    if (DOM.panelChat) DOM.panelChat.style.display = '';
-    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
-    
     const tabTargetMap = {
+      'skyworks': 'viewSkyworks',
       'shipplan': 'viewShipPlan',
-      'quotations': 'viewQuotations',
-      'skyworks': 'viewSkyworks'
+      'quotations': 'viewQuotations'
     };
     if (tabTargetMap[tab]) {
       switchViewerCard(tabTargetMap[tab]);
@@ -1014,39 +1010,13 @@ function switchMobileTab(tab) {
   }
 }
 
-// 윈도우 리사이즈 시 PC 대화면 듀얼 뷰 복원 보장
-window.addEventListener('resize', () => {
-  if (window.innerWidth >= 681) {
-    if (DOM.panelChat) DOM.panelChat.style.display = '';
-    if (DOM.panelViewer) DOM.panelViewer.style.display = '';
-  }
-});
-
 function switchViewerCard(targetId) {
-  if (!targetId) return;
-
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
-    const isTarget = btn.getAttribute('data-target') === targetId;
-    btn.classList.toggle('active', isTarget);
+    btn.classList.toggle('active', btn.getAttribute('data-target') === targetId);
   });
-  
   document.querySelectorAll('.viewer-content-card').forEach(card => {
-    const isTarget = card.id === targetId;
-    card.classList.toggle('active', isTarget);
-    card.style.display = isTarget ? 'flex' : 'none';
+    card.classList.toggle('active', card.id === targetId);
   });
-
-  // 탭 전환 시 각 뷰어 데이터 렌더링 보장
-  if (targetId === 'viewQuotations') {
-    if (!AppState.quotFilteredRows || AppState.quotFilteredRows.length === 0) {
-      AppState.quotFilteredRows = AppState.quotationsData || [];
-    }
-    renderQuotationsPage(AppState.quotCurrentPage || 1);
-  } else if (targetId === 'viewSkyworks') {
-    if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
-      renderSkyworksTable(AppState.skyworksData);
-    }
-  }
 }
 
 // --- 메시지 출력 헬퍼 ---

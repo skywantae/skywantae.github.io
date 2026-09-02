@@ -181,27 +181,26 @@ html, body {
   transform: scale(0.94);
 }
 
-/* --- 메인 레이아웃 (PC 기본: 듀얼 분할 전체 채움) --- */
+/* --- 메인 레이아웃 --- */
 .app-layout {
   position: absolute;
   top: var(--header-height);
-  bottom: 0;
+  bottom: var(--nav-height);
   left: 0;
   right: 0;
   display: flex;
   overflow: hidden;
 }
 
-/* --- 좌측 패널: 챗봇 화면 (PC 기본 40%) --- */
+/* --- 좌측/주 패널: 챗봇 화면 --- */
 .panel-chat {
-  flex: 4;
+  flex: 1;
   display: flex;
   flex-direction: column;
   height: 100%;
   background: var(--bg-surface);
   position: relative;
   overflow: hidden;
-  border-right: 1px solid var(--border-subtle);
 }
 
 /* 퀵 액션 칩 바 */
@@ -429,14 +428,13 @@ html, body {
   transform: scale(0.92);
 }
 
-/* --- 우측 패널: 데이터 뷰어 (PC 기본 60% 듀얼 분할) --- */
+/* --- 우측/보조 패널: 데이터 뷰어 --- */
 .panel-viewer {
-  display: flex;
-  flex: 6;
-  min-width: 0;
+  display: none; /* 스마트폰 기본 단일 모드에서는 숨김 */
   flex-direction: column;
   height: 100%;
   background: var(--bg-app);
+  border-left: 1px solid var(--border-subtle);
   overflow: hidden;
 }
 
@@ -477,7 +475,7 @@ html, body {
 }
 
 .viewer-content-card.active {
-  display: flex !important;
+  display: flex;
 }
 
 .viewer-card-header {
@@ -748,7 +746,7 @@ html, body {
   color: var(--text-muted);
 }
 
-/* 하단 탭 바 (스마트폰 모바일 모드 680px 이하에서만 표시) */
+/* 하단 탭 바 (커버 화면 모드 전용) */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
@@ -759,7 +757,7 @@ html, body {
   background: rgba(18, 22, 32, 0.95);
   backdrop-filter: var(--glass-blur);
   border-top: 1px solid var(--border-subtle);
-  display: none; /* PC 대화면에서는 기본 숨김 */
+  display: flex;
   align-items: center;
   justify-content: space-around;
   z-index: 100;
@@ -1248,24 +1246,41 @@ html, body {
 }
 
 /* ==========================================================================
-   📱 스마트폰 모바일 화면 (680px 이하 전용): 단일 패널 전환 + 하단 탭 바 활성화
+   📱 갤럭시 Z 폴드 8 대화면 (Unfolded Main Screen) 반응형 미디어 쿼리
+   폭 681px 이상: 듀얼 패널 Master-Detail 분할 뷰
    ========================================================================== */
-@media (max-width: 680px) {
+@media (min-width: 681px) {
   .app-layout {
-    bottom: var(--nav-height) !important;
+    bottom: 0; /* 대화면에서는 하단 탭 바 제거하고 전체 영역 확장 */
   }
 
   .bottom-nav-bar {
-    display: flex !important;
+    display: none !important;
   }
 
+  .fold-panel-toggle {
+    display: flex;
+  }
+
+  /* 좌측 40% (챗봇) + 우측 60% (데이터 뷰어) 듀얼 분할 */
   .panel-chat {
-    flex: 1 !important;
-    border-right: none !important;
+    flex: 4;
+    border-right: 1px solid var(--border-subtle);
   }
 
   .panel-viewer {
-    flex: 1 !important;
-    display: none;
+    display: flex !important;
+    flex: 6;
+  }
+}
+
+/* ==========================================================================
+   📱 플렉스 모드 (힌지 반접힘 각도) 최적화
+   ========================================================================== */
+@media (horizontal-viewport-segments: 2) {
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 }
