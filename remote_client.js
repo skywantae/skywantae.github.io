@@ -34,6 +34,18 @@ window.RemoteClient = (function() {
     initialized: false
   };
 
+  function applyRatioMode(mode) {
+    State.fitMode = mode;
+    const canvas = State.canvas || document.getElementById('rdCanvas');
+    if (canvas) {
+      canvas.classList.remove('fit-mode', 'fill-mode', 'cover-mode');
+      canvas.classList.add(`${mode}-mode`);
+    }
+    const ratioSelect = document.getElementById('rdRatioSelect');
+    if (ratioSelect) ratioSelect.value = mode;
+    updateVirtualCursor();
+  }
+
   function init() {
     if (State.initialized) return;
     State.canvas = document.getElementById('rdCanvas');
@@ -732,16 +744,6 @@ window.RemoteClient = (function() {
         applyRatioMode(e.target.value);
         localStorage.setItem('kostat_rd_ratio_mode', e.target.value);
       });
-    }
-
-    function applyRatioMode(mode) {
-      State.fitMode = mode;
-      const canvas = State.canvas || document.getElementById('rdCanvas');
-      if (!canvas) return;
-      canvas.classList.remove('fit-mode', 'fill-mode', 'cover-mode');
-      canvas.classList.add(`${mode}-mode`);
-      if (ratioSelect) ratioSelect.value = mode;
-      updateVirtualCursor();
     }
 
     // Native Mobile Fullscreen

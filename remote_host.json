@@ -1,0 +1,17 @@
+{
+  "active_url": "https://recorders-highland-excellence-warren.trycloudflare.com",
+  "pin": "8805",
+  "device_name": "💻 내 노트북 (시즈모드 1)",
+  "updated_at": "2026-09-03 10:58:52",
+  "status": "online",
+  "devices": {
+    "dev_primary": {
+      "id": "dev_primary",
+      "name": "💻 내 노트북 (시즈모드 1)",
+      "active_url": "https://recorders-highland-excellence-warren.trycloudflare.com",
+      "pin": "8805",
+      "updated_at": "2026-09-03 10:58:52",
+      "status": "online"
+    }
+  }
+}
