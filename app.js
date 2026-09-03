@@ -49,6 +49,11 @@ const DOM = {
   statusDot: document.getElementById('statusDot'),
   statusText: document.getElementById('statusText'),
   connStatusPill: document.getElementById('connStatusPill'),
+  appLayout: document.getElementById('appLayout'),
+  mobileNavSwitcher: document.getElementById('mobileNavSwitcher'),
+  btnNavChat: document.getElementById('btnNavChat'),
+  btnNavViewer: document.getElementById('btnNavViewer'),
+  mobileViewerNavText: document.getElementById('mobileViewerNavText'),
   panelChat: document.getElementById('panelChat'),
   panelViewer: document.getElementById('panelViewer'),
   bottomNavBar: document.getElementById('bottomNavBar'),
@@ -343,6 +348,14 @@ function initUI() {
       switchViewerCard(targetId);
     });
   });
+
+  // [모바일 반응형] 100% 풀스크린 탭 전환기 바인딩
+  if (DOM.btnNavChat) {
+    DOM.btnNavChat.addEventListener('click', () => switchMobilePanel('chat'));
+  }
+  if (DOM.btnNavViewer) {
+    DOM.btnNavViewer.addEventListener('click', () => switchMobilePanel('viewer'));
+  }
 
   // Skyworks 필터
   DOM.skyworksSearchInput.addEventListener('input', debounce(filterSkyworksTable, 200));
@@ -1047,11 +1060,31 @@ function switchMobileTab(tab) {
   }
 }
 
+function switchMobilePanel(panelType) {
+  if (!DOM.appLayout) DOM.appLayout = document.getElementById('appLayout');
+  if (!DOM.btnNavChat) DOM.btnNavChat = document.getElementById('btnNavChat');
+  if (!DOM.btnNavViewer) DOM.btnNavViewer = document.getElementById('btnNavViewer');
+
+  if (panelType === 'chat') {
+    DOM.appLayout?.classList.remove('show-viewer');
+    DOM.btnNavChat?.classList.add('active');
+    DOM.btnNavViewer?.classList.remove('active');
+  } else {
+    DOM.appLayout?.classList.add('show-viewer');
+    DOM.btnNavViewer?.classList.add('active');
+    DOM.btnNavChat?.classList.remove('active');
+  }
+}
+
 function switchViewerCard(targetId) {
   if (!targetId) return;
 
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-target') === targetId);
+    const isTarget = btn.getAttribute('data-target') === targetId;
+    btn.classList.toggle('active', isTarget);
+    if (isTarget && DOM.mobileViewerNavText) {
+      DOM.mobileViewerNavText.textContent = btn.textContent.trim();
+    }
   });
   
   document.querySelectorAll('.viewer-content-card').forEach(card => {
@@ -1059,6 +1092,11 @@ function switchViewerCard(targetId) {
     card.classList.toggle('active', isTarget);
     card.style.display = isTarget ? 'flex' : 'none';
   });
+
+  // 모바일 화면(폭 768px 미만)인 경우 자동으로 뷰어 패널로 전환
+  if (window.innerWidth < 768) {
+    switchMobilePanel('viewer');
+  }
 
   // 탭 전환 시 데이터 렌더링
   if (targetId === 'viewQuotations') {

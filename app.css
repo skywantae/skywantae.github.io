@@ -2049,3 +2049,131 @@ html, body {
   background: var(--accent-blue);
   color: #fff;
 }
+
+/* ==========================================================================
+   반응형 100% 풀스크린 탭 전환식 시스템 (아이폰 & 일반 스마트폰 최적화)
+   - 768px 미만: 듀얼 분할 해제 -> 챗봇 100% or ERP/원격 100% 풀스크린 토글
+   - 768px 이상: 기존 갤럭시 Z 폴드 8 펼침 & PC 듀얼 스크린 (38:62) 자동 유지
+   ========================================================================== */
+
+/* 기본 (넓은 화면 / 폴드 펼침 / PC): 모바일 스위처 숨김 */
+.mobile-nav-switcher {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  /* 1. 모바일 전용 상단 탭 스위처 표시 */
+  .mobile-nav-switcher {
+    display: flex !important;
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    height: 42px;
+    background: rgba(14, 18, 28, 0.98);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 4px 8px;
+    gap: 6px;
+    z-index: 50;
+    box-sizing: border-box;
+  }
+
+  .mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0 10px;
+    touch-action: manipulation;
+  }
+
+  .mobile-nav-btn.active {
+    background: rgba(59, 130, 246, 0.18);
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #60a5fa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .mobile-nav-btn .nav-icon {
+    font-size: 15px;
+  }
+
+  /* 2. 메인 레이아웃 높이 및 배치 조정 */
+  .app-layout {
+    top: calc(var(--header-height) + 42px) !important;
+    flex-direction: column !important;
+  }
+
+  /* 3. 패널 100% 풀스크린 전환 (아이폰 찌그러짐 원천 차단) */
+  .panel-chat, .panel-viewer {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    flex: 1 1 100% !important;
+    height: 100% !important;
+    border-right: none !important;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* 기본: 챗봇 100% 표시 */
+  .app-layout:not(.show-viewer) .panel-chat {
+    display: flex !important;
+    z-index: 10;
+  }
+  .app-layout:not(.show-viewer) .panel-viewer {
+    display: none !important;
+  }
+
+  /* 뷰어 모드: ERP 데이터/원격 뷰어 100% 표시 */
+  .app-layout.show-viewer .panel-chat {
+    display: none !important;
+  }
+  .app-layout.show-viewer .panel-viewer {
+    display: flex !important;
+    z-index: 10;
+  }
+
+  /* 4. 모바일 뷰어 네비게이션 가로 스크롤 최적화 */
+  .viewer-nav-bar {
+    padding: 6px 8px;
+    gap: 5px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-shrink: 0;
+  }
+  .viewer-nav-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .viewer-tab-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* 5. 헤더 컴팩트화 (아이폰 상단 공간 절약) */
+  .app-header {
+    height: 48px;
+    padding: 0 10px;
+  }
+  .brand-img {
+    height: 20px;
+  }
+  .connection-pill {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+}
