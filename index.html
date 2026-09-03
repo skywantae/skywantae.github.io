@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.132" />
+  <link rel="stylesheet" href="app.css?v=1.0.133" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,6 +89,7 @@
         <button class="viewer-tab-btn active" data-target="viewShipPlan">출하 계획</button>
         <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
+        <button class="viewer-tab-btn" data-target="viewRemoteDesktop">🖥️ 원격 조종</button>
       </div>
 
       <!-- 1. 출하 계획 뷰 (기본 활성) -->
@@ -187,6 +188,79 @@
         </div>
       </div>
 
+      <!-- 4. PC 원격 데스크톱 조종 뷰 -->
+      <div class="viewer-content-card" id="viewRemoteDesktop">
+        <div class="rd-toolbar">
+          <div class="rd-toolbar-left">
+            <div class="rd-device-group">
+              <select id="rdDeviceSelect" class="rd-select">
+                <option value="dev_default">💻 내 노트북 (기본)</option>
+              </select>
+              <button id="rdBtnAddDevice" class="rd-btn-icon" title="새 노트북 추가">+</button>
+            </div>
+            <div class="status-pill" id="rdStatusPill">
+              <span class="dot offline" id="rdStatusDot"></span>
+              <span class="status-text" id="rdStatusText">연결 대기</span>
+            </div>
+          </div>
+
+          <div class="rd-toolbar-right">
+            <div class="mode-toggle-group">
+              <button id="rdBtnTouch" class="btn-mode active" title="화면 직접 터치">터치</button>
+              <button id="rdBtnTrackpad" class="btn-mode" title="마우스 트랙패드 조종">트랙패드</button>
+            </div>
+            <button id="rdBtnKbdToggle" class="rd-btn-tool" title="가상 키보드">⌨️ 키보드</button>
+            <button id="rdBtnSettings" class="rd-btn-tool" title="스트리밍 설정">⚙️ 설정</button>
+            <button id="rdBtnFullscreen" class="rd-btn-tool" title="전체화면 토글">⛶</button>
+          </div>
+        </div>
+
+        <div class="rd-viewport-container" id="rdViewportContainer">
+          <canvas id="rdCanvas" class="rd-canvas"></canvas>
+          <div id="rdVirtualCursor" class="rd-virtual-cursor"></div>
+
+          <div id="rdAuthOverlay" class="rd-auth-overlay">
+            <div class="rd-auth-card">
+              <h3>🖥️ 노트북 원격 데스크톱 연결</h3>
+              <p>노트북에서 <code>python remote_desktop/run_agent.py</code>를 실행하고 발급된 주소를 입력하세요.</p>
+              <div class="rd-form-group">
+                <input type="text" id="rdUrlInput" class="rd-input" placeholder="Cloudflare URL (예: https://...trycloudflare.com)" />
+                <input type="password" id="rdPinInput" class="rd-input" placeholder="보안 PIN (기본: 8805)" maxlength="8" />
+                <button id="rdBtnConnect" class="rd-btn-primary">원격 연결 시작</button>
+              </div>
+              <div id="rdAuthError" class="rd-auth-error"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rd-trackpad-bar" id="rdTrackpadBar">
+          <button class="rd-trackpad-btn" id="rdTrackpadLeft">좌클릭 (L)</button>
+          <button class="rd-trackpad-btn rd-scroll-btn" id="rdTrackpadWheelUp">▲ 휠</button>
+          <button class="rd-trackpad-btn rd-scroll-btn" id="rdTrackpadWheelDown">▼ 휠</button>
+          <button class="rd-trackpad-btn" id="rdTrackpadRight">우클릭 (R)</button>
+        </div>
+
+        <div class="rd-keyboard-drawer" id="rdKeyboardDrawer">
+          <div class="rd-kbd-input-row">
+            <input type="text" id="rdQuickTextInput" class="rd-quick-input" placeholder="여기에 입력 후 전송 (한글 지원)..." />
+            <button id="rdBtnSendText" class="action-btn-sm primary">전송</button>
+            <button id="rdBtnCloseKbd" class="action-btn-sm secondary">닫기</button>
+          </div>
+          <div class="rd-quick-keys-row">
+            <button class="rd-key-chip" data-key="enter">Enter</button>
+            <button class="rd-key-chip" data-key="backspace">Bksp</button>
+            <button class="rd-key-chip" data-key="tab">Tab</button>
+            <button class="rd-key-chip" data-key="escape">Esc</button>
+            <button class="rd-key-chip special" data-combo="ctrl,c">Ctrl+C</button>
+            <button class="rd-key-chip special" data-combo="ctrl,v">Ctrl+V</button>
+            <button class="rd-key-chip special" data-combo="ctrl,a">Ctrl+A</button>
+            <button class="rd-key-chip special" data-combo="alt,tab">Alt+Tab</button>
+            <button class="rd-key-chip" data-key="win">Win</button>
+            <button class="rd-key-chip" data-key="f5">F5</button>
+          </div>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -227,7 +301,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.132</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.133</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -239,14 +313,81 @@
     </div>
   </div>
 
+  <!-- 새 노트북 등록 모달 -->
+  <div class="modal-backdrop" id="rdDeviceModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>새 노트북 / PC 등록</h3>
+        <button class="close-btn" id="rdBtnCloseDeviceModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-item">
+          <label>노트북 이름:</label>
+          <input type="text" id="rdNewDevName" class="form-input" placeholder="예: 출장용 그램, 재택 PC" />
+        </div>
+        <div class="setting-item">
+          <label>원격 접속 주소 (Cloudflare URL 또는 IP):</label>
+          <input type="text" id="rdNewDevUrl" class="form-input" placeholder="예: https://xxxx.trycloudflare.com" />
+        </div>
+        <div class="setting-item">
+          <label>보안 PIN 코드:</label>
+          <input type="password" id="rdNewDevPin" class="form-input" placeholder="기본: 8805" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="rdBtnSaveDevice" class="action-btn-sm primary">노트북 등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 원격 스트리밍 설정 모달 -->
+  <div class="modal-backdrop" id="rdSettingsModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>원격 스트리밍 설정</h3>
+        <button class="close-btn" id="rdBtnCloseSettings">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-item">
+          <label>화질 (해외 인터넷 속도에 맞춰 조절):</label>
+          <select id="rdSettingQuality" class="compact-select" style="width:100%">
+            <option value="40">저화질 (동남아/3G망, ~15KB/프레임)</option>
+            <option value="60" selected>표준 (호텔 Wi-Fi 추천, ~25KB/프레임)</option>
+            <option value="80">고화질 (국내 고속망, ~50KB/프레임)</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label>초당 프레임 (FPS):</label>
+          <select id="rdSettingFps" class="compact-select" style="width:100%">
+            <option value="15">15 FPS (데이터 절약)</option>
+            <option value="25" selected>25 FPS (부드러운 조종)</option>
+            <option value="30">30 FPS (초고속 반응)</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label>해상도 스케일:</label>
+          <select id="rdSettingScale" class="compact-select" style="width:100%">
+            <option value="0.7">70% 축소 (대역폭 50% 절감)</option>
+            <option value="0.85">85% 축소</option>
+            <option value="1.0" selected>100% 원본 해상도</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="rdBtnSaveSettings" class="action-btn-sm primary">적용</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.132"></script>
-  <script src="data/shipplan_data.js?v=1.0.132"></script>
-  <script src="data/quotations_data.js?v=1.0.132"></script>
-  <script src="data/knowledge_data.js?v=1.0.132"></script>
+  <script src="data/skyworks_data.js?v=1.0.133"></script>
+  <script src="data/shipplan_data.js?v=1.0.133"></script>
+  <script src="data/quotations_data.js?v=1.0.133"></script>
+  <script src="data/knowledge_data.js?v=1.0.133"></script>
   
-  <script src="updater.js?v=1.0.132"></script>
-  <script src="app.js?v=1.0.132"></script>
+  <script src="updater.js?v=1.0.133"></script>
+  <script src="remote_client.js?v=1.0.133"></script>
+  <script src="app.js?v=1.0.133"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

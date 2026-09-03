@@ -1458,3 +1458,278 @@ html, body {
   margin-top: 5px;
 }
 
+
+/* ==========================================================================
+   4. PC 원격 데스크톱 조종 탭 (Remote Desktop)
+   ========================================================================== */
+#viewRemoteDesktop {
+  padding: 0 !important;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+
+#viewRemoteDesktop.fullscreen-mode {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+.rd-toolbar {
+  height: 42px;
+  background: rgba(18, 24, 38, 0.95);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.rd-toolbar-left, .rd-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rd-device-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rd-select {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  outline: none;
+  max-width: 140px;
+}
+
+.rd-btn-icon {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.rd-btn-tool {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.rd-viewport-container {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.rd-canvas {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.rd-virtual-cursor {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  background: rgba(59, 130, 246, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  display: none;
+  z-index: 50;
+  box-shadow: 0 0 8px rgba(0,0,0,0.6);
+}
+
+.rd-auth-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 15, 25, 0.92);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  padding: 16px;
+}
+
+.rd-auth-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: 20px;
+  border-radius: var(--radius-md);
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+
+.rd-auth-card h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.rd-auth-card p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.rd-auth-card code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #93c5fd;
+}
+
+.rd-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rd-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  outline: none;
+  text-align: center;
+}
+
+.rd-btn-primary {
+  background: var(--accent-blue);
+  color: #fff;
+  border: none;
+  padding: 9px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.rd-auth-error {
+  color: var(--accent-rose);
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.rd-trackpad-bar {
+  height: 44px;
+  background: rgba(18, 24, 38, 0.95);
+  border-top: 1px solid var(--border-subtle);
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  flex-shrink: 0;
+  z-index: 20;
+}
+.rd-trackpad-bar.active { display: flex; }
+
+.rd-trackpad-btn {
+  flex: 1;
+  height: 32px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+}
+.rd-trackpad-btn:active { background: var(--accent-blue); color: #fff; }
+
+.rd-keyboard-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(18, 24, 38, 0.98);
+  border-top: 1px solid var(--border-subtle);
+  padding: 8px 10px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 40;
+}
+.rd-keyboard-drawer.active { display: flex; }
+
+.rd-kbd-input-row {
+  display: flex;
+  gap: 6px;
+}
+
+.rd-quick-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  outline: none;
+}
+
+.rd-quick-keys-row {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.rd-key-chip {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.rd-key-chip.special {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+.rd-key-chip:active {
+  background: var(--accent-blue);
+  color: #fff;
+}

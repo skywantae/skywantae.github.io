@@ -1070,6 +1070,10 @@ function switchViewerCard(targetId) {
     if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
       renderSkyworksTable(AppState.skyworksData);
     }
+  } else if (targetId === 'viewRemoteDesktop') {
+    if (window.RemoteClient) {
+      window.RemoteClient.init();
+    }
   }
 }
 
