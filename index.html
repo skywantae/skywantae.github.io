@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.137" />
+  <link rel="stylesheet" href="app.css?v=1.0.138" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -209,6 +209,11 @@
               <button id="rdBtnTouch" class="btn-mode active" title="화면 직접 터치">터치</button>
               <button id="rdBtnTrackpad" class="btn-mode" title="마우스 트랙패드 조종">트랙패드</button>
             </div>
+            <div class="rd-zoom-group">
+              <button id="rdBtnZoomOut" class="rd-btn-tool" title="화면 축소 (Zoom Out)">➖</button>
+              <button id="rdBtnZoomReset" class="rd-btn-tool zoom-val" title="100% 기본 크기 리셋">100%</button>
+              <button id="rdBtnZoomIn" class="rd-btn-tool" title="화면 확대 (Zoom In)">➕</button>
+            </div>
             <select id="rdRatioSelect" class="rd-select" title="화면 비율 / 맞춤 모드">
               <option value="fit" selected>📐 16:9 정비율 (Fit)</option>
               <option value="fill">📺 화면 꽉 채움 (Stretch)</option>
@@ -223,11 +228,15 @@
         <!-- 전체화면 플로팅 컨트롤 -->
         <button id="rdBtnFloatExitFs" class="rd-floating-fs-btn" title="전체화면 나가기">✕</button>
         <button id="rdBtnFloatToggleBar" class="rd-floating-bar-btn" title="상단 바 보이기/숨기기">▲</button>
+        <div class="rd-floating-zoom-bar" id="rdFloatZoomBar">
+          <button id="rdBtnFloatZoomOut" class="rd-float-tool-btn" title="화면 축소">➖</button>
+          <span id="rdFloatZoomLevel" class="rd-float-zoom-text">100%</span>
+          <button id="rdBtnFloatZoomIn" class="rd-float-tool-btn" title="화면 확대">➕</button>
+          <button id="rdBtnFloatZoomReset" class="rd-float-tool-btn" title="100% 리셋">↺</button>
+        </div>
 
         <div class="rd-viewport-container" id="rdViewportContainer">
           <canvas id="rdCanvas" class="rd-canvas fit-mode"></canvas>
-          <div id="rdVirtualCursor" class="rd-virtual-cursor"></div>
-          <div id="rdTouchIndicator" class="rd-touch-indicator"></div>
 
           <div id="rdAuthOverlay" class="rd-auth-overlay">
             <div class="rd-auth-card">
@@ -311,7 +320,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.137</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.138</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -390,14 +399,14 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.137"></script>
-  <script src="data/shipplan_data.js?v=1.0.137"></script>
-  <script src="data/quotations_data.js?v=1.0.137"></script>
-  <script src="data/knowledge_data.js?v=1.0.137"></script>
+  <script src="data/skyworks_data.js?v=1.0.138"></script>
+  <script src="data/shipplan_data.js?v=1.0.138"></script>
+  <script src="data/quotations_data.js?v=1.0.138"></script>
+  <script src="data/knowledge_data.js?v=1.0.138"></script>
   
-  <script src="updater.js?v=1.0.137"></script>
-  <script src="remote_client.js?v=1.0.137"></script>
-  <script src="app.js?v=1.0.137"></script>
+  <script src="updater.js?v=1.0.138"></script>
+  <script src="remote_client.js?v=1.0.138"></script>
+  <script src="app.js?v=1.0.138"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

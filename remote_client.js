@@ -29,10 +29,57 @@ window.RemoteClient = (function() {
     touchStartTime: 0,
     touchHoldTimer: null,
     isTwoFinger: false,
+    lastTwoFingerX: 0,
     lastTwoFingerY: 0,
     fitMode: localStorage.getItem('kostat_rd_ratio_mode') || 'fit',
+    zoomScale: 1.0,
+    panX: 0,
+    panY: 0,
+    pinchStartDist: 0,
+    pinchStartScale: 1.0,
+    isPinching: false,
     initialized: false
   };
+
+  function setZoom(scale, resetPan = false) {
+    State.zoomScale = Math.max(1.0, Math.min(4.0, parseFloat(scale.toFixed(2))));
+    if (State.zoomScale <= 1.0 || resetPan) {
+      State.panX = 0;
+      State.panY = 0;
+    }
+    applyZoom();
+  }
+
+  function zoomIn() {
+    setZoom(State.zoomScale + 0.25);
+  }
+
+  function zoomOut() {
+    setZoom(State.zoomScale - 0.25);
+  }
+
+  function zoomReset() {
+    setZoom(1.0, true);
+  }
+
+  function applyZoom() {
+    const canvas = State.canvas || document.getElementById('rdCanvas');
+    if (!canvas) return;
+    if (State.zoomScale <= 1.0) {
+      State.zoomScale = 1.0;
+      State.panX = 0;
+      State.panY = 0;
+      canvas.style.transform = '';
+    } else {
+      canvas.style.transform = `scale(${State.zoomScale}) translate(${State.panX}px, ${State.panY}px)`;
+    }
+    const txt = `${Math.round(State.zoomScale * 100)}%`;
+    const resetBtn = document.getElementById('rdBtnZoomReset');
+    if (resetBtn) resetBtn.textContent = txt;
+    const floatTxt = document.getElementById('rdFloatZoomLevel');
+    if (floatTxt) floatTxt.textContent = txt;
+    updateVirtualCursor();
+  }
 
   function applyRatioMode(mode) {
     State.fitMode = mode;
@@ -268,6 +315,7 @@ window.RemoteClient = (function() {
         State.isConnected = true;
         updateStatus(true, '원격 연결됨');
         if (authOverlay) authOverlay.style.display = 'none';
+        if (State.container) State.container.classList.add('connected');
         localStorage.setItem('kostat_remote_pin', State.pin);
 
         // Save URL
@@ -318,6 +366,7 @@ window.RemoteClient = (function() {
         State.isConnected = false;
         updateStatus(false, '연결 종료');
         if (authOverlay) authOverlay.style.display = 'flex';
+        if (State.container) State.container.classList.remove('connected');
         if (event.code === 4001 && authError) {
           authError.textContent = '보안 PIN 코드가 올바르지 않습니다.';
         }
@@ -326,6 +375,7 @@ window.RemoteClient = (function() {
       State.ws.onerror = () => {
         State.isConnected = false;
         updateStatus(false, '접속 실패');
+        if (State.container) State.container.classList.remove('connected');
         if (authError) {
           authError.textContent = '노트북에 연결할 수 없습니다. Cloudflare URL 또는 로컬 주소를 확인하세요.';
         }
@@ -341,6 +391,7 @@ window.RemoteClient = (function() {
       State.ws = null;
     }
     State.isConnected = false;
+    if (State.container) State.container.classList.remove('connected');
     updateStatus(false, '대기 중');
   }
 
@@ -420,29 +471,15 @@ window.RemoteClient = (function() {
   }
 
   function updateVirtualCursor() {
-    if (!State.virtualCursor || !State.canvas) return;
-    const r = getImageRenderRect();
-    if (!r) return;
-    const screenX = r.left + State.cursorX * r.width;
-    const screenY = r.top + State.cursorY * r.height;
-    State.virtualCursor.style.left = `${screenX}px`;
-    State.virtualCursor.style.top = `${screenY}px`;
+    // Hidden per user request: only real Windows cursor is visible
   }
 
   function showTouchIndicator(x, y) {
-    const indicator = document.getElementById('rdTouchIndicator');
-    if (indicator) {
-      indicator.style.left = `${x}px`;
-      indicator.style.top = `${y}px`;
-      indicator.classList.add('active');
-    }
+    // Disabled per user request: only real Windows cursor is visible
   }
 
   function hideTouchIndicator() {
-    const indicator = document.getElementById('rdTouchIndicator');
-    if (indicator) {
-      indicator.classList.remove('active');
-    }
+    // Disabled per user request
   }
 
   function bindInputs() {
@@ -457,8 +494,6 @@ window.RemoteClient = (function() {
         State.touchStartX = t.clientX;
         State.touchStartY = t.clientY;
         State.touchStartTime = Date.now();
-
-        showTouchIndicator(t.clientX, t.clientY);
 
         if (State.mode === 'touch') {
           const coords = getNormalizedCoords(t.clientX, t.clientY);
@@ -475,8 +510,13 @@ window.RemoteClient = (function() {
       } else if (e.touches.length === 2) {
         State.isTwoFinger = true;
         clearTimeout(State.touchHoldTimer);
-        hideTouchIndicator();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        State.pinchStartDist = Math.hypot(dx, dy);
+        State.pinchStartScale = State.zoomScale;
+        State.isPinching = false;
         State.lastTwoFingerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        State.lastTwoFingerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       }
     }, { passive: false });
 
@@ -488,8 +528,6 @@ window.RemoteClient = (function() {
         const t = e.touches[0];
         const dx = t.clientX - State.touchStartX;
         const dy = t.clientY - State.touchStartY;
-
-        showTouchIndicator(t.clientX, t.clientY);
 
         if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
           clearTimeout(State.touchHoldTimer);
@@ -504,23 +542,45 @@ window.RemoteClient = (function() {
           const speed = 0.0012;
           State.cursorX = Math.max(0, Math.min(1, State.cursorX + dx * speed));
           State.cursorY = Math.max(0, Math.min(1, State.cursorY + dy * speed));
-          updateVirtualCursor();
           sendCommand({ type: 'mouse_move', x: State.cursorX, y: State.cursorY });
           State.touchStartX = t.clientX;
           State.touchStartY = t.clientY;
         }
       } else if (e.touches.length === 2) {
-        const currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-        const deltaY = currentY - State.lastTwoFingerY;
-        if (Math.abs(deltaY) > 8) {
-          sendCommand({ type: 'mouse_wheel', delta: deltaY > 0 ? 120 : -120 });
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const currentDist = Math.hypot(dx, dy);
+        const distDiff = Math.abs(currentDist - State.pinchStartDist);
+
+        if (distDiff > 14 || State.isPinching) {
+          State.isPinching = true;
+          const newScale = State.pinchStartScale * (currentDist / State.pinchStartDist);
+          setZoom(newScale);
+        } else {
+          // Two finger scroll or pan when zoomed
+          const currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          const currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const deltaY = currentY - State.lastTwoFingerY;
+          const deltaX = currentX - State.lastTwoFingerX;
+
+          if (State.zoomScale > 1.05) {
+            State.panX += deltaX / State.zoomScale;
+            State.panY += deltaY / State.zoomScale;
+            applyZoom();
+          } else if (Math.abs(deltaY) > 8) {
+            sendCommand({ type: 'mouse_wheel', delta: deltaY > 0 ? 120 : -120 });
+          }
           State.lastTwoFingerY = currentY;
+          State.lastTwoFingerX = currentX;
         }
       }
     }, { passive: false });
 
     container.addEventListener('touchend', (e) => {
       if (!State.isConnected) return;
+      if (e.touches.length < 2) {
+        State.isPinching = false;
+      }
       setTimeout(hideTouchIndicator, 200);
 
       if (State.touchHoldTimer) {
@@ -638,10 +698,26 @@ window.RemoteClient = (function() {
     const btnSaveDev = document.getElementById('rdBtnSaveDevice');
 
     if (btnAddDev && addDevModal) {
-      btnAddDev.addEventListener('click', () => addDevModal.classList.add('active'));
+      btnAddDev.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addDevModal.classList.add('show');
+        addDevModal.classList.add('active');
+      });
     }
     if (btnCloseDev && addDevModal) {
-      btnCloseDev.addEventListener('click', () => addDevModal.classList.remove('active'));
+      btnCloseDev.addEventListener('click', () => {
+        addDevModal.classList.remove('show');
+        addDevModal.classList.remove('active');
+      });
+    }
+    if (addDevModal) {
+      addDevModal.addEventListener('click', (e) => {
+        if (e.target === addDevModal) {
+          addDevModal.classList.remove('show');
+          addDevModal.classList.remove('active');
+        }
+      });
     }
     if (btnSaveDev && addDevModal) {
       btnSaveDev.addEventListener('click', () => {
@@ -653,6 +729,7 @@ window.RemoteClient = (function() {
         const newId = 'dev_' + Date.now();
         State.deviceList.push({ id: newId, name: `💻 ${name}`, url, pin });
         saveDevices();
+        addDevModal.classList.remove('show');
         addDevModal.classList.remove('active');
         connectToDevice(newId);
       });
@@ -709,6 +786,21 @@ window.RemoteClient = (function() {
       });
     });
 
+    // Zoom Controls
+    const btnZoomIn = document.getElementById('rdBtnZoomIn');
+    const btnZoomOut = document.getElementById('rdBtnZoomOut');
+    const btnZoomReset = document.getElementById('rdBtnZoomReset');
+    const btnFloatZoomIn = document.getElementById('rdBtnFloatZoomIn');
+    const btnFloatZoomOut = document.getElementById('rdBtnFloatZoomOut');
+    const btnFloatZoomReset = document.getElementById('rdBtnFloatZoomReset');
+
+    if (btnZoomIn) btnZoomIn.addEventListener('click', () => zoomIn());
+    if (btnZoomOut) btnZoomOut.addEventListener('click', () => zoomOut());
+    if (btnZoomReset) btnZoomReset.addEventListener('click', () => zoomReset());
+    if (btnFloatZoomIn) btnFloatZoomIn.addEventListener('click', () => zoomIn());
+    if (btnFloatZoomOut) btnFloatZoomOut.addEventListener('click', () => zoomOut());
+    if (btnFloatZoomReset) btnFloatZoomReset.addEventListener('click', () => zoomReset());
+
     // Settings Modal
     const settingsModal = document.getElementById('rdSettingsModal');
     const btnSettings = document.getElementById('rdBtnSettings');
@@ -716,10 +808,26 @@ window.RemoteClient = (function() {
     const btnSaveSettings = document.getElementById('rdBtnSaveSettings');
 
     if (btnSettings && settingsModal) {
-      btnSettings.addEventListener('click', () => settingsModal.classList.add('active'));
+      btnSettings.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        settingsModal.classList.add('show');
+        settingsModal.classList.add('active');
+      });
     }
     if (btnCloseSettings && settingsModal) {
-      btnCloseSettings.addEventListener('click', () => settingsModal.classList.remove('active'));
+      btnCloseSettings.addEventListener('click', () => {
+        settingsModal.classList.remove('show');
+        settingsModal.classList.remove('active');
+      });
+    }
+    if (settingsModal) {
+      settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+          settingsModal.classList.remove('show');
+          settingsModal.classList.remove('active');
+        }
+      });
     }
     if (btnSaveSettings && settingsModal) {
       btnSaveSettings.addEventListener('click', () => {
@@ -732,6 +840,7 @@ window.RemoteClient = (function() {
           fps: parseInt(fps, 10),
           scale: parseFloat(scale)
         });
+        settingsModal.classList.remove('show');
         settingsModal.classList.remove('active');
       });
     }

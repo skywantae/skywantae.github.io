@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kostat-pwa-v1.0.137'; // {AUTO_REPLACE_CACHE_VERSION}
+const CACHE_NAME = 'kostat-pwa-v1.0.138'; // {AUTO_REPLACE_CACHE_VERSION}
 
 const ASSETS_TO_CACHE = [
   './',
