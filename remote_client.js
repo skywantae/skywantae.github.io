@@ -596,16 +596,114 @@ window.RemoteClient = (function() {
       });
     }
 
-    // Fullscreen Toggle
+    // Fit Mode Toggle (화면 꽉 채우기 vs 원본 비율)
+    const btnFitMode = document.getElementById('rdBtnFitMode');
+    let currentFit = localStorage.getItem('kostat_rd_fit_mode') || 'fill';
+    applyFitMode(currentFit);
+
+    if (btnFitMode) {
+      btnFitMode.addEventListener('click', () => {
+        currentFit = currentFit === 'fill' ? 'fit' : 'fill';
+        applyFitMode(currentFit);
+        localStorage.setItem('kostat_rd_fit_mode', currentFit);
+      });
+    }
+
+    function applyFitMode(mode) {
+      const canvas = State.canvas || document.getElementById('rdCanvas');
+      if (!canvas) return;
+      if (mode === 'fill') {
+        canvas.classList.add('fill-mode');
+        canvas.classList.remove('fit-mode');
+        if (btnFitMode) {
+          btnFitMode.textContent = '📺 꽉 채우기';
+          btnFitMode.classList.add('active');
+        }
+      } else {
+        canvas.classList.remove('fill-mode');
+        canvas.classList.add('fit-mode');
+        if (btnFitMode) {
+          btnFitMode.textContent = '🔍 원본 비율';
+          btnFitMode.classList.remove('active');
+        }
+      }
+    }
+
+    // Native Mobile Fullscreen
     const btnFullscreen = document.getElementById('rdBtnFullscreen');
+    const btnFloatExit = document.getElementById('rdBtnFloatExitFs');
+    const btnFloatToggleBar = document.getElementById('rdBtnFloatToggleBar');
+
+    function enterFullscreen() {
+      const viewer = document.getElementById('viewRemoteDesktop');
+      const docEl = document.documentElement;
+      if (viewer) viewer.classList.add('fullscreen-mode');
+
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen().catch(() => {});
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      } else if (docEl.msRequestFullscreen) {
+        docEl.msRequestFullscreen();
+      }
+    }
+
+    function exitFullscreen() {
+      const viewer = document.getElementById('viewRemoteDesktop');
+      if (viewer) {
+        viewer.classList.remove('fullscreen-mode');
+        viewer.classList.remove('toolbar-collapsed');
+      }
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
     if (btnFullscreen) {
       btnFullscreen.addEventListener('click', () => {
         const viewer = document.getElementById('viewRemoteDesktop');
-        if (viewer) {
-          viewer.classList.toggle('fullscreen-mode');
+        if (viewer && viewer.classList.contains('fullscreen-mode')) {
+          exitFullscreen();
+        } else {
+          enterFullscreen();
         }
       });
     }
+
+    if (btnFloatExit) {
+      btnFloatExit.addEventListener('click', exitFullscreen);
+    }
+
+    if (btnFloatToggleBar) {
+      btnFloatToggleBar.addEventListener('click', () => {
+        const viewer = document.getElementById('viewRemoteDesktop');
+        if (viewer) viewer.classList.toggle('toolbar-collapsed');
+      });
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        const viewer = document.getElementById('viewRemoteDesktop');
+        if (viewer) {
+          viewer.classList.remove('fullscreen-mode');
+          viewer.classList.remove('toolbar-collapsed');
+        }
+      }
+    });
+
+    document.addEventListener('webkitfullscreenchange', () => {
+      if (!document.webkitFullscreenElement) {
+        const viewer = document.getElementById('viewRemoteDesktop');
+        if (viewer) {
+          viewer.classList.remove('fullscreen-mode');
+          viewer.classList.remove('toolbar-collapsed');
+        }
+      }
+    });
   }
 
   return {

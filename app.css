@@ -1475,10 +1475,88 @@ html, body {
 
 #viewRemoteDesktop.fullscreen-mode {
   position: fixed !important;
-  inset: 0 !important;
-  z-index: 9999 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
+  z-index: 999999 !important;
+  background: #000 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+#viewRemoteDesktop.fullscreen-mode .rd-toolbar {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+#viewRemoteDesktop.fullscreen-mode.toolbar-collapsed .rd-toolbar {
+  transform: translateY(-100%);
+  pointer-events: none;
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  border: none;
+}
+
+#viewRemoteDesktop.fullscreen-mode .rd-viewport-container {
+  width: 100vw !important;
+  height: 100% !important;
+  flex: 1 1 0 !important;
+}
+
+/* Floating controls in Fullscreen */
+.rd-floating-fs-btn,
+.rd-floating-bar-btn {
+  display: none;
+  position: absolute;
+  z-index: 1000000;
+  background: rgba(18, 24, 38, 0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  touch-action: manipulation;
+}
+
+#viewRemoteDesktop.fullscreen-mode .rd-floating-fs-btn {
+  display: flex;
+  top: 10px;
+  left: 10px;
+}
+
+#viewRemoteDesktop.fullscreen-mode .rd-floating-bar-btn {
+  display: flex;
+  top: 10px;
+  right: 10px;
+}
+
+#viewRemoteDesktop.fullscreen-mode.toolbar-collapsed .rd-floating-bar-btn {
+  transform: rotate(180deg);
+}
+
+.rd-btn-tool.primary-tool {
+  background: var(--accent-blue) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border-color: var(--accent-blue-hover) !important;
+}
+
+.rd-btn-tool.active {
+  background: rgba(59, 130, 246, 0.25) !important;
+  color: #93c5fd !important;
+  border-color: rgba(59, 130, 246, 0.5) !important;
 }
 
 .rd-toolbar {
@@ -1544,6 +1622,8 @@ html, body {
 .rd-viewport-container {
   flex: 1;
   width: 100%;
+  height: 100%;
+  min-height: 0;
   position: relative;
   overflow: hidden;
   background: #000;
@@ -1554,10 +1634,26 @@ html, body {
 }
 
 .rd-canvas {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
   display: block;
+}
+
+.rd-canvas.fill-mode {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: fill !important;
+}
+
+.rd-canvas.fit-mode {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
 }
 
 .rd-virtual-cursor {
