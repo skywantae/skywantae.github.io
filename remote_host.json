@@ -1,8 +1,8 @@
 {
-  "active_url": "https://edmonton-mapping-humidity-dining.trycloudflare.com",
+  "active_url": "https://declined-contemporary-scheduled-estimate.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 내 노트북 (시즈모드 1)",
-  "updated_at": "2026-09-03 14:07:01",
+  "updated_at": "2026-09-03 15:17:15",
   "status": "online",
   "devices": {
     "dev_primary": {
@@ -11,6 +11,15 @@
       "active_url": "https://edmonton-mapping-humidity-dining.trycloudflare.com",
       "pin": "8805",
       "updated_at": "2026-09-03 14:07:01",
+      "status": "online",
+      "local_url": "http://192.168.0.48:8765"
+    },
+    "dev_desktop_h2q3k25": {
+      "id": "dev_desktop_h2q3k25",
+      "name": "💻 내 노트북 (시즈모드 1)",
+      "active_url": "https://declined-contemporary-scheduled-estimate.trycloudflare.com",
+      "pin": "8805",
+      "updated_at": "2026-09-03 15:17:15",
       "status": "online",
       "local_url": "http://192.168.0.48:8765"
     }

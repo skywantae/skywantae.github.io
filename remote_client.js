@@ -115,6 +115,14 @@ window.RemoteClient = (function() {
     // Apply saved aspect ratio mode
     applyRatioMode(State.fitMode);
 
+    // [Cache Purge] Purge legacy edmonton / dead tunnel URLs from localStorage
+    if (localStorage.getItem('kostat_remote_cache_ver') !== 'v1.0.143') {
+      localStorage.removeItem('kostat_remote_last_url');
+      localStorage.removeItem('kostat_remote_devices');
+      localStorage.setItem('kostat_remote_cache_ver', 'v1.0.143');
+      State.deviceList = [];
+    }
+
     // Load saved URL for default
     const savedUrl = localStorage.getItem('kostat_remote_last_url') || '';
     const urlEl = document.getElementById('rdUrlInput');
@@ -187,57 +195,53 @@ window.RemoteClient = (function() {
     }
 
     if (info) {
+      // Rebuild clean deviceList from remote_host.json (purge dead devices completely)
+      State.deviceList = [];
       let targetDevId = null;
 
-      // Multi-device parsing
+      // Multi-device parsing (sorted by freshest updated_at)
       if (info.devices && typeof info.devices === 'object') {
-        Object.entries(info.devices).forEach(([devId, devInfo]) => {
-          let dev = State.deviceList.find(d => d.id === devId);
+        const entries = Object.entries(info.devices).sort((a, b) => {
+          const timeA = a[1].updated_at || '';
+          const timeB = b[1].updated_at || '';
+          return timeB.localeCompare(timeA); // Descending (freshest first)
+        });
+
+        entries.forEach(([devId, devInfo]) => {
           const devName = devInfo.name || `💻 ${devId}`;
-          if (dev) {
-            dev.name = devName;
-            dev.url = devInfo.active_url;
-            dev.pin = devInfo.pin || '8805';
-            dev.status = devInfo.status || 'online';
-          } else {
-            State.deviceList.push({
-              id: devId,
-              name: devName,
-              url: devInfo.active_url,
-              pin: devInfo.pin || '8805',
-              status: devInfo.status || 'online'
-            });
-          }
+          State.deviceList.push({
+            id: devId,
+            name: devName,
+            url: devInfo.active_url,
+            pin: devInfo.pin || '8805',
+            status: devInfo.status || 'online',
+            updated_at: devInfo.updated_at
+          });
+
           if (devInfo.status === 'online' && !targetDevId) {
             targetDevId = devId;
           }
         });
       }
 
-      // Root single-device support
-      if (info.status === 'online' && info.active_url) {
-        let defaultDev = State.deviceList.find(d => d.id === 'dev_default');
+      // Root single-device support fallback
+      if (info.status === 'online' && info.active_url && State.deviceList.length === 0) {
         const defaultName = info.device_name || '💻 내 노트북 (시즈모드 1)';
-        if (defaultDev) {
-          defaultDev.name = defaultName;
-          defaultDev.url = info.active_url;
-          defaultDev.pin = info.pin || '8805';
-        } else {
-          State.deviceList.unshift({
-            id: 'dev_default',
-            name: defaultName,
-            url: info.active_url,
-            pin: info.pin || '8805'
-          });
-        }
-        if (!targetDevId) targetDevId = 'dev_default';
+        State.deviceList.push({
+          id: 'dev_default',
+          name: defaultName,
+          url: info.active_url,
+          pin: info.pin || '8805',
+          status: 'online'
+        });
+        targetDevId = 'dev_default';
       }
 
       saveDevices();
 
       if (targetDevId) {
         const targetDev = State.deviceList.find(d => d.id === targetDevId);
-        console.log('[Auto-Discovery] Auto connecting to:', targetDevId, targetDev?.url);
+        console.log('[Auto-Discovery] Connecting to freshest online device:', targetDevId, targetDev?.url);
         State.pin = targetDev?.pin || '8805';
         const pinEl = document.getElementById('rdPinInput');
         if (pinEl) pinEl.value = State.pin;
