@@ -2,7 +2,7 @@
   "active_url": "https://edmonton-mapping-humidity-dining.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 내 노트북 (시즈모드 1)",
-  "updated_at": "2026-09-03 13:51:48",
+  "updated_at": "2026-09-03 13:53:56",
   "status": "online",
   "devices": {
     "dev_primary": {
@@ -10,7 +10,7 @@
       "name": "💻 내 노트북 (시즈모드 1)",
       "active_url": "https://edmonton-mapping-humidity-dining.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-03 13:51:48",
+      "updated_at": "2026-09-03 13:53:56",
       "status": "online",
       "local_url": "http://192.168.0.48:8765"
     }
