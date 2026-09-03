@@ -6,6 +6,7 @@ const ASSETS_TO_CACHE = [
   './app.css',
   './app.js',
   './updater.js',
+  './remote_client.js',
   './manifest.json',
   './icon.png',
   './logo.png',
