@@ -124,33 +124,62 @@ window.RemoteClient = (function() {
     fetchAutoDiscoveryAndConnect();
   }
 
-  async function fetchAutoDiscoveryAndConnect() {
+  let autoRecoveryTimer = null;
+  let autoRecoveryAttempts = 0;
+
+  async function fetchAutoDiscoveryAndConnect(forceRefresh = false) {
     if (State.isConnected) return;
     updateStatus(false, '한국 노트북 탐색 중...');
     let info = null;
+    const cacheBuster = `_t=${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
     // 1. Real-time GitHub API (zero cache, instant)
     try {
-      const apiEndpoint = `https://api.github.com/repos/skywantae/skywantae.github.io/contents/remote_host.json?t=${Date.now()}`;
-      const apiRes = await fetch(apiEndpoint, { cache: 'no-store' });
+      const apiEndpoint = `https://api.github.com/repos/skywantae/skywantae.github.io/contents/remote_host.json?${cacheBuster}`;
+      const apiRes = await fetch(apiEndpoint, { 
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+      });
       if (apiRes.ok) {
         const ghJson = await apiRes.json();
         if (ghJson && ghJson.content) {
           const rawStr = decodeURIComponent(escape(atob(ghJson.content.replace(/\s/g, ''))));
           info = JSON.parse(rawStr);
+          console.log('[Auto-Discovery] Success via GitHub API (0-cache)');
         }
       }
     } catch (e) {
-      console.log('[Auto-Discovery] API fetch failed, trying raw fallback:', e);
+      console.log('[Auto-Discovery] API fetch failed, trying live pages fallback:', e);
     }
 
-    // 2. Raw endpoint fallback
+    // 2. GitHub Pages direct origin (instant zero-cache)
     if (!info) {
       try {
-        const rawEndpoint = `https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/remote_host.json?t=${Date.now()}`;
-        const rawRes = await fetch(rawEndpoint, { cache: 'no-store' });
+        const pagesEndpoint = `https://skywantae.github.io/remote_host.json?${cacheBuster}`;
+        const pagesRes = await fetch(pagesEndpoint, { 
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+        });
+        if (pagesRes.ok) {
+          info = await pagesRes.json();
+          console.log('[Auto-Discovery] Success via GitHub Pages origin');
+        }
+      } catch (e) {
+        console.log('[Auto-Discovery] Pages origin fetch failed, trying raw fallback:', e);
+      }
+    }
+
+    // 3. Raw endpoint fallback
+    if (!info) {
+      try {
+        const rawEndpoint = `https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/remote_host.json?${cacheBuster}`;
+        const rawRes = await fetch(rawEndpoint, { 
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+        });
         if (rawRes.ok) {
           info = await rawRes.json();
+          console.log('[Auto-Discovery] Success via Raw fallback');
         }
       } catch (e) {
         console.log('[Auto-Discovery] Raw fallback failed:', e);
@@ -207,12 +236,13 @@ window.RemoteClient = (function() {
       saveDevices();
 
       if (targetDevId) {
-        console.log('[Auto-Discovery] Auto connecting to:', targetDevId);
-        State.pin = State.deviceList.find(d => d.id === targetDevId)?.pin || '8805';
+        const targetDev = State.deviceList.find(d => d.id === targetDevId);
+        console.log('[Auto-Discovery] Auto connecting to:', targetDevId, targetDev?.url);
+        State.pin = targetDev?.pin || '8805';
         const pinEl = document.getElementById('rdPinInput');
         if (pinEl) pinEl.value = State.pin;
         const urlEl = document.getElementById('rdUrlInput');
-        if (urlEl) urlEl.value = State.deviceList.find(d => d.id === targetDevId)?.url || '';
+        if (urlEl) urlEl.value = targetDev?.url || '';
 
         updateStatus(false, '자동 직통 연결 중...');
         connectToDevice(targetDevId);
@@ -313,6 +343,7 @@ window.RemoteClient = (function() {
 
       State.ws.onopen = () => {
         State.isConnected = true;
+        autoRecoveryAttempts = 0;
         updateStatus(true, '원격 연결됨');
         if (authOverlay) authOverlay.style.display = 'none';
         if (State.container) State.container.classList.add('connected');
@@ -374,10 +405,24 @@ window.RemoteClient = (function() {
 
       State.ws.onerror = () => {
         State.isConnected = false;
-        updateStatus(false, '접속 실패');
         if (State.container) State.container.classList.remove('connected');
-        if (authError) {
-          authError.textContent = '노트북에 연결할 수 없습니다. Cloudflare URL 또는 로컬 주소를 확인하세요.';
+        
+        // Auto-Healing: Try re-discovering fresh tunnel URL
+        if (autoRecoveryAttempts < 3) {
+          autoRecoveryAttempts++;
+          updateStatus(false, `접속 재시도 (${autoRecoveryAttempts}/3)...`);
+          if (authError) {
+            authError.textContent = `노트북 새 주소 자동 탐색 중... (${autoRecoveryAttempts}/3)`;
+          }
+          clearTimeout(autoRecoveryTimer);
+          autoRecoveryTimer = setTimeout(() => {
+            fetchAutoDiscoveryAndConnect(true);
+          }, 3000);
+        } else {
+          updateStatus(false, '접속 실패');
+          if (authError) {
+            authError.textContent = '노트북에 연결할 수 없습니다. 터널 주소를 확인하거나 잠시 후 다시 시도하세요.';
+          }
         }
       };
     } catch (err) {
