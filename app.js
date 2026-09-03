@@ -1073,6 +1073,7 @@ function switchViewerCard(targetId) {
   } else if (targetId === 'viewRemoteDesktop') {
     if (window.RemoteClient) {
       window.RemoteClient.init();
+      window.RemoteClient.autoConnect();
     }
   }
 }

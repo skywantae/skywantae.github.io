@@ -56,6 +56,50 @@ window.RemoteClient = (function() {
     const savedUrl = localStorage.getItem('kostat_remote_last_url') || '';
     const urlEl = document.getElementById('rdUrlInput');
     if (urlEl && savedUrl) urlEl.value = savedUrl;
+
+    // Zero-Touch Auto-Discovery: Check for online siege-mode laptop and auto-connect
+    fetchAutoDiscoveryAndConnect();
+  }
+
+  async function fetchAutoDiscoveryAndConnect() {
+    if (State.isConnected) return;
+    updateStatus(false, '노트북 탐색 중...');
+    try {
+      const endpoint = `https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/remote_host.json?t=${Date.now()}`;
+      const res = await fetch(endpoint, { cache: 'no-store' });
+      if (res.ok) {
+        const info = await res.json();
+        if (info.status === 'online' && info.active_url) {
+          console.log('[Auto-Discovery] Online host found:', info);
+          State.pin = info.pin || '8805';
+          const pinEl = document.getElementById('rdPinInput');
+          if (pinEl) pinEl.value = State.pin;
+          const urlEl = document.getElementById('rdUrlInput');
+          if (urlEl) urlEl.value = info.active_url;
+
+          let defaultDev = State.deviceList.find(d => d.id === 'dev_default');
+          if (defaultDev) {
+            defaultDev.name = info.device_name || '💻 내 노트북 (시즈모드)';
+            defaultDev.url = info.active_url;
+            defaultDev.pin = State.pin;
+          } else {
+            State.deviceList.unshift({
+              id: 'dev_default',
+              name: info.device_name || '💻 내 노트북 (시즈모드)',
+              url: info.active_url,
+              pin: State.pin
+            });
+          }
+          saveDevices();
+          updateStatus(false, '자동 직통 연결 중...');
+          connectToDevice('dev_default');
+          return;
+        }
+      }
+    } catch (err) {
+      console.log('[Auto-Discovery] Info:', err);
+    }
+    updateStatus(false, '연결 대기');
   }
 
   function loadDevices() {
@@ -545,6 +589,7 @@ window.RemoteClient = (function() {
   return {
     init: init,
     connect: connectToDevice,
-    disconnect: disconnect
+    disconnect: disconnect,
+    autoConnect: fetchAutoDiscoveryAndConnect
   };
 })();
