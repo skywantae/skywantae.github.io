@@ -30,6 +30,7 @@ window.RemoteClient = (function() {
     touchHoldTimer: null,
     isTwoFinger: false,
     lastTwoFingerY: 0,
+    fitMode: localStorage.getItem('kostat_rd_ratio_mode') || 'fit',
     initialized: false
   };
 
@@ -48,9 +49,12 @@ window.RemoteClient = (function() {
 
     // Load saved PIN
     const savedPin = localStorage.getItem('kostat_remote_pin') || '8805';
+    if (savedPin) State.pin = savedPin;
     const pinEl = document.getElementById('rdPinInput');
-    if (pinEl) pinEl.value = savedPin;
-    State.pin = savedPin;
+    if (pinEl) pinEl.value = State.pin;
+
+    // Apply saved aspect ratio mode
+    applyRatioMode(State.fitMode);
 
     // Load saved URL for default
     const savedUrl = localStorage.getItem('kostat_remote_last_url') || '';
@@ -94,31 +98,67 @@ window.RemoteClient = (function() {
       }
     }
 
-    if (info && info.status === 'online' && info.active_url) {
-      console.log('[Auto-Discovery] Live host found:', info);
-      State.pin = info.pin || '8805';
-      const pinEl = document.getElementById('rdPinInput');
-      if (pinEl) pinEl.value = State.pin;
-      const urlEl = document.getElementById('rdUrlInput');
-      if (urlEl) urlEl.value = info.active_url;
+    if (info) {
+      let targetDevId = null;
 
-      let defaultDev = State.deviceList.find(d => d.id === 'dev_default');
-      if (defaultDev) {
-        defaultDev.name = info.device_name || '💻 내 노트북 (시즈모드 - 온라인)';
-        defaultDev.url = info.active_url;
-        defaultDev.pin = State.pin;
-      } else {
-        State.deviceList.unshift({
-          id: 'dev_default',
-          name: info.device_name || '💻 내 노트북 (시즈모드 - 온라인)',
-          url: info.active_url,
-          pin: State.pin
+      // Multi-device parsing
+      if (info.devices && typeof info.devices === 'object') {
+        Object.entries(info.devices).forEach(([devId, devInfo]) => {
+          let dev = State.deviceList.find(d => d.id === devId);
+          const devName = devInfo.name || `💻 ${devId}`;
+          if (dev) {
+            dev.name = devName;
+            dev.url = devInfo.active_url;
+            dev.pin = devInfo.pin || '8805';
+            dev.status = devInfo.status || 'online';
+          } else {
+            State.deviceList.push({
+              id: devId,
+              name: devName,
+              url: devInfo.active_url,
+              pin: devInfo.pin || '8805',
+              status: devInfo.status || 'online'
+            });
+          }
+          if (devInfo.status === 'online' && !targetDevId) {
+            targetDevId = devId;
+          }
         });
       }
+
+      // Root single-device support
+      if (info.status === 'online' && info.active_url) {
+        let defaultDev = State.deviceList.find(d => d.id === 'dev_default');
+        const defaultName = info.device_name || '💻 내 노트북 (시즈모드 1)';
+        if (defaultDev) {
+          defaultDev.name = defaultName;
+          defaultDev.url = info.active_url;
+          defaultDev.pin = info.pin || '8805';
+        } else {
+          State.deviceList.unshift({
+            id: 'dev_default',
+            name: defaultName,
+            url: info.active_url,
+            pin: info.pin || '8805'
+          });
+        }
+        if (!targetDevId) targetDevId = 'dev_default';
+      }
+
       saveDevices();
-      updateStatus(false, '자동 직통 연결 중...');
-      connectToDevice('dev_default');
-      return;
+
+      if (targetDevId) {
+        console.log('[Auto-Discovery] Auto connecting to:', targetDevId);
+        State.pin = State.deviceList.find(d => d.id === targetDevId)?.pin || '8805';
+        const pinEl = document.getElementById('rdPinInput');
+        if (pinEl) pinEl.value = State.pin;
+        const urlEl = document.getElementById('rdUrlInput');
+        if (urlEl) urlEl.value = State.deviceList.find(d => d.id === targetDevId)?.url || '';
+
+        updateStatus(false, '자동 직통 연결 중...');
+        connectToDevice(targetDevId);
+        return;
+      }
     }
 
     updateStatus(false, '연결 대기');
@@ -142,6 +182,7 @@ window.RemoteClient = (function() {
     renderDeviceSelect();
   }
 
+  let deviceSelectListenerBound = false;
   function renderDeviceSelect() {
     const select = document.getElementById('rdDeviceSelect');
     if (!select) return;
@@ -149,10 +190,21 @@ window.RemoteClient = (function() {
     State.deviceList.forEach(d => {
       const opt = document.createElement('option');
       opt.value = d.id;
-      opt.textContent = d.name;
+      opt.textContent = d.name + (d.status === 'online' ? ' [● 온라인]' : '');
       if (d.id === State.currentDeviceId) opt.selected = true;
       select.appendChild(opt);
     });
+
+    if (!deviceSelectListenerBound) {
+      select.addEventListener('change', () => {
+        const selectedId = select.value;
+        if (selectedId && selectedId !== State.currentDeviceId) {
+          disconnect();
+          connectToDevice(selectedId);
+        }
+      });
+      deviceSelectListenerBound = true;
+    }
   }
 
   function connectToDevice(deviceId) {
@@ -293,23 +345,92 @@ window.RemoteClient = (function() {
     if (txt) txt.textContent = text;
   }
 
-  function getNormalizedCoords(clientX, clientY) {
+  function getImageRenderRect() {
+    if (!State.canvas) return null;
     const rect = State.canvas.getBoundingClientRect();
-    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+    const videoW = State.canvas.width || 1920;
+    const videoH = State.canvas.height || 1080;
+    const boxW = rect.width;
+    const boxH = rect.height;
+
+    if (State.fitMode === 'fill' || State.canvas.classList.contains('fill-mode')) {
+      return { left: rect.left, top: rect.top, width: boxW, height: boxH };
+    }
+
+    const videoRatio = videoW / videoH;
+    const boxRatio = boxW / boxH;
+    let renderW, renderH, offsetX, offsetY;
+
+    if (State.fitMode === 'cover' || State.canvas.classList.contains('cover-mode')) {
+      if (boxRatio > videoRatio) {
+        renderW = boxW;
+        renderH = boxW / videoRatio;
+        offsetX = 0;
+        offsetY = (boxH - renderH) / 2;
+      } else {
+        renderH = boxH;
+        renderW = boxH * videoRatio;
+        offsetX = (boxW - renderW) / 2;
+        offsetY = 0;
+      }
+    } else {
+      // 'fit' (contain)
+      if (boxRatio > videoRatio) {
+        renderH = boxH;
+        renderW = boxH * videoRatio;
+        offsetX = (boxW - renderW) / 2;
+        offsetY = 0;
+      } else {
+        renderW = boxW;
+        renderH = boxW / videoRatio;
+        offsetX = 0;
+        offsetY = (boxH - renderH) / 2;
+      }
+    }
+
+    return {
+      left: rect.left + offsetX,
+      top: rect.top + offsetY,
+      width: renderW,
+      height: renderH
+    };
+  }
+
+  function getNormalizedCoords(clientX, clientY) {
+    const r = getImageRenderRect();
+    if (!r || r.width <= 0 || r.height <= 0) return null;
+    if (clientX < r.left || clientX > r.left + r.width || clientY < r.top || clientY > r.top + r.height) {
       return null;
     }
-    const x = (clientX - rect.left) / rect.width;
-    const y = (clientY - rect.top) / rect.height;
+    const x = (clientX - r.left) / r.width;
+    const y = (clientY - r.top) / r.height;
     return { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) };
   }
 
   function updateVirtualCursor() {
     if (!State.virtualCursor || !State.canvas) return;
-    const rect = State.canvas.getBoundingClientRect();
-    const screenX = rect.left + State.cursorX * rect.width;
-    const screenY = rect.top + State.cursorY * rect.height;
+    const r = getImageRenderRect();
+    if (!r) return;
+    const screenX = r.left + State.cursorX * r.width;
+    const screenY = r.top + State.cursorY * r.height;
     State.virtualCursor.style.left = `${screenX}px`;
     State.virtualCursor.style.top = `${screenY}px`;
+  }
+
+  function showTouchIndicator(x, y) {
+    const indicator = document.getElementById('rdTouchIndicator');
+    if (indicator) {
+      indicator.style.left = `${x}px`;
+      indicator.style.top = `${y}px`;
+      indicator.classList.add('active');
+    }
+  }
+
+  function hideTouchIndicator() {
+    const indicator = document.getElementById('rdTouchIndicator');
+    if (indicator) {
+      indicator.classList.remove('active');
+    }
   }
 
   function bindInputs() {
@@ -324,6 +445,8 @@ window.RemoteClient = (function() {
         State.touchStartX = t.clientX;
         State.touchStartY = t.clientY;
         State.touchStartTime = Date.now();
+
+        showTouchIndicator(t.clientX, t.clientY);
 
         if (State.mode === 'touch') {
           const coords = getNormalizedCoords(t.clientX, t.clientY);
@@ -340,6 +463,7 @@ window.RemoteClient = (function() {
       } else if (e.touches.length === 2) {
         State.isTwoFinger = true;
         clearTimeout(State.touchHoldTimer);
+        hideTouchIndicator();
         State.lastTwoFingerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       }
     }, { passive: false });
@@ -352,6 +476,8 @@ window.RemoteClient = (function() {
         const t = e.touches[0];
         const dx = t.clientX - State.touchStartX;
         const dy = t.clientY - State.touchStartY;
+
+        showTouchIndicator(t.clientX, t.clientY);
 
         if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
           clearTimeout(State.touchHoldTimer);
@@ -383,6 +509,8 @@ window.RemoteClient = (function() {
 
     container.addEventListener('touchend', (e) => {
       if (!State.isConnected) return;
+      setTimeout(hideTouchIndicator, 200);
+
       if (State.touchHoldTimer) {
         clearTimeout(State.touchHoldTimer);
         const elapsed = Date.now() - State.touchStartTime;
@@ -596,37 +724,24 @@ window.RemoteClient = (function() {
       });
     }
 
-    // Fit Mode Toggle (화면 꽉 채우기 vs 원본 비율)
-    const btnFitMode = document.getElementById('rdBtnFitMode');
-    let currentFit = localStorage.getItem('kostat_rd_fit_mode') || 'fill';
-    applyFitMode(currentFit);
-
-    if (btnFitMode) {
-      btnFitMode.addEventListener('click', () => {
-        currentFit = currentFit === 'fill' ? 'fit' : 'fill';
-        applyFitMode(currentFit);
-        localStorage.setItem('kostat_rd_fit_mode', currentFit);
+    // Aspect Ratio & Fit Mode Selector
+    const ratioSelect = document.getElementById('rdRatioSelect');
+    if (ratioSelect) {
+      ratioSelect.value = State.fitMode;
+      ratioSelect.addEventListener('change', (e) => {
+        applyRatioMode(e.target.value);
+        localStorage.setItem('kostat_rd_ratio_mode', e.target.value);
       });
     }
 
-    function applyFitMode(mode) {
+    function applyRatioMode(mode) {
+      State.fitMode = mode;
       const canvas = State.canvas || document.getElementById('rdCanvas');
       if (!canvas) return;
-      if (mode === 'fill') {
-        canvas.classList.add('fill-mode');
-        canvas.classList.remove('fit-mode');
-        if (btnFitMode) {
-          btnFitMode.textContent = '📺 꽉 채우기';
-          btnFitMode.classList.add('active');
-        }
-      } else {
-        canvas.classList.remove('fill-mode');
-        canvas.classList.add('fit-mode');
-        if (btnFitMode) {
-          btnFitMode.textContent = '🔍 원본 비율';
-          btnFitMode.classList.remove('active');
-        }
-      }
+      canvas.classList.remove('fit-mode', 'fill-mode', 'cover-mode');
+      canvas.classList.add(`${mode}-mode`);
+      if (ratioSelect) ratioSelect.value = mode;
+      updateVirtualCursor();
     }
 
     // Native Mobile Fullscreen
