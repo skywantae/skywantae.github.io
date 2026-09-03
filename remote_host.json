@@ -1,8 +1,8 @@
 {
-  "active_url": "https://declined-contemporary-scheduled-estimate.trycloudflare.com",
+  "active_url": "https://guitars-routines-subsidiary-try.trycloudflare.com",
   "pin": "8805",
-  "device_name": "💻 내 노트북 (시즈모드 1)",
-  "updated_at": "2026-09-03 15:17:15",
+  "device_name": "💻 해외출장전산작업용",
+  "updated_at": "2026-09-03 16:31:31",
   "status": "online",
   "devices": {
     "dev_primary": {
@@ -17,12 +17,21 @@
     "dev_desktop_h2q3k25": {
       "id": "dev_desktop_h2q3k25",
       "name": "💻 내 노트북 (시즈모드 1)",
-      "active_url": "https://declined-contemporary-scheduled-estimate.trycloudflare.com",
+      "active_url": "https://subcommittee-park-diane-reservations.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-03 15:17:15",
+      "updated_at": "2026-09-03 16:30:53",
       "status": "online",
       "local_url": "http://192.168.0.48:8765"
+    },
+    "dev_desktop_kqi331h": {
+      "id": "dev_desktop_kqi331h",
+      "name": "💻 해외출장전산작업용",
+      "active_url": "https://guitars-routines-subsidiary-try.trycloudflare.com",
+      "pin": "8805",
+      "updated_at": "2026-09-03 16:31:31",
+      "status": "online",
+      "local_url": "http://192.168.0.5:8765"
     }
   },
-  "local_url": "http://192.168.0.48:8765"
+  "local_url": "http://192.168.0.5:8765"
 }

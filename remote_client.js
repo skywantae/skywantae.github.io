@@ -539,6 +539,7 @@ window.RemoteClient = (function() {
       if (!State.isConnected) return;
       if (e.touches.length === 1) {
         State.isTwoFinger = false;
+        State.hasMoved = false;
         const t = e.touches[0];
         State.touchStartX = t.clientX;
         State.touchStartY = t.clientY;
@@ -578,8 +579,9 @@ window.RemoteClient = (function() {
         const dx = t.clientX - State.touchStartX;
         const dy = t.clientY - State.touchStartY;
 
-        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
           clearTimeout(State.touchHoldTimer);
+          State.hasMoved = true;
         }
 
         if (State.mode === 'touch') {
@@ -632,16 +634,35 @@ window.RemoteClient = (function() {
       }
       setTimeout(hideTouchIndicator, 200);
 
-      if (State.touchHoldTimer) {
-        clearTimeout(State.touchHoldTimer);
-        const elapsed = Date.now() - State.touchStartTime;
-        if (elapsed < 300) {
-          if (State.mode === 'touch') {
-            const coords = getNormalizedCoords(State.touchStartX, State.touchStartY);
-            if (coords) {
-              sendCommand({ type: 'mouse_move', x: coords.x, y: coords.y });
-              sendCommand({ type: 'mouse_click', button: 'left' });
-            }
+      clearTimeout(State.touchHoldTimer);
+      const elapsed = Date.now() - State.touchStartTime;
+
+      if (!State.isTwoFinger && !State.hasMoved && elapsed < 350) {
+        if (State.mode === 'touch') {
+          const coords = getNormalizedCoords(State.touchStartX, State.touchStartY);
+          if (coords) {
+            sendCommand({ type: 'mouse_move', x: coords.x, y: coords.y });
+            sendCommand({ type: 'mouse_click', button: 'left' });
+          }
+        } else if (State.mode === 'trackpad') {
+          // [사용자 요청] 트랙패드 모드에서 더블 클릭(더블 탭) 시 마우스 왼쪽 버튼 클릭
+          const now = Date.now();
+          const timeSinceLastTap = now - (State.lastTrackpadTapTime || 0);
+          const tapDist = Math.hypot(
+            (State.touchStartX || 0) - (State.lastTrackpadTapX || 0),
+            (State.touchStartY || 0) - (State.lastTrackpadTapY || 0)
+          );
+
+          if (timeSinceLastTap > 30 && timeSinceLastTap < 450 && tapDist < 50) {
+            // 더블 탭(더블 클릭) 감지 성공!
+            if (navigator.vibrate) navigator.vibrate(40);
+            sendCommand({ type: 'mouse_click', button: 'left' });
+            State.lastTrackpadTapTime = 0; // 리셋
+          } else {
+            // 1차 탭 기록
+            State.lastTrackpadTapTime = now;
+            State.lastTrackpadTapX = State.touchStartX;
+            State.lastTrackpadTapY = State.touchStartY;
           }
         }
       }
@@ -784,11 +805,12 @@ window.RemoteClient = (function() {
       });
     }
 
-    // Virtual Keyboard Drawer
+    // Virtual Keyboard Drawer & Real-Time Typing Engine
     const kbdDrawer = document.getElementById('rdKeyboardDrawer');
     const btnKbdToggle = document.getElementById('rdBtnKbdToggle');
     const btnCloseKbd = document.getElementById('rdBtnCloseKbd');
     const btnSendText = document.getElementById('rdBtnSendText');
+    const btnClearKbd = document.getElementById('rdBtnClearKbd');
     const quickInput = document.getElementById('rdQuickTextInput');
 
     if (btnKbdToggle && kbdDrawer) {
@@ -802,24 +824,122 @@ window.RemoteClient = (function() {
     if (btnCloseKbd && kbdDrawer) {
       btnCloseKbd.addEventListener('click', () => kbdDrawer.classList.remove('active'));
     }
-    if (btnSendText && quickInput) {
-      btnSendText.addEventListener('click', () => {
-        const txt = quickInput.value;
-        if (txt) {
-          sendCommand({ type: 'type_text', text: txt });
+
+    if (btnClearKbd && quickInput) {
+      btnClearKbd.addEventListener('click', () => {
+        quickInput.value = '';
+        quickInput.focus();
+      });
+    }
+
+    if (quickInput) {
+      let isComposing = false;
+      let lastVal = '';
+
+      // [실시간 타이핑 1] 한글 IME 조합 처리
+      quickInput.addEventListener('compositionstart', () => {
+        isComposing = true;
+      });
+
+      quickInput.addEventListener('compositionend', (e) => {
+        isComposing = false;
+        if (!State.isConnected) return;
+        // 조합이 완료된 한글 글자를 즉시 원격으로 타이핑!
+        if (e.data) {
+          sendCommand({ type: 'type_text', text: e.data });
+        }
+        quickInput.value = '';
+        lastVal = '';
+      });
+
+      // [실시간 타이핑 2] 영문, 숫자, 특수기호, 붙여넣기 실시간 전송
+      quickInput.addEventListener('input', (e) => {
+        if (!State.isConnected) return;
+        if (isComposing) return; // 한글 조합 중에는 compositionend에서 완료 시 전송
+
+        const currentVal = quickInput.value;
+        if (currentVal.length > lastVal.length) {
+          // 새로 타이핑된 글자 추출
+          const added = currentVal.slice(lastVal.length);
+          sendCommand({ type: 'type_text', text: added });
+        } else if (currentVal.length < lastVal.length) {
+          // 글자가 지워진 경우 (백스페이스)
+          const diff = lastVal.length - currentVal.length;
+          for (let i = 0; i < diff; i++) {
+            sendCommand({ type: 'key_down', key: 'backspace' });
+            setTimeout(() => sendCommand({ type: 'key_up', key: 'backspace' }), 15);
+          }
+        }
+
+        if (currentVal.length > 25) {
           quickInput.value = '';
+          lastVal = '';
+        } else {
+          lastVal = currentVal;
         }
       });
+
+      // [실시간 타이핑 3] 특수 제어키 (Enter, Backspace, Tab, Esc) 즉시 직통 전송
       quickInput.addEventListener('keydown', (e) => {
+        if (!State.isConnected) return;
+
         if (e.key === 'Enter') {
+          e.preventDefault();
+          sendCommand({ type: 'key_down', key: 'enter' });
+          setTimeout(() => sendCommand({ type: 'key_up', key: 'enter' }), 20);
+          quickInput.value = '';
+          lastVal = '';
+        } else if (e.key === 'Backspace' && quickInput.value === '') {
+          // 입력창이 비어있는 상태에서 백스페이스를 누르면 노트북의 직전 글자 삭제
+          e.preventDefault();
+          sendCommand({ type: 'key_down', key: 'backspace' });
+          setTimeout(() => sendCommand({ type: 'key_up', key: 'backspace' }), 15);
+        } else if (e.key === 'Tab') {
+          e.preventDefault();
+          sendCommand({ type: 'key_down', key: 'tab' });
+          setTimeout(() => sendCommand({ type: 'key_up', key: 'tab' }), 20);
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          sendCommand({ type: 'key_down', key: 'escape' });
+          setTimeout(() => sendCommand({ type: 'key_up', key: 'escape' }), 20);
+        }
+      });
+
+      // 수동 전송 버튼 (긴 문단이나 복사본 일괄 전송용)
+      if (btnSendText) {
+        btnSendText.addEventListener('click', () => {
           const txt = quickInput.value;
           if (txt) {
             sendCommand({ type: 'type_text', text: txt });
             quickInput.value = '';
+            lastVal = '';
           }
-        }
-      });
+        });
+      }
     }
+
+    // [실시간 타이핑 4] PC/외부 물리 키보드 다이렉트 패스스루
+    window.addEventListener('keydown', (e) => {
+      if (!State.isConnected) return;
+      // 일반 입력 필드나 모달에 포커스 중일 때는 패스스루 제외
+      const tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+      const key = e.key.toLowerCase();
+      if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
+        e.preventDefault();
+        const map = { arrowup: 'up', arrowdown: 'down', arrowleft: 'left', arrowright: 'right' };
+        sendCommand({ type: 'key_down', key: map[key] });
+        setTimeout(() => sendCommand({ type: 'key_up', key: map[key] }), 25);
+      } else if (['enter', 'backspace', 'tab', 'escape'].includes(key)) {
+        e.preventDefault();
+        sendCommand({ type: 'key_down', key });
+        setTimeout(() => sendCommand({ type: 'key_up', key }), 25);
+      } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        e.preventDefault();
+        sendCommand({ type: 'type_text', text: e.key });
+      }
+    });
 
     // Key chips
     document.querySelectorAll('.rd-key-chip').forEach(btn => {

@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.143" />
+  <link rel="stylesheet" href="app.css?v=1.0.144" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -273,8 +273,12 @@
 
         <div class="rd-keyboard-drawer" id="rdKeyboardDrawer">
           <div class="rd-kbd-input-row">
-            <input type="text" id="rdQuickTextInput" class="rd-quick-input" placeholder="여기에 입력 후 전송 (한글 지원)..." />
-            <button id="rdBtnSendText" class="action-btn-sm primary">전송</button>
+            <div class="rd-input-wrap" style="position:relative; flex:1; display:flex; align-items:center;">
+              <input type="text" id="rdQuickTextInput" class="rd-quick-input" placeholder="⚡ 실시간 타이핑 (입력 즉시 노트북에 반영)..." autocomplete="off" autocapitalize="off" spellcheck="false" style="padding-right: 62px; width: 100%;" />
+              <span id="rdRealtimeBadge" style="position:absolute; right:8px; font-size:10px; color:#10b981; font-weight:700; background:rgba(16,185,129,0.15); padding:2px 6px; border-radius:4px; pointer-events:none;">⚡실시간</span>
+            </div>
+            <button id="rdBtnSendText" class="action-btn-sm primary" title="입력창 텍스트 전송">전송</button>
+            <button id="rdBtnClearKbd" class="action-btn-sm secondary" title="입력창 지우기">지우기</button>
             <button id="rdBtnCloseKbd" class="action-btn-sm secondary">닫기</button>
           </div>
           <div class="rd-quick-keys-row">
@@ -332,7 +336,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.143</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.144</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -411,14 +415,14 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.143"></script>
-  <script src="data/shipplan_data.js?v=1.0.143"></script>
-  <script src="data/quotations_data.js?v=1.0.143"></script>
-  <script src="data/knowledge_data.js?v=1.0.143"></script>
+  <script src="data/skyworks_data.js?v=1.0.144"></script>
+  <script src="data/shipplan_data.js?v=1.0.144"></script>
+  <script src="data/quotations_data.js?v=1.0.144"></script>
+  <script src="data/knowledge_data.js?v=1.0.144"></script>
   
-  <script src="updater.js?v=1.0.143"></script>
-  <script src="remote_client.js?v=1.0.143"></script>
-  <script src="app.js?v=1.0.143"></script>
+  <script src="updater.js?v=1.0.144"></script>
+  <script src="remote_client.js?v=1.0.144"></script>
+  <script src="app.js?v=1.0.144"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
