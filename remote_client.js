@@ -63,42 +63,64 @@ window.RemoteClient = (function() {
 
   async function fetchAutoDiscoveryAndConnect() {
     if (State.isConnected) return;
-    updateStatus(false, '노트북 탐색 중...');
-    try {
-      const endpoint = `https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/remote_host.json?t=${Date.now()}`;
-      const res = await fetch(endpoint, { cache: 'no-store' });
-      if (res.ok) {
-        const info = await res.json();
-        if (info.status === 'online' && info.active_url) {
-          console.log('[Auto-Discovery] Online host found:', info);
-          State.pin = info.pin || '8805';
-          const pinEl = document.getElementById('rdPinInput');
-          if (pinEl) pinEl.value = State.pin;
-          const urlEl = document.getElementById('rdUrlInput');
-          if (urlEl) urlEl.value = info.active_url;
+    updateStatus(false, '한국 노트북 탐색 중...');
+    let info = null;
 
-          let defaultDev = State.deviceList.find(d => d.id === 'dev_default');
-          if (defaultDev) {
-            defaultDev.name = info.device_name || '💻 내 노트북 (시즈모드)';
-            defaultDev.url = info.active_url;
-            defaultDev.pin = State.pin;
-          } else {
-            State.deviceList.unshift({
-              id: 'dev_default',
-              name: info.device_name || '💻 내 노트북 (시즈모드)',
-              url: info.active_url,
-              pin: State.pin
-            });
-          }
-          saveDevices();
-          updateStatus(false, '자동 직통 연결 중...');
-          connectToDevice('dev_default');
-          return;
+    // 1. Real-time GitHub API (zero cache, instant)
+    try {
+      const apiEndpoint = `https://api.github.com/repos/skywantae/skywantae.github.io/contents/remote_host.json?t=${Date.now()}`;
+      const apiRes = await fetch(apiEndpoint, { cache: 'no-store' });
+      if (apiRes.ok) {
+        const ghJson = await apiRes.json();
+        if (ghJson && ghJson.content) {
+          const rawStr = decodeURIComponent(escape(atob(ghJson.content.replace(/\s/g, ''))));
+          info = JSON.parse(rawStr);
         }
       }
-    } catch (err) {
-      console.log('[Auto-Discovery] Info:', err);
+    } catch (e) {
+      console.log('[Auto-Discovery] API fetch failed, trying raw fallback:', e);
     }
+
+    // 2. Raw endpoint fallback
+    if (!info) {
+      try {
+        const rawEndpoint = `https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/remote_host.json?t=${Date.now()}`;
+        const rawRes = await fetch(rawEndpoint, { cache: 'no-store' });
+        if (rawRes.ok) {
+          info = await rawRes.json();
+        }
+      } catch (e) {
+        console.log('[Auto-Discovery] Raw fallback failed:', e);
+      }
+    }
+
+    if (info && info.status === 'online' && info.active_url) {
+      console.log('[Auto-Discovery] Live host found:', info);
+      State.pin = info.pin || '8805';
+      const pinEl = document.getElementById('rdPinInput');
+      if (pinEl) pinEl.value = State.pin;
+      const urlEl = document.getElementById('rdUrlInput');
+      if (urlEl) urlEl.value = info.active_url;
+
+      let defaultDev = State.deviceList.find(d => d.id === 'dev_default');
+      if (defaultDev) {
+        defaultDev.name = info.device_name || '💻 내 노트북 (시즈모드 - 온라인)';
+        defaultDev.url = info.active_url;
+        defaultDev.pin = State.pin;
+      } else {
+        State.deviceList.unshift({
+          id: 'dev_default',
+          name: info.device_name || '💻 내 노트북 (시즈모드 - 온라인)',
+          url: info.active_url,
+          pin: State.pin
+        });
+      }
+      saveDevices();
+      updateStatus(false, '자동 직통 연결 중...');
+      connectToDevice('dev_default');
+      return;
+    }
+
     updateStatus(false, '연결 대기');
   }
 
