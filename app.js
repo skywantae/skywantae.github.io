@@ -35,6 +35,17 @@ const AppState = {
   currentQuotNo: null
 };
 
+// 전역 관리자 상태 객체 (출하 DB 및 게시판 관리자 공통 사용)
+const AdminState = window.AdminState = {
+  isAuthenticated: false,
+  isDeploying: false,
+  latestDetectedDate: '',
+  parsedShipRows: null,
+  parsedSkyworksRows: null,
+  sourceFileName: '',
+  sourceFileSize: 0
+};
+
 function parseValidDate(dateVal) {
   if (!dateVal) return null;
   const s = String(dateVal).trim();
@@ -1523,16 +1534,6 @@ window.copyCellText = copyCellText;
 // [Admin] 관리자 출하 DB 업데이트 & GitHub 무인 자동 배포 모듈
 // ==========================================================================
 (function initAdminDbModule() {
-  const AdminState = window.AdminState = {
-    isAuthenticated: false,
-    isDeploying: false,
-    latestDetectedDate: '',
-    parsedShipRows: null,
-    parsedSkyworksRows: null,
-    sourceFileName: '',
-    sourceFileSize: 0
-  };
-
   function getAdminAuthToken(pin) {
     if (pin !== '8805') return null;
     const parts = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"];
