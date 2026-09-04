@@ -1939,17 +1939,26 @@ function initFeedbackBoardEvents() {
       if (DOM.feedbackAuthorInput) DOM.feedbackAuthorInput.value = '';
       if (DOM.feedbackTitleInput) DOM.feedbackTitleInput.value = '';
       if (DOM.feedbackContentInput) DOM.feedbackContentInput.value = '';
-      if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.add('active');
+      if (DOM.feedbackNewModal) {
+        DOM.feedbackNewModal.classList.add('show');
+        DOM.feedbackNewModal.classList.add('active');
+      }
     });
   }
   if (DOM.btnCloseFeedbackNewModal) {
     DOM.btnCloseFeedbackNewModal.addEventListener('click', () => {
-      if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.remove('active');
+      if (DOM.feedbackNewModal) {
+        DOM.feedbackNewModal.classList.remove('show');
+        DOM.feedbackNewModal.classList.remove('active');
+      }
     });
   }
   if (DOM.btnCancelFeedbackNew) {
     DOM.btnCancelFeedbackNew.addEventListener('click', () => {
-      if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.remove('active');
+      if (DOM.feedbackNewModal) {
+        DOM.feedbackNewModal.classList.remove('show');
+        DOM.feedbackNewModal.classList.remove('active');
+      }
     });
   }
 
@@ -1966,12 +1975,18 @@ function initFeedbackBoardEvents() {
   // 관리자 답변 모달 닫기
   if (DOM.btnCloseFeedbackReplyModal) {
     DOM.btnCloseFeedbackReplyModal.addEventListener('click', () => {
-      if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
+      if (DOM.feedbackReplyModal) {
+        DOM.feedbackReplyModal.classList.remove('show');
+        DOM.feedbackReplyModal.classList.remove('active');
+      }
     });
   }
   if (DOM.btnCancelFeedbackReply) {
     DOM.btnCancelFeedbackReply.addEventListener('click', () => {
-      if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
+      if (DOM.feedbackReplyModal) {
+        DOM.feedbackReplyModal.classList.remove('show');
+        DOM.feedbackReplyModal.classList.remove('active');
+      }
     });
   }
 
@@ -2117,7 +2132,10 @@ function submitNewFeedback() {
   AppState.feedbackData.unshift(newPost);
   saveFeedbackStorage();
 
-  if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.remove('active');
+  if (DOM.feedbackNewModal) {
+    DOM.feedbackNewModal.classList.remove('show');
+    DOM.feedbackNewModal.classList.remove('active');
+  }
   renderFeedbackBoard();
   showToast('💡 기능 추가 요청이 등록되었습니다. 관리자가 검토 후 답변을 드립니다.');
 }
@@ -2171,7 +2189,10 @@ window.openAdminReplyModal = function(id) {
     DOM.feedbackReplyTextInput.value = post.reply ? (post.reply.content || '') : '';
   }
 
-  if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.add('active');
+  if (DOM.feedbackReplyModal) {
+    DOM.feedbackReplyModal.classList.add('show');
+    DOM.feedbackReplyModal.classList.add('active');
+  }
 };
 
 function submitAdminReply() {
@@ -2206,7 +2227,10 @@ function submitAdminReply() {
   };
 
   saveFeedbackStorage();
-  if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
+  if (DOM.feedbackReplyModal) {
+    DOM.feedbackReplyModal.classList.remove('show');
+    DOM.feedbackReplyModal.classList.remove('active');
+  }
   renderFeedbackBoard();
   showToast('👑 관리자 답변이 성공적으로 등록되었습니다.');
 }
