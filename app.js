@@ -21,13 +21,22 @@ const AppState = {
   shipPlanPageSize: 50,
   shipPlanFilteredRows: [],
 
+  // Skyworks PO 페이징 상태
+  skyworksCurrentPage: 1,
+  skyworksPageSize: 50,
+  skyworksFilteredRows: [],
+
   // 기능 요청 게시판 상태
   feedbackData: [],
   feedbackFilteredRows: [],
+  feedbackCurrentPage: 1,
+  feedbackPageSize: 10,
   isBoardAdmin: false,
 
   // FAQ 지식베이스 관리 상태
   faqFilteredRows: [],
+  faqCurrentPage: 1,
+  faqPageSize: 10,
   isFaqAdmin: false,
   currentFaqAttachments: [],
 
@@ -107,6 +116,10 @@ const DOM = {
   skyworksCount: document.getElementById('skyworksCount'),
   skyworksSearchInput: document.getElementById('skyworksSearchInput'),
   skyworksYearSelect: document.getElementById('skyworksYearSelect'),
+  skyworksPageSizeSelect: document.getElementById('skyworksPageSizeSelect'),
+  skyworksPagination: document.getElementById('skyworksPagination'),
+  skyworksPageInfo: document.getElementById('skyworksPageInfo'),
+  skyworksPageControls: document.getElementById('skyworksPageControls'),
   btnSkyworksReload: document.getElementById('btnSkyworksReload'),
 
   // Ship Plan
@@ -157,6 +170,10 @@ const DOM = {
   feedbackCountBadge: document.getElementById('feedbackCountBadge'),
   feedbackSearchInput: document.getElementById('feedbackSearchInput'),
   feedbackStatusFilter: document.getElementById('feedbackStatusFilter'),
+  feedbackPageSizeSelect: document.getElementById('feedbackPageSizeSelect'),
+  feedbackPagination: document.getElementById('feedbackPagination'),
+  feedbackPageInfo: document.getElementById('feedbackPageInfo'),
+  feedbackPageControls: document.getElementById('feedbackPageControls'),
   btnOpenNewFeedbackModal: document.getElementById('btnOpenNewFeedbackModal'),
   btnToggleBoardAdmin: document.getElementById('btnToggleBoardAdmin'),
   feedbackNewModal: document.getElementById('feedbackNewModal'),
@@ -198,6 +215,10 @@ const DOM = {
   viewFaq: document.getElementById('viewFaq'),
   faqCountBadge: document.getElementById('faqCountBadge'),
   faqSearchInput: document.getElementById('faqSearchInput'),
+  faqPageSizeSelect: document.getElementById('faqPageSizeSelect'),
+  faqPagination: document.getElementById('faqPagination'),
+  faqPageInfo: document.getElementById('faqPageInfo'),
+  faqPageControls: document.getElementById('faqPageControls'),
   btnOpenNewFaqModal: document.getElementById('btnOpenNewFaqModal'),
   btnToggleFaqAdmin: document.getElementById('btnToggleFaqAdmin'),
   btnDeployFaq: document.getElementById('btnDeployFaq'),
@@ -213,6 +234,7 @@ const DOM = {
   faqEditIndex: document.getElementById('faqEditIndex'),
   faqQuestionInput: document.getElementById('faqQuestionInput'),
   faqCategoryInput: document.getElementById('faqCategoryInput'),
+  faqAuthorPinInput: document.getElementById('faqAuthorPinInput'),
   faqAnswerInput: document.getElementById('faqAnswerInput'),
   faqAttachSizeIndicator: document.getElementById('faqAttachSizeIndicator'),
   faqDropzone: document.getElementById('faqDropzone'),
@@ -221,6 +243,17 @@ const DOM = {
   btnSaveFaqEdit: document.getElementById('btnSaveFaqEdit'),
   btnCancelFaqEdit: document.getElementById('btnCancelFaqEdit'),
   btnCloseFaqEditModal: document.getElementById('btnCloseFaqEditModal'),
+
+  // FAQ 본인 확인 비밀번호 모달 (수정/삭제 권한 확인)
+  faqAuthorPinModal: document.getElementById('faqAuthorPinModal'),
+  faqAuthTargetIndex: document.getElementById('faqAuthTargetIndex'),
+  faqAuthTargetAction: document.getElementById('faqAuthTargetAction'),
+  faqAuthorPinPromptText: document.getElementById('faqAuthorPinPromptText'),
+  faqAuthorPinCheckInput: document.getElementById('faqAuthorPinCheckInput'),
+  faqAuthorPinError: document.getElementById('faqAuthorPinError'),
+  btnVerifyFaqAuthorPin: document.getElementById('btnVerifyFaqAuthorPin'),
+  btnCancelFaqAuthorPin: document.getElementById('btnCancelFaqAuthorPin'),
+  btnCloseFaqAuthorPinModal: document.getElementById('btnCloseFaqAuthorPinModal'),
 
   // FAQ 삭제 확인 모달
   faqDeleteModal: document.getElementById('faqDeleteModal'),
@@ -565,6 +598,13 @@ function initUI() {
   // Skyworks 필터
   DOM.skyworksSearchInput.addEventListener('input', debounce(filterSkyworksTable, 200));
   DOM.skyworksYearSelect.addEventListener('change', filterSkyworksTable);
+  if (DOM.skyworksPageSizeSelect) {
+    DOM.skyworksPageSizeSelect.addEventListener('change', () => {
+      AppState.skyworksPageSize = parseInt(DOM.skyworksPageSizeSelect.value, 10) || 50;
+      AppState.skyworksCurrentPage = 1;
+      renderSkyworksPage(1);
+    });
+  }
   
   // 견적서 검색 이벤트 (아래 404~435에서 올바르게 등록됨)
 
@@ -829,14 +869,39 @@ function initSkyworksYears() {
 }
 
 function renderSkyworksTable(rows) {
-  if (!rows || rows.length === 0) {
-    DOM.skyworksTbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">Skyworks 데이터가 없습니다.</td></tr>`;
-    DOM.skyworksCount.textContent = '0건';
+  AppState.skyworksFilteredRows = rows || [];
+  AppState.skyworksCurrentPage = 1;
+  renderSkyworksPage(1);
+}
+
+function renderSkyworksPage(page) {
+  const rows = AppState.skyworksFilteredRows || [];
+  const totalRows = rows.length;
+  const pageSize = AppState.skyworksPageSize || 50;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.skyworksCurrentPage = page;
+
+  if (DOM.skyworksCount) {
+    DOM.skyworksCount.textContent = `${totalRows.toLocaleString()}건`;
+  }
+
+  if (DOM.skyworksPageInfo) {
+    DOM.skyworksPageInfo.textContent = `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
+  if (!DOM.skyworksTbody) return;
+
+  if (totalRows === 0) {
+    DOM.skyworksTbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">일치하는 Skyworks 데이터가 없습니다.</td></tr>`;
+    if (DOM.skyworksPageControls) DOM.skyworksPageControls.innerHTML = '';
     return;
   }
 
-  DOM.skyworksCount.textContent = `${rows.length.toLocaleString()}건`;
-  const sliced = rows.slice(0, 150);
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const sliced = rows.slice(start, end);
 
   DOM.skyworksTbody.innerHTML = sliced.map(r => {
     const exDate = r.exfactorydate || r.ex_date || r.order_date || '-';
@@ -849,11 +914,11 @@ function renderSkyworksTable(rows) {
     const bal = r.balance !== undefined ? r.balance : '-';
 
     return `
-      <tr>
+      <tr class="erp-copyable-cell">
         <td>${formatDate(exDate)}</td>
         <td>${formatDate(shipDate)}</td>
-        <td style="font-weight:600;color:#60a5fa;">${pono}</td>
-        <td>${pn}</td>
+        <td style="font-weight:600;color:#60a5fa;">${escapeHtml(pono)}</td>
+        <td>${escapeHtml(pn)}</td>
         <td style="text-align:right;">${Number(qty) ? Number(qty).toLocaleString() : qty}</td>
         <td style="text-align:right;">${price}</td>
         <td style="text-align:right;color:#34d399;">${amount !== '-' && Number(amount) ? Number(amount).toLocaleString() : amount}</td>
@@ -861,7 +926,56 @@ function renderSkyworksTable(rows) {
       </tr>
     `;
   }).join('');
+
+  renderSkyworksPaginationControls(page, totalPages);
 }
+
+function renderSkyworksPaginationControls(currentPage, totalPages) {
+  if (!DOM.skyworksPageControls) return;
+
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
+  let btnsHtml = '';
+
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToSkyworksPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToSkyworksPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
+
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
+  }
+
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToSkyworksPage(1)">1</button>`;
+
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToSkyworksPage(${p})">${p}</button>`;
+  });
+
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToSkyworksPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToSkyworksPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToSkyworksPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
+
+  DOM.skyworksPageControls.innerHTML = btnsHtml;
+}
+
+window.goToSkyworksPage = function(page) {
+  renderSkyworksPage(page);
+};
 
 function filterSkyworksTable() {
   const search = DOM.skyworksSearchInput.value.toLowerCase().trim();
@@ -2129,6 +2243,13 @@ function initFeedbackBoardEvents() {
   if (DOM.feedbackStatusFilter) {
     DOM.feedbackStatusFilter.addEventListener('change', renderFeedbackBoard);
   }
+  if (DOM.feedbackPageSizeSelect) {
+    DOM.feedbackPageSizeSelect.addEventListener('change', () => {
+      AppState.feedbackPageSize = parseInt(DOM.feedbackPageSizeSelect.value, 10) || 10;
+      AppState.feedbackCurrentPage = 1;
+      renderFeedbackPage(1);
+    });
+  }
 
   // 새 글 등록 모달 열기/닫기
   if (DOM.btnOpenNewFeedbackModal) {
@@ -2234,8 +2355,6 @@ function initFeedbackBoardEvents() {
 }
 
 function renderFeedbackBoard() {
-  if (!DOM.feedbackBoardList) return;
-
   const query = (DOM.feedbackSearchInput?.value || '').toLowerCase().trim();
   const statusFilter = DOM.feedbackStatusFilter?.value || 'all';
 
@@ -2254,12 +2373,30 @@ function renderFeedbackBoard() {
   }
 
   AppState.feedbackFilteredRows = list;
+  AppState.feedbackCurrentPage = 1;
+  renderFeedbackPage(1);
+}
+
+function renderFeedbackPage(page) {
+  if (!DOM.feedbackBoardList) return;
+
+  const list = AppState.feedbackFilteredRows || [];
+  const totalRows = list.length;
+  const pageSize = AppState.feedbackPageSize || 10;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.feedbackCurrentPage = page;
 
   if (DOM.feedbackCountBadge) {
-    DOM.feedbackCountBadge.textContent = `${list.length}건`;
+    DOM.feedbackCountBadge.textContent = `${totalRows}건`;
   }
 
-  if (list.length === 0) {
+  if (DOM.feedbackPageInfo) {
+    DOM.feedbackPageInfo.textContent = `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
+  if (totalRows === 0) {
     DOM.feedbackBoardList.innerHTML = `
       <div class="feedback-empty-state">
         <div style="font-size:32px;margin-bottom:8px;">💡</div>
@@ -2267,10 +2404,15 @@ function renderFeedbackBoard() {
         <div style="font-size:12px;color:#94a3b8;">새로운 아이디어나 필요한 기능이 있다면 [+ 새 요청 등록] 버튼을 눌러보세요.</div>
       </div>
     `;
+    if (DOM.feedbackPageControls) DOM.feedbackPageControls.innerHTML = '';
     return;
   }
 
-  DOM.feedbackBoardList.innerHTML = list.map(item => {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageItems = list.slice(start, end);
+
+  DOM.feedbackBoardList.innerHTML = pageItems.map(item => {
     let badgeClass = 'pending';
     let badgeText = '⏳ 검토 중';
     if (item.status === 'replied') {
@@ -2321,7 +2463,56 @@ function renderFeedbackBoard() {
       </div>
     `;
   }).join('');
+
+  renderFeedbackPaginationControls(page, totalPages);
 }
+
+function renderFeedbackPaginationControls(currentPage, totalPages) {
+  if (!DOM.feedbackPageControls) return;
+
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
+  let btnsHtml = '';
+
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToFeedbackPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToFeedbackPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
+
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
+  }
+
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToFeedbackPage(1)">1</button>`;
+
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToFeedbackPage(${p})">${p}</button>`;
+  });
+
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToFeedbackPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToFeedbackPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToFeedbackPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
+
+  DOM.feedbackPageControls.innerHTML = btnsHtml;
+}
+
+window.goToFeedbackPage = function(page) {
+  renderFeedbackPage(page);
+};
 
 function submitNewFeedback() {
   const author = (DOM.feedbackAuthorInput?.value || '').trim();
@@ -2579,6 +2770,32 @@ function initFaqEvents() {
   if (DOM.faqSearchInput) {
     DOM.faqSearchInput.addEventListener('input', debounce(renderFaqList, 200));
   }
+  if (DOM.faqPageSizeSelect) {
+    DOM.faqPageSizeSelect.addEventListener('change', () => {
+      AppState.faqPageSize = parseInt(DOM.faqPageSizeSelect.value, 10) || 10;
+      AppState.faqCurrentPage = 1;
+      renderFaqPage(1);
+    });
+  }
+
+  // 1-1) FAQ 작성자 확인 PIN 모달 이벤트
+  if (DOM.btnVerifyFaqAuthorPin) {
+    DOM.btnVerifyFaqAuthorPin.addEventListener('click', verifyFaqAuthorPin);
+  }
+  if (DOM.btnCancelFaqAuthorPin) {
+    DOM.btnCancelFaqAuthorPin.addEventListener('click', closeFaqAuthorPinModal);
+  }
+  if (DOM.btnCloseFaqAuthorPinModal) {
+    DOM.btnCloseFaqAuthorPinModal.addEventListener('click', closeFaqAuthorPinModal);
+  }
+  if (DOM.faqAuthorPinCheckInput) {
+    DOM.faqAuthorPinCheckInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyFaqAuthorPin();
+      }
+    });
+  }
 
   // 2) 관리자 모드 토글
   if (DOM.btnToggleFaqAdmin) {
@@ -2673,8 +2890,6 @@ function initFaqEvents() {
 
 // FAQ 목록 렌더링 엔진
 function renderFaqList() {
-  if (!DOM.faqListContainer) return;
-
   const query = (DOM.faqSearchInput?.value || '').toLowerCase().trim();
   let list = AppState.knowledgeData || [];
 
@@ -2688,12 +2903,30 @@ function renderFaqList() {
   }
 
   AppState.faqFilteredRows = list;
+  AppState.faqCurrentPage = 1;
+  renderFaqPage(1);
+}
+
+function renderFaqPage(page) {
+  if (!DOM.faqListContainer) return;
+
+  const list = AppState.faqFilteredRows || [];
+  const totalRows = list.length;
+  const pageSize = AppState.faqPageSize || 10;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.faqCurrentPage = page;
 
   if (DOM.faqCountBadge) {
-    DOM.faqCountBadge.textContent = `${list.length}건`;
+    DOM.faqCountBadge.textContent = `${totalRows}건`;
   }
 
-  if (list.length === 0) {
+  if (DOM.faqPageInfo) {
+    DOM.faqPageInfo.textContent = `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
+  if (totalRows === 0) {
     DOM.faqListContainer.innerHTML = `
       <div class="feedback-empty-state">
         <div style="font-size:32px;margin-bottom:8px;">📚</div>
@@ -2701,10 +2934,15 @@ function renderFaqList() {
         <div style="font-size:12px;color:#94a3b8;">검색어를 변경하거나 우측 상단 [+ 새 FAQ 등록]을 눌러보세요.</div>
       </div>
     `;
+    if (DOM.faqPageControls) DOM.faqPageControls.innerHTML = '';
     return;
   }
 
-  DOM.faqListContainer.innerHTML = list.map(item => {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageItems = list.slice(start, end);
+
+  DOM.faqListContainer.innerHTML = pageItems.map(item => {
     const actualIndex = AppState.knowledgeData.indexOf(item);
     const categoryName = item.category || detectFaqCategory(item.Q || item.question || '');
 
@@ -2768,7 +3006,6 @@ function renderFaqList() {
         </div>
       `;
     } else if (legacyImages.length > 0 || legacyFiles.length > 0) {
-      // 기존 레거시 경로 이미지 및 파일 렌더링 (images\1.png 등)
       let legacyThumbsHtml = '';
       let legacyFilesHtml = '';
 
@@ -2811,20 +3048,17 @@ function renderFaqList() {
       `;
     }
 
-    // 관리자 버튼
-    let adminActionHtml = '';
-    if (AppState.isFaqAdmin) {
-      adminActionHtml = `
-        <div class="faq-card-actions">
-          <button class="action-btn-sm primary" onclick="openEditFaqModal(${actualIndex})" style="font-size:11px;padding:3px 10px;">
-            ✏️ 수정
-          </button>
-          <button class="action-btn-sm danger" onclick="openDeleteFaqModal(${actualIndex})" style="font-size:11px;padding:3px 10px;">
-            🗑️ 삭제
-          </button>
-        </div>
-      `;
-    }
+    // 작성자 본인 확인 또는 관리자 권한 기반 수정/삭제 버튼 (누구나 볼 수 있으며 클릭 시 본인 4자리 또는 관리자 PIN 검증)
+    const actionHtml = `
+      <div class="faq-card-actions">
+        <button class="action-btn-sm primary" onclick="handleFaqEditClick(${actualIndex})" style="font-size:11px;padding:3px 10px;">
+          ✏️ 수정
+        </button>
+        <button class="action-btn-sm danger" onclick="handleFaqDeleteClick(${actualIndex})" style="font-size:11px;padding:3px 10px;">
+          🗑️ 삭제
+        </button>
+      </div>
+    `;
 
     const qTitle = escapeHtml(item.Q || item.question || item.title || '제목 없음');
     const aContent = renderMarkdown(item.A || item.answer || item.content || '');
@@ -2838,10 +3072,144 @@ function renderFaqList() {
         <div class="faq-card-question">Q. ${qTitle}</div>
         <div class="faq-card-answer">${aContent}</div>
         ${mediaHtml}
-        ${adminActionHtml}
+        ${actionHtml}
       </div>
     `;
   }).join('');
+
+  renderFaqPaginationControls(page, totalPages);
+}
+
+function renderFaqPaginationControls(currentPage, totalPages) {
+  if (!DOM.faqPageControls) return;
+
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
+  let btnsHtml = '';
+
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToFaqPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToFaqPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
+
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
+  }
+
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToFaqPage(1)">1</button>`;
+
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToFaqPage(${p})">${p}</button>`;
+  });
+
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToFaqPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToFaqPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToFaqPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
+
+  DOM.faqPageControls.innerHTML = btnsHtml;
+}
+
+window.goToFaqPage = function(page) {
+  renderFaqPage(page);
+};
+
+// FAQ 수정 / 삭제 버튼 핸들러 (본인 4자리 비밀번호 또는 마스터 관리자 검증)
+window.handleFaqEditClick = function(idx) {
+  if (AppState.isFaqAdmin || (window.AdminState && window.AdminState.isAuthenticated)) {
+    openEditFaqModal(idx);
+    return;
+  }
+  openFaqAuthorPinModal(idx, 'edit');
+};
+
+window.handleFaqDeleteClick = function(idx) {
+  if (AppState.isFaqAdmin || (window.AdminState && window.AdminState.isAuthenticated)) {
+    openDeleteFaqModal(idx);
+    return;
+  }
+  openFaqAuthorPinModal(idx, 'delete');
+};
+
+function openFaqAuthorPinModal(idx, action) {
+  if (!DOM.faqAuthorPinModal) return;
+  if (DOM.faqAuthTargetIndex) DOM.faqAuthTargetIndex.value = idx;
+  if (DOM.faqAuthTargetAction) DOM.faqAuthTargetAction.value = action;
+  if (DOM.faqAuthorPinCheckInput) DOM.faqAuthorPinCheckInput.value = '';
+  if (DOM.faqAuthorPinError) DOM.faqAuthorPinError.style.display = 'none';
+
+  if (DOM.faqAuthorPinPromptText) {
+    DOM.faqAuthorPinPromptText.innerHTML = action === 'delete'
+      ? '해당 FAQ를 <b style="color:#f43f5e;">삭제</b>하려면 등록 시 설정한 <b>4자리 비밀번호</b>를 입력해 주세요.<br><span style="font-size:11px;color:#94a3b8;">(관리자는 관리자 PIN 8805 입력 가능)</span>'
+      : '해당 FAQ를 <b style="color:#38bdf8;">수정</b>하려면 등록 시 설정한 <b>4자리 비밀번호</b>를 입력해 주세요.<br><span style="font-size:11px;color:#94a3b8;">(관리자는 관리자 PIN 8805 입력 가능)</span>';
+  }
+
+  DOM.faqAuthorPinModal.classList.add('show');
+  DOM.faqAuthorPinModal.classList.add('active');
+  setTimeout(() => DOM.faqAuthorPinCheckInput?.focus(), 150);
+}
+
+function closeFaqAuthorPinModal() {
+  if (DOM.faqAuthorPinModal) {
+    DOM.faqAuthorPinModal.classList.remove('show');
+    DOM.faqAuthorPinModal.classList.remove('active');
+  }
+}
+
+function verifyFaqAuthorPin() {
+  const pin = (DOM.faqAuthorPinCheckInput?.value || '').trim();
+  const idx = parseInt(DOM.faqAuthTargetIndex?.value, 10);
+  const action = DOM.faqAuthTargetAction?.value || 'edit';
+
+  if (!pin || !/^\d{4}$/.test(pin)) {
+    if (DOM.faqAuthorPinError) {
+      DOM.faqAuthorPinError.textContent = '4자리 숫자를 정확히 입력해 주세요.';
+      DOM.faqAuthorPinError.style.display = 'block';
+    }
+    DOM.faqAuthorPinCheckInput?.focus();
+    return;
+  }
+
+  const item = AppState.knowledgeData[idx];
+  if (!item) {
+    closeFaqAuthorPinModal();
+    return;
+  }
+
+  // 마스터 관리자 PIN(8805) 또는 본인 등록 4자리 PIN 일치 여부 확인
+  const isMasterAdmin = (pin === '8805');
+  const isAuthor = (item.author_pin && String(item.author_pin) === pin);
+
+  if (isMasterAdmin || isAuthor) {
+    closeFaqAuthorPinModal();
+    if (action === 'delete') {
+      openDeleteFaqModal(idx);
+    } else {
+      openEditFaqModal(idx);
+    }
+  } else {
+    if (DOM.faqAuthorPinError) {
+      DOM.faqAuthorPinError.textContent = !item.author_pin 
+        ? '초기 FAQ 항목은 마스터 관리자 PIN(8805)으로만 수정/삭제할 수 있습니다.'
+        : '비밀번호가 일치하지 않습니다. (작성 시 설정한 4자리 숫자)';
+      DOM.faqAuthorPinError.style.display = 'block';
+    }
+    DOM.faqAuthorPinCheckInput?.focus();
+    DOM.faqAuthorPinCheckInput?.select();
+  }
 }
 
 // 카테고리 자동 감지
@@ -2874,7 +3242,6 @@ function toggleFaqAdminMode() {
       DOM.btnToggleFaqAdmin.classList.remove('primary');
       DOM.btnToggleFaqAdmin.classList.add('warning');
     }
-    if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'none';
     if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'none';
     showToast('FAQ 관리자 모드가 해제되었습니다.');
     renderFaqList();
@@ -2906,6 +3273,7 @@ function openNewFaqModal() {
   if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '📚 새 사내 FAQ / 지식 등록';
   if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = '';
   if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = '';
+  if (DOM.faqAuthorPinInput) DOM.faqAuthorPinInput.value = '';
   if (DOM.faqAnswerInput) DOM.faqAnswerInput.value = '';
   
   AppState.currentFaqAttachments = [];
@@ -2927,6 +3295,7 @@ window.openEditFaqModal = function(idx) {
   if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '✏️ 사내 FAQ 지식 수정';
   if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = item.Q || item.question || item.title || '';
   if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = item.category || '';
+  if (DOM.faqAuthorPinInput) DOM.faqAuthorPinInput.value = item.author_pin || '';
   if (DOM.faqAnswerInput) DOM.faqAnswerInput.value = item.A || item.answer || item.content || '';
 
   // 기존 첨부파일 복원
@@ -3032,6 +3401,7 @@ function submitFaqEdit() {
   const q = (DOM.faqQuestionInput?.value || '').trim();
   const a = (DOM.faqAnswerInput?.value || '').trim();
   const cat = (DOM.faqCategoryInput?.value || '').trim();
+  const authorPin = (DOM.faqAuthorPinInput?.value || '').trim();
   const editIdx = parseInt(DOM.faqEditIndex?.value, 10);
 
   if (!q) {
@@ -3045,6 +3415,15 @@ function submitFaqEdit() {
     return;
   }
 
+  // 신규 등록 시 4자리 비밀번호 필수 입력 검증
+  if (editIdx < 0) {
+    if (!authorPin || !/^\d{4}$/.test(authorPin)) {
+      showToast('작성자 확인용 4자리 비밀번호(숫자)를 입력해 주세요.', 'error');
+      DOM.faqAuthorPinInput?.focus();
+      return;
+    }
+  }
+
   // 저장 전 긴급 백업 스냅샷
   saveFaqEmergencyBackup();
 
@@ -3056,7 +3435,10 @@ function submitFaqEdit() {
     A: a,
     category: cat || detectFaqCategory(q),
     attachments: [...AppState.currentFaqAttachments],
-    updated_at: dateStr
+    updated_at: dateStr,
+    author_pin: (authorPin && /^\d{4}$/.test(authorPin))
+      ? authorPin
+      : (editIdx >= 0 && AppState.knowledgeData[editIdx].author_pin ? AppState.knowledgeData[editIdx].author_pin : '8805')
   };
 
   if (editIdx >= 0 && editIdx < AppState.knowledgeData.length) {
