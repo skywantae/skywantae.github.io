@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.153" />
+  <link rel="stylesheet" href="app.css?v=1.0.154" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,6 +102,7 @@
         <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
         <button class="viewer-tab-btn" data-target="viewFeedback">💡 기능 요청</button>
+        <button class="viewer-tab-btn" data-target="viewFaq">📚 FAQ 지식</button>
       </div>
 
       <!-- 1. 출하 계획 뷰 (기본 활성) -->
@@ -242,6 +243,30 @@
         </div>
       </div>
 
+      <!-- 5. 사내 FAQ 및 업무 지식베이스 뷰 -->
+      <div class="viewer-content-card" id="viewFaq" style="display:none;">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>사내 FAQ 지식베이스</h3>
+            <span class="count-badge" id="faqCountBadge">0개</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="faqSearchInput" class="compact-search" placeholder="질문/답변/키워드 검색..." style="width: 150px;" />
+            <button class="action-btn-sm primary" id="btnOpenNewFaqModal" style="display:none;">+ 새 FAQ 등록</button>
+            <button class="action-btn-sm warning" id="btnToggleFaqAdmin" title="FAQ 추가/수정/삭제 관리자 모드">🔒 관리자 모드</button>
+            <button class="action-btn-sm" id="btnDeployFaq" style="display:none; background:#10b981; border-color:#10b981; color:#fff;" title="수정된 FAQ 전체 웹앱 및 깃허브 배포">🚀 배포 적용</button>
+            <button class="action-btn-sm secondary" id="btnExportFaqBackup" style="font-size:11px; padding:3px 8px;" title="전체 FAQ JSON 백업 파일 다운로드">💾 백업</button>
+            <button class="action-btn-sm secondary" id="btnImportFaqBackup" style="font-size:11px; padding:3px 8px;" title="백업 파일에서 복원">📥 복원</button>
+            <input type="file" id="faqBackupFileInput" accept=".json" style="display:none;" />
+          </div>
+        </div>
+        
+        <!-- FAQ 목록 컨테이너 -->
+        <div class="faq-list-container" id="faqListContainer">
+          <div class="text-center py-4" style="color:#94a3b8;">FAQ 지식 목록을 불러오는 중입니다...</div>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -282,14 +307,17 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.153</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.154</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
         </div>
         <div class="setting-item">
           <label>관리자 전용 메뉴:</label>
-          <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%; margin-top:4px;">🔒 관리자 출하 DB 업데이트</button>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+            <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%;">🔒 관리자 출하 DB 업데이트</button>
+            <button class="action-btn-sm primary" id="btnSettingsOpenFaqManager" style="width:100%; background:#6366f1; border-color:#6366f1;">📚 사내 FAQ 지식베이스 관리</button>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -475,16 +503,101 @@
     </div>
   </div>
 
+  <!-- FAQ 등록 및 수정 전용 모달 (사진, PDF, 엑셀, 워드, 영상 최대 30MB 첨부 지원) -->
+  <div class="modal-backdrop" id="faqEditModal">
+    <div class="modal-dialog quotation-dialog-lg" style="max-width:680px;">
+      <div class="modal-header">
+        <h3 id="faqModalTitle">📚 사내 FAQ 지식 등록 / 수정</h3>
+        <button class="close-btn" id="btnCloseFaqEditModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="faqEditIndex" value="-1" />
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">질문 (Question) <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="faqQuestionInput" class="form-input" placeholder="예: 위탁재고(Consignment) 거래 방식과 정산 주기" style="width:100%;" maxlength="150" />
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">카테고리 / 핵심 검색 키워드 (쉼표로 구분)</label>
+          <input type="text" id="faqCategoryInput" class="form-input" placeholder="예: 인코텀즈, 위탁재고, 출하요청, 해외영업" style="width:100%;" />
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">상세 답변 내용 (Answer) <span style="color:#f43f5e;">*</span></label>
+          <textarea id="faqAnswerInput" class="form-input" rows="7" placeholder="상세 업무 절차, 규정, 유의사항 등을 입력하세요. 줄바꿈과 마크다운 형식을 지원합니다." style="width:100%;resize:vertical;"></textarea>
+        </div>
+
+        <!-- 파일 첨부 섹션 (사진, PDF, 엑셀, 워드, 동영상 최대 30MB) -->
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label style="font-size:12px;color:#94a3b8;">📎 첨부 파일 (사진, PDF, 엑셀, 워드, 영상 최대 30MB)</label>
+            <span style="font-size:11px;color:#10b981;" id="faqAttachSizeIndicator">0개 첨부됨 (파일당 최대 30MB)</span>
+          </div>
+          <div class="faq-attach-dropzone" id="faqDropzone">
+            <input type="file" id="faqFileInput" accept="image/*,video/*,.pdf,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.csv" multiple style="display:none;" />
+            <div style="font-size:22px;margin-bottom:4px;">📁</div>
+            <div style="font-size:13px;color:#cbd5e1;">파일을 여기로 끌어다 놓거나 <strong>터치하여 파일 선택</strong></div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">JPG, PNG, PDF, Excel, Word, MP4 등 (파일당 최대 30MB)</div>
+          </div>
+          <div id="faqAttachedList" class="faq-attached-items-container" style="margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnSaveFaqEdit">💾 FAQ 저장</button>
+        <button class="action-btn-sm secondary" id="btnCancelFaqEdit">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ 삭제 확인 모달 -->
+  <div class="modal-backdrop" id="faqDeleteModal">
+    <div class="modal-dialog" style="max-width:380px;">
+      <div class="modal-header">
+        <h3 style="color:#f43f5e;">🗑️ FAQ 삭제 확인</h3>
+        <button class="close-btn" id="btnCloseFaqDeleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="faqDeleteTargetIndex" />
+        <p style="font-size:14px; color:#f8fafc; font-weight:600; margin-bottom:8px;" id="faqDeleteTitlePreview">
+          해당 FAQ 항목을 삭제하시겠습니까?
+        </p>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:0; line-height:1.5;">
+          삭제된 FAQ는 챗봇 질의응답에서도 즉시 제외됩니다. 정말로 삭제하시겠습니까?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm danger" id="btnConfirmDeleteFaq">삭제하기</button>
+        <button class="action-btn-sm secondary" id="btnCancelDeleteFaq">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 미디어 확대 보기 라이트박스 모달 -->
+  <div class="modal-backdrop" id="faqMediaLightboxModal">
+    <div class="modal-dialog" style="max-width:90vw; background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.15);">
+      <div class="modal-header">
+        <h3 id="faqLightboxTitle" style="font-size:14px; color:#e2e8f0;">미디어 미리보기</h3>
+        <button class="close-btn" id="btnCloseFaqLightbox">&times;</button>
+      </div>
+      <div class="modal-body" id="faqLightboxBody" style="text-align:center; padding:15px; max-height:80vh; overflow:auto;">
+        <!-- Image or Video injected dynamically -->
+      </div>
+      <div class="modal-footer">
+        <a id="faqLightboxDownloadBtn" class="action-btn-sm primary" download style="text-decoration:none;">다운로드</a>
+        <button class="action-btn-sm secondary" id="btnCloseFaqLightbox2">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.153"></script>
-  <script src="data/shipplan_data.js?v=1.0.153"></script>
-  <script src="data/quotations_data.js?v=1.0.153"></script>
-  <script src="data/knowledge_data.js?v=1.0.153"></script>
-  <script src="data/feedback_board.js?v=1.0.153"></script>
+  <script src="data/skyworks_data.js?v=1.0.154"></script>
+  <script src="data/shipplan_data.js?v=1.0.154"></script>
+  <script src="data/quotations_data.js?v=1.0.154"></script>
+  <script src="data/knowledge_data.js?v=1.0.154"></script>
+  <script src="data/faq_db.js?v=1.0.154"></script>
+  <script src="data/feedback_board.js?v=1.0.154"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.153"></script>
-  <script src="updater.js?v=1.0.153"></script>
-  <script src="app.js?v=1.0.153"></script>
+  <script src="xlsx.full.min.js?v=1.0.154"></script>
+  <script src="updater.js?v=1.0.154"></script>
+  <script src="app.js?v=1.0.154"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

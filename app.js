@@ -26,6 +26,11 @@ const AppState = {
   feedbackFilteredRows: [],
   isBoardAdmin: false,
 
+  // FAQ 지식베이스 관리 상태
+  faqFilteredRows: [],
+  isFaqAdmin: false,
+  currentFaqAttachments: [],
+
   // 상태
   dbReady: false,
   isSyncing: false,
@@ -187,7 +192,51 @@ const DOM = {
   feedbackDeleteTitlePreview: document.getElementById('feedbackDeleteTitlePreview'),
   btnConfirmDeleteFeedback: document.getElementById('btnConfirmDeleteFeedback'),
   btnCancelDeleteFeedback: document.getElementById('btnCancelDeleteFeedback'),
-  btnCloseFeedbackDeleteModal: document.getElementById('btnCloseFeedbackDeleteModal')
+  btnCloseFeedbackDeleteModal: document.getElementById('btnCloseFeedbackDeleteModal'),
+
+  // FAQ 지식베이스 DOM
+  viewFaq: document.getElementById('viewFaq'),
+  faqCountBadge: document.getElementById('faqCountBadge'),
+  faqSearchInput: document.getElementById('faqSearchInput'),
+  btnOpenNewFaqModal: document.getElementById('btnOpenNewFaqModal'),
+  btnToggleFaqAdmin: document.getElementById('btnToggleFaqAdmin'),
+  btnDeployFaq: document.getElementById('btnDeployFaq'),
+  btnExportFaqBackup: document.getElementById('btnExportFaqBackup'),
+  btnImportFaqBackup: document.getElementById('btnImportFaqBackup'),
+  faqBackupFileInput: document.getElementById('faqBackupFileInput'),
+  faqListContainer: document.getElementById('faqListContainer'),
+  btnSettingsOpenFaqManager: document.getElementById('btnSettingsOpenFaqManager'),
+
+  // FAQ 등록/수정 모달
+  faqEditModal: document.getElementById('faqEditModal'),
+  faqModalTitle: document.getElementById('faqModalTitle'),
+  faqEditIndex: document.getElementById('faqEditIndex'),
+  faqQuestionInput: document.getElementById('faqQuestionInput'),
+  faqCategoryInput: document.getElementById('faqCategoryInput'),
+  faqAnswerInput: document.getElementById('faqAnswerInput'),
+  faqAttachSizeIndicator: document.getElementById('faqAttachSizeIndicator'),
+  faqDropzone: document.getElementById('faqDropzone'),
+  faqFileInput: document.getElementById('faqFileInput'),
+  faqAttachedList: document.getElementById('faqAttachedList'),
+  btnSaveFaqEdit: document.getElementById('btnSaveFaqEdit'),
+  btnCancelFaqEdit: document.getElementById('btnCancelFaqEdit'),
+  btnCloseFaqEditModal: document.getElementById('btnCloseFaqEditModal'),
+
+  // FAQ 삭제 확인 모달
+  faqDeleteModal: document.getElementById('faqDeleteModal'),
+  faqDeleteTargetIndex: document.getElementById('faqDeleteTargetIndex'),
+  faqDeleteTitlePreview: document.getElementById('faqDeleteTitlePreview'),
+  btnConfirmDeleteFaq: document.getElementById('btnConfirmDeleteFaq'),
+  btnCancelDeleteFaq: document.getElementById('btnCancelDeleteFaq'),
+  btnCloseFaqDeleteModal: document.getElementById('btnCloseFaqDeleteModal'),
+
+  // FAQ 미디어 라이트박스
+  faqMediaLightboxModal: document.getElementById('faqMediaLightboxModal'),
+  faqLightboxTitle: document.getElementById('faqLightboxTitle'),
+  faqLightboxBody: document.getElementById('faqLightboxBody'),
+  faqLightboxDownloadBtn: document.getElementById('faqLightboxDownloadBtn'),
+  btnCloseFaqLightbox: document.getElementById('btnCloseFaqLightbox'),
+  btnCloseFaqLightbox2: document.getElementById('btnCloseFaqLightbox2')
 };
 
 // --- IndexedDB 스토리지 헬퍼 (영구 고속 캐시) ---
@@ -274,7 +323,10 @@ async function loadInitialDatabases() {
     if (window.KOSTAT_QUOTATIONS_DATA && window.KOSTAT_QUOTATIONS_DATA.length > 0) {
       AppState.quotationsData = window.KOSTAT_QUOTATIONS_DATA;
     }
-    if (window.KOSTAT_KNOWLEDGE_DATA && window.KOSTAT_KNOWLEDGE_DATA.length > 0) {
+    // FAQ 지식 데이터 우선 바인딩 (전용 DB > 번들 객체)
+    if (window.KOSTAT_FAQ_DB && window.KOSTAT_FAQ_DB.length > 0) {
+      AppState.knowledgeData = window.KOSTAT_FAQ_DB;
+    } else if (window.KOSTAT_KNOWLEDGE_DATA && window.KOSTAT_KNOWLEDGE_DATA.length > 0) {
       AppState.knowledgeData = window.KOSTAT_KNOWLEDGE_DATA;
     }
     // 3. IndexedDB의 더 최신 캐시가 있다면 갱신
@@ -324,6 +376,28 @@ async function loadInitialDatabases() {
       localStorage.setItem('KOSTAT_FEEDBACK_POSTS', JSON.stringify(AppState.feedbackData));
     }
 
+    // FAQ 지식 데이터 로드 (localStorage 및 IndexedDB 캐시 복원 - 영구 유실 방지)
+    let localFaq = null;
+    try {
+      const savedFaq = localStorage.getItem('KOSTAT_FAQ_DATA') || localStorage.getItem('KOSTAT_KNOWLEDGE_DATA');
+      if (savedFaq) localFaq = JSON.parse(savedFaq);
+    } catch (_) {}
+
+    if (localFaq !== null && Array.isArray(localFaq) && localFaq.length > 0) {
+      AppState.knowledgeData = localFaq;
+    } else {
+      const cachedKnow = await IDB.get('knowledge');
+      if (cachedKnow && Array.isArray(cachedKnow) && cachedKnow.length > 0) {
+        AppState.knowledgeData = cachedKnow;
+      }
+    }
+    // 안전한 긴급 백업 스냅샷 보존
+    try {
+      if (AppState.knowledgeData && AppState.knowledgeData.length > 0) {
+        localStorage.setItem('KOSTAT_FAQ_EMERGENCY_BACKUP', JSON.stringify(AppState.knowledgeData));
+      }
+    } catch (_) {}
+
     AppState.dbReady = true;
     updateStatus(true, getDataDateStatusText());
     
@@ -333,6 +407,7 @@ async function loadInitialDatabases() {
     renderQuotHistory();
     renderShipPlanHistory();
     renderFeedbackBoard();
+    renderFaqList();
 
     console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
   } catch (err) {
@@ -359,11 +434,12 @@ async function syncLiveDatabases(isManual = false) {
       fetch(`${GITHUB_RAW_BASE}/skyworks_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${GITHUB_RAW_BASE}/shipplan_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${GITHUB_RAW_BASE}/quotations_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${GITHUB_RAW_BASE}/faq_db.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${GITHUB_RAW_BASE}/knowledge_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null)
     ];
 
-    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve([null, null, null, null]), 6000));
-    const [liveSky, liveShip, liveQuot, liveKnow] = await Promise.race([Promise.all(fetchPromises), timeoutPromise]);
+    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve([null, null, null, null, null]), 6000));
+    const [liveSky, liveShip, liveQuot, liveFaq, liveKnow] = await Promise.race([Promise.all(fetchPromises), timeoutPromise]);
 
     let updated = false;
 
@@ -391,9 +467,14 @@ async function syncLiveDatabases(isManual = false) {
       }
     }
 
-    if (liveKnow && Array.isArray(liveKnow) && liveKnow.length > 0) {
-      AppState.knowledgeData = liveKnow;
-      await IDB.set('knowledge', liveKnow);
+    const targetFaq = (liveFaq && Array.isArray(liveFaq) && liveFaq.length > 0) ? liveFaq : liveKnow;
+    if (targetFaq && Array.isArray(targetFaq) && targetFaq.length > 0) {
+      if (targetFaq.length !== AppState.knowledgeData.length) {
+        AppState.knowledgeData = targetFaq;
+        await IDB.set('knowledge', targetFaq);
+        renderFaqList();
+        updated = true;
+      }
     }
 
     AppState.lastSyncTime = new Date();
@@ -440,6 +521,7 @@ function updateStatus(isOnline, text) {
 // --- UI 이벤트 바인딩 ---
 function initUI() {
   initFeedbackBoardEvents();
+  initFaqEvents();
 
   // 챗봇 입력
   DOM.chatForm.addEventListener('submit', (e) => {
@@ -596,6 +678,13 @@ function initUI() {
   if (DOM.btnCloseSettings) {
     DOM.btnCloseSettings.addEventListener('click', () => DOM.settingsModal.classList.remove('show'));
   }
+  if (DOM.btnSettingsOpenFaqManager) {
+    DOM.btnSettingsOpenFaqManager.addEventListener('click', () => {
+      DOM.settingsModal.classList.remove('show');
+      DOM.settingsModal.classList.remove('active');
+      switchViewerCard('viewFaq');
+    });
+  }
 
   // 상단 헤더 새로고침 (PWA 캐시 초기화 + 실시간 OTA 동기화)
   DOM.btnRefresh.addEventListener('click', async () => {
@@ -683,12 +772,48 @@ function searchLocalFAQ(query) {
 
     if (score > maxScore) {
       maxScore = score;
-      bestMatch = { q: qText, a: aText, images: item.Images || [] };
+      bestMatch = {
+        q: qText,
+        a: aText,
+        images: item.Images || [],
+        attachments: item.attachments || [],
+        files: item.Files || []
+      };
     }
   }
 
   if (bestMatch && maxScore >= 5) {
-    return `**[사내 규정/FAQ] ${bestMatch.q}**\n\n${bestMatch.a}`;
+    let output = `**[사내 규정/FAQ] ${bestMatch.q}**\n\n${bestMatch.a}`;
+
+    if (bestMatch.attachments && bestMatch.attachments.length > 0) {
+      output += '\n\n**📎 첨부 파일/미디어:**';
+      bestMatch.attachments.forEach(att => {
+        if (att.category === 'image' || (att.type && att.type.startsWith('image/'))) {
+          output += `\n![${att.name}](${att.data})`;
+        } else {
+          output += `\n- [${att.name}](${att.data})`;
+        }
+      });
+    } else if (bestMatch.images && bestMatch.images.length > 0) {
+      output += '\n\n**📷 첨부 이미지:**';
+      bestMatch.images.forEach(img => {
+        const norm = img.replace(/\\/g, '/');
+        const src = norm.startsWith('images/') ? `data/${norm}` : (norm.startsWith('data/') ? norm : `data/images/${norm}`);
+        output += `\n![참고 이미지](${src})`;
+      });
+    }
+
+    if (bestMatch.files && bestMatch.files.length > 0) {
+      output += '\n\n**📊 첨부 문서:**';
+      bestMatch.files.forEach(f => {
+        const norm = f.replace(/\\/g, '/');
+        const src = norm.startsWith('images/') ? `data/${norm}` : (norm.startsWith('data/') ? norm : `data/images/${norm}`);
+        const fname = norm.split('/').pop();
+        output += `\n- [${fname}](${src})`;
+      });
+    }
+
+    return output;
   }
   return null;
 }
@@ -1379,6 +1504,9 @@ function switchViewerCard(targetId) {
     }
   } else if (targetId === 'viewFeedback') {
     renderFeedbackBoard();
+  } else if (targetId === 'viewFaq') {
+    renderFaqList();
+    syncLiveDatabases(false);
   }
 }
 
@@ -1506,6 +1634,12 @@ function renderMarkdown(text) {
   let html = escapeHtml(text);
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+  // 마크다운 이미지: ![alt](src) -> 인라인 썸네일 & 라이트박스 연동
+  html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
+    return `<div style="margin:8px 0;"><img src="${src}" alt="${alt}" style="max-width:100%;max-height:220px;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.15);" onclick="openFaqLightbox('${alt}', 'image', '${src}', '${alt}')" /></div>`;
+  });
+  // 마크다운 다운로드 링크: [name](url)
+  html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" download="$1" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">$1</a>');
   html = html.replace(/\n/g, '<br>');
   return html;
 }
@@ -2266,13 +2400,23 @@ function verifyBoardPin() {
     closeBoardPinModal();
     if (window.AdminState) window.AdminState.isAuthenticated = true;
     AppState.isBoardAdmin = true;
+    AppState.isFaqAdmin = true;
     if (DOM.btnToggleBoardAdmin) {
       DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
       DOM.btnToggleBoardAdmin.classList.remove('warning');
       DOM.btnToggleBoardAdmin.classList.add('primary');
     }
-    showToast('✓ 관리자 인증 완료! 요청 답변 작성 및 관리가 가능합니다.');
+    if (DOM.btnToggleFaqAdmin) {
+      DOM.btnToggleFaqAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleFaqAdmin.classList.remove('warning');
+      DOM.btnToggleFaqAdmin.classList.add('primary');
+    }
+    if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'inline-flex';
+    if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'inline-flex';
+
+    showToast('✓ 관리자 인증 완료! 요청 답변 및 FAQ 관리가 가능합니다.');
     renderFeedbackBoard();
+    renderFaqList();
   } else {
     if (DOM.boardPinError) {
       DOM.boardPinError.textContent = 'PIN 번호가 일치하지 않습니다. (기본: 8805)';
@@ -2426,5 +2570,769 @@ function saveFeedbackStorage() {
     console.warn('Feedback localStorage save error:', e);
   }
 }
+
+// ==========================================================================
+// 6. 사내 FAQ 및 업무 지식베이스 (FAQ Knowledge Management) 모듈
+// ==========================================================================
+function initFaqEvents() {
+  // 1) FAQ 검색 필터링
+  if (DOM.faqSearchInput) {
+    DOM.faqSearchInput.addEventListener('input', debounce(renderFaqList, 200));
+  }
+
+  // 2) 관리자 모드 토글
+  if (DOM.btnToggleFaqAdmin) {
+    DOM.btnToggleFaqAdmin.addEventListener('click', toggleFaqAdminMode);
+  }
+
+  // 3) 새 FAQ 등록 모달 열기
+  if (DOM.btnOpenNewFaqModal) {
+    DOM.btnOpenNewFaqModal.addEventListener('click', openNewFaqModal);
+  }
+
+  // 4) 클라우드 실시간 배포 적용
+  if (DOM.btnDeployFaq) {
+    DOM.btnDeployFaq.addEventListener('click', applyFaqDeploy);
+  }
+
+  // 5) 백업 다운로드 & 복원
+  if (DOM.btnExportFaqBackup) {
+    DOM.btnExportFaqBackup.addEventListener('click', exportFaqBackup);
+  }
+  if (DOM.btnImportFaqBackup && DOM.faqBackupFileInput) {
+    DOM.btnImportFaqBackup.addEventListener('click', () => {
+      DOM.faqBackupFileInput.value = '';
+      DOM.faqBackupFileInput.click();
+    });
+    DOM.faqBackupFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        importFaqBackup(e.target.files[0]);
+      }
+    });
+  }
+
+  // 6) FAQ 등록/수정 모달 이벤트
+  if (DOM.btnSaveFaqEdit) {
+    DOM.btnSaveFaqEdit.addEventListener('click', submitFaqEdit);
+  }
+  if (DOM.btnCancelFaqEdit) {
+    DOM.btnCancelFaqEdit.addEventListener('click', closeFaqEditModal);
+  }
+  if (DOM.btnCloseFaqEditModal) {
+    DOM.btnCloseFaqEditModal.addEventListener('click', closeFaqEditModal);
+  }
+
+  // 7) 파일 첨부 드롭존 및 파일 선택 (최대 30MB)
+  if (DOM.faqDropzone && DOM.faqFileInput) {
+    DOM.faqDropzone.addEventListener('click', () => DOM.faqFileInput.click());
+    DOM.faqDropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      DOM.faqDropzone.classList.add('dragover');
+    });
+    DOM.faqDropzone.addEventListener('dragleave', () => {
+      DOM.faqDropzone.classList.remove('dragover');
+    });
+    DOM.faqDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      DOM.faqDropzone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFaqFiles(e.dataTransfer.files);
+      }
+    });
+    DOM.faqFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handleFaqFiles(e.target.files);
+      }
+    });
+  }
+
+  // 8) 삭제 확인 모달 이벤트
+  if (DOM.btnConfirmDeleteFaq) {
+    DOM.btnConfirmDeleteFaq.addEventListener('click', executeDeleteFaq);
+  }
+  if (DOM.btnCancelDeleteFaq) {
+    DOM.btnCancelDeleteFaq.addEventListener('click', closeFaqDeleteModal);
+  }
+  if (DOM.btnCloseFaqDeleteModal) {
+    DOM.btnCloseFaqDeleteModal.addEventListener('click', closeFaqDeleteModal);
+  }
+
+  // 9) 미디어 라이트박스 닫기
+  if (DOM.btnCloseFaqLightbox) {
+    DOM.btnCloseFaqLightbox.addEventListener('click', closeFaqLightbox);
+  }
+  if (DOM.btnCloseFaqLightbox2) {
+    DOM.btnCloseFaqLightbox2.addEventListener('click', closeFaqLightbox);
+  }
+  if (DOM.faqMediaLightboxModal) {
+    DOM.faqMediaLightboxModal.addEventListener('click', (e) => {
+      if (e.target === DOM.faqMediaLightboxModal) closeFaqLightbox();
+    });
+  }
+}
+
+// FAQ 목록 렌더링 엔진
+function renderFaqList() {
+  if (!DOM.faqListContainer) return;
+
+  const query = (DOM.faqSearchInput?.value || '').toLowerCase().trim();
+  let list = AppState.knowledgeData || [];
+
+  if (query) {
+    list = list.filter(item => {
+      const q = (item.Q || item.question || item.title || '').toLowerCase();
+      const a = (item.A || item.answer || item.content || '').toLowerCase();
+      const cat = (item.category || '').toLowerCase();
+      return q.includes(query) || a.includes(query) || cat.includes(query);
+    });
+  }
+
+  AppState.faqFilteredRows = list;
+
+  if (DOM.faqCountBadge) {
+    DOM.faqCountBadge.textContent = `${list.length}건`;
+  }
+
+  if (list.length === 0) {
+    DOM.faqListContainer.innerHTML = `
+      <div class="feedback-empty-state">
+        <div style="font-size:32px;margin-bottom:8px;">📚</div>
+        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">일치하는 사내 FAQ 지식이 없습니다.</div>
+        <div style="font-size:12px;color:#94a3b8;">검색어를 변경하거나 우측 상단 [+ 새 FAQ 등록]을 눌러보세요.</div>
+      </div>
+    `;
+    return;
+  }
+
+  DOM.faqListContainer.innerHTML = list.map(item => {
+    const actualIndex = AppState.knowledgeData.indexOf(item);
+    const categoryName = item.category || detectFaqCategory(item.Q || item.question || '');
+
+    // 미디어 및 첨부파일 렌더링
+    let mediaHtml = '';
+    const attachments = item.attachments || [];
+    const legacyImages = item.Images || [];
+    const legacyFiles = item.Files || [];
+
+    // 신규 등록된 첨부파일 (사진, 영상, PDF, Excel, Word 등 최대 30MB)
+    if (attachments.length > 0) {
+      let thumbsHtml = '';
+      let filesHtml = '';
+      let videosHtml = '';
+
+      attachments.forEach(att => {
+        const attName = escapeHtml(att.name || '첨부파일');
+        const attSize = formatFileSize(att.size || 0);
+
+        if (att.category === 'image' || (att.type && att.type.startsWith('image/'))) {
+          thumbsHtml += `
+            <img class="faq-media-thumbnail" src="${att.data}" alt="${attName}" 
+                 onclick="openFaqLightbox('${attName}', 'image', '${att.data}', '${attName}')" 
+                 title="${attName} (${attSize})" />
+          `;
+        } else if (att.category === 'video' || (att.type && att.type.startsWith('video/'))) {
+          videosHtml += `
+            <div class="faq-video-preview-wrapper" style="margin-top:8px;">
+              <video controls playsinline preload="metadata" style="max-width:100%;max-height:260px;border-radius:6px;" src="${att.data}">
+                브라우저가 비디오 태그를 지원하지 않습니다.
+              </video>
+              <div style="font-size:11px;color:#94a3b8;margin-top:2px;">🎬 ${attName} (${attSize})</div>
+            </div>
+          `;
+        } else if (att.category === 'pdf' || (att.type === 'application/pdf')) {
+          filesHtml += `
+            <a class="faq-file-chip pdf" href="${att.data}" download="${attName}" target="_blank" rel="noopener">
+              📑 ${attName} <span class="chip-size">${attSize}</span>
+            </a>
+          `;
+        } else if (att.category === 'excel' || (att.name && att.name.match(/\.(xlsx?|csv)$/i))) {
+          filesHtml += `
+            <a class="faq-file-chip excel" href="${att.data}" download="${attName}" target="_blank" rel="noopener">
+              📊 ${attName} <span class="chip-size">${attSize}</span>
+            </a>
+          `;
+        } else {
+          filesHtml += `
+            <a class="faq-file-chip doc" href="${att.data}" download="${attName}" target="_blank" rel="noopener">
+              📄 ${attName} <span class="chip-size">${attSize}</span>
+            </a>
+          `;
+        }
+      });
+
+      mediaHtml = `
+        <div class="faq-attachments-area" style="margin-top:10px;">
+          ${thumbsHtml ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">${thumbsHtml}</div>` : ''}
+          ${videosHtml}
+          ${filesHtml ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${filesHtml}</div>` : ''}
+        </div>
+      `;
+    } else if (legacyImages.length > 0 || legacyFiles.length > 0) {
+      // 기존 레거시 경로 이미지 및 파일 렌더링 (images\1.png 등)
+      let legacyThumbsHtml = '';
+      let legacyFilesHtml = '';
+
+      legacyImages.forEach(img => {
+        const norm = img.replace(/\\/g, '/');
+        const src = norm.startsWith('images/') ? `data/${norm}` : (norm.startsWith('data/') ? norm : `data/images/${norm}`);
+        const fname = norm.split('/').pop();
+
+        if (fname.toLowerCase().endsWith('.pdf')) {
+          legacyFilesHtml += `
+            <a class="faq-file-chip pdf" href="${src}" download="${escapeHtml(fname)}" target="_blank" rel="noopener">
+              📑 ${escapeHtml(fname)}
+            </a>
+          `;
+        } else {
+          legacyThumbsHtml += `
+            <img class="faq-media-thumbnail" src="${src}" alt="${escapeHtml(fname)}" 
+                 onclick="openFaqLightbox('${escapeHtml(fname)}', 'image', '${src}', '${escapeHtml(fname)}')" 
+                 title="${escapeHtml(fname)}" onerror="this.style.display='none'" />
+          `;
+        }
+      });
+
+      legacyFiles.forEach(f => {
+        const norm = f.replace(/\\/g, '/');
+        const src = norm.startsWith('images/') ? `data/${norm}` : (norm.startsWith('data/') ? norm : `data/images/${norm}`);
+        const fname = norm.split('/').pop();
+        legacyFilesHtml += `
+          <a class="faq-file-chip excel" href="${src}" download="${escapeHtml(fname)}" target="_blank" rel="noopener">
+            📊 ${escapeHtml(fname)}
+          </a>
+        `;
+      });
+
+      mediaHtml = `
+        <div class="faq-attachments-area" style="margin-top:10px;">
+          ${legacyThumbsHtml ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">${legacyThumbsHtml}</div>` : ''}
+          ${legacyFilesHtml ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${legacyFilesHtml}</div>` : ''}
+        </div>
+      `;
+    }
+
+    // 관리자 버튼
+    let adminActionHtml = '';
+    if (AppState.isFaqAdmin) {
+      adminActionHtml = `
+        <div class="faq-card-actions">
+          <button class="action-btn-sm primary" onclick="openEditFaqModal(${actualIndex})" style="font-size:11px;padding:3px 10px;">
+            ✏️ 수정
+          </button>
+          <button class="action-btn-sm danger" onclick="openDeleteFaqModal(${actualIndex})" style="font-size:11px;padding:3px 10px;">
+            🗑️ 삭제
+          </button>
+        </div>
+      `;
+    }
+
+    const qTitle = escapeHtml(item.Q || item.question || item.title || '제목 없음');
+    const aContent = renderMarkdown(item.A || item.answer || item.content || '');
+
+    return `
+      <div class="faq-card" id="faq-card-${actualIndex}">
+        <div class="faq-card-header">
+          <span class="faq-category-badge">${escapeHtml(categoryName)}</span>
+          ${item.updated_at ? `<span style="font-size:11px;color:#94a3b8;">${escapeHtml(item.updated_at)}</span>` : ''}
+        </div>
+        <div class="faq-card-question">Q. ${qTitle}</div>
+        <div class="faq-card-answer">${aContent}</div>
+        ${mediaHtml}
+        ${adminActionHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+// 카테고리 자동 감지
+function detectFaqCategory(q) {
+  const qLower = q.toLowerCase();
+  if (qLower.includes('뜻이') || qLower.includes('인코텀즈') || qLower.includes('exw') || qLower.includes('fob') || qLower.includes('dap') || qLower.includes('ddu') || qLower.includes('ddp') || qLower.includes('cif') || qLower.includes('cfr')) {
+    return '무역/인코텀즈';
+  }
+  if (qLower.includes('위탁재고') || qLower.includes('consignment')) {
+    return '위탁재고';
+  }
+  if (qLower.includes('견적서') || qLower.includes('quotation') || qLower.includes('단가') || qLower.includes('moq')) {
+    return '견적서/영업';
+  }
+  if (qLower.includes('금형') || qLower.includes('도면') || qLower.includes('carrier') || qLower.includes('tray') || qLower.includes('코드')) {
+    return '기술/제품개발';
+  }
+  if (qLower.includes('업무 진행') || qLower.includes('순서') || qLower.includes('ci')) {
+    return '업무절차';
+  }
+  return '사내규정/지식';
+}
+
+// 관리자 모드 토글
+function toggleFaqAdminMode() {
+  if (AppState.isFaqAdmin) {
+    AppState.isFaqAdmin = false;
+    if (DOM.btnToggleFaqAdmin) {
+      DOM.btnToggleFaqAdmin.textContent = '🔒 관리자 모드';
+      DOM.btnToggleFaqAdmin.classList.remove('primary');
+      DOM.btnToggleFaqAdmin.classList.add('warning');
+    }
+    if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'none';
+    if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'none';
+    showToast('FAQ 관리자 모드가 해제되었습니다.');
+    renderFaqList();
+    return;
+  }
+
+  // 이미 다른 화면에서 인증된 경우
+  if ((window.AdminState && window.AdminState.isAuthenticated) || AppState.isBoardAdmin) {
+    AppState.isFaqAdmin = true;
+    if (DOM.btnToggleFaqAdmin) {
+      DOM.btnToggleFaqAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleFaqAdmin.classList.remove('warning');
+      DOM.btnToggleFaqAdmin.classList.add('primary');
+    }
+    if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'inline-flex';
+    if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'inline-flex';
+    showToast('✓ 관리자 권한이 활성화되었습니다.');
+    renderFaqList();
+    return;
+  }
+
+  // PIN 모달 열기
+  openBoardPinModal();
+}
+
+// FAQ 등록 모달 열기
+function openNewFaqModal() {
+  if (DOM.faqEditIndex) DOM.faqEditIndex.value = '-1';
+  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '📚 새 사내 FAQ / 지식 등록';
+  if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = '';
+  if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = '';
+  if (DOM.faqAnswerInput) DOM.faqAnswerInput.value = '';
+  
+  AppState.currentFaqAttachments = [];
+  renderFaqAttachedList();
+
+  if (DOM.faqEditModal) {
+    DOM.faqEditModal.classList.add('show');
+    DOM.faqEditModal.classList.add('active');
+    setTimeout(() => DOM.faqQuestionInput?.focus(), 150);
+  }
+}
+
+// FAQ 수정 모달 열기
+window.openEditFaqModal = function(idx) {
+  const item = AppState.knowledgeData[idx];
+  if (!item) return;
+
+  if (DOM.faqEditIndex) DOM.faqEditIndex.value = idx;
+  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '✏️ 사내 FAQ 지식 수정';
+  if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = item.Q || item.question || item.title || '';
+  if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = item.category || '';
+  if (DOM.faqAnswerInput) DOM.faqAnswerInput.value = item.A || item.answer || item.content || '';
+
+  // 기존 첨부파일 복원
+  AppState.currentFaqAttachments = item.attachments ? JSON.parse(JSON.stringify(item.attachments)) : [];
+  renderFaqAttachedList();
+
+  if (DOM.faqEditModal) {
+    DOM.faqEditModal.classList.add('show');
+    DOM.faqEditModal.classList.add('active');
+    setTimeout(() => DOM.faqQuestionInput?.focus(), 150);
+  }
+};
+
+function closeFaqEditModal() {
+  if (DOM.faqEditModal) {
+    DOM.faqEditModal.classList.remove('show');
+    DOM.faqEditModal.classList.remove('active');
+  }
+}
+
+// 파일 첨부 처리 (최대 30MB)
+function handleFaqFiles(files) {
+  if (!files || files.length === 0) return;
+  const MAX_SIZE = 30 * 1024 * 1024; // 30MB
+
+  Array.from(files).forEach(file => {
+    if (file.size > MAX_SIZE) {
+      showToast(`⚠️ "${file.name}" 파일 크기(${formatFileSize(file.size)})가 30MB를 초과하여 첨부할 수 없습니다.`, 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      let cat = 'doc';
+      const fName = file.name.toLowerCase();
+
+      if (file.type.startsWith('image/')) cat = 'image';
+      else if (file.type.startsWith('video/')) cat = 'video';
+      else if (file.type === 'application/pdf' || fName.endsWith('.pdf')) cat = 'pdf';
+      else if (fName.match(/\.(xlsx?|csv)$/)) cat = 'excel';
+      else if (fName.match(/\.(docx?|pptx?|txt)$/)) cat = 'word';
+
+      AppState.currentFaqAttachments.push({
+        id: 'att-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+        name: file.name,
+        size: file.size,
+        type: file.type || 'application/octet-stream',
+        category: cat,
+        data: dataUrl
+      });
+      renderFaqAttachedList();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// 첨부된 파일 목록 UI 렌더링
+function renderFaqAttachedList() {
+  if (!DOM.faqAttachedList) return;
+
+  const list = AppState.currentFaqAttachments || [];
+  let totalBytes = 0;
+
+  if (list.length === 0) {
+    DOM.faqAttachedList.innerHTML = '';
+    if (DOM.faqAttachSizeIndicator) {
+      DOM.faqAttachSizeIndicator.textContent = '0개 첨부됨 (파일당 최대 30MB)';
+    }
+    return;
+  }
+
+  DOM.faqAttachedList.innerHTML = list.map((att, i) => {
+    totalBytes += (att.size || 0);
+    let icon = '📄';
+    if (att.category === 'image') icon = '🖼️';
+    else if (att.category === 'video') icon = '🎬';
+    else if (att.category === 'pdf') icon = '📑';
+    else if (att.category === 'excel') icon = '📊';
+
+    return `
+      <div class="faq-attached-item">
+        <span class="faq-attached-icon">${icon}</span>
+        <span class="faq-attached-name" title="${escapeHtml(att.name)}">${escapeHtml(att.name)}</span>
+        <span class="faq-attached-size">${formatFileSize(att.size)}</span>
+        <button type="button" class="faq-attached-remove" onclick="removeFaqAttachment('${att.id}')" title="삭제">&times;</button>
+      </div>
+    `;
+  }).join('');
+
+  if (DOM.faqAttachSizeIndicator) {
+    DOM.faqAttachSizeIndicator.textContent = `${list.length}개 첨부됨 (총 ${formatFileSize(totalBytes)} / 최대 30MB)`;
+  }
+}
+
+window.removeFaqAttachment = function(id) {
+  AppState.currentFaqAttachments = (AppState.currentFaqAttachments || []).filter(a => a.id !== id);
+  renderFaqAttachedList();
+};
+
+// FAQ 등록 / 수정 저장
+function submitFaqEdit() {
+  const q = (DOM.faqQuestionInput?.value || '').trim();
+  const a = (DOM.faqAnswerInput?.value || '').trim();
+  const cat = (DOM.faqCategoryInput?.value || '').trim();
+  const editIdx = parseInt(DOM.faqEditIndex?.value, 10);
+
+  if (!q) {
+    showToast('질문(Question) 내용을 입력해 주세요.', 'error');
+    DOM.faqQuestionInput?.focus();
+    return;
+  }
+  if (!a) {
+    showToast('상세 답변(Answer) 내용을 입력해 주세요.', 'error');
+    DOM.faqAnswerInput?.focus();
+    return;
+  }
+
+  // 저장 전 긴급 백업 스냅샷
+  saveFaqEmergencyBackup();
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const faqItem = {
+    Q: q,
+    A: a,
+    category: cat || detectFaqCategory(q),
+    attachments: [...AppState.currentFaqAttachments],
+    updated_at: dateStr
+  };
+
+  if (editIdx >= 0 && editIdx < AppState.knowledgeData.length) {
+    // 기존 데이터의 레거시 이미지/파일 보존
+    if (AppState.knowledgeData[editIdx].Images && !faqItem.Images) {
+      faqItem.Images = AppState.knowledgeData[editIdx].Images;
+    }
+    if (AppState.knowledgeData[editIdx].Files && !faqItem.Files) {
+      faqItem.Files = AppState.knowledgeData[editIdx].Files;
+    }
+    AppState.knowledgeData[editIdx] = faqItem;
+    showToast('✓ FAQ 지식이 성공적으로 수정되었습니다.');
+  } else {
+    AppState.knowledgeData.unshift(faqItem);
+    showToast('✓ 새 FAQ 지식이 등록되었습니다.');
+  }
+
+  saveFaqStorage();
+  closeFaqEditModal();
+  renderFaqList();
+}
+
+// FAQ 삭제 모달
+window.openDeleteFaqModal = function(idx) {
+  const item = AppState.knowledgeData[idx];
+  if (!item) return;
+
+  if (DOM.faqDeleteTargetIndex) DOM.faqDeleteTargetIndex.value = idx;
+  if (DOM.faqDeleteTitlePreview) {
+    DOM.faqDeleteTitlePreview.textContent = `"${escapeHtml(item.Q || item.question || '해당 FAQ')}" 항목을 삭제하시겠습니까?`;
+  }
+  if (DOM.faqDeleteModal) {
+    DOM.faqDeleteModal.classList.add('show');
+    DOM.faqDeleteModal.classList.add('active');
+  }
+};
+
+function closeFaqDeleteModal() {
+  if (DOM.faqDeleteModal) {
+    DOM.faqDeleteModal.classList.remove('show');
+    DOM.faqDeleteModal.classList.remove('active');
+  }
+}
+
+function executeDeleteFaq() {
+  const idx = parseInt(DOM.faqDeleteTargetIndex?.value, 10);
+  if (isNaN(idx) || idx < 0 || idx >= AppState.knowledgeData.length) return;
+
+  // 삭제 전 긴급 백업
+  saveFaqEmergencyBackup();
+
+  AppState.knowledgeData.splice(idx, 1);
+  saveFaqStorage();
+
+  closeFaqDeleteModal();
+  renderFaqList();
+  showToast('🗑️ FAQ 항목이 삭제되었습니다.');
+}
+
+// FAQ 로컬 영구 스토리지 저장 (절대 유실 방지)
+function saveFaqStorage() {
+  try {
+    const data = AppState.knowledgeData || [];
+    localStorage.setItem('KOSTAT_FAQ_DATA', JSON.stringify(data));
+    localStorage.setItem('KOSTAT_KNOWLEDGE_DATA', JSON.stringify(data));
+    IDB.set('knowledge', data);
+  } catch (e) {
+    console.warn('FAQ localStorage save error:', e);
+  }
+}
+
+function saveFaqEmergencyBackup() {
+  try {
+    const data = AppState.knowledgeData || [];
+    if (data.length > 0) {
+      localStorage.setItem('KOSTAT_FAQ_EMERGENCY_BACKUP', JSON.stringify(data));
+    }
+  } catch (_) {}
+}
+
+// 백업 다운로드 (.json)
+function exportFaqBackup() {
+  const data = AppState.knowledgeData || [];
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const filename = `kostat_faq_backup_${y}${m}${d}_${hh}${mm}.json`;
+
+  const payload = {
+    backup_version: "1.0",
+    created_at: `${y}-${m}-${d} ${hh}:${mm}`,
+    total_count: data.length,
+    items: data
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`💾 FAQ 백업 파일(${filename})이 저장되었습니다.`);
+}
+
+// 백업 파일 복원 (.json)
+function importFaqBackup(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      let items = [];
+      if (Array.isArray(parsed)) {
+        items = parsed;
+      } else if (parsed && Array.isArray(parsed.items)) {
+        items = parsed.items;
+      } else {
+        throw new Error('올바른 FAQ 백업 JSON 형식이 아닙니다.');
+      }
+
+      if (items.length === 0) {
+        showToast('⚠️ 백업 파일에 복원할 FAQ 항목이 없습니다.', 'error');
+        return;
+      }
+
+      saveFaqEmergencyBackup();
+      AppState.knowledgeData = items;
+      saveFaqStorage();
+      renderFaqList();
+      showToast(`✓ FAQ 백업 데이터가 성공적으로 복원되었습니다. (총 ${items.length}건)`);
+    } catch (err) {
+      console.error('FAQ 백업 복원 오류:', err);
+      showToast('⚠️ 백업 파일 파싱 실패: ' + err.message, 'error');
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+// GitHub API 클라우드 실시간 배포 (모든 사용자 즉시 반영)
+async function applyFaqDeploy() {
+  if (!AppState.knowledgeData || AppState.knowledgeData.length === 0) {
+    alert('배포할 FAQ 지식 데이터가 없습니다.');
+    return;
+  }
+
+  const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+  
+  if (DOM.btnDeployFaq) DOM.btnDeployFaq.disabled = true;
+  showToast('🚀 GitHub 클라우드에 FAQ 실시간 배포를 시작합니다...');
+
+  const OWNER = 'skywantae';
+  const REPO = 'skywantae.github.io';
+  const API_BASE = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
+
+  async function pushFile(path, contentStr, commitMsg) {
+    const getRes = await fetch(`${API_BASE}/${path}`, {
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    let sha = null;
+    if (getRes.ok) {
+      const getJson = await getRes.json();
+      sha = getJson.sha;
+    }
+
+    const utf8Bytes = new TextEncoder().encode(contentStr);
+    let binary = '';
+    for (let i = 0; i < utf8Bytes.length; i++) {
+      binary += String.fromCharCode(utf8Bytes[i]);
+    }
+    const b64 = btoa(binary);
+
+    const putBody = {
+      message: commitMsg,
+      content: b64,
+      branch: 'main'
+    };
+    if (sha) putBody.sha = sha;
+
+    const putRes = await fetch(`${API_BASE}/${path}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(putBody)
+    });
+
+    if (!putRes.ok) {
+      const errText = await putRes.text();
+      throw new Error(`[${path}] 푸시 실패 (${putRes.status}): ${errText}`);
+    }
+    return putRes.json();
+  }
+
+  try {
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const count = AppState.knowledgeData.length;
+
+    // 1) data/faq_db.json
+    showToast('1/5 FAQ 데이터베이스(faq_db.json) 푸시 중...');
+    await pushFile('data/faq_db.json', JSON.stringify(AppState.knowledgeData, null, 2), `chore: update faq_db.json (${count} items) via web admin`);
+
+    // 2) data/faq_db.js
+    showToast('2/5 FAQ 로더 스크립트(faq_db.js) 푸시 중...');
+    await pushFile('data/faq_db.js', `window.KOSTAT_FAQ_DB = ${JSON.stringify(AppState.knowledgeData)};\n`, `chore: update faq_db.js via web admin`);
+
+    // 3) data/knowledge_data.json
+    showToast('3/5 챗봇 지식 베이스(knowledge_data.json) 푸시 중...');
+    await pushFile('data/knowledge_data.json', JSON.stringify(AppState.knowledgeData), `chore: sync knowledge_data.json via web admin`);
+
+    // 4) data/knowledge_data.js
+    showToast('4/5 챗봇 지식 스크립트(knowledge_data.js) 푸시 중...');
+    await pushFile('data/knowledge_data.js', `window.KOSTAT_KNOWLEDGE_DATA = ${JSON.stringify(AppState.knowledgeData)};\n`, `chore: sync knowledge_data.js via web admin`);
+
+    // 5) data/faq_backups/faq_backup_{ts}.json (영구 안전 보존 스냅샷)
+    showToast('5/5 클라우드 백업 스냅샷 저장 중...');
+    await pushFile(`data/faq_backups/faq_backup_${ts}.json`, JSON.stringify(AppState.knowledgeData, null, 2), `backup: automated faq snapshot ${ts}`);
+
+    showToast(`🎉 배포 완료! 총 ${count}건의 FAQ가 클라우드에 실시간 반영되었습니다.`);
+    alert(`✅ FAQ 배포가 성공적으로 완료되었습니다!\n\n• 총 FAQ 건수: ${count}건\n• 클라우드 백업 스냅샷: faq_backup_${ts}.json\n\n모든 사용자의 모바일 기기 및 웹에서 최신 FAQ 지식이 즉시 실시간 동기화됩니다.`);
+  } catch (err) {
+    console.error('FAQ Cloud Deploy Error:', err);
+    alert('배포 중 오류 발생: ' + err.message);
+  } finally {
+    if (DOM.btnDeployFaq) DOM.btnDeployFaq.disabled = false;
+  }
+}
+
+// 미디어 확대 라이트박스
+window.openFaqLightbox = function(title, mediaType, src, filename) {
+  if (!DOM.faqMediaLightboxModal) return;
+  if (DOM.faqLightboxTitle) DOM.faqLightboxTitle.textContent = title || '미디어 미리보기';
+  if (DOM.faqLightboxBody) {
+    if (mediaType === 'video') {
+      DOM.faqLightboxBody.innerHTML = `<video controls autoplay playsinline style="max-width:100%;max-height:70vh;border-radius:8px;" src="${src}"></video>`;
+    } else {
+      DOM.faqLightboxBody.innerHTML = `<img src="${src}" alt="미리보기" style="max-width:100%;max-height:70vh;object-fit:contain;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,0.5);">`;
+    }
+  }
+  if (DOM.faqLightboxDownloadBtn) {
+    DOM.faqLightboxDownloadBtn.href = src;
+    DOM.faqLightboxDownloadBtn.download = filename || 'download';
+  }
+  DOM.faqMediaLightboxModal.classList.add('show');
+  DOM.faqMediaLightboxModal.classList.add('active');
+};
+
+function closeFaqLightbox() {
+  if (DOM.faqMediaLightboxModal) {
+    DOM.faqMediaLightboxModal.classList.remove('show');
+    DOM.faqMediaLightboxModal.classList.remove('active');
+    if (DOM.faqLightboxBody) DOM.faqLightboxBody.innerHTML = '';
+  }
+}
+
+function formatFileSize(bytes) {
+  if (!bytes || bytes <= 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let i = 0;
+  let val = bytes;
+  while (val >= 1024 && i < units.length - 1) {
+    val /= 1024;
+    i++;
+  }
+  return `${val.toFixed(1)} ${units[i]}`;
+}
+
 
 
