@@ -914,6 +914,7 @@ html, body {
 }
 
 .kostat-header-row {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -942,23 +943,26 @@ html, body {
 }
 
 .kostat-doc-title {
-  flex: 1;
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  transform: translateX(-50%);
   text-align: center;
-  padding-top: 14px;
+  pointer-events: none;
 }
 
 .kostat-doc-title .quotation-heading {
   display: inline-block;
   font-family: Arial, 'Segoe UI', 'Helvetica Neue', Helvetica, -apple-system, sans-serif;
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 26px;
+  font-weight: 600;
   letter-spacing: 0.5px;
   color: #000000;
   line-height: 1.15;
-  border-bottom: 3.5px solid #000000;
+  border-bottom: 2px solid #000000;
   padding-bottom: 2px;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
   text-transform: uppercase;
 }
 
@@ -2254,7 +2258,9 @@ html, body {
   gap: 12px;
   padding: 14px;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  min-height: 0;
   background: var(--bg-card, #0f172a);
 }
 
@@ -2374,6 +2380,31 @@ html, body {
   flex-direction: column;
   gap: 12px;
   padding: 8px 0 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+}
+
+.faq-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.faq-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.faq-list-container::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.35);
+  border-radius: 3px;
+}
+
+.faq-list-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.55);
 }
 
 .faq-card {

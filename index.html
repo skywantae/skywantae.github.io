@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.155" />
+  <link rel="stylesheet" href="app.css?v=1.0.156" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -252,6 +252,7 @@
               <option value="50">50개씩</option>
             </select>
             <button class="action-btn-sm primary" id="btnOpenNewFeedbackModal">+ 새 요청 등록</button>
+            <button class="action-btn-sm secondary" id="btnRefreshFeedback" title="클라우드 최신 글 동기화">🔄 새로고침</button>
             <button class="action-btn-sm warning" id="btnToggleBoardAdmin" title="관리자 답변 및 관리 권한 인증">🔒 관리자 모드</button>
           </div>
         </div>
@@ -294,12 +295,12 @@
           </div>
         </div>
         
-        <!-- FAQ 목록 컨테이너 -->
+        <!-- FAQ 목록 컨테이너 (스크롤 가능) -->
         <div class="faq-list-container" id="faqListContainer">
           <div class="text-center py-4" style="color:#94a3b8;">FAQ 지식 목록을 불러오는 중입니다...</div>
         </div>
         <!-- FAQ 지식 하단 페이지네이션 컨트롤러 -->
-        <div class="pagination-container" id="faqPagination">
+        <div class="pagination-container" id="faqPagination" style="flex-shrink:0;">
           <div class="pagination-info" id="faqPageInfo">0 / 0 페이지 (총 0건)</div>
           <div class="pagination-controls" id="faqPageControls">
             <!-- 동적 페이지 번호 버튼 생성 -->
@@ -347,7 +348,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.155</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.156</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -380,7 +381,7 @@
             출하 계획 데이터베이스를 갱신하려면 관리자 보안 PIN을 입력하세요.
           </p>
           <div class="form-group" style="display:flex; gap:8px;">
-            <input type="password" id="adminPinInput" class="form-input" placeholder="관리자 PIN (기본: 8805)" maxlength="8" style="text-align:center; font-size:16px; letter-spacing:4px;" />
+            <input type="password" id="adminPinInput" class="form-input" placeholder="관리자 PIN 입력" maxlength="8" style="text-align:center; font-size:16px; letter-spacing:4px;" />
             <button class="action-btn-sm primary" id="btnVerifyAdminPin">인증</button>
           </div>
           <div id="adminAuthError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
@@ -509,7 +510,7 @@
           기능 요청 게시판 답변 작성 및 관리 권한을 활성화하려면 관리자 PIN 번호를 입력하세요.
         </p>
         <div class="form-group" style="margin-bottom:8px;">
-          <input type="password" id="boardPinInput" class="form-input" placeholder="관리자 PIN (기본: 8805)" maxlength="8" style="text-align:center; font-size:18px; letter-spacing:4px; width:100%;" />
+          <input type="password" id="boardPinInput" class="form-input" placeholder="관리자 PIN 입력" maxlength="8" style="text-align:center; font-size:18px; letter-spacing:4px; width:100%;" />
         </div>
         <div id="boardPinError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
       </div>
@@ -637,7 +638,7 @@
           비밀번호가 일치하지 않습니다.
         </div>
         <div style="font-size:11px; color:#94a3b8; text-align:center;">
-          ※ 관리자는 관리자 마스터 PIN(8805)으로 언제든 처리할 수 있습니다.
+          ※ 관리자는 마스터 PIN으로 언제든 처리할 수 있습니다.
         </div>
       </div>
       <div class="modal-footer">
@@ -665,16 +666,16 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.155"></script>
-  <script src="data/shipplan_data.js?v=1.0.155"></script>
-  <script src="data/quotations_data.js?v=1.0.155"></script>
-  <script src="data/knowledge_data.js?v=1.0.155"></script>
-  <script src="data/faq_db.js?v=1.0.155"></script>
-  <script src="data/feedback_board.js?v=1.0.155"></script>
+  <script src="data/skyworks_data.js?v=1.0.156"></script>
+  <script src="data/shipplan_data.js?v=1.0.156"></script>
+  <script src="data/quotations_data.js?v=1.0.156"></script>
+  <script src="data/knowledge_data.js?v=1.0.156"></script>
+  <script src="data/faq_db.js?v=1.0.156"></script>
+  <script src="data/feedback_board.js?v=1.0.156"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.155"></script>
-  <script src="updater.js?v=1.0.155"></script>
-  <script src="app.js?v=1.0.155"></script>
+  <script src="xlsx.full.min.js?v=1.0.156"></script>
+  <script src="updater.js?v=1.0.156"></script>
+  <script src="app.js?v=1.0.156"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
