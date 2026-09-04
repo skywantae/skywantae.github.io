@@ -1,16 +1,16 @@
 {
-  "active_url": "https://technologies-temperature-water-top.trycloudflare.com",
+  "active_url": "https://treasures-tent-stamps-sword.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-04 22:19:02",
+  "updated_at": "2026-09-04 22:19:49",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://technologies-temperature-water-top.trycloudflare.com",
+      "active_url": "https://treasures-tent-stamps-sword.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-04 22:19:02",
+      "updated_at": "2026-09-04 22:19:49",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
