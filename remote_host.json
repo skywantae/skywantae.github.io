@@ -1,8 +1,8 @@
 {
-  "active_url": "https://kentucky-ireland-innovation-strips.trycloudflare.com",
+  "active_url": "https://hull-decimal-essential-keen.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-04 10:08:49",
+  "updated_at": "2026-09-04 10:09:42",
   "status": "online",
   "devices": {
     "dev_desktop_h2q3k25": {
@@ -17,9 +17,9 @@
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://kentucky-ireland-innovation-strips.trycloudflare.com",
+      "active_url": "https://hull-decimal-essential-keen.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-04 10:08:49",
+      "updated_at": "2026-09-04 10:09:42",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
