@@ -27,10 +27,9 @@ const AppState = {
 
 function formatKoreanDate(dateStr) {
   if (!dateStr) {
-    const d = new Date();
-    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+    return (AppState && AppState.dataDate) ? AppState.dataDate : '2026년 9월 3일';
   }
-  const m = String(dateStr).match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+  const m = String(dateStr).match(/^(\d{4})[-/.]?(\d{1,2})[-/.]?(\d{1,2})/);
   if (m) {
     return `${parseInt(m[1], 10)}년 ${parseInt(m[2], 10)}월 ${parseInt(m[3], 10)}일`;
   }
@@ -200,13 +199,14 @@ async function loadInitialDatabases() {
     const cachedQuot = await IDB.get('quotations');
     if (cachedQuot && cachedQuot.length >= AppState.quotationsData.length) AppState.quotationsData = cachedQuot;
 
-    // 메타데이터(version.json)에서 릴리즈 일자 로드
+    // 메타데이터(version.json)에서 실제 ERP 데이터 기준일자(data_date) 로드
     try {
       const vRes = await fetch('version.json?t=' + Date.now()).catch(() => null);
       if (vRes && vRes.ok) {
         const vData = await vRes.json();
-        if (vData && vData.release_date) {
-          AppState.dataDate = formatKoreanDate(vData.release_date);
+        // 소프트웨어 release_date가 아닌 실제 ERP data_date 필드만 적용
+        if (vData && vData.data_date) {
+          AppState.dataDate = formatKoreanDate(vData.data_date);
         }
       }
     } catch (e) {}
@@ -288,7 +288,12 @@ async function syncLiveDatabases(isManual = false) {
       renderSkyworksTable(AppState.skyworksData);
       initSkyworksYears();
       renderQuotHistory();
-      AppState.dataDate = formatKoreanDate(new Date().toISOString().slice(0, 10));
+      try {
+        const vLive = await fetch(`${GITHUB_RAW_BASE}/../version.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null);
+        if (vLive && vLive.data_date) {
+          AppState.dataDate = formatKoreanDate(vLive.data_date);
+        }
+      } catch (_) {}
       updateStatus(true, getDataDateStatusText());
       showToast(`최신 데이터가 실시간 반영되었습니다. (${getDataDateStatusText()})`);
     } else {
@@ -1269,6 +1274,8 @@ window.copyCellText = copyCellText;
 (function initAdminDbModule() {
   const AdminState = {
     isAuthenticated: false,
+    isDeploying: false,
+    latestDetectedDate: '',
     parsedShipRows: null,
     parsedSkyworksRows: null,
     sourceFileName: '',
@@ -1332,6 +1339,16 @@ window.copyCellText = copyCellText;
 
   function closeAdminModal() {
     if (adminModal) adminModal.classList.remove('active');
+    // 배포되지 않은 임시 파일 및 파싱 상태 리셋 (데이터 일자 보존)
+    if (!AdminState.isDeploying) {
+      AdminState.parsedShipRows = null;
+      AdminState.parsedSkyworksRows = null;
+      AdminState.latestDetectedDate = '';
+      if (fileInput) fileInput.value = '';
+      if (summaryCard) summaryCard.style.display = 'none';
+      if (btnApplyDeploy) btnApplyDeploy.style.display = 'none';
+      if (progressSection) progressSection.style.display = 'none';
+    }
   }
 
   if (btnOpenModal1) btnOpenModal1.addEventListener('click', openAdminModal);
@@ -1512,6 +1529,7 @@ window.copyCellText = copyCellText;
 
         AdminState.parsedShipRows = shipRows;
         AdminState.parsedSkyworksRows = skyworksRows;
+        AdminState.latestDetectedDate = latestDate || '';
 
         // 요약 카드 렌더링
         if (summaryCard) summaryCard.style.display = 'block';
@@ -1551,6 +1569,7 @@ window.copyCellText = copyCellText;
       return;
     }
 
+    AdminState.isDeploying = true;
     if (btnApplyDeploy) btnApplyDeploy.disabled = true;
     if (progressSection) {
       progressSection.style.display = 'block';
@@ -1635,15 +1654,18 @@ window.copyCellText = copyCellText;
       progressBarFill.style.width = '85%';
 
       const nowStr = new Date().toISOString();
-      const currentVerStr = (document.getElementById('currentAppVersion')?.textContent || 'v1.0.145').replace('v', '');
+      const currentVerStr = (document.getElementById('currentAppVersion')?.textContent || 'v1.0.146').replace('v', '');
       const parts = currentVerStr.split('.');
-      let nextVer = '1.0.146';
+      let nextVer = '1.0.147';
       if (parts.length === 3) {
         nextVer = `${parts[0]}.${parts[1]}.${parseInt(parts[2], 10) + 1}`;
       }
 
+      const deployDataDate = AdminState.latestDetectedDate || new Date().toISOString().slice(0, 10);
       const versionPayload = {
         version: `v${nextVer}`,
+        release_date: new Date().toISOString().slice(0, 10),
+        data_date: deployDataDate,
         updated_at: nowStr,
         shipplan_count: AdminState.parsedShipRows.length,
         skyworks_count: AdminState.parsedSkyworksRows.length,
@@ -1660,6 +1682,8 @@ window.copyCellText = copyCellText;
       window.KOSTAT_SKYWORKS_DATA = AdminState.parsedSkyworksRows;
       AppState.shipPlanData = AdminState.parsedShipRows;
       AppState.skyworksData = AdminState.parsedSkyworksRows;
+      AppState.dataDate = formatKoreanDate(deployDataDate);
+      updateStatus(true, getDataDateStatusText());
 
       const badge = document.getElementById('shipPlanStatusBadge');
       if (badge) badge.textContent = `DB 정상 (${AdminState.parsedShipRows.length.toLocaleString()}건)`;
@@ -1670,7 +1694,7 @@ window.copyCellText = copyCellText;
       if (curVerEl) curVerEl.textContent = `v${nextVer}`;
 
       showToast(`🎉 배포 완료! 출하 계획 ${AdminState.parsedShipRows.length.toLocaleString()}건이 반영되었습니다.`);
-      alert(`✅ 성공적으로 배포되었습니다!\n\n• 배포 버전: v${nextVer}\n• 총 출하 건수: ${AdminState.parsedShipRows.length.toLocaleString()}건\n• Skyworks PO: ${AdminState.parsedSkyworksRows.length.toLocaleString()}건\n\n모든 사용자의 모바일 기기에 최신 출하 내역이 즉시 동기화됩니다.`);
+      alert(`✅ 성공적으로 배포되었습니다!\n\n• 배포 버전: v${nextVer}\n• 데이터 기준일: ${AppState.dataDate}\n• 총 출하 건수: ${AdminState.parsedShipRows.length.toLocaleString()}건\n• Skyworks PO: ${AdminState.parsedSkyworksRows.length.toLocaleString()}건\n\n모든 사용자의 모바일 기기에 최신 출하 내역이 즉시 동기화됩니다.`);
 
       closeAdminModal();
     } catch (err) {
@@ -1678,6 +1702,7 @@ window.copyCellText = copyCellText;
       alert(`배포 중 오류가 발생했습니다:\n${err.message}`);
       if (progressLabel) progressLabel.textContent = '배포 실패';
     } finally {
+      AdminState.isDeploying = false;
       if (btnApplyDeploy) btnApplyDeploy.disabled = false;
     }
   }
