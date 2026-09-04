@@ -1,16 +1,16 @@
 {
-  "active_url": "https://forming-boulder-jumping-employ.trycloudflare.com",
+  "active_url": "https://segment-bandwidth-matter-champagne.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-04 22:08:27",
+  "updated_at": "2026-09-04 22:09:17",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://forming-boulder-jumping-employ.trycloudflare.com",
+      "active_url": "https://segment-bandwidth-matter-champagne.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-04 22:08:27",
+      "updated_at": "2026-09-04 22:09:17",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
