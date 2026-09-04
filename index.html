@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.150" />
+  <link rel="stylesheet" href="app.css?v=1.0.151" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -282,7 +282,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.150</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.151</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -345,8 +345,8 @@
                 <span class="stat-value" id="adminSummarySkyworks">0건</span>
               </div>
               <div class="summary-stat">
-                <span class="stat-label">최근 출고일자</span>
-                <span class="stat-value" id="adminSummaryLatestDate">-</span>
+                <span class="stat-label">데이터 기준일자</span>
+                <input type="date" id="adminDataDateInput" class="form-input" style="padding:2px 6px;font-size:13px;font-weight:700;color:#10b981;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:4px;width:135px;" title="적용할 데이터 기준일자를 직접 확인 및 수정할 수 있습니다" />
               </div>
             </div>
           </div>
@@ -429,16 +429,39 @@
     </div>
   </div>
 
+  <!-- 게시판 관리자 PIN 인증 모달 (모바일 prompt() 차단 원천 해결) -->
+  <div class="modal-backdrop" id="boardAdminPinModal">
+    <div class="modal-dialog" style="max-width:360px;">
+      <div class="modal-header">
+        <h3>🔒 관리자 모드 인증</h3>
+        <button class="close-btn" id="btnCloseBoardPinModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:12px; line-height:1.5;">
+          기능 요청 게시판 답변 작성 및 관리 권한을 활성화하려면 관리자 PIN 번호를 입력하세요.
+        </p>
+        <div class="form-group" style="margin-bottom:8px;">
+          <input type="password" id="boardPinInput" class="form-input" placeholder="관리자 PIN (기본: 8805)" maxlength="8" style="text-align:center; font-size:18px; letter-spacing:4px; width:100%;" />
+        </div>
+        <div id="boardPinError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnVerifyBoardPin">인증</button>
+        <button class="action-btn-sm secondary" id="btnCancelBoardPin">취소</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.150"></script>
-  <script src="data/shipplan_data.js?v=1.0.150"></script>
-  <script src="data/quotations_data.js?v=1.0.150"></script>
-  <script src="data/knowledge_data.js?v=1.0.150"></script>
-  <script src="data/feedback_board.js?v=1.0.150"></script>
+  <script src="data/skyworks_data.js?v=1.0.151"></script>
+  <script src="data/shipplan_data.js?v=1.0.151"></script>
+  <script src="data/quotations_data.js?v=1.0.151"></script>
+  <script src="data/knowledge_data.js?v=1.0.151"></script>
+  <script src="data/feedback_board.js?v=1.0.151"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.150"></script>
-  <script src="updater.js?v=1.0.150"></script>
-  <script src="app.js?v=1.0.150"></script>
+  <script src="xlsx.full.min.js?v=1.0.151"></script>
+  <script src="updater.js?v=1.0.151"></script>
+  <script src="app.js?v=1.0.151"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

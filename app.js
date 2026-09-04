@@ -31,19 +31,37 @@ const AppState = {
   isSyncing: false,
   lastSyncTime: null,
   activeTab: 'shipplan',
-  dataDate: '2026년 9월 3일',
+  dataDate: '2026년 9월 4일',
   currentQuotNo: null
 };
 
+function parseValidDate(dateVal) {
+  if (!dateVal) return null;
+  const s = String(dateVal).trim();
+  const m = s.match(/^(\d{4})[-/.]?(\d{1,2})[-/.]?(\d{1,2})/);
+  if (!m) return null;
+  const y = parseInt(m[1], 10);
+  const mon = parseInt(m[2], 10);
+  const d = parseInt(m[3], 10);
+  if (y < 2020 || y > 2050) return null;
+  if (mon < 1 || mon > 12) return null;
+  if (d < 1 || d > 31) return null;
+  return `${y}-${String(mon).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+
 function formatKoreanDate(dateStr) {
-  if (!dateStr) {
-    return (AppState && AppState.dataDate) ? AppState.dataDate : '2026년 9월 3일';
+  const norm = parseValidDate(dateStr);
+  if (norm) {
+    const [y, mon, d] = norm.split('-').map(v => parseInt(v, 10));
+    return `${y}년 ${mon}월 ${d}일`;
   }
-  const m = String(dateStr).match(/^(\d{4})[-/.]?(\d{1,2})[-/.]?(\d{1,2})/);
-  if (m) {
-    return `${parseInt(m[1], 10)}년 ${parseInt(m[2], 10)}월 ${parseInt(m[3], 10)}일`;
+  if (typeof dateStr === 'string' && dateStr.includes('년') && !dateStr.includes('0월') && !dateStr.includes(' 0일')) {
+    return dateStr;
   }
-  return dateStr;
+  if (AppState && AppState.dataDate && !AppState.dataDate.includes('0월') && !AppState.dataDate.includes(' 0일')) {
+    return AppState.dataDate;
+  }
+  return '2026년 9월 4일';
 }
 
 function getDataDateStatusText() {
@@ -141,7 +159,16 @@ const DOM = {
   feedbackTargetId: document.getElementById('feedbackTargetId'),
   feedbackTargetPreview: document.getElementById('feedbackTargetPreview'),
   feedbackReplyStatusSelect: document.getElementById('feedbackReplyStatusSelect'),
-  feedbackReplyTextInput: document.getElementById('feedbackReplyTextInput')
+  feedbackReplyTextInput: document.getElementById('feedbackReplyTextInput'),
+
+  // 게시판 관리자 PIN 인증 모달
+  boardAdminPinModal: document.getElementById('boardAdminPinModal'),
+  btnCloseBoardPinModal: document.getElementById('btnCloseBoardPinModal'),
+  btnCancelBoardPin: document.getElementById('btnCancelBoardPin'),
+  btnVerifyBoardPin: document.getElementById('btnVerifyBoardPin'),
+  boardPinInput: document.getElementById('boardPinInput'),
+  boardPinError: document.getElementById('boardPinError'),
+  adminDataDateInput: document.getElementById('adminDataDateInput')
 };
 
 // --- IndexedDB 스토리지 헬퍼 (영구 고속 캐시) ---
@@ -241,6 +268,14 @@ async function loadInitialDatabases() {
     const cachedQuot = await IDB.get('quotations');
     if (cachedQuot && cachedQuot.length >= AppState.quotationsData.length) AppState.quotationsData = cachedQuot;
 
+    // 0) localStorage에 저장된 실제 ERP 데이터 기준일자 즉시 로드 (새로고침 즉각 유지)
+    try {
+      const savedDate = localStorage.getItem('KOSTAT_ERP_DATA_DATE');
+      if (savedDate) {
+        AppState.dataDate = formatKoreanDate(savedDate);
+      }
+    } catch (_) {}
+
     // 메타데이터(version.json)에서 실제 ERP 데이터 기준일자(data_date) 로드
     try {
       const vRes = await fetch('version.json?t=' + Date.now()).catch(() => null);
@@ -249,6 +284,9 @@ async function loadInitialDatabases() {
         // 소프트웨어 release_date가 아닌 실제 ERP data_date 필드만 적용
         if (vData && vData.data_date) {
           AppState.dataDate = formatKoreanDate(vData.data_date);
+          try {
+            localStorage.setItem('KOSTAT_ERP_DATA_DATE', vData.data_date);
+          } catch (_) {}
         }
       }
     } catch (e) {}
@@ -1702,6 +1740,7 @@ window.copyCellText = copyCellText;
 
         const shipRows = [];
         const skyworksRows = [];
+        const todayIso = new Date().toISOString().slice(0, 10);
         let latestDate = '';
 
         for (let i = 0; i < rawJson.length; i++) {
@@ -1722,8 +1761,11 @@ window.copyCellText = copyCellText;
           };
           shipRows.push(compactShipItem);
 
-          if (ex > latestDate) latestDate = ex;
-          if (ship > latestDate) latestDate = ship;
+          // 유효한 날짜(1~12월, 1~31일)만 탐색 (0000 더미일자 배제)
+          const validEx = parseValidDate(ex);
+          const validShip = parseValidDate(ship);
+          if (validEx && validEx <= todayIso && validEx > latestDate) latestDate = validEx;
+          if (validShip && validShip <= todayIso && validShip > latestDate) latestDate = validShip;
 
           // Skyworks PO 추출
           if (cust.toUpperCase().includes('SKYWORKS')) {
@@ -1740,16 +1782,19 @@ window.copyCellText = copyCellText;
           }
         }
 
+        const effectiveDate = latestDate || todayIso;
         AdminState.parsedShipRows = shipRows;
         AdminState.parsedSkyworksRows = skyworksRows;
-        AdminState.latestDetectedDate = latestDate || '';
+        AdminState.latestDetectedDate = effectiveDate;
 
         // 요약 카드 렌더링
         if (summaryCard) summaryCard.style.display = 'block';
         if (summaryFileName) summaryFileName.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
         if (summaryTotal) summaryTotal.textContent = `${shipRows.length.toLocaleString()}건`;
         if (summarySkyworks) summarySkyworks.textContent = `${skyworksRows.length.toLocaleString()}건`;
-        if (summaryLatestDate) summaryLatestDate.textContent = latestDate || '-';
+        const dataDateInput = document.getElementById('adminDataDateInput');
+        if (dataDateInput) dataDateInput.value = effectiveDate;
+        if (summaryLatestDate) summaryLatestDate.textContent = formatKoreanDate(effectiveDate);
 
         if (progressLabel) progressLabel.textContent = `파싱 완료! (${shipRows.length.toLocaleString()}건 준비됨)`;
         if (progressPercent) progressPercent.textContent = '100%';
@@ -1874,7 +1919,10 @@ window.copyCellText = copyCellText;
         nextVer = `${parts[0]}.${parts[1]}.${parseInt(parts[2], 10) + 1}`;
       }
 
-      const deployDataDate = AdminState.latestDetectedDate || new Date().toISOString().slice(0, 10);
+      const dataDateInput = document.getElementById('adminDataDateInput');
+      const chosenDataDate = (dataDateInput && dataDateInput.value) ? dataDateInput.value : (AdminState.latestDetectedDate || new Date().toISOString().slice(0, 10));
+      const deployDataDate = parseValidDate(chosenDataDate) || new Date().toISOString().slice(0, 10);
+
       const versionPayload = {
         version: `v${nextVer}`,
         release_date: new Date().toISOString().slice(0, 10),
@@ -1886,7 +1934,7 @@ window.copyCellText = copyCellText;
       };
       await pushFile('version.json', JSON.stringify(versionPayload, null, 2), `chore: bump version to v${nextVer} via web admin`);
 
-      // 4) 현재 실행 중인 웹앱 메모리 즉시 갱신
+      // 4) 현재 실행 중인 웹앱 메모리 및 로컬 스토리지 즉시 갱신
       progressLabel.textContent = '4/4 현재 브라우저 화면 즉시 동기화 완료!';
       progressPercent.textContent = '100%';
       progressBarFill.style.width = '100%';
@@ -1897,6 +1945,12 @@ window.copyCellText = copyCellText;
       AppState.skyworksData = AdminState.parsedSkyworksRows;
       AppState.dataDate = formatKoreanDate(deployDataDate);
       AppState.shipPlanFilteredRows = AdminState.parsedShipRows;
+
+      // 로컬 스토리지에 즉시 저장 (새로고침 시 CDN 배포 지연과 무관하게 즉각 유지)
+      try {
+        localStorage.setItem('KOSTAT_ERP_DATA_DATE', deployDataDate);
+      } catch (_) {}
+
       renderShipPlanPage(1);
       updateStatus(true, getDataDateStatusText());
       const skyCountBadge = document.getElementById('skyworksCount');
@@ -1905,7 +1959,7 @@ window.copyCellText = copyCellText;
       const curVerEl = document.getElementById('currentAppVersion');
       if (curVerEl) curVerEl.textContent = `v${nextVer}`;
 
-      showToast(`🎉 배포 완료! 출하 계획 ${AdminState.parsedShipRows.length.toLocaleString()}건이 반영되었습니다.`);
+      showToast(`🎉 배포 완료! 출하 계획 ${AdminState.parsedShipRows.length.toLocaleString()}건 (${AppState.dataDate} 기준)이 반영되었습니다.`);
       alert(`✅ 성공적으로 배포되었습니다!\n\n• 배포 버전: v${nextVer}\n• 데이터 기준일: ${AppState.dataDate}\n• 총 출하 건수: ${AdminState.parsedShipRows.length.toLocaleString()}건\n• Skyworks PO: ${AdminState.parsedSkyworksRows.length.toLocaleString()}건\n\n모든 사용자의 모바일 기기에 최신 출하 내역이 즉시 동기화됩니다.`);
 
       closeAdminModal();
@@ -1970,6 +2024,27 @@ function initFeedbackBoardEvents() {
   // 관리자 모드 토글
   if (DOM.btnToggleBoardAdmin) {
     DOM.btnToggleBoardAdmin.addEventListener('click', toggleBoardAdminMode);
+  }
+
+  // 게시판 관리자 PIN 인증 모달 이벤트
+  if (DOM.btnVerifyBoardPin) {
+    DOM.btnVerifyBoardPin.addEventListener('click', verifyBoardPin);
+  }
+  if (DOM.boardPinInput) {
+    DOM.boardPinInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') verifyBoardPin();
+    });
+  }
+  if (DOM.btnCloseBoardPinModal) {
+    DOM.btnCloseBoardPinModal.addEventListener('click', closeBoardPinModal);
+  }
+  if (DOM.btnCancelBoardPin) {
+    DOM.btnCancelBoardPin.addEventListener('click', closeBoardPinModal);
+  }
+  if (DOM.boardAdminPinModal) {
+    DOM.boardAdminPinModal.addEventListener('click', (e) => {
+      if (e.target === DOM.boardAdminPinModal) closeBoardPinModal();
+    });
   }
 
   // 관리자 답변 모달 닫기
@@ -2140,6 +2215,48 @@ function submitNewFeedback() {
   showToast('💡 기능 추가 요청이 등록되었습니다. 관리자가 검토 후 답변을 드립니다.');
 }
 
+function openBoardPinModal() {
+  if (DOM.boardAdminPinModal) {
+    if (DOM.boardPinInput) DOM.boardPinInput.value = '';
+    if (DOM.boardPinError) {
+      DOM.boardPinError.style.display = 'none';
+      DOM.boardPinError.textContent = '';
+    }
+    DOM.boardAdminPinModal.classList.add('show');
+    DOM.boardAdminPinModal.classList.add('active');
+    setTimeout(() => DOM.boardPinInput?.focus(), 150);
+  }
+}
+
+function closeBoardPinModal() {
+  if (DOM.boardAdminPinModal) {
+    DOM.boardAdminPinModal.classList.remove('show');
+    DOM.boardAdminPinModal.classList.remove('active');
+  }
+}
+
+function verifyBoardPin() {
+  const pin = (DOM.boardPinInput?.value || '').trim();
+  if (pin === '8805') {
+    closeBoardPinModal();
+    AdminState.isAuthenticated = true;
+    AppState.isBoardAdmin = true;
+    if (DOM.btnToggleBoardAdmin) {
+      DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleBoardAdmin.classList.remove('warning');
+      DOM.btnToggleBoardAdmin.classList.add('primary');
+    }
+    showToast('✓ 관리자 인증 완료! 요청 답변 작성 및 관리가 가능합니다.');
+    renderFeedbackBoard();
+  } else {
+    if (DOM.boardPinError) {
+      DOM.boardPinError.textContent = 'PIN 번호가 일치하지 않습니다. (기본: 8805)';
+      DOM.boardPinError.style.display = 'block';
+    }
+    DOM.boardPinInput?.select();
+  }
+}
+
 function toggleBoardAdminMode() {
   if (AppState.isBoardAdmin) {
     AppState.isBoardAdmin = false;
@@ -2153,21 +2270,21 @@ function toggleBoardAdminMode() {
     return;
   }
 
-  const pin = prompt('관리자 보안 PIN을 입력하세요 (기본: 8805):');
-  if (!pin) return;
-
-  if (pin === '8805') {
+  // 출하 DB 관리자로 이미 인증된 상태라면 즉시 활성화
+  if (AdminState.isAuthenticated) {
     AppState.isBoardAdmin = true;
     if (DOM.btnToggleBoardAdmin) {
       DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
       DOM.btnToggleBoardAdmin.classList.remove('warning');
       DOM.btnToggleBoardAdmin.classList.add('primary');
     }
-    showToast('✓ 관리자 인증 완료! 각 요청에 답변을 달거나 상태를 변경할 수 있습니다.');
+    showToast('✓ 관리자 권한이 활성화되었습니다.');
     renderFeedbackBoard();
-  } else {
-    showToast('PIN 번호가 일치하지 않습니다.', 'error');
+    return;
   }
+
+  // 모바일 prompt() 차단 원천 해결: 전용 PIN 모달 표시
+  openBoardPinModal();
 }
 
 window.openAdminReplyModal = function(id) {
