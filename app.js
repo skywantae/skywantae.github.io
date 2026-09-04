@@ -1771,6 +1771,7 @@ function showToast(msg) {
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2500);
 }
+window.showToast = showToast;
 
 function debounce(func, wait) {
   let timeout;

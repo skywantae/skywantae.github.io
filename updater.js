@@ -9,6 +9,24 @@ const RELEASES_PAGE_URL = `https://github.com/${GITHUB_REPO}/releases`;
 
 let appGithubToken = null;
 
+function showToast(msg) {
+  if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
+    window.showToast(msg);
+    return;
+  }
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+    background: rgba(30, 41, 59, 0.95); color: #fff; padding: 8px 16px;
+    border-radius: 20px; font-size: 12px; font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 9999;
+    backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1);
+  `;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
 async function checkForAppUpdates(isManualCheck = false) {
   const statusMsgEl = document.getElementById('updateStatusMsg');
   const currentVerEl = document.getElementById('currentAppVersion');
