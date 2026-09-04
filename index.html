@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.145" />
+  <link rel="stylesheet" href="app.css?v=1.0.146" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -113,6 +113,7 @@
           <div class="viewer-tools">
             <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명 검색..." />
             <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
+            <button class="action-btn-sm warning" id="btnOpenAdminDbModal" title="관리자 전용 출하 엑셀 DB 업데이트">🔒 DB 업데이트</button>
           </div>
         </div>
         <div class="table-responsive-wrapper">
@@ -239,10 +240,14 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.145</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.146</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
+        </div>
+        <div class="setting-item">
+          <label>관리자 전용 메뉴:</label>
+          <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%; margin-top:4px;">🔒 관리자 출하 DB 업데이트</button>
         </div>
       </div>
       <div class="modal-footer">
@@ -251,14 +256,87 @@
     </div>
   </div>
 
+  <!-- 관리자 전용 출하 DB 업데이트 모달 -->
+  <div class="modal-backdrop" id="adminDbModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>🔒 관리자 출하 DB 업데이트</h3>
+        <button class="close-btn" id="btnCloseAdminDbModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Step 1: PIN 인증 -->
+        <div id="adminAuthSection" class="admin-section">
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:12px;">
+            출하 계획 데이터베이스를 갱신하려면 관리자 보안 PIN을 입력하세요.
+          </p>
+          <div class="form-group" style="display:flex; gap:8px;">
+            <input type="password" id="adminPinInput" class="form-input" placeholder="관리자 PIN (기본: 8805)" maxlength="8" style="text-align:center; font-size:16px; letter-spacing:4px;" />
+            <button class="action-btn-sm primary" id="btnVerifyAdminPin">인증</button>
+          </div>
+          <div id="adminAuthError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
+        </div>
+
+        <!-- Step 2: 엑셀 업로드 및 배포 (인증 후 표시) -->
+        <div id="adminUploadSection" class="admin-section" style="display:none;">
+          <div class="admin-badge-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:12px; color:#10b981; font-weight:600;">✓ 관리자 인증 완료</span>
+            <button class="action-btn-sm secondary" id="btnAdminLogout" style="font-size:11px; padding:2px 8px;">로그아웃</button>
+          </div>
+
+          <div class="admin-dropzone" id="adminDropzone">
+            <input type="file" id="adminFileInput" accept=".xls,.xlsx,.csv" style="display:none;" />
+            <div class="dropzone-icon">📥</div>
+            <div class="dropzone-text">최신 출하 엑셀 파일(Excel.xls, .xlsx)을<br><strong>여기에 끌어다 놓거나 터치하여 선택</strong>하세요.</div>
+            <div class="dropzone-sub">사내 전산 ExportShipPlan 양식 자동 파싱 (58,000+건)</div>
+          </div>
+
+          <!-- 파싱 분석 요약 카드 -->
+          <div id="adminFileSummary" class="admin-summary-card" style="display:none;">
+            <div class="summary-title" id="adminSummaryFileName">Excel.xls</div>
+            <div class="summary-grid">
+              <div class="summary-stat">
+                <span class="stat-label">총 출하 건수</span>
+                <span class="stat-value" id="adminSummaryTotal">0건</span>
+              </div>
+              <div class="summary-stat">
+                <span class="stat-label">Skyworks 건수</span>
+                <span class="stat-value" id="adminSummarySkyworks">0건</span>
+              </div>
+              <div class="summary-stat">
+                <span class="stat-label">최근 출고일자</span>
+                <span class="stat-value" id="adminSummaryLatestDate">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 배포 진행 상태 바 -->
+          <div id="adminProgressSection" style="display:none; margin-top:14px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span id="adminProgressLabel" style="color:#94a3b8;">배포 준비 중...</span>
+              <span id="adminProgressPercent" style="font-weight:700; color:#3b82f6;">0%</span>
+            </div>
+            <div class="admin-progress-bar-bg">
+              <div class="admin-progress-bar-fill" id="adminProgressBarFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" id="adminModalFooter">
+        <button class="action-btn-sm primary" id="btnApplyAdminDeploy" style="display:none;">🚀 전체 웹앱에 배포 적용</button>
+        <button class="action-btn-sm secondary" id="btnCloseAdminDb">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.145"></script>
-  <script src="data/shipplan_data.js?v=1.0.145"></script>
-  <script src="data/quotations_data.js?v=1.0.145"></script>
-  <script src="data/knowledge_data.js?v=1.0.145"></script>
+  <script src="data/skyworks_data.js?v=1.0.146"></script>
+  <script src="data/shipplan_data.js?v=1.0.146"></script>
+  <script src="data/quotations_data.js?v=1.0.146"></script>
+  <script src="data/knowledge_data.js?v=1.0.146"></script>
   
-  <script src="updater.js?v=1.0.145"></script>
-  <script src="app.js?v=1.0.145"></script>
+  <script src="xlsx.full.min.js?v=1.0.146"></script>
+  <script src="updater.js?v=1.0.146"></script>
+  <script src="app.js?v=1.0.146"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
