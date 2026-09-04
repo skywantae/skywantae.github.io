@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.147" />
+  <link rel="stylesheet" href="app.css?v=1.0.148" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -108,15 +108,23 @@
         <div class="viewer-card-header">
           <div class="viewer-title-group">
             <h3>출하 계획 (Ship Plan)</h3>
-            <span class="count-badge" id="shipPlanStatusBadge">DB 정상</span>
+            <span class="count-badge" id="shipPlanStatusBadge">0건</span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명 검색..." />
+            <input type="text" id="shipPlanCustomerInput" class="compact-search" placeholder="고객사 검색..." style="width: 130px;" />
+            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명/PO/기타..." />
+            <select id="shipPlanPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
+              <option value="50">50개씩</option>
+              <option value="100">100개씩</option>
+              <option value="150">150개씩</option>
+              <option value="200">200개씩</option>
+            </select>
             <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
+            <button class="action-btn-sm" id="btnReloadShipPlan">새로고침</button>
             <button class="action-btn-sm warning" id="btnOpenAdminDbModal" title="관리자 전용 출하 엑셀 DB 업데이트">🔒 DB 업데이트</button>
           </div>
         </div>
-        <div class="table-responsive-wrapper">
+        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
           <table class="modern-table" id="shipPlanTable">
             <thead>
               <tr>
@@ -124,9 +132,16 @@
               </tr>
             </thead>
             <tbody id="shipPlanTbody">
-              <tr><td colspan="7" class="text-center py-4">조회할 부품번호를 입력하세요.</td></tr>
+              <tr><td colspan="7" class="text-center py-4">출하 계획 데이터를 불러오는 중입니다...</td></tr>
             </tbody>
           </table>
+        </div>
+        <!-- 출하 계획 하단 페이지네이션 컨트롤러 -->
+        <div class="pagination-container" id="shipPlanPagination">
+          <div class="pagination-info" id="shipPlanPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-controls" id="shipPlanPageControls">
+            <!-- 동적 페이지 번호 버튼 생성 -->
+          </div>
         </div>
       </div>
 
@@ -240,7 +255,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.147</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.148</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -329,14 +344,14 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.147"></script>
-  <script src="data/shipplan_data.js?v=1.0.147"></script>
-  <script src="data/quotations_data.js?v=1.0.147"></script>
-  <script src="data/knowledge_data.js?v=1.0.147"></script>
+  <script src="data/skyworks_data.js?v=1.0.148"></script>
+  <script src="data/shipplan_data.js?v=1.0.148"></script>
+  <script src="data/quotations_data.js?v=1.0.148"></script>
+  <script src="data/knowledge_data.js?v=1.0.148"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.147"></script>
-  <script src="updater.js?v=1.0.147"></script>
-  <script src="app.js?v=1.0.147"></script>
+  <script src="xlsx.full.min.js?v=1.0.148"></script>
+  <script src="updater.js?v=1.0.148"></script>
+  <script src="app.js?v=1.0.148"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

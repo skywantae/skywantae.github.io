@@ -16,6 +16,11 @@ const AppState = {
   quotPageSize: 50,
   quotFilteredRows: [],
 
+  // 출하 계획 페이징 상태
+  shipPlanCurrentPage: 1,
+  shipPlanPageSize: 50,
+  shipPlanFilteredRows: [],
+
   // 상태
   dbReady: false,
   isSyncing: false,
@@ -68,8 +73,15 @@ const DOM = {
   // Ship Plan
   shipPlanTable: document.getElementById('shipPlanTable'),
   shipPlanTbody: document.getElementById('shipPlanTbody'),
+  shipPlanCustomerInput: document.getElementById('shipPlanCustomerInput'),
   shipPlanPartInput: document.getElementById('shipPlanPartInput'),
+  shipPlanPageSizeSelect: document.getElementById('shipPlanPageSizeSelect'),
   btnSearchShipPlan: document.getElementById('btnSearchShipPlan'),
+  btnReloadShipPlan: document.getElementById('btnReloadShipPlan'),
+  shipPlanPagination: document.getElementById('shipPlanPagination'),
+  shipPlanPageInfo: document.getElementById('shipPlanPageInfo'),
+  shipPlanPageControls: document.getElementById('shipPlanPageControls'),
+  shipPlanStatusBadge: document.getElementById('shipPlanStatusBadge'),
 
   // Quotations
   quotHistoryCount: document.getElementById('quotHistoryCount'),
@@ -218,6 +230,7 @@ async function loadInitialDatabases() {
     renderSkyworksTable(AppState.skyworksData);
     initSkyworksYears();
     renderQuotHistory();
+    renderShipPlanHistory();
 
     console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
   } catch (err) {
@@ -288,6 +301,7 @@ async function syncLiveDatabases(isManual = false) {
       renderSkyworksTable(AppState.skyworksData);
       initSkyworksYears();
       renderQuotHistory();
+      renderShipPlanHistory();
       try {
         const vLive = await fetch(`${GITHUB_RAW_BASE}/../version.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null);
         if (vLive && vLive.data_date) {
@@ -396,17 +410,37 @@ function initUI() {
     syncLiveDatabases(true);
   });
 
-  // 출하계획 검색
-  DOM.btnSearchShipPlan.addEventListener('click', () => {
-    const pn = DOM.shipPlanPartInput.value.trim();
-    if (pn) searchShipPlanLocal(pn);
-  });
-  DOM.shipPlanPartInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const pn = DOM.shipPlanPartInput.value.trim();
-      if (pn) searchShipPlanLocal(pn);
-    }
-  });
+  // 출하 계획 검색 & 필터 & 페이지 크기
+  if (DOM.shipPlanCustomerInput) {
+    DOM.shipPlanCustomerInput.addEventListener('input', debounce(filterShipPlanTable, 200));
+    DOM.shipPlanCustomerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterShipPlanTable();
+    });
+  }
+  if (DOM.shipPlanPartInput) {
+    DOM.shipPlanPartInput.addEventListener('input', debounce(filterShipPlanTable, 200));
+    DOM.shipPlanPartInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterShipPlanTable();
+    });
+  }
+  if (DOM.btnSearchShipPlan) {
+    DOM.btnSearchShipPlan.addEventListener('click', filterShipPlanTable);
+  }
+  if (DOM.btnReloadShipPlan) {
+    DOM.btnReloadShipPlan.addEventListener('click', () => {
+      if (DOM.shipPlanCustomerInput) DOM.shipPlanCustomerInput.value = '';
+      if (DOM.shipPlanPartInput) DOM.shipPlanPartInput.value = '';
+      renderShipPlanHistory();
+      syncLiveDatabases(true);
+    });
+  }
+  if (DOM.shipPlanPageSizeSelect) {
+    DOM.shipPlanPageSizeSelect.addEventListener('change', () => {
+      AppState.shipPlanPageSize = parseInt(DOM.shipPlanPageSizeSelect.value, 10) || 50;
+      AppState.shipPlanCurrentPage = 1;
+      renderShipPlanPage(1);
+    });
+  }
 
   // 견적서 검색 & 필터 & 페이지 크기
   if (DOM.quotCustomerInput) {
@@ -623,40 +657,157 @@ function filterSkyworksTable() {
   renderSkyworksTable(filtered);
 }
 
-// --- 5. 출하 및 선적 계획 뷰어 (로컬 검색) ---
-function searchShipPlanLocal(pn) {
-  const qClean = pn.toLowerCase().trim();
-  const qNorm = qClean.replace(/[-_\s]/g, '');
-  DOM.shipPlanTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">조회 중...</td></tr>`;
+// --- 5. 출하 및 선적 계획 뷰어 (로컬 + 다중 페이지네이션 & 고객사/부품 필터) ---
+function renderShipPlanHistory() {
+  if (DOM.shipPlanCustomerInput) DOM.shipPlanCustomerInput.value = '';
+  if (DOM.shipPlanPartInput) DOM.shipPlanPartInput.value = '';
+  AppState.shipPlanFilteredRows = AppState.shipPlanData || [];
+  AppState.shipPlanCurrentPage = 1;
+  renderShipPlanPage(1);
+}
 
-  const matched = AppState.shipPlanData.filter(r => {
+function filterShipPlanTable() {
+  const custSearch = DOM.shipPlanCustomerInput ? DOM.shipPlanCustomerInput.value.toLowerCase().trim() : '';
+  const custNorm = custSearch.replace(/[-_\s]/g, '');
+
+  const partSearch = DOM.shipPlanPartInput ? DOM.shipPlanPartInput.value.toLowerCase().trim() : '';
+  const partNorm = partSearch.replace(/[-_\s]/g, '');
+
+  AppState.shipPlanFilteredRows = (AppState.shipPlanData || []).filter(r => {
+    // 1. 고객사 필터
+    if (custSearch) {
+      const c = (r.c || '').toLowerCase();
+      if (!c.includes(custSearch) && (custNorm.length < 2 || !c.replace(/[-_\s]/g, '').includes(custNorm))) {
+        return false;
+      }
+    }
+
+    // 2. 부품명/PO/기타 검색어 필터
+    if (!partSearch) return true;
+
     const k = (r.k || '').toLowerCase();
     const p = (r.p || '').toLowerCase();
-    const c = (r.c || '').toLowerCase();
+    const f = (r.f || '').toLowerCase();
 
-    if (k.includes(qClean) || p.includes(qClean) || c.includes(qClean)) return true;
-    if (qNorm.length >= 2) {
-      if (k.replace(/[-_\s]/g, '').includes(qNorm) || p.replace(/[-_\s]/g, '').includes(qNorm)) return true;
+    if (k.includes(partSearch) || p.includes(partSearch) || f.includes(partSearch)) return true;
+    if (partNorm.length >= 2) {
+      if (k.replace(/[-_\s]/g, '').includes(partNorm) || p.replace(/[-_\s]/g, '').includes(partNorm)) return true;
     }
     return false;
   });
 
-  if (matched.length === 0) {
-    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">일치하는 출하 데이터가 없습니다: '${escapeHtml(pn)}'</td></tr>`;
+  AppState.shipPlanCurrentPage = 1;
+  renderShipPlanPage(1);
+}
+
+function renderShipPlanPage(page) {
+  const rows = AppState.shipPlanFilteredRows || [];
+  const totalRows = rows.length;
+  const pageSize = AppState.shipPlanPageSize || 50;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.shipPlanCurrentPage = page;
+
+  // 카운트 뱃지 & 페이지 인포
+  if (DOM.shipPlanStatusBadge) {
+    DOM.shipPlanStatusBadge.textContent = `${totalRows.toLocaleString()}건`;
+  }
+  if (DOM.shipPlanPageInfo) {
+    DOM.shipPlanPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
+  if (!DOM.shipPlanTbody) return;
+
+  if (totalRows === 0) {
+    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">일치하는 출하 계획 데이터가 없습니다.</td></tr>`;
+    if (DOM.shipPlanPageControls) DOM.shipPlanPageControls.innerHTML = '';
     return;
   }
 
-  DOM.shipPlanTbody.innerHTML = matched.slice(0, 100).map(r => `
-    <tr>
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageRows = rows.slice(start, end);
+
+  DOM.shipPlanTbody.innerHTML = pageRows.map(r => `
+    <tr class="erp-copyable-cell">
       <td>${formatDate(r.e)}</td>
       <td>${formatDate(r.s)}</td>
-      <td>${r.c || '-'}</td>
-      <td style="font-weight:600;color:#60a5fa;">${r.p || '-'}</td>
-      <td>${r.k || '-'}</td>
+      <td style="font-weight:600;">${escapeHtml(r.c || '-')}</td>
+      <td style="font-weight:600;color:#60a5fa;">${escapeHtml(r.p || '-')}</td>
+      <td style="color:#38bdf8;">${escapeHtml(r.k || '-')}</td>
       <td style="text-align:right;">${r.q ? Number(r.q).toLocaleString() : '0'}</td>
-      <td style="text-align:right;color:#34d399;">${r.b ? Number(r.b).toLocaleString() : '0'}</td>
+      <td style="text-align:right;color:#34d399;font-weight:600;">${r.b ? Number(r.b).toLocaleString() : '0'}</td>
     </tr>
   `).join('');
+
+  // 페이지네이션 컨트롤러 렌더링
+  renderShipPlanPaginationControls(page, totalPages);
+}
+
+function renderShipPlanPaginationControls(currentPage, totalPages) {
+  if (!DOM.shipPlanPageControls) return;
+
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
+  let btnsHtml = '';
+
+  // 처음으로 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToShipPlanPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
+  
+  // 이전 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToShipPlanPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
+
+  // 페이지 번호 (슬라이딩 윈도우)
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
+  }
+
+  // 1페이지 버튼
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToShipPlanPage(1)">1</button>`;
+
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToShipPlanPage(${p})">${p}</button>`;
+  });
+
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  // 마지막 페이지 버튼
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToShipPlanPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  // 다음 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToShipPlanPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
+
+  // 마지막으로 버튼
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToShipPlanPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
+
+  DOM.shipPlanPageControls.innerHTML = btnsHtml;
+}
+
+function goToShipPlanPage(page) {
+  renderShipPlanPage(page);
+  const wrapper = document.querySelector('#viewShipPlan .table-responsive-wrapper');
+  if (wrapper) wrapper.scrollTop = 0;
+}
+
+function searchShipPlanLocal(pn) {
+  if (DOM.shipPlanPartInput) DOM.shipPlanPartInput.value = pn;
+  if (DOM.shipPlanCustomerInput) DOM.shipPlanCustomerInput.value = '';
+  filterShipPlanTable();
+  switchViewerCard('viewShipPlan');
 }
 
 // --- 6. 견적서 뷰어 & 상세 모달 (로컬 + 다중 페이지네이션 & 고객사 직접 입력 필터) ---
@@ -1101,7 +1252,12 @@ function switchViewerCard(targetId) {
   }
 
   // 탭 전환 시 데이터 렌더링
-  if (targetId === 'viewQuotations') {
+  if (targetId === 'viewShipPlan') {
+    if (!AppState.shipPlanFilteredRows || AppState.shipPlanFilteredRows.length === 0) {
+      AppState.shipPlanFilteredRows = AppState.shipPlanData || [];
+    }
+    renderShipPlanPage(AppState.shipPlanCurrentPage || 1);
+  } else if (targetId === 'viewQuotations') {
     if (!AppState.quotFilteredRows || AppState.quotFilteredRows.length === 0) {
       AppState.quotFilteredRows = AppState.quotationsData || [];
     }
@@ -1266,6 +1422,7 @@ function debounce(func, wait) {
 // 전역 스코프 바인딩
 window.openQuotationDetail = openQuotationDetail;
 window.goToQuotPage = goToQuotPage;
+window.goToShipPlanPage = goToShipPlanPage;
 window.copyCellText = copyCellText;
 
 // ==========================================================================
@@ -1683,10 +1840,9 @@ window.copyCellText = copyCellText;
       AppState.shipPlanData = AdminState.parsedShipRows;
       AppState.skyworksData = AdminState.parsedSkyworksRows;
       AppState.dataDate = formatKoreanDate(deployDataDate);
+      AppState.shipPlanFilteredRows = AdminState.parsedShipRows;
+      renderShipPlanPage(1);
       updateStatus(true, getDataDateStatusText());
-
-      const badge = document.getElementById('shipPlanStatusBadge');
-      if (badge) badge.textContent = `DB 정상 (${AdminState.parsedShipRows.length.toLocaleString()}건)`;
       const skyCountBadge = document.getElementById('skyworksCount');
       if (skyCountBadge) skyCountBadge.textContent = `${AdminState.parsedSkyworksRows.length.toLocaleString()}건`;
 
