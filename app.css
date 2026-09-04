@@ -944,11 +944,22 @@ html, body {
 .kostat-doc-title {
   flex: 1;
   text-align: center;
-  font-size: 26px;
+  padding-top: 14px;
+}
+
+.kostat-doc-title .quotation-heading {
+  display: inline-block;
+  font-family: Arial, 'Segoe UI', 'Helvetica Neue', Helvetica, -apple-system, sans-serif;
+  font-size: 28px;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 0.5px;
   color: #000000;
-  padding-top: 15px;
+  line-height: 1.15;
+  border-bottom: 3.5px solid #000000;
+  padding-bottom: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
+  text-transform: uppercase;
 }
 
 .kostat-approval-box {
@@ -1102,69 +1113,52 @@ html, body {
 }
 
 /* ==========================================================================
-   인쇄 및 PDF 저장 전용 @media print CSS (A4 용지 규격 완벽 정렬)
+   인쇄 및 PDF 저장 전용 @media print CSS (A4 규격 / 브라우저 헤더&푸터 원천 제거)
    ========================================================================== */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 10mm 12mm;
+    margin: 0 !important; /* 브라우저 기본 머리글(날짜, 제목) 및 바닥글(URL, 1/1) 원천 차단 */
   }
   
-  body, html {
+  html, body {
+    width: 210mm !important;
+    min-height: 297mm !important;
     background: #ffffff !important;
     color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .app-header,
-  .panel-chat,
-  .viewer-nav-bar,
-  .viewer-tools,
-  .pagination-container,
-  .bottom-nav-bar,
-  .modal-header,
-  .modal-footer,
-  .close-btn,
-  .toast-notification,
-  #panelChat,
-  #panelViewer {
+  body > *:not(#printContainer) {
     display: none !important;
   }
 
-  .modal-backdrop {
-    position: static !important;
-    background: transparent !important;
-    padding: 0 !important;
+  #printContainer {
     display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-
-  .modal-dialog {
-    max-width: 100% !important;
-    width: 100% !important;
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    transform: none !important;
-  }
-
-  .modal-body {
-    padding: 0 !important;
+    position: static !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    box-sizing: border-box !important;
+    padding: 10mm 12mm !important; /* 실제 인쇄 용지 여백을 내부 패딩으로 설정하여 브라우저 헤더/푸터 없이 완벽 출력 */
+    margin: 0 auto !important;
+    background: #ffffff !important;
+    color: #000000 !important;
     overflow: visible !important;
   }
 
-  .kostat-official-sheet {
+  #printContainer .kostat-official-sheet {
     border: 2px solid #000000 !important;
-    padding: 16px 20px !important;
+    padding: 14px 18px !important;
     background: #ffffff !important;
     color: #000000 !important;
     width: 100% !important;
     box-sizing: border-box !important;
     box-shadow: none !important;
+    margin: 0 !important;
+    max-width: 100% !important;
   }
 
   .kostat-red-title {
@@ -1328,41 +1322,6 @@ html, body {
   display: none;
 }
 
-@media print {
-  html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: #fff !important;
-  }
-  body > *:not(#printContainer) {
-    display: none !important;
-  }
-  #printContainer {
-    display: block !important;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    background: #fff;
-    color: #000;
-  }
-  
-  @page {
-    size: A4 portrait;
-    margin: 10mm 15mm;
-  }
-  
-  .kostat-official-sheet {
-    box-shadow: none !important;
-    border: none !important;
-    max-width: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-  }
-}
 
 /* Quotation Print Layout */
 .quot-print-wrapper {

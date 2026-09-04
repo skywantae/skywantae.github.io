@@ -985,7 +985,7 @@ function openQuotationDetail(quotNo) {
             FAX : 82-32-671-0259
           </div>
         </div>
-        <div class="kostat-doc-title">QUOTATION</div>
+        <div class="kostat-doc-title"><span class="quotation-heading">QUOTATION</span></div>
         <div class="kostat-approval-box">
           <table class="kostat-approval-table">
             <thead>
@@ -1193,12 +1193,19 @@ function printQuotation(quotNo) {
     // If the modal is already open and rendering this quote, just use its HTML
     printContainer.innerHTML = printableQuotation.outerHTML;
   } else {
-    // We would need to generate it, but btnModalPrintQuot is inside the modal, so printableQuotation is always present
     return;
   }
 
-  // Trigger print
+  // 브라우저 기본 머리글(제목/날짜) 및 바닥글(URL/페이지) 출력을 원천 차단
+  const originalTitle = document.title;
+  document.title = '';
+
   window.print();
+
+  setTimeout(() => {
+    document.title = originalTitle;
+    printContainer.innerHTML = '';
+  }, 1000);
 }
 
 function switchMobileTab(tab) {
