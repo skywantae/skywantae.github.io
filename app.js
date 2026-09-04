@@ -795,7 +795,7 @@ function handleLocalChatCommand(text) {
   // 매칭되는 답변이 없을 때 안내
   appendBotMessage({
     sender: 'KOSTAT 봇',
-    text: `**'${escapeHtml(clean)}'**에 대한 사내 규정 또는 FAQ 정보를 찾지 못했습니다.\n\n다른 키워드로 질문해 주세요. (예: EXW 조건, 위탁재고, 출장여비 규정, 견적 유효기간 등)\n※ Skyworks PO, 출하 계획, 견적서 검색은 우측 탭 메뉴에서 바로 이용하실 수 있습니다.`
+    text: `**'${escapeHtml(clean)}'**에 대한 사내 규정 또는 FAQ 정보를 찾지 못했습니다.\n\n다른 키워드로 질문해 주세요. (예: EXW 조건, 위탁재고, 연차휴가, 견적 유효기간 등)\n※ Skyworks PO, 출하 계획, 견적서 검색은 우측 탭 메뉴에서 바로 이용하실 수 있습니다.`
   });
 }
 
