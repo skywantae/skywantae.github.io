@@ -1523,7 +1523,7 @@ window.copyCellText = copyCellText;
 // [Admin] 관리자 출하 DB 업데이트 & GitHub 무인 자동 배포 모듈
 // ==========================================================================
 (function initAdminDbModule() {
-  const AdminState = {
+  const AdminState = window.AdminState = {
     isAuthenticated: false,
     isDeploying: false,
     latestDetectedDate: '',
@@ -2239,7 +2239,7 @@ function verifyBoardPin() {
   const pin = (DOM.boardPinInput?.value || '').trim();
   if (pin === '8805') {
     closeBoardPinModal();
-    AdminState.isAuthenticated = true;
+    if (window.AdminState) window.AdminState.isAuthenticated = true;
     AppState.isBoardAdmin = true;
     if (DOM.btnToggleBoardAdmin) {
       DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
@@ -2271,7 +2271,7 @@ function toggleBoardAdminMode() {
   }
 
   // 출하 DB 관리자로 이미 인증된 상태라면 즉시 활성화
-  if (AdminState.isAuthenticated) {
+  if (window.AdminState && window.AdminState.isAuthenticated) {
     AppState.isBoardAdmin = true;
     if (DOM.btnToggleBoardAdmin) {
       DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
