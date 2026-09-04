@@ -420,20 +420,32 @@ async function loadInitialDatabases() {
       }
     } catch (e) {}
 
-    // 기능 요청 게시판 데이터 로드
+    // 기능 요청 게시판 데이터 로드 (IndexedDB + LocalStorage 영구 보존 & 가짜 예시 완전 배제)
     let localFeedback = null;
     try {
-      const saved = localStorage.getItem('KOSTAT_FEEDBACK_POSTS');
+      const saved = localStorage.getItem('KOSTAT_FEEDBACK_POSTS') || localStorage.getItem('KOSTAT_FEEDBACK_BACKUP');
       if (saved) localFeedback = JSON.parse(saved);
     } catch(e) {}
 
-    if (localFeedback !== null && Array.isArray(localFeedback)) {
-      AppState.feedbackData = localFeedback;
-    } else if (window.KOSTAT_FEEDBACK_DATA && window.KOSTAT_FEEDBACK_DATA.length > 0) {
-      AppState.feedbackData = [...window.KOSTAT_FEEDBACK_DATA];
-      localStorage.setItem('KOSTAT_FEEDBACK_POSTS', JSON.stringify(AppState.feedbackData));
+    if (!localFeedback || !Array.isArray(localFeedback) || localFeedback.length === 0) {
+      try {
+        if (window.IDB) {
+          const cachedFb = await IDB.get('feedback_posts');
+          if (cachedFb && Array.isArray(cachedFb) && cachedFb.length > 0) {
+            localFeedback = cachedFb;
+          }
+        }
+      } catch (_) {}
     }
-    // 클라우드 원격 최신 기능 요청 데이터 비동기 동기화 (PC↔모바일 연동)
+
+    if (localFeedback && Array.isArray(localFeedback)) {
+      AppState.feedbackData = localFeedback.filter(isRealUserFeedback);
+    } else {
+      AppState.feedbackData = [];
+    }
+    saveFeedbackStorage();
+
+    // 클라우드 원격 최신 기능 요청 데이터 비동기 병합 동기화 (PC↔모바일 연동)
     setTimeout(() => { fetchRemoteFeedback(true); }, 300);
 
     // FAQ 지식 데이터 로드 (localStorage 및 IndexedDB 캐시 복원 - 영구 유실 방지)
@@ -2788,11 +2800,26 @@ function deleteCurrentFeedbackPost() {
   window.deleteFeedbackPostById(id);
 }
 
+// 가짜 예시 데이터(김철수, 이영희 등) 영구 배제 및 실제 사용자 작성 글 검증
+function isRealUserFeedback(post) {
+  if (!post || typeof post !== 'object') return false;
+  if (post.id === 'req-1725418800001' || post.id === 'req-1725418800002') return false;
+  if (post.author === '영업1팀 김철수' || post.author === '해외영업부 이영희') return false;
+  return Boolean(post.title && post.author && post.content);
+}
+
 function saveFeedbackStorage() {
   try {
-    localStorage.setItem('KOSTAT_FEEDBACK_POSTS', JSON.stringify(AppState.feedbackData || []));
+    const validList = (AppState.feedbackData || []).filter(isRealUserFeedback);
+    AppState.feedbackData = validList;
+    const jsonStr = JSON.stringify(validList);
+    localStorage.setItem('KOSTAT_FEEDBACK_POSTS', jsonStr);
+    localStorage.setItem('KOSTAT_FEEDBACK_BACKUP', jsonStr);
+    if (window.IDB) {
+      IDB.set('feedback_posts', validList).catch(() => {});
+    }
   } catch (e) {
-    console.warn('Feedback localStorage save error:', e);
+    console.warn('Feedback storage save error:', e);
   }
 }
 
@@ -2842,12 +2869,12 @@ async function syncFeedbackToCloud() {
   }
 
   try {
-    const list = AppState.feedbackData || [];
+    const list = (AppState.feedbackData || []).filter(isRealUserFeedback);
     // 1) data/feedback_board.json 동기화
     await pushFile('data/feedback_board.json', JSON.stringify(list, null, 2), `chore: sync feedback_board.json (${list.length} posts)`);
     // 2) data/feedback_board.js 로더 동기화
     await pushFile('data/feedback_board.js', `window.KOSTAT_FEEDBACK_DATA = ${JSON.stringify(list, null, 2)};\n`, `chore: sync feedback_board.js`);
-    console.log('✓ 기능 요청 게시판 클라우드 동기화 완료');
+    console.log(`✓ 기능 요청 게시판 클라우드 동기화 완료 (${list.length}건)`);
   } catch (err) {
     console.warn('기능 요청 클라우드 동기화 실패:', err);
   }
@@ -2862,12 +2889,30 @@ async function fetchRemoteFeedback(silent = true) {
       res = await fetch(`data/feedback_board.json?t=${timestamp}`).catch(() => null);
     }
     if (res && res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        AppState.feedbackData = data;
-        localStorage.setItem('KOSTAT_FEEDBACK_POSTS', JSON.stringify(data));
+      const remoteData = await res.json();
+      if (Array.isArray(remoteData)) {
+        const validRemote = remoteData.filter(isRealUserFeedback);
+        
+        // [중요] 기존 로컬 글과 원격 글을 ID 기준으로 안전하게 병합 (게시글 유실 원천 방지)
+        const currentList = (AppState.feedbackData || []).filter(isRealUserFeedback);
+        const map = new Map();
+
+        // 1) 원격 데이터 등록
+        validRemote.forEach(p => map.set(p.id, p));
+        // 2) 로컬에만 있는 최신 글 보존 (아직 원격에 푸시 반영 중이거나 오프라인 작성 건)
+        currentList.forEach(p => {
+          if (!map.has(p.id)) {
+            map.set(p.id, p);
+          }
+        });
+
+        const merged = Array.from(map.values());
+        merged.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
+        AppState.feedbackData = merged;
+        saveFeedbackStorage();
         renderFeedbackBoard();
-        if (!silent) showToast(`✓ 최신 기능 요청 목록 ${data.length}건을 동기화했습니다.`);
+        if (!silent) showToast(`✓ 최신 기능 요청 목록 ${merged.length}건을 동기화했습니다.`);
         return true;
       }
     }
