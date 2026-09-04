@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#12141a" />
+  <meta name="description" content="KOSTAT ERP Registrar 챗봇 및 원격 업무 지원 모바일 시스템" />
+  <title>KOSTAT ERP 모바일 챗봇</title>
+  <link rel="manifest" href="manifest.json" />
+  
+  <!-- iOS PWA (Progressive Web App) Native Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
+  <link rel="apple-touch-icon" href="icon.png">
+  
+  <link rel="stylesheet" href="app.css?v=1.0.154" />
+  <!-- Google Fonts: Inter & Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <!-- 최상단 상태바 및 헤더 -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo">
+        <img src="logo.png" class="brand-img" alt="KOSTAT" />
+        <span class="logo-title">ERP</span>
+      </div>
+      <div class="connection-pill" id="connStatusPill">
+        <span class="status-dot online" id="statusDot"></span>
+        <span class="status-text" id="statusText">2026년 9월 3일 자 데이터 적용 중</span>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <button class="icon-btn" id="btnRefresh" title="새로고침">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      </button>
+      <button class="icon-btn" id="btnSettings" title="설정/업데이트">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- [모바일 전용 / 폭 768px 미만] 반응형 100% 풀스크린 탭 전환 바 -->
+  <nav class="mobile-nav-switcher" id="mobileNavSwitcher">
+    <button class="mobile-nav-btn active" id="btnNavChat" data-panel="chat">
+      <span class="nav-icon">💬</span>
+      <span class="nav-text">AI 챗봇</span>
+    </button>
+    <button class="mobile-nav-btn" id="btnNavViewer" data-panel="viewer">
+      <span class="nav-icon">📊</span>
+      <span class="nav-text" id="mobileViewerNavText">ERP 데이터 뷰어</span>
+    </button>
+  </nav>
+
+  <!-- 메인 레이아웃 컨테이너 -->
+  <main class="app-layout" id="appLayout">
+    
+    <!-- [좌측 / 주 패널] 사내 규정 & FAQ 지식 질의응답 챗봇 -->
+    <section class="panel-chat active" id="panelChat">
+      <!-- 채팅 메시지 스크롤 영역 -->
+      <div class="chat-messages-container" id="chatContainer">
+        <!-- 초기 환영 메시지 -->
+        <div class="chat-bubble bot-msg">
+          <div class="bubble-header">
+            <span class="bot-badge">KOSTAT 봇</span>
+            <span class="msg-time" id="welcomeTime">방금</span>
+          </div>
+          <div class="bubble-content">
+            안녕하세요! <strong>KOSTAT 사내 규정 및 업무 지식(FAQ) 챗봇</strong>입니다.<br>
+            사내 규정, 인코텀즈 무역 조건, 위탁재고, 출장 규정 등에 대해 자유롭게 질문해 주세요.
+          </div>
+        </div>
+      </div>
+
+      <!-- 하단 메시지 입력 바 -->
+      <div class="chat-input-wrapper">
+        <form class="chat-input-form" id="chatForm">
+          <input 
+            type="text" 
+            id="chatInput" 
+            class="chat-input" 
+            placeholder="사내 규정 및 업무 지식 질문 입력... (예: EXW 조건, 위탁재고)" 
+            autocomplete="off"
+          />
+          <button type="submit" class="send-btn" id="btnSend">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- [우측 / 보조 패널] 데이터 뷰어 (출하계획 -> 견적서 -> Skyworks 순서) -->
+    <section class="panel-viewer" id="panelViewer">
+      
+      <!-- 서브 뷰 네비게이션 헤더 -->
+      <div class="viewer-nav-bar">
+        <button class="viewer-tab-btn active" data-target="viewShipPlan">출하 계획</button>
+        <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
+        <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
+        <button class="viewer-tab-btn" data-target="viewFeedback">💡 기능 요청</button>
+        <button class="viewer-tab-btn" data-target="viewFaq">📚 FAQ 지식</button>
+      </div>
+
+      <!-- 1. 출하 계획 뷰 (기본 활성) -->
+      <div class="viewer-content-card active" id="viewShipPlan">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>출하 계획 (Ship Plan)</h3>
+            <span class="count-badge" id="shipPlanStatusBadge">0건</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="shipPlanCustomerInput" class="compact-search" placeholder="고객사 검색..." style="width: 130px;" />
+            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명/PO/기타..." />
+            <select id="shipPlanPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
+              <option value="50">50개씩</option>
+              <option value="100">100개씩</option>
+              <option value="150">150개씩</option>
+              <option value="200">200개씩</option>
+            </select>
+            <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
+            <button class="action-btn-sm" id="btnReloadShipPlan">새로고침</button>
+            <button class="action-btn-sm warning" id="btnOpenAdminDbModal" title="관리자 전용 출하 엑셀 DB 업데이트">🔒 DB 업데이트</button>
+          </div>
+        </div>
+        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
+          <table class="modern-table" id="shipPlanTable">
+            <thead>
+              <tr>
+                <th>출고일</th><th>선적일</th><th>고객사</th><th>PO번호</th><th>부품번호</th><th>수량</th><th>잔여</th>
+              </tr>
+            </thead>
+            <tbody id="shipPlanTbody">
+              <tr><td colspan="7" class="text-center py-4">출하 계획 데이터를 불러오는 중입니다...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- 출하 계획 하단 페이지네이션 컨트롤러 -->
+        <div class="pagination-container" id="shipPlanPagination">
+          <div class="pagination-info" id="shipPlanPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-controls" id="shipPlanPageControls">
+            <!-- 동적 페이지 번호 버튼 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 견적서 뷰어 -->
+      <div class="viewer-content-card" id="viewQuotations">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>견적서</h3>
+            <span class="count-badge" id="quotHistoryCount">0건</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="quotCustomerInput" class="compact-search" placeholder="고객사 검색 (직접 입력)..." style="width: 160px;" />
+            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/견적번호..." />
+            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
+              <option value="50">50개씩</option>
+              <option value="100">100개씩</option>
+              <option value="150">150개씩</option>
+            </select>
+            <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
+            <button class="action-btn-sm" id="btnReloadQuotHistory">새로고침</button>
+            <button class="action-btn-sm warning" id="btnPrintQuotation" style="display: none;">PDF 인쇄</button>
+          </div>
+        </div>
+        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
+          <table class="modern-table" id="quotationsTable">
+            <thead>
+              <tr>
+                <th>견적번호</th><th>견적일</th><th>고객사</th><th>부품번호</th><th>규격/설명</th><th>단가</th><th>비고</th>
+              </tr>
+            </thead>
+            <tbody id="quotationsTbody">
+              <tr><td colspan="7" class="text-center py-4">견적서 데이터를 불러오는 중입니다...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- 견적서 하단 페이지네이션 컨트롤러 -->
+        <div class="pagination-container" id="quotPagination">
+          <div class="pagination-info" id="quotPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-controls" id="quotPageControls">
+            <!-- 동적 페이지 번호 버튼 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Skyworks PO 뷰 -->
+      <div class="viewer-content-card" id="viewSkyworks">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>Skyworks PO 현황</h3>
+            <span class="count-badge" id="skyworksCount">0건</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="skyworksSearchInput" class="compact-search" placeholder="PO/부품명 필터..." />
+            <select id="skyworksYearSelect" class="compact-select">
+              <option value="">전체 연도</option>
+            </select>
+            <button class="action-btn-sm" id="btnSkyworksReload">새로고침</button>
+          </div>
+        </div>
+        <div class="table-responsive-wrapper">
+          <table class="modern-table" id="skyworksTable">
+            <thead id="skyworksThead">
+              <tr>
+                <th>발주일</th><th>납기일</th><th>PO번호</th><th>부품명</th><th>수량</th><th>단가</th><th>금액</th><th>상태</th>
+              </tr>
+            </thead>
+            <tbody id="skyworksTbody">
+              <tr><td colspan="8" class="text-center py-4">데이터를 불러오는 중입니다...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. 기능 추가 및 제안 게시판 뷰 -->
+      <div class="viewer-content-card" id="viewFeedback" style="display:none;">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>기능 요청 게시판</h3>
+            <span class="count-badge" id="feedbackCountBadge">0건</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="feedbackSearchInput" class="compact-search" placeholder="제목/작성자 검색..." style="width: 140px;" />
+            <select id="feedbackStatusFilter" class="compact-select" title="상태 필터">
+              <option value="all">전체 상태</option>
+              <option value="pending">⏳ 검토 중</option>
+              <option value="replied">💬 답변 완료</option>
+              <option value="applied">🚀 반영 완료</option>
+            </select>
+            <button class="action-btn-sm primary" id="btnOpenNewFeedbackModal">+ 새 요청 등록</button>
+            <button class="action-btn-sm warning" id="btnToggleBoardAdmin" title="관리자 답변 및 관리 권한 인증">🔒 관리자 모드</button>
+          </div>
+        </div>
+        
+        <!-- 게시판 게시글 카드 목록 컨테이너 -->
+        <div class="feedback-board-container" id="feedbackBoardList">
+          <div class="text-center py-4" style="color:#94a3b8;">게시글을 불러오는 중입니다...</div>
+        </div>
+      </div>
+
+      <!-- 5. 사내 FAQ 및 업무 지식베이스 뷰 -->
+      <div class="viewer-content-card" id="viewFaq" style="display:none;">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>사내 FAQ 지식베이스</h3>
+            <span class="count-badge" id="faqCountBadge">0개</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="faqSearchInput" class="compact-search" placeholder="질문/답변/키워드 검색..." style="width: 150px;" />
+            <button class="action-btn-sm primary" id="btnOpenNewFaqModal" style="display:none;">+ 새 FAQ 등록</button>
+            <button class="action-btn-sm warning" id="btnToggleFaqAdmin" title="FAQ 추가/수정/삭제 관리자 모드">🔒 관리자 모드</button>
+            <button class="action-btn-sm" id="btnDeployFaq" style="display:none; background:#10b981; border-color:#10b981; color:#fff;" title="수정된 FAQ 전체 웹앱 및 깃허브 배포">🚀 배포 적용</button>
+            <button class="action-btn-sm secondary" id="btnExportFaqBackup" style="font-size:11px; padding:3px 8px;" title="전체 FAQ JSON 백업 파일 다운로드">💾 백업</button>
+            <button class="action-btn-sm secondary" id="btnImportFaqBackup" style="font-size:11px; padding:3px 8px;" title="백업 파일에서 복원">📥 복원</button>
+            <input type="file" id="faqBackupFileInput" accept=".json" style="display:none;" />
+          </div>
+        </div>
+        
+        <!-- FAQ 목록 컨테이너 -->
+        <div class="faq-list-container" id="faqListContainer">
+          <div class="text-center py-4" style="color:#94a3b8;">FAQ 지식 목록을 불러오는 중입니다...</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- 견적서 상세 모달 다이얼로그 (PC 버전 100% 동일 포맷) -->
+  <div class="modal-backdrop" id="quotDetailModal">
+    <div class="modal-dialog quotation-dialog-lg">
+      <div class="modal-header">
+        <h3 id="modalQuotTitle">견적서 상세 정보</h3>
+        <button class="close-btn" id="btnCloseQuotModal">&times;</button>
+      </div>
+      <div class="modal-body" id="modalQuotBody">
+        <!-- PC 버전 동일 ERP 격자 렌더링 -->
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm" id="btnModalPrintQuot" style="background:#27ae60;border-color:#27ae60;color:#fff;">인쇄 / PDF</button>
+        <button class="action-btn-sm" id="btnModalCopyQuotText" style="background:#3b82f6;border-color:#3b82f6;color:#fff;">전체 복사</button>
+        <button class="action-btn-sm secondary" id="btnModalClose">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 설정 및 업데이트 모달 다이얼로그 -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>시스템 정보 & 업데이트</h3>
+        <button class="close-btn" id="btnCloseSettingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-item">
+          <label>동작 환경 (오프라인 지원):</label>
+          <div style="background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;font-size:12px;color:#cbd5e1;line-height:1.6;">
+            • <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>
+            • <strong>탑재 데이터</strong>: Skyworks PO 7,300+건, 출하 계획 58,000+건, 견적서 20,000+건, 사내 FAQ 내장.
+          </div>
+        </div>
+        <div class="setting-item">
+          <label>앱 버전 정보:</label>
+          <div class="version-box">
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.154</strong></span>
+            <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
+          </div>
+          <div class="update-status-msg" id="updateStatusMsg"></div>
+        </div>
+        <div class="setting-item">
+          <label>관리자 전용 메뉴:</label>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+            <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%;">🔒 관리자 출하 DB 업데이트</button>
+            <button class="action-btn-sm primary" id="btnSettingsOpenFaqManager" style="width:100%; background:#6366f1; border-color:#6366f1;">📚 사내 FAQ 지식베이스 관리</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm secondary" id="btnCloseSettings">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 전용 출하 DB 업데이트 모달 -->
+  <div class="modal-backdrop" id="adminDbModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>🔒 관리자 출하 DB 업데이트</h3>
+        <button class="close-btn" id="btnCloseAdminDbModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Step 1: PIN 인증 -->
+        <div id="adminAuthSection" class="admin-section">
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:12px;">
+            출하 계획 데이터베이스를 갱신하려면 관리자 보안 PIN을 입력하세요.
+          </p>
+          <div class="form-group" style="display:flex; gap:8px;">
+            <input type="password" id="adminPinInput" class="form-input" placeholder="관리자 PIN (기본: 8805)" maxlength="8" style="text-align:center; font-size:16px; letter-spacing:4px;" />
+            <button class="action-btn-sm primary" id="btnVerifyAdminPin">인증</button>
+          </div>
+          <div id="adminAuthError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
+        </div>
+
+        <!-- Step 2: 엑셀 업로드 및 배포 (인증 후 표시) -->
+        <div id="adminUploadSection" class="admin-section" style="display:none;">
+          <div class="admin-badge-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:12px; color:#10b981; font-weight:600;">✓ 관리자 인증 완료</span>
+            <button class="action-btn-sm secondary" id="btnAdminLogout" style="font-size:11px; padding:2px 8px;">로그아웃</button>
+          </div>
+
+          <div class="admin-dropzone" id="adminDropzone">
+            <input type="file" id="adminFileInput" accept=".xls,.xlsx,.csv" style="display:none;" />
+            <div class="dropzone-icon">📥</div>
+            <div class="dropzone-text">최신 출하 엑셀 파일(Excel.xls, .xlsx)을<br><strong>여기에 끌어다 놓거나 터치하여 선택</strong>하세요.</div>
+            <div class="dropzone-sub">사내 전산 ExportShipPlan 양식 자동 파싱 (58,000+건)</div>
+          </div>
+
+          <!-- 파싱 분석 요약 카드 -->
+          <div id="adminFileSummary" class="admin-summary-card" style="display:none;">
+            <div class="summary-title" id="adminSummaryFileName">Excel.xls</div>
+            <div class="summary-grid">
+              <div class="summary-stat">
+                <span class="stat-label">총 출하 건수</span>
+                <span class="stat-value" id="adminSummaryTotal">0건</span>
+              </div>
+              <div class="summary-stat">
+                <span class="stat-label">Skyworks 건수</span>
+                <span class="stat-value" id="adminSummarySkyworks">0건</span>
+              </div>
+              <div class="summary-stat">
+                <span class="stat-label">데이터 기준일자</span>
+                <input type="date" id="adminDataDateInput" class="form-input" style="padding:2px 6px;font-size:13px;font-weight:700;color:#10b981;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:4px;width:135px;" title="적용할 데이터 기준일자를 직접 확인 및 수정할 수 있습니다" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 배포 진행 상태 바 -->
+          <div id="adminProgressSection" style="display:none; margin-top:14px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span id="adminProgressLabel" style="color:#94a3b8;">배포 준비 중...</span>
+              <span id="adminProgressPercent" style="font-weight:700; color:#3b82f6;">0%</span>
+            </div>
+            <div class="admin-progress-bar-bg">
+              <div class="admin-progress-bar-fill" id="adminProgressBarFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" id="adminModalFooter">
+        <button class="action-btn-sm primary" id="btnApplyAdminDeploy" style="display:none;">🚀 전체 웹앱에 배포 적용</button>
+        <button class="action-btn-sm secondary" id="btnCloseAdminDb">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 새 기능 요청 등록 모달 -->
+  <div class="modal-backdrop" id="feedbackNewModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>💡 새 기능 추가 요청 등록</h3>
+        <button class="close-btn" id="btnCloseFeedbackNewModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">작성자 (부서 / 이름) <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="feedbackAuthorInput" class="form-input" placeholder="예: 해외영업부 홍길동" style="width:100%;" maxlength="20" />
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">요청 제목 <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="feedbackTitleInput" class="form-input" placeholder="추가되었으면 하는 기능을 한 줄로 요약해 주세요" style="width:100%;" maxlength="50" />
+        </div>
+        <div class="form-group">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">상세 요청 내용 <span style="color:#f43f5e;">*</span></label>
+          <textarea id="feedbackContentInput" class="form-input" rows="5" placeholder="구체적인 사용 상황이나 필요한 세부 사항을 적어주세요." style="width:100%;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnSubmitNewFeedback">등록하기</button>
+        <button class="action-btn-sm secondary" id="btnCancelFeedbackNew">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 답변 및 상태 변경 모달 -->
+  <div class="modal-backdrop" id="feedbackReplyModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>👑 관리자 답변 작성 및 상태 변경</h3>
+        <button class="close-btn" id="btnCloseFeedbackReplyModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="feedbackTargetId" />
+        <div id="feedbackTargetPreview" style="background:rgba(255,255,255,0.04);padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px;color:#cbd5e1;line-height:1.5;"></div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">처리 상태 변경</label>
+          <select id="feedbackReplyStatusSelect" class="form-input" style="width:100%;">
+            <option value="pending">⏳ 검토 중</option>
+            <option value="replied">💬 답변 완료</option>
+            <option value="applied">🚀 반영 완료</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">관리자 공식 답변</label>
+          <textarea id="feedbackReplyTextInput" class="form-input" rows="5" placeholder="해당 요청 사항에 대한 검토 의견 또는 반영 일정을 작성해 주세요." style="width:100%;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnSubmitAdminReply">답변 저장</button>
+        <button class="action-btn-sm danger" id="btnDeleteFeedbackPost">삭제</button>
+        <button class="action-btn-sm secondary" id="btnCancelFeedbackReply">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 게시판 관리자 PIN 인증 모달 (모바일 prompt() 차단 원천 해결) -->
+  <div class="modal-backdrop" id="boardAdminPinModal">
+    <div class="modal-dialog" style="max-width:360px;">
+      <div class="modal-header">
+        <h3>🔒 관리자 모드 인증</h3>
+        <button class="close-btn" id="btnCloseBoardPinModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:12px; line-height:1.5;">
+          기능 요청 게시판 답변 작성 및 관리 권한을 활성화하려면 관리자 PIN 번호를 입력하세요.
+        </p>
+        <div class="form-group" style="margin-bottom:8px;">
+          <input type="password" id="boardPinInput" class="form-input" placeholder="관리자 PIN (기본: 8805)" maxlength="8" style="text-align:center; font-size:18px; letter-spacing:4px; width:100%;" />
+        </div>
+        <div id="boardPinError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnVerifyBoardPin">인증</button>
+        <button class="action-btn-sm secondary" id="btnCancelBoardPin">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 게시글 삭제 확인 전용 모달 (모바일 confirm() 차단 원천 해결) -->
+  <div class="modal-backdrop" id="feedbackDeleteModal">
+    <div class="modal-dialog" style="max-width:380px;">
+      <div class="modal-header">
+        <h3 style="color:#f43f5e;">🗑️ 게시글 삭제 확인</h3>
+        <button class="close-btn" id="btnCloseFeedbackDeleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="feedbackDeleteTargetId" />
+        <p style="font-size:14px; color:#f8fafc; font-weight:600; margin-bottom:8px;" id="feedbackDeleteTitlePreview">
+          선택한 기능 요청 게시글을 삭제하시겠습니까?
+        </p>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:0; line-height:1.5;">
+          삭제된 요청 내용 및 관리자 답변은 복구할 수 없습니다. 정말로 삭제하시겠습니까?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm danger" id="btnConfirmDeleteFeedback">삭제하기</button>
+        <button class="action-btn-sm secondary" id="btnCancelDeleteFeedback">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ 등록 및 수정 전용 모달 (사진, PDF, 엑셀, 워드, 영상 최대 30MB 첨부 지원) -->
+  <div class="modal-backdrop" id="faqEditModal">
+    <div class="modal-dialog quotation-dialog-lg" style="max-width:680px;">
+      <div class="modal-header">
+        <h3 id="faqModalTitle">📚 사내 FAQ 지식 등록 / 수정</h3>
+        <button class="close-btn" id="btnCloseFaqEditModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="faqEditIndex" value="-1" />
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">질문 (Question) <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="faqQuestionInput" class="form-input" placeholder="예: 위탁재고(Consignment) 거래 방식과 정산 주기" style="width:100%;" maxlength="150" />
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">카테고리 / 핵심 검색 키워드 (쉼표로 구분)</label>
+          <input type="text" id="faqCategoryInput" class="form-input" placeholder="예: 인코텀즈, 위탁재고, 출하요청, 해외영업" style="width:100%;" />
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">상세 답변 내용 (Answer) <span style="color:#f43f5e;">*</span></label>
+          <textarea id="faqAnswerInput" class="form-input" rows="7" placeholder="상세 업무 절차, 규정, 유의사항 등을 입력하세요. 줄바꿈과 마크다운 형식을 지원합니다." style="width:100%;resize:vertical;"></textarea>
+        </div>
+
+        <!-- 파일 첨부 섹션 (사진, PDF, 엑셀, 워드, 동영상 최대 30MB) -->
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label style="font-size:12px;color:#94a3b8;">📎 첨부 파일 (사진, PDF, 엑셀, 워드, 영상 최대 30MB)</label>
+            <span style="font-size:11px;color:#10b981;" id="faqAttachSizeIndicator">0개 첨부됨 (파일당 최대 30MB)</span>
+          </div>
+          <div class="faq-attach-dropzone" id="faqDropzone">
+            <input type="file" id="faqFileInput" accept="image/*,video/*,.pdf,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.csv" multiple style="display:none;" />
+            <div style="font-size:22px;margin-bottom:4px;">📁</div>
+            <div style="font-size:13px;color:#cbd5e1;">파일을 여기로 끌어다 놓거나 <strong>터치하여 파일 선택</strong></div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">JPG, PNG, PDF, Excel, Word, MP4 등 (파일당 최대 30MB)</div>
+          </div>
+          <div id="faqAttachedList" class="faq-attached-items-container" style="margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnSaveFaqEdit">💾 FAQ 저장</button>
+        <button class="action-btn-sm secondary" id="btnCancelFaqEdit">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ 삭제 확인 모달 -->
+  <div class="modal-backdrop" id="faqDeleteModal">
+    <div class="modal-dialog" style="max-width:380px;">
+      <div class="modal-header">
+        <h3 style="color:#f43f5e;">🗑️ FAQ 삭제 확인</h3>
+        <button class="close-btn" id="btnCloseFaqDeleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="faqDeleteTargetIndex" />
+        <p style="font-size:14px; color:#f8fafc; font-weight:600; margin-bottom:8px;" id="faqDeleteTitlePreview">
+          해당 FAQ 항목을 삭제하시겠습니까?
+        </p>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:0; line-height:1.5;">
+          삭제된 FAQ는 챗봇 질의응답에서도 즉시 제외됩니다. 정말로 삭제하시겠습니까?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm danger" id="btnConfirmDeleteFaq">삭제하기</button>
+        <button class="action-btn-sm secondary" id="btnCancelDeleteFaq">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 미디어 확대 보기 라이트박스 모달 -->
+  <div class="modal-backdrop" id="faqMediaLightboxModal">
+    <div class="modal-dialog" style="max-width:90vw; background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.15);">
+      <div class="modal-header">
+        <h3 id="faqLightboxTitle" style="font-size:14px; color:#e2e8f0;">미디어 미리보기</h3>
+        <button class="close-btn" id="btnCloseFaqLightbox">&times;</button>
+      </div>
+      <div class="modal-body" id="faqLightboxBody" style="text-align:center; padding:15px; max-height:80vh; overflow:auto;">
+        <!-- Image or Video injected dynamically -->
+      </div>
+      <div class="modal-footer">
+        <a id="faqLightboxDownloadBtn" class="action-btn-sm primary" download style="text-decoration:none;">다운로드</a>
+        <button class="action-btn-sm secondary" id="btnCloseFaqLightbox2">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
+  <script src="data/skyworks_data.js?v=1.0.154"></script>
+  <script src="data/shipplan_data.js?v=1.0.154"></script>
+  <script src="data/quotations_data.js?v=1.0.154"></script>
+  <script src="data/knowledge_data.js?v=1.0.154"></script>
+  <script src="data/faq_db.js?v=1.0.154"></script>
+  <script src="data/feedback_board.js?v=1.0.154"></script>
+  
+  <script src="xlsx.full.min.js?v=1.0.154"></script>
+  <script src="updater.js?v=1.0.154"></script>
+  <script src="app.js?v=1.0.154"></script>
+  
+  <!-- Service Worker Registration for PWA Offline Mode -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => {
+            console.log('[PWA] Service Worker registered:', reg.scope);
+          })
+          .catch(err => console.log('[PWA] Service Worker error:', err));
+      });
+    }
+  </script>
+  
+  <!-- 인쇄 전용 컨테이너 (숨김 처리됨, 인쇄시에만 노출) -->
+  <div id="printContainer" class="print-only"></div>
+</body>
+</html>
