@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.152" />
+  <link rel="stylesheet" href="app.css?v=1.0.153" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -282,7 +282,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.152</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.153</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -452,16 +452,39 @@
     </div>
   </div>
 
+  <!-- 게시글 삭제 확인 전용 모달 (모바일 confirm() 차단 원천 해결) -->
+  <div class="modal-backdrop" id="feedbackDeleteModal">
+    <div class="modal-dialog" style="max-width:380px;">
+      <div class="modal-header">
+        <h3 style="color:#f43f5e;">🗑️ 게시글 삭제 확인</h3>
+        <button class="close-btn" id="btnCloseFeedbackDeleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="feedbackDeleteTargetId" />
+        <p style="font-size:14px; color:#f8fafc; font-weight:600; margin-bottom:8px;" id="feedbackDeleteTitlePreview">
+          선택한 기능 요청 게시글을 삭제하시겠습니까?
+        </p>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:0; line-height:1.5;">
+          삭제된 요청 내용 및 관리자 답변은 복구할 수 없습니다. 정말로 삭제하시겠습니까?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm danger" id="btnConfirmDeleteFeedback">삭제하기</button>
+        <button class="action-btn-sm secondary" id="btnCancelDeleteFeedback">취소</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.152"></script>
-  <script src="data/shipplan_data.js?v=1.0.152"></script>
-  <script src="data/quotations_data.js?v=1.0.152"></script>
-  <script src="data/knowledge_data.js?v=1.0.152"></script>
-  <script src="data/feedback_board.js?v=1.0.152"></script>
+  <script src="data/skyworks_data.js?v=1.0.153"></script>
+  <script src="data/shipplan_data.js?v=1.0.153"></script>
+  <script src="data/quotations_data.js?v=1.0.153"></script>
+  <script src="data/knowledge_data.js?v=1.0.153"></script>
+  <script src="data/feedback_board.js?v=1.0.153"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.152"></script>
-  <script src="updater.js?v=1.0.152"></script>
-  <script src="app.js?v=1.0.152"></script>
+  <script src="xlsx.full.min.js?v=1.0.153"></script>
+  <script src="updater.js?v=1.0.153"></script>
+  <script src="app.js?v=1.0.153"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

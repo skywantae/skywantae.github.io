@@ -179,7 +179,15 @@ const DOM = {
   btnVerifyBoardPin: document.getElementById('btnVerifyBoardPin'),
   boardPinInput: document.getElementById('boardPinInput'),
   boardPinError: document.getElementById('boardPinError'),
-  adminDataDateInput: document.getElementById('adminDataDateInput')
+  adminDataDateInput: document.getElementById('adminDataDateInput'),
+
+  // 게시글 삭제 확인 모달 DOM
+  feedbackDeleteModal: document.getElementById('feedbackDeleteModal'),
+  feedbackDeleteTargetId: document.getElementById('feedbackDeleteTargetId'),
+  feedbackDeleteTitlePreview: document.getElementById('feedbackDeleteTitlePreview'),
+  btnConfirmDeleteFeedback: document.getElementById('btnConfirmDeleteFeedback'),
+  btnCancelDeleteFeedback: document.getElementById('btnCancelDeleteFeedback'),
+  btnCloseFeedbackDeleteModal: document.getElementById('btnCloseFeedbackDeleteModal')
 };
 
 // --- IndexedDB 스토리지 헬퍼 (영구 고속 캐시) ---
@@ -309,10 +317,10 @@ async function loadInitialDatabases() {
       if (saved) localFeedback = JSON.parse(saved);
     } catch(e) {}
 
-    if (localFeedback && Array.isArray(localFeedback) && localFeedback.length > 0) {
+    if (localFeedback !== null && Array.isArray(localFeedback)) {
       AppState.feedbackData = localFeedback;
     } else if (window.KOSTAT_FEEDBACK_DATA && window.KOSTAT_FEEDBACK_DATA.length > 0) {
-      AppState.feedbackData = window.KOSTAT_FEEDBACK_DATA;
+      AppState.feedbackData = [...window.KOSTAT_FEEDBACK_DATA];
       localStorage.setItem('KOSTAT_FEEDBACK_POSTS', JSON.stringify(AppState.feedbackData));
     }
 
@@ -2073,6 +2081,22 @@ function initFeedbackBoardEvents() {
   if (DOM.btnDeleteFeedbackPost) {
     DOM.btnDeleteFeedbackPost.addEventListener('click', deleteCurrentFeedbackPost);
   }
+
+  // 게시글 삭제 확인 전용 모달 이벤트 (confirm() 차단 문제 100% 원천 해결)
+  if (DOM.btnConfirmDeleteFeedback) {
+    DOM.btnConfirmDeleteFeedback.addEventListener('click', executeDeleteFeedbackPost);
+  }
+  if (DOM.btnCancelDeleteFeedback) {
+    DOM.btnCancelDeleteFeedback.addEventListener('click', closeFeedbackDeleteModal);
+  }
+  if (DOM.btnCloseFeedbackDeleteModal) {
+    DOM.btnCloseFeedbackDeleteModal.addEventListener('click', closeFeedbackDeleteModal);
+  }
+  if (DOM.feedbackDeleteModal) {
+    DOM.feedbackDeleteModal.addEventListener('click', (e) => {
+      if (e.target === DOM.feedbackDeleteModal) closeFeedbackDeleteModal();
+    });
+  }
 }
 
 function renderFeedbackBoard() {
@@ -2354,18 +2378,45 @@ function submitAdminReply() {
 }
 
 window.deleteFeedbackPostById = function(id) {
-  if (!confirm('정말 이 요청 게시글을 삭제하시겠습니까?')) return;
+  const post = (AppState.feedbackData || []).find(p => p.id === id);
+  if (DOM.feedbackDeleteTargetId) DOM.feedbackDeleteTargetId.value = id;
+  if (DOM.feedbackDeleteTitlePreview) {
+    const postTitle = post ? post.title : '선택한 요청';
+    DOM.feedbackDeleteTitlePreview.textContent = `"${postTitle}" 게시글을 삭제하시겠습니까?`;
+  }
+  if (DOM.feedbackDeleteModal) {
+    DOM.feedbackDeleteModal.classList.add('show');
+    DOM.feedbackDeleteModal.classList.add('active');
+  }
+};
+
+function closeFeedbackDeleteModal() {
+  if (DOM.feedbackDeleteModal) {
+    DOM.feedbackDeleteModal.classList.remove('show');
+    DOM.feedbackDeleteModal.classList.remove('active');
+  }
+}
+
+function executeDeleteFeedbackPost() {
+  const id = DOM.feedbackDeleteTargetId?.value;
+  if (!id) return;
+
   AppState.feedbackData = (AppState.feedbackData || []).filter(p => p.id !== id);
   saveFeedbackStorage();
+
+  closeFeedbackDeleteModal();
+  if (DOM.feedbackReplyModal) {
+    DOM.feedbackReplyModal.classList.remove('show');
+    DOM.feedbackReplyModal.classList.remove('active');
+  }
   renderFeedbackBoard();
-  showToast('요청 게시글이 삭제되었습니다.');
-};
+  showToast('🗑️ 요청 게시글이 성공적으로 삭제되었습니다.');
+}
 
 function deleteCurrentFeedbackPost() {
   const id = DOM.feedbackTargetId?.value;
   if (!id) return;
   window.deleteFeedbackPostById(id);
-  if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
 }
 
 function saveFeedbackStorage() {
