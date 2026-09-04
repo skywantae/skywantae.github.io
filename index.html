@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.149" />
+  <link rel="stylesheet" href="app.css?v=1.0.150" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -101,6 +101,7 @@
         <button class="viewer-tab-btn active" data-target="viewShipPlan">출하 계획</button>
         <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
+        <button class="viewer-tab-btn" data-target="viewFeedback">💡 기능 요청</button>
       </div>
 
       <!-- 1. 출하 계획 뷰 (기본 활성) -->
@@ -215,6 +216,32 @@
         </div>
       </div>
 
+      <!-- 4. 기능 추가 및 제안 게시판 뷰 -->
+      <div class="viewer-content-card" id="viewFeedback" style="display:none;">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>기능 요청 게시판</h3>
+            <span class="count-badge" id="feedbackCountBadge">0건</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="feedbackSearchInput" class="compact-search" placeholder="제목/작성자 검색..." style="width: 140px;" />
+            <select id="feedbackStatusFilter" class="compact-select" title="상태 필터">
+              <option value="all">전체 상태</option>
+              <option value="pending">⏳ 검토 중</option>
+              <option value="replied">💬 답변 완료</option>
+              <option value="applied">🚀 반영 완료</option>
+            </select>
+            <button class="action-btn-sm primary" id="btnOpenNewFeedbackModal">+ 새 요청 등록</button>
+            <button class="action-btn-sm warning" id="btnToggleBoardAdmin" title="관리자 답변 및 관리 권한 인증">🔒 관리자 모드</button>
+          </div>
+        </div>
+        
+        <!-- 게시판 게시글 카드 목록 컨테이너 -->
+        <div class="feedback-board-container" id="feedbackBoardList">
+          <div class="text-center py-4" style="color:#94a3b8;">게시글을 불러오는 중입니다...</div>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -255,7 +282,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.149</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.150</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -341,17 +368,75 @@
         <button class="action-btn-sm secondary" id="btnCloseAdminDb">닫기</button>
       </div>
     </div>
+  <!-- 새 기능 요청 등록 모달 -->
+  <div class="modal-backdrop" id="feedbackNewModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>💡 새 기능 추가 요청 등록</h3>
+        <button class="close-btn" id="btnCloseFeedbackNewModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">작성자 (부서 / 이름) <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="feedbackAuthorInput" class="form-input" placeholder="예: 해외영업부 홍길동" style="width:100%;" maxlength="20" />
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">요청 제목 <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="feedbackTitleInput" class="form-input" placeholder="추가되었으면 하는 기능을 한 줄로 요약해 주세요" style="width:100%;" maxlength="50" />
+        </div>
+        <div class="form-group">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">상세 요청 내용 <span style="color:#f43f5e;">*</span></label>
+          <textarea id="feedbackContentInput" class="form-input" rows="5" placeholder="구체적인 사용 상황이나 필요한 세부 사항을 적어주세요." style="width:100%;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnSubmitNewFeedback">등록하기</button>
+        <button class="action-btn-sm secondary" id="btnCancelFeedbackNew">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 답변 및 상태 변경 모달 -->
+  <div class="modal-backdrop" id="feedbackReplyModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>👑 관리자 답변 작성 및 상태 변경</h3>
+        <button class="close-btn" id="btnCloseFeedbackReplyModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="feedbackTargetId" />
+        <div id="feedbackTargetPreview" style="background:rgba(255,255,255,0.04);padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px;color:#cbd5e1;line-height:1.5;"></div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">처리 상태 변경</label>
+          <select id="feedbackReplyStatusSelect" class="form-input" style="width:100%;">
+            <option value="pending">⏳ 검토 중</option>
+            <option value="replied">💬 답변 완료</option>
+            <option value="applied">🚀 반영 완료</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">관리자 공식 답변</label>
+          <textarea id="feedbackReplyTextInput" class="form-input" rows="5" placeholder="해당 요청 사항에 대한 검토 의견 또는 반영 일정을 작성해 주세요." style="width:100%;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnSubmitAdminReply">답변 저장</button>
+        <button class="action-btn-sm danger" id="btnDeleteFeedbackPost">삭제</button>
+        <button class="action-btn-sm secondary" id="btnCancelFeedbackReply">닫기</button>
+      </div>
+    </div>
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.149"></script>
-  <script src="data/shipplan_data.js?v=1.0.149"></script>
-  <script src="data/quotations_data.js?v=1.0.149"></script>
-  <script src="data/knowledge_data.js?v=1.0.149"></script>
+  <script src="data/skyworks_data.js?v=1.0.150"></script>
+  <script src="data/shipplan_data.js?v=1.0.150"></script>
+  <script src="data/quotations_data.js?v=1.0.150"></script>
+  <script src="data/knowledge_data.js?v=1.0.150"></script>
+  <script src="data/feedback_board.js?v=1.0.150"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.149"></script>
-  <script src="updater.js?v=1.0.149"></script>
-  <script src="app.js?v=1.0.149"></script>
+  <script src="xlsx.full.min.js?v=1.0.150"></script>
+  <script src="updater.js?v=1.0.150"></script>
+  <script src="app.js?v=1.0.150"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

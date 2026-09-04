@@ -21,6 +21,11 @@ const AppState = {
   shipPlanPageSize: 50,
   shipPlanFilteredRows: [],
 
+  // 기능 요청 게시판 상태
+  feedbackData: [],
+  feedbackFilteredRows: [],
+  isBoardAdmin: false,
+
   // 상태
   dbReady: false,
   isSyncing: false,
@@ -111,7 +116,32 @@ const DOM = {
   settingsModal: document.getElementById('settingsModal'),
   btnCloseSettingsModal: document.getElementById('btnCloseSettingsModal'),
   btnCloseSettings: document.getElementById('btnCloseSettings'),
-  currentAppVersion: document.getElementById('currentAppVersion')
+  currentAppVersion: document.getElementById('currentAppVersion'),
+
+  // 기능 요청 게시판 DOM
+  feedbackBoardList: document.getElementById('feedbackBoardList'),
+  feedbackCountBadge: document.getElementById('feedbackCountBadge'),
+  feedbackSearchInput: document.getElementById('feedbackSearchInput'),
+  feedbackStatusFilter: document.getElementById('feedbackStatusFilter'),
+  btnOpenNewFeedbackModal: document.getElementById('btnOpenNewFeedbackModal'),
+  btnToggleBoardAdmin: document.getElementById('btnToggleBoardAdmin'),
+  feedbackNewModal: document.getElementById('feedbackNewModal'),
+  btnCloseFeedbackNewModal: document.getElementById('btnCloseFeedbackNewModal'),
+  btnCancelFeedbackNew: document.getElementById('btnCancelFeedbackNew'),
+  btnSubmitNewFeedback: document.getElementById('btnSubmitNewFeedback'),
+  feedbackAuthorInput: document.getElementById('feedbackAuthorInput'),
+  feedbackTitleInput: document.getElementById('feedbackTitleInput'),
+  feedbackContentInput: document.getElementById('feedbackContentInput'),
+  
+  feedbackReplyModal: document.getElementById('feedbackReplyModal'),
+  btnCloseFeedbackReplyModal: document.getElementById('btnCloseFeedbackReplyModal'),
+  btnCancelFeedbackReply: document.getElementById('btnCancelFeedbackReply'),
+  btnSubmitAdminReply: document.getElementById('btnSubmitAdminReply'),
+  btnDeleteFeedbackPost: document.getElementById('btnDeleteFeedbackPost'),
+  feedbackTargetId: document.getElementById('feedbackTargetId'),
+  feedbackTargetPreview: document.getElementById('feedbackTargetPreview'),
+  feedbackReplyStatusSelect: document.getElementById('feedbackReplyStatusSelect'),
+  feedbackReplyTextInput: document.getElementById('feedbackReplyTextInput')
 };
 
 // --- IndexedDB 스토리지 헬퍼 (영구 고속 캐시) ---
@@ -223,6 +253,20 @@ async function loadInitialDatabases() {
       }
     } catch (e) {}
 
+    // 기능 요청 게시판 데이터 로드
+    let localFeedback = null;
+    try {
+      const saved = localStorage.getItem('KOSTAT_FEEDBACK_POSTS');
+      if (saved) localFeedback = JSON.parse(saved);
+    } catch(e) {}
+
+    if (localFeedback && Array.isArray(localFeedback) && localFeedback.length > 0) {
+      AppState.feedbackData = localFeedback;
+    } else if (window.KOSTAT_FEEDBACK_DATA && window.KOSTAT_FEEDBACK_DATA.length > 0) {
+      AppState.feedbackData = window.KOSTAT_FEEDBACK_DATA;
+      localStorage.setItem('KOSTAT_FEEDBACK_POSTS', JSON.stringify(AppState.feedbackData));
+    }
+
     AppState.dbReady = true;
     updateStatus(true, getDataDateStatusText());
     
@@ -231,6 +275,7 @@ async function loadInitialDatabases() {
     initSkyworksYears();
     renderQuotHistory();
     renderShipPlanHistory();
+    renderFeedbackBoard();
 
     console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
   } catch (err) {
@@ -337,6 +382,8 @@ function updateStatus(isOnline, text) {
 
 // --- UI 이벤트 바인딩 ---
 function initUI() {
+  initFeedbackBoardEvents();
+
   // 챗봇 입력
   DOM.chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1273,6 +1320,8 @@ function switchViewerCard(targetId) {
     if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
       renderSkyworksTable(AppState.skyworksData);
     }
+  } else if (targetId === 'viewFeedback') {
+    renderFeedbackBoard();
   }
 }
 
@@ -1872,4 +1921,317 @@ window.copyCellText = copyCellText;
 
   if (btnApplyDeploy) btnApplyDeploy.addEventListener('click', applyAdminDeploy);
 })();
+
+// ==========================================================================
+// 5. 기능 추가 및 제안 게시판 (Feature Request Board) 엔진
+// ==========================================================================
+function initFeedbackBoardEvents() {
+  if (DOM.feedbackSearchInput) {
+    DOM.feedbackSearchInput.addEventListener('input', debounce(renderFeedbackBoard, 200));
+  }
+  if (DOM.feedbackStatusFilter) {
+    DOM.feedbackStatusFilter.addEventListener('change', renderFeedbackBoard);
+  }
+
+  // 새 글 등록 모달 열기/닫기
+  if (DOM.btnOpenNewFeedbackModal) {
+    DOM.btnOpenNewFeedbackModal.addEventListener('click', () => {
+      if (DOM.feedbackAuthorInput) DOM.feedbackAuthorInput.value = '';
+      if (DOM.feedbackTitleInput) DOM.feedbackTitleInput.value = '';
+      if (DOM.feedbackContentInput) DOM.feedbackContentInput.value = '';
+      if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.add('active');
+    });
+  }
+  if (DOM.btnCloseFeedbackNewModal) {
+    DOM.btnCloseFeedbackNewModal.addEventListener('click', () => {
+      if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.remove('active');
+    });
+  }
+  if (DOM.btnCancelFeedbackNew) {
+    DOM.btnCancelFeedbackNew.addEventListener('click', () => {
+      if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.remove('active');
+    });
+  }
+
+  // 새 글 제출
+  if (DOM.btnSubmitNewFeedback) {
+    DOM.btnSubmitNewFeedback.addEventListener('click', submitNewFeedback);
+  }
+
+  // 관리자 모드 토글
+  if (DOM.btnToggleBoardAdmin) {
+    DOM.btnToggleBoardAdmin.addEventListener('click', toggleBoardAdminMode);
+  }
+
+  // 관리자 답변 모달 닫기
+  if (DOM.btnCloseFeedbackReplyModal) {
+    DOM.btnCloseFeedbackReplyModal.addEventListener('click', () => {
+      if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
+    });
+  }
+  if (DOM.btnCancelFeedbackReply) {
+    DOM.btnCancelFeedbackReply.addEventListener('click', () => {
+      if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
+    });
+  }
+
+  // 관리자 답변 저장 & 삭제
+  if (DOM.btnSubmitAdminReply) {
+    DOM.btnSubmitAdminReply.addEventListener('click', submitAdminReply);
+  }
+  if (DOM.btnDeleteFeedbackPost) {
+    DOM.btnDeleteFeedbackPost.addEventListener('click', deleteCurrentFeedbackPost);
+  }
+}
+
+function renderFeedbackBoard() {
+  if (!DOM.feedbackBoardList) return;
+
+  const query = (DOM.feedbackSearchInput?.value || '').toLowerCase().trim();
+  const statusFilter = DOM.feedbackStatusFilter?.value || 'all';
+
+  let list = AppState.feedbackData || [];
+
+  if (statusFilter !== 'all') {
+    list = list.filter(item => item.status === statusFilter);
+  }
+
+  if (query) {
+    list = list.filter(item => 
+      (item.title && item.title.toLowerCase().includes(query)) ||
+      (item.author && item.author.toLowerCase().includes(query)) ||
+      (item.content && item.content.toLowerCase().includes(query))
+    );
+  }
+
+  AppState.feedbackFilteredRows = list;
+
+  if (DOM.feedbackCountBadge) {
+    DOM.feedbackCountBadge.textContent = `${list.length}건`;
+  }
+
+  if (list.length === 0) {
+    DOM.feedbackBoardList.innerHTML = `
+      <div class="feedback-empty-state">
+        <div style="font-size:32px;margin-bottom:8px;">💡</div>
+        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">등록된 기능 요청이 없습니다.</div>
+        <div style="font-size:12px;color:#94a3b8;">새로운 아이디어나 필요한 기능이 있다면 [+ 새 요청 등록] 버튼을 눌러보세요.</div>
+      </div>
+    `;
+    return;
+  }
+
+  DOM.feedbackBoardList.innerHTML = list.map(item => {
+    let badgeClass = 'pending';
+    let badgeText = '⏳ 검토 중';
+    if (item.status === 'replied') {
+      badgeClass = 'replied';
+      badgeText = '💬 답변 완료';
+    } else if (item.status === 'applied') {
+      badgeClass = 'applied';
+      badgeText = '🚀 반영 완료';
+    }
+
+    let replyHtml = '';
+    if (item.reply && item.reply.content) {
+      replyHtml = `
+        <div class="feedback-reply-box">
+          <div class="feedback-reply-header">
+            <span>👑 ${escapeHtml(item.reply.author || '관리자')} 답변</span>
+            <span style="font-size:11px;color:#94a3b8;">${escapeHtml(item.reply.replied_at || '')}</span>
+          </div>
+          <div class="feedback-reply-content">${escapeHtml(item.reply.content)}</div>
+        </div>
+      `;
+    }
+
+    let adminActionHtml = '';
+    if (AppState.isBoardAdmin) {
+      adminActionHtml = `
+        <div class="feedback-card-actions">
+          <button class="action-btn-sm primary" onclick="openAdminReplyModal('${item.id}')" style="font-size:11px;padding:3px 10px;">
+            ${item.reply ? '✏️ 답변 수정' : '💬 답변 작성'}
+          </button>
+          <button class="action-btn-sm danger" onclick="deleteFeedbackPostById('${item.id}')" style="font-size:11px;padding:3px 10px;">
+            🗑️ 삭제
+          </button>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="feedback-card" id="card-${item.id}">
+        <div class="feedback-card-header">
+          <span class="feedback-badge ${badgeClass}">${badgeText}</span>
+          <span class="feedback-card-meta">${escapeHtml(item.author || '익명')} · ${escapeHtml(item.created_at || '')}</span>
+        </div>
+        <div class="feedback-card-title">${escapeHtml(item.title)}</div>
+        <div class="feedback-card-content">${escapeHtml(item.content)}</div>
+        ${replyHtml}
+        ${adminActionHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+function submitNewFeedback() {
+  const author = (DOM.feedbackAuthorInput?.value || '').trim();
+  const title = (DOM.feedbackTitleInput?.value || '').trim();
+  const content = (DOM.feedbackContentInput?.value || '').trim();
+
+  if (!author) {
+    showToast('작성자(부서/이름)를 입력해 주세요.', 'error');
+    DOM.feedbackAuthorInput?.focus();
+    return;
+  }
+  if (!title) {
+    showToast('요청 제목을 입력해 주세요.', 'error');
+    DOM.feedbackTitleInput?.focus();
+    return;
+  }
+  if (!content) {
+    showToast('상세 요청 내용을 입력해 주세요.', 'error');
+    DOM.feedbackContentInput?.focus();
+    return;
+  }
+
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const dateStr = `${y}-${m}-${d} ${hh}:${mm}`;
+
+  const newPost = {
+    id: `req-${Date.now()}`,
+    title: title,
+    author: author,
+    content: content,
+    created_at: dateStr,
+    status: 'pending',
+    reply: null
+  };
+
+  if (!Array.isArray(AppState.feedbackData)) AppState.feedbackData = [];
+  AppState.feedbackData.unshift(newPost);
+  saveFeedbackStorage();
+
+  if (DOM.feedbackNewModal) DOM.feedbackNewModal.classList.remove('active');
+  renderFeedbackBoard();
+  showToast('💡 기능 추가 요청이 등록되었습니다. 관리자가 검토 후 답변을 드립니다.');
+}
+
+function toggleBoardAdminMode() {
+  if (AppState.isBoardAdmin) {
+    AppState.isBoardAdmin = false;
+    if (DOM.btnToggleBoardAdmin) {
+      DOM.btnToggleBoardAdmin.textContent = '🔒 관리자 모드';
+      DOM.btnToggleBoardAdmin.classList.remove('primary');
+      DOM.btnToggleBoardAdmin.classList.add('warning');
+    }
+    showToast('관리자 모드가 해제되었습니다.');
+    renderFeedbackBoard();
+    return;
+  }
+
+  const pin = prompt('관리자 보안 PIN을 입력하세요 (기본: 8805):');
+  if (!pin) return;
+
+  if (pin === '8805') {
+    AppState.isBoardAdmin = true;
+    if (DOM.btnToggleBoardAdmin) {
+      DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleBoardAdmin.classList.remove('warning');
+      DOM.btnToggleBoardAdmin.classList.add('primary');
+    }
+    showToast('✓ 관리자 인증 완료! 각 요청에 답변을 달거나 상태를 변경할 수 있습니다.');
+    renderFeedbackBoard();
+  } else {
+    showToast('PIN 번호가 일치하지 않습니다.', 'error');
+  }
+}
+
+window.openAdminReplyModal = function(id) {
+  const post = (AppState.feedbackData || []).find(p => p.id === id);
+  if (!post) return;
+
+  if (DOM.feedbackTargetId) DOM.feedbackTargetId.value = id;
+  if (DOM.feedbackTargetPreview) {
+    DOM.feedbackTargetPreview.innerHTML = `
+      <div style="font-weight:700;color:#f8fafc;margin-bottom:4px;">${escapeHtml(post.title)}</div>
+      <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">작성자: ${escapeHtml(post.author)} (${post.created_at})</div>
+      <div style="font-size:12px;color:#cbd5e1;white-space:pre-wrap;">${escapeHtml(post.content)}</div>
+    `;
+  }
+  if (DOM.feedbackReplyStatusSelect) {
+    DOM.feedbackReplyStatusSelect.value = post.status || 'replied';
+  }
+  if (DOM.feedbackReplyTextInput) {
+    DOM.feedbackReplyTextInput.value = post.reply ? (post.reply.content || '') : '';
+  }
+
+  if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.add('active');
+};
+
+function submitAdminReply() {
+  const id = DOM.feedbackTargetId?.value;
+  if (!id) return;
+
+  const post = (AppState.feedbackData || []).find(p => p.id === id);
+  if (!post) return;
+
+  const replyText = (DOM.feedbackReplyTextInput?.value || '').trim();
+  const status = DOM.feedbackReplyStatusSelect?.value || 'replied';
+
+  if (!replyText) {
+    showToast('관리자 공식 답변 내용을 작성해 주세요.', 'error');
+    DOM.feedbackReplyTextInput?.focus();
+    return;
+  }
+
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const dateStr = `${y}-${m}-${d} ${hh}:${mm}`;
+
+  post.status = status;
+  post.reply = {
+    author: '시스템 관리자',
+    content: replyText,
+    replied_at: dateStr
+  };
+
+  saveFeedbackStorage();
+  if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
+  renderFeedbackBoard();
+  showToast('👑 관리자 답변이 성공적으로 등록되었습니다.');
+}
+
+window.deleteFeedbackPostById = function(id) {
+  if (!confirm('정말 이 요청 게시글을 삭제하시겠습니까?')) return;
+  AppState.feedbackData = (AppState.feedbackData || []).filter(p => p.id !== id);
+  saveFeedbackStorage();
+  renderFeedbackBoard();
+  showToast('요청 게시글이 삭제되었습니다.');
+};
+
+function deleteCurrentFeedbackPost() {
+  const id = DOM.feedbackTargetId?.value;
+  if (!id) return;
+  window.deleteFeedbackPostById(id);
+  if (DOM.feedbackReplyModal) DOM.feedbackReplyModal.classList.remove('active');
+}
+
+function saveFeedbackStorage() {
+  try {
+    localStorage.setItem('KOSTAT_FEEDBACK_POSTS', JSON.stringify(AppState.feedbackData || []));
+  } catch (e) {
+    console.warn('Feedback localStorage save error:', e);
+  }
+}
+
 
