@@ -1,0 +1,1 @@
+window.KOSTAT_FEEDBACK_DATA = [];
