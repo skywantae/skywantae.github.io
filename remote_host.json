@@ -1,16 +1,16 @@
 {
-  "active_url": "https://portraits-mothers-reserves-drinking.trycloudflare.com",
+  "active_url": "https://dolls-cats-round-jamie.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-05 19:54:35",
+  "updated_at": "2026-09-05 19:55:31",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://portraits-mothers-reserves-drinking.trycloudflare.com",
+      "active_url": "https://dolls-cats-round-jamie.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-05 19:54:35",
+      "updated_at": "2026-09-05 19:55:31",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
