@@ -1,16 +1,16 @@
 {
-  "active_url": "https://savannah-suggestion-tri-surrounded.trycloudflare.com",
+  "active_url": "https://parking-holes-physics-endangered.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-05 23:41:30",
+  "updated_at": "2026-09-05 23:42:24",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://savannah-suggestion-tri-surrounded.trycloudflare.com",
+      "active_url": "https://parking-holes-physics-endangered.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-05 23:41:30",
+      "updated_at": "2026-09-05 23:42:24",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
