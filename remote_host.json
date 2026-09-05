@@ -1,16 +1,16 @@
 {
-  "active_url": "https://remain-signatures-sale-acceptance.trycloudflare.com",
+  "active_url": "https://morning-nhs-important-alabama.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-06 06:31:57",
+  "updated_at": "2026-09-06 06:32:50",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://remain-signatures-sale-acceptance.trycloudflare.com",
+      "active_url": "https://morning-nhs-important-alabama.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-06 06:31:57",
+      "updated_at": "2026-09-06 06:32:50",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
