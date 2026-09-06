@@ -1,16 +1,16 @@
 {
-  "active_url": "https://cute-dean-accessibility-microphone.trycloudflare.com",
+  "active_url": "https://correspondence-engineers-deal-mapping.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-07 03:22:22",
+  "updated_at": "2026-09-07 03:23:15",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://cute-dean-accessibility-microphone.trycloudflare.com",
+      "active_url": "https://correspondence-engineers-deal-mapping.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-07 03:22:22",
+      "updated_at": "2026-09-07 03:23:15",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
