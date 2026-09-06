@@ -1,16 +1,16 @@
 {
-  "active_url": "https://nissan-introducing-arise-painting.trycloudflare.com",
+  "active_url": "https://descriptions-directions-sewing-wheat.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-06 21:00:32",
+  "updated_at": "2026-09-06 21:01:25",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://nissan-introducing-arise-painting.trycloudflare.com",
+      "active_url": "https://descriptions-directions-sewing-wheat.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-06 21:00:32",
+      "updated_at": "2026-09-06 21:01:25",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
