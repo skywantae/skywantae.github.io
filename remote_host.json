@@ -1,16 +1,16 @@
 {
-  "active_url": "https://subaru-calendar-star-encourages.trycloudflare.com",
+  "active_url": "https://morgan-boards-actions-marathon.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-06 10:22:03",
+  "updated_at": "2026-09-06 10:22:56",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://subaru-calendar-star-encourages.trycloudflare.com",
+      "active_url": "https://morgan-boards-actions-marathon.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-06 10:22:03",
+      "updated_at": "2026-09-06 10:22:56",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
