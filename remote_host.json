@@ -1,16 +1,16 @@
 {
-  "active_url": "https://battle-possibilities-exact-nvidia.trycloudflare.com",
+  "active_url": "https://tension-standard-learners-from.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-06 09:12:53",
+  "updated_at": "2026-09-06 09:13:46",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://battle-possibilities-exact-nvidia.trycloudflare.com",
+      "active_url": "https://tension-standard-learners-from.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-06 09:12:53",
+      "updated_at": "2026-09-06 09:13:46",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
