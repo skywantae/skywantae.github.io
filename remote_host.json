@@ -1,16 +1,16 @@
 {
-  "active_url": "https://fort-neutral-notices-dash.trycloudflare.com",
+  "active_url": "https://dispatch-secrets-incorporate-consortium.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-07 07:28:58",
+  "updated_at": "2026-09-07 07:29:51",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://fort-neutral-notices-dash.trycloudflare.com",
+      "active_url": "https://dispatch-secrets-incorporate-consortium.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-07 07:28:58",
+      "updated_at": "2026-09-07 07:29:51",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
