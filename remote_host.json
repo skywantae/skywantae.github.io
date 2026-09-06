@@ -1,16 +1,16 @@
 {
-  "active_url": "https://text-afterwards-disclaimer-wan.trycloudflare.com",
+  "active_url": "https://pad-printing-parents-vision.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-06 21:09:26",
+  "updated_at": "2026-09-06 21:10:19",
   "status": "online",
   "devices": {
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://text-afterwards-disclaimer-wan.trycloudflare.com",
+      "active_url": "https://pad-printing-parents-vision.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-06 21:09:26",
+      "updated_at": "2026-09-06 21:10:19",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
