@@ -1826,74 +1826,263 @@ function openContractReviewDetail(projectNo) {
     return;
   }
 
-  DOM.modalContractTitle.textContent = `계약검토서 상세 [${found.project_no}]`;
-  const isDone = found.status === '완료';
-  const statusBadgeClass = isDone ? 'contract-status-badge completed' : 'contract-status-badge in-progress';
+  DOM.modalContractTitle.textContent = `계약검토서 상세 정보 [${found.project_no}]`;
+
+  // 액션 아이템 목록 HTML
+  let actionHtml = '';
+  if (found.action_items && found.action_items.length > 0) {
+    actionHtml = `
+      <table class="contract-sub-table">
+        <thead>
+          <tr><th>일자</th><th>상태</th><th>도면(Drawing)</th><th>시뮬레이션</th><th>POD</th></tr>
+        </thead>
+        <tbody>
+          ${found.action_items.map(a => `
+            <tr>
+              <td>${escapeHtml(a.date || '-')}</td>
+              <td>${escapeHtml(a.status || '-')}</td>
+              <td>${escapeHtml(a.drawing || '-')}</td>
+              <td>${escapeHtml(a.simulation || '-')}</td>
+              <td>${escapeHtml(a.pod || '-')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else {
+    actionHtml = `<div class="contract-empty-sub">등록된 Action Item 데이터가 없습니다.</div>`;
+  }
+
+  // 샘플 배송 목록 HTML
+  let sampleHtml = '';
+  if (found.sample_deliveries && found.sample_deliveries.length > 0) {
+    sampleHtml = `
+      <table class="contract-sub-table">
+        <thead>
+          <tr><th>일자</th><th>Invoice</th><th>수량</th><th>예정일</th><th>발송일</th><th>설명</th><th>Attn</th><th>배송추적</th></tr>
+        </thead>
+        <tbody>
+          ${found.sample_deliveries.map(s => `
+            <tr>
+              <td>${escapeHtml(s.date || '-')}</td>
+              <td>${escapeHtml(s.invoice || '-')}</td>
+              <td>${escapeHtml(s.qty || '-')}</td>
+              <td>${escapeHtml(s.due_date || '-')}</td>
+              <td>${escapeHtml(s.shipped_date || '-')}</td>
+              <td>${escapeHtml(s.description || '-')}</td>
+              <td>${escapeHtml(s.attn || '-')}</td>
+              <td>${escapeHtml(s.courier_tracking || '-')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else {
+    sampleHtml = `<div class="contract-empty-sub">등록된 Sample Delivery 데이터가 없습니다.</div>`;
+  }
+
+  // 인증 상태 목록 HTML
+  let qualHtml = '';
+  if (found.qualifications && found.qualifications.length > 0) {
+    qualHtml = `
+      <table class="contract-sub-table">
+        <thead>
+          <tr><th>일자</th><th>상태</th><th>Dual Report</th></tr>
+        </thead>
+        <tbody>
+          ${found.qualifications.map(q => `
+            <tr>
+              <td>${escapeHtml(q.date || '-')}</td>
+              <td>${escapeHtml(q.status || '-')}</td>
+              <td>${escapeHtml(q.dual_report || '-')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else {
+    qualHtml = `<div class="contract-empty-sub">등록된 Qualification Status 데이터가 없습니다.</div>`;
+  }
 
   DOM.modalContractBody.innerHTML = `
-    <div style="padding:4px 0;">
-      <!-- 기본 규격/스펙 그리드 -->
-      <div class="contract-spec-grid">
-        <div class="contract-spec-item">
-          <div class="label">프로젝트 번호</div>
-          <div class="value" style="color:#60a5fa;">${escapeHtml(found.project_no)}</div>
+    <div class="kostat-contract-sheet" id="printableContractReview">
+      <!-- 1. 상단 3개 열 그리드 (ERP 원본 100% 동일 배치) -->
+      <div class="contract-top-grid">
+        <!-- 열 1 -->
+        <div class="contract-grid-col">
+          <div class="erp-field-row">
+            <span class="erp-field-label">Project No. :</span>
+            <span class="erp-field-val bold blue">${escapeHtml(found.project_no)}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Date :</span>
+            <span class="erp-field-val">${escapeHtml(found.date || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Status :</span>
+            <span class="erp-field-val">${escapeHtml(found.status || 'Document')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Priority :</span>
+            <span class="erp-field-val">${escapeHtml(found.priority || '1')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Item :</span>
+            <span class="erp-field-val">${escapeHtml(found.item || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Tool Type :</span>
+            <span class="erp-field-val">${escapeHtml(found.tool_type || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Country :</span>
+            <span class="erp-field-val">${escapeHtml(found.country || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Customer :</span>
+            <span class="erp-field-val bold">${escapeHtml(found.customer || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Related Custom :</span>
+            <span class="erp-field-val">${escapeHtml(found.related_custom || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Material :</span>
+            <span class="erp-field-val">${escapeHtml(found.material || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Q'ty :</span>
+            <span class="erp-field-val">${escapeHtml(found.qty || '')}</span>
+          </div>
         </div>
-        <div class="contract-spec-item">
-          <div class="label">등록 일자</div>
-          <div class="value">${escapeHtml(found.date || '-')}</div>
+
+        <!-- 열 2 -->
+        <div class="contract-grid-col">
+          <div class="erp-field-row">
+            <span class="erp-field-label">Part No :</span>
+            <span class="erp-field-val bold green">${escapeHtml(found.part_no || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Temp(Length) :</span>
+            <span class="erp-field-val">${escapeHtml(found.temp || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Erp Code :</span>
+            <span class="erp-field-val">${escapeHtml(found.erp_code || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Monthly Amount :</span>
+            <span class="erp-field-val align-right">${escapeHtml(found.monthly_amount || '.000')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Exp Po Yymm :</span>
+            <span class="erp-field-val">${escapeHtml(found.exp_po_yymm || '-')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Tooling Po No :</span>
+            <span class="erp-field-val">${escapeHtml(found.tooling_po_no || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Tooling Cost :</span>
+            <span class="erp-field-val align-right">${escapeHtml(found.tooling_cost || '.000')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Mass Date :</span>
+            <span class="erp-field-val">${escapeHtml(found.mass_date || '.  .')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Mass Amount :</span>
+            <span class="erp-field-val align-right">${escapeHtml(found.mass_amount || '.000')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Person Charge :</span>
+            <span class="erp-field-val align-right">${escapeHtml(found.person_charge || '.000')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Due Date :</span>
+            <span class="erp-field-val">${escapeHtml(found.due_date || '')}</span>
+          </div>
         </div>
-        <div class="contract-spec-item">
-          <div class="label">고객사</div>
-          <div class="value" style="color:#38bdf8;">${escapeHtml(found.customer || '-')} (${escapeHtml(found.country || '-')})</div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">진행 상태</div>
-          <div class="value"><span class="${statusBadgeClass}">${escapeHtml(found.status)}</span></div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">품목 (Item)</div>
-          <div class="value">${escapeHtml(found.item || '-')}</div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">금형 형태 (Tool Type)</div>
-          <div class="value">${escapeHtml(found.tool_type || '-')}</div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">부품 번호 (Part No)</div>
-          <div class="value" style="color:#34d399;">${escapeHtml(found.part_no || '-')}</div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">원재료 소재 (Material)</div>
-          <div class="value">${escapeHtml(found.material || '-')}</div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">수량 (Qty)</div>
-          <div class="value">${escapeHtml(found.qty || '1')} EA</div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">납기 예정일 (Due Date)</div>
-          <div class="value">${escapeHtml(found.due_date || '-')}</div>
-        </div>
-        <div class="contract-spec-item">
-          <div class="label">담당자 / 부서</div>
-          <div class="value">${escapeHtml(found.username || '-')} (${escapeHtml(found.deptno || '-')})</div>
+
+        <!-- 열 3 -->
+        <div class="contract-grid-col">
+          <div class="erp-field-row">
+            <span class="erp-field-label">Update :</span>
+            <span class="erp-field-val">${escapeHtml(found.update || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Username :</span>
+            <span class="erp-field-val">${escapeHtml(found.username || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Deptno :</span>
+            <span class="erp-field-val">${escapeHtml(found.deptno || '')}</span>
+          </div>
+          <div class="erp-field-row">
+            <span class="erp-field-label">Finish :</span>
+            <span class="erp-field-val">${escapeHtml(found.finish || '미결재')}</span>
+          </div>
+          <div class="erp-descript-container">
+            <span class="erp-descript-title">Descript</span>
+            <div class="erp-descript-box">${escapeHtml(found.descript || '')}</div>
+          </div>
         </div>
       </div>
 
-      <!-- 의뢰 제목 -->
-      ${found.req_head ? `
-      <div style="margin-top:12px; padding:8px 12px; background:rgba(59,130,246,0.08); border-left:3px solid #3b82f6; border-radius:4px;">
-        <div style="font-size:11px; color:#94a3b8; font-weight:600;">의뢰 제목 (Written Request Title)</div>
-        <div style="font-size:13px; color:#f8fafc; font-weight:700; margin-top:2px;">${escapeHtml(found.req_head)}</div>
-      </div>` : ''}
+      <!-- 2. 탭 바 -->
+      <div class="contract-tab-bar">
+        <button type="button" class="contract-tab-btn" data-tab="action" onclick="switchContractSubTab('action')">Action Item</button>
+        <button type="button" class="contract-tab-btn" data-tab="sample" onclick="switchContractSubTab('sample')">Sample Delivery</button>
+        <button type="button" class="contract-tab-btn" data-tab="qual" onclick="switchContractSubTab('qual')">Qualification Status</button>
+        <button type="button" class="contract-tab-btn active" data-tab="written" onclick="switchContractSubTab('written')">Written Request</button>
+      </div>
 
-      <!-- 상세 의뢰 메모 / 패키지 규격 (f_reqmemo) 전문 -->
-      <div style="margin-top:14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label style="font-size:12px; color:#94a3b8; font-weight:600;">📝 상세 요청 내용 & 패키지 규격 메모 (Request Details)</label>
-          <span style="font-size:11px; color:#64748b;">ERP 전산 메모 원문</span>
+      <!-- 3. 탭 내용 영역 -->
+      <div class="contract-tab-body">
+        <!-- Written Request 탭 (기본 활성화) -->
+        <div id="cTabPaneWritten" class="contract-pane active">
+          <div class="written-form-table">
+            <div class="written-form-row">
+              <div class="written-row-label">의뢰여부</div>
+              <div class="written-row-value">
+                <span class="written-input-box short">${escapeHtml(found.req_set || '검토')}</span>
+              </div>
+            </div>
+            <div class="written-form-row">
+              <div class="written-row-label">의뢰부서</div>
+              <div class="written-row-value">
+                <span class="written-input-box medium">${escapeHtml(found.req_dept || '')}</span>
+              </div>
+            </div>
+            <div class="written-form-row">
+              <div class="written-row-label">검토안건</div>
+              <div class="written-row-value">
+                <span class="written-input-box full bold">${escapeHtml(found.req_head || '')}</span>
+              </div>
+            </div>
+            <div class="written-form-row" style="align-items:stretch;">
+              <div class="written-row-label">의뢰내용</div>
+              <div class="written-row-value">
+                <div class="written-memo-textarea">${escapeHtml(found.req_memo || '')}</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="contract-memo-box">${found.req_memo ? escapeHtml(found.req_memo) : '<span style="color:#64748b;">등록된 세부 의뢰 내용이 없습니다.</span>'}</div>
+
+        <!-- Action Item 탭 -->
+        <div id="cTabPaneAction" class="contract-pane">
+          ${actionHtml}
+        </div>
+
+        <!-- Sample Delivery 탭 -->
+        <div id="cTabPaneSample" class="contract-pane">
+          ${sampleHtml}
+        </div>
+
+        <!-- Qualification Status 탭 -->
+        <div id="cTabPaneQual" class="contract-pane">
+          ${qualHtml}
+        </div>
       </div>
     </div>
   `;
@@ -1901,27 +2090,59 @@ function openContractReviewDetail(projectNo) {
   DOM.contractDetailModal.classList.add('show');
 }
 
+function switchContractSubTab(tabName) {
+  const btns = document.querySelectorAll('.contract-tab-btn');
+  btns.forEach(b => {
+    if (b.getAttribute('data-tab') === tabName) {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  const panes = {
+    action: document.getElementById('cTabPaneAction'),
+    sample: document.getElementById('cTabPaneSample'),
+    qual: document.getElementById('cTabPaneQual'),
+    written: document.getElementById('cTabPaneWritten')
+  };
+
+  Object.keys(panes).forEach(k => {
+    if (panes[k]) {
+      if (k === tabName) {
+        panes[k].classList.add('active');
+      } else {
+        panes[k].classList.remove('active');
+      }
+    }
+  });
+}
+window.switchContractSubTab = switchContractSubTab;
+
 function copyCurrentContractReviewSummary() {
   if (!AppState.selectedContractProjectNo) return;
   const found = (AppState.contractReviewsData || []).find(r => r.project_no === AppState.selectedContractProjectNo);
   if (!found) return;
 
-  let text = `[계약검토서 (Project) 요약]\n`;
-  text += `• 프로젝트 번호: ${found.project_no}\n`;
-  text += `• 등록일자: ${found.date}\n`;
-  text += `• 고객사: ${found.customer} (${found.country})\n`;
-  text += `• 품목: ${found.item} | 금형: ${found.tool_type}\n`;
-  text += `• Part No: ${found.part_no}\n`;
-  text += `• 원재료: ${found.material}\n`;
-  text += `• 수량: ${found.qty} | 납기: ${found.due_date}\n`;
-  text += `• 담당자: ${found.username} (${found.deptno})\n`;
-  text += `• 진행상태: ${found.status}\n`;
-  if (found.req_head) text += `• 의뢰제목: ${found.req_head}\n`;
-  if (found.req_memo) text += `\n[세부 의뢰 내용]\n${found.req_memo}\n`;
+  let text = `[계약검토서 (Project Review)]\n`;
+  text += `• Project No: ${found.project_no}\n`;
+  text += `• Date: ${found.date} | Status: ${found.status} | Priority: ${found.priority}\n`;
+  text += `• Customer: ${found.customer} (${found.country}) | Related: ${found.related_custom || '-'}\n`;
+  text += `• Item: ${found.item} | Tool Type: ${found.tool_type}\n`;
+  text += `• Part No: ${found.part_no} | Temp: ${found.temp || '-'}\n`;
+  text += `• Material: ${found.material || '-'} | Qty: ${found.qty || '-'}\n`;
+  text += `• Tooling PO: ${found.tooling_po_no || '-'} | Cost: ${found.tooling_cost || '-'}\n`;
+  text += `• Update: ${found.update} | Username: ${found.username} (${found.deptno})\n`;
+  text += `• Finish: ${found.finish}\n\n`;
+  text += `[Written Request / 의뢰 상세]\n`;
+  text += `• 의뢰여부: ${found.req_set}\n`;
+  text += `• 의뢰부서: ${found.req_dept}\n`;
+  text += `• 검토안건: ${found.req_head}\n\n`;
+  text += `[의뢰내용]\n${found.req_memo}\n`;
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast('계약검토서 내용이 클립보드에 복사되었습니다.');
+      showToast('계약검토서 전체 요약이 복사되었습니다.');
     });
   } else {
     showToast('클립보드 복사 완료');
