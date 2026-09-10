@@ -16,6 +16,13 @@ const AppState = {
   quotPageSize: 50,
   quotFilteredRows: [],
 
+  // 계약검토서 (Project) 페이징 상태
+  contractReviewsData: [],
+  contractCurrentPage: 1,
+  contractPageSize: 50,
+  contractFilteredRows: [],
+  selectedContractProjectNo: null,
+
   // 출하 계획 페이징 상태
   shipPlanCurrentPage: 1,
   shipPlanPageSize: 50,
@@ -180,6 +187,27 @@ const DOM = {
   btnModalClose: document.getElementById('btnModalClose'),
   btnModalPrintQuot: document.getElementById('btnModalPrintQuot'),
   btnModalCopyQuotText: document.getElementById('btnModalCopyQuotText'),
+
+  // 계약검토서 (Project) DOM
+  viewContractReviews: document.getElementById('viewContractReviews'),
+  contractReviewsCount: document.getElementById('contractReviewsCount'),
+  contractCustomerInput: document.getElementById('contractCustomerInput'),
+  contractSearchInput: document.getElementById('contractSearchInput'),
+  contractStatusSelect: document.getElementById('contractStatusSelect'),
+  contractPageSizeSelect: document.getElementById('contractPageSizeSelect'),
+  btnSearchContract: document.getElementById('btnSearchContract'),
+  btnReloadContract: document.getElementById('btnReloadContract'),
+  contractReviewsTable: document.getElementById('contractReviewsTable'),
+  contractReviewsTbody: document.getElementById('contractReviewsTbody'),
+  contractPagination: document.getElementById('contractPagination'),
+  contractPageInfo: document.getElementById('contractPageInfo'),
+  contractPageControls: document.getElementById('contractPageControls'),
+  contractDetailModal: document.getElementById('contractDetailModal'),
+  modalContractTitle: document.getElementById('modalContractTitle'),
+  modalContractBody: document.getElementById('modalContractBody'),
+  btnCloseContractModal: document.getElementById('btnCloseContractModal'),
+  btnModalCloseContract: document.getElementById('btnModalCloseContract'),
+  btnModalCopyContractText: document.getElementById('btnModalCopyContractText'),
 
   // Settings & Refresh
   btnSettings: document.getElementById('btnSettings'),
@@ -381,6 +409,9 @@ async function loadInitialDatabases() {
     if (window.KOSTAT_QUOTATIONS_DATA && window.KOSTAT_QUOTATIONS_DATA.length > 0) {
       AppState.quotationsData = window.KOSTAT_QUOTATIONS_DATA;
     }
+    if (window.KOSTAT_CONTRACT_REVIEWS_DATA && window.KOSTAT_CONTRACT_REVIEWS_DATA.length > 0) {
+      AppState.contractReviewsData = window.KOSTAT_CONTRACT_REVIEWS_DATA;
+    }
     // FAQ 지식 데이터 우선 바인딩 (전용 DB > 번들 객체)
     if (window.KOSTAT_FAQ_DB && window.KOSTAT_FAQ_DB.length > 0) {
       AppState.knowledgeData = window.KOSTAT_FAQ_DB;
@@ -396,6 +427,9 @@ async function loadInitialDatabases() {
     
     const cachedQuot = await IDB.get('quotations');
     if (cachedQuot && cachedQuot.length >= AppState.quotationsData.length) AppState.quotationsData = cachedQuot;
+
+    const cachedContract = await IDB.get('contract_reviews');
+    if (cachedContract && cachedContract.length >= AppState.contractReviewsData.length) AppState.contractReviewsData = cachedContract;
 
     // 0) localStorage에 저장된 실제 ERP 데이터 기준일자 즉시 로드 (새로고침 즉각 유지)
     try {
@@ -477,11 +511,12 @@ async function loadInitialDatabases() {
     renderSkyworksTable(AppState.skyworksData);
     initSkyworksYears();
     renderQuotHistory();
+    renderContractReviews();
     renderShipPlanHistory();
     renderFeedbackBoard();
     renderFaqList();
 
-    console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}`);
+    console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}`);
   } catch (err) {
     console.error('DB Load Error:', err);
     updateStatus(true, getDataDateStatusText());
@@ -745,6 +780,52 @@ function initUI() {
     DOM.btnModalCopyQuotText.addEventListener('click', () => {
       copyCurrentQuotationSummary();
     });
+  }
+
+  // 계약검토서 검색 & 필터 & 페이지 크기
+  if (DOM.contractCustomerInput) {
+    DOM.contractCustomerInput.addEventListener('input', debounce(filterContractReviewsTable, 200));
+    DOM.contractCustomerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterContractReviewsTable();
+    });
+  }
+  if (DOM.contractSearchInput) {
+    DOM.contractSearchInput.addEventListener('input', debounce(filterContractReviewsTable, 200));
+    DOM.contractSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterContractReviewsTable();
+    });
+  }
+  if (DOM.contractStatusSelect) {
+    DOM.contractStatusSelect.addEventListener('change', filterContractReviewsTable);
+  }
+  if (DOM.contractPageSizeSelect) {
+    DOM.contractPageSizeSelect.addEventListener('change', () => {
+      AppState.contractPageSize = parseInt(DOM.contractPageSizeSelect.value, 10) || 50;
+      AppState.contractCurrentPage = 1;
+      renderContractReviewsPage(1);
+    });
+  }
+  if (DOM.btnSearchContract) {
+    DOM.btnSearchContract.addEventListener('click', filterContractReviewsTable);
+  }
+  if (DOM.btnReloadContract) {
+    DOM.btnReloadContract.addEventListener('click', () => {
+      if (DOM.contractCustomerInput) DOM.contractCustomerInput.value = '';
+      if (DOM.contractSearchInput) DOM.contractSearchInput.value = '';
+      if (DOM.contractStatusSelect) DOM.contractStatusSelect.value = '';
+      renderContractReviews();
+    });
+  }
+
+  // 계약검토서 모달 이벤트
+  if (DOM.btnCloseContractModal) {
+    DOM.btnCloseContractModal.addEventListener('click', () => DOM.contractDetailModal.classList.remove('show'));
+  }
+  if (DOM.btnModalCloseContract) {
+    DOM.btnModalCloseContract.addEventListener('click', () => DOM.contractDetailModal.classList.remove('show'));
+  }
+  if (DOM.btnModalCopyContractText) {
+    DOM.btnModalCopyContractText.addEventListener('click', copyCurrentContractReviewSummary);
   }
 
   // 설정 모달
@@ -1563,6 +1644,290 @@ function copyCurrentQuotationSummary() {
   }
 }
 
+// --- 6-1. 계약검토서(Project) 뷰어 & 상세 모달 (다중 페이지네이션 & 실시간 복합 필터) ---
+function renderContractReviews() {
+  if (DOM.contractCustomerInput) DOM.contractCustomerInput.value = '';
+  if (DOM.contractSearchInput) DOM.contractSearchInput.value = '';
+  if (DOM.contractStatusSelect) DOM.contractStatusSelect.value = '';
+  AppState.contractFilteredRows = AppState.contractReviewsData || [];
+  AppState.contractCurrentPage = 1;
+  renderContractReviewsPage(1);
+}
+
+function filterContractReviewsTable() {
+  const custSearch = DOM.contractCustomerInput ? DOM.contractCustomerInput.value.toLowerCase().trim() : '';
+  const custNorm = custSearch.replace(/[-_\s]/g, '');
+
+  const textSearch = DOM.contractSearchInput ? DOM.contractSearchInput.value.toLowerCase().trim() : '';
+  const textNorm = textSearch.replace(/[-_\s]/g, '');
+
+  const statusFilter = DOM.contractStatusSelect ? DOM.contractStatusSelect.value.trim() : '';
+
+  AppState.contractFilteredRows = (AppState.contractReviewsData || []).filter(r => {
+    // 1. 고객사 필터
+    if (custSearch) {
+      const c = (r.customer || '').toLowerCase();
+      if (!c.includes(custSearch) && (custNorm.length < 2 || !c.replace(/[-_\s]/g, '').includes(custNorm))) {
+        return false;
+      }
+    }
+
+    // 2. 상태 필터 (진행중 / 완료)
+    if (statusFilter && r.status !== statusFilter) {
+      return false;
+    }
+
+    // 3. 부품번호 / 프로젝트번호 / 품목 / 소재 / 의뢰내용 검색
+    if (!textSearch) return true;
+
+    const p = (r.part_no || '').toLowerCase();
+    const pNo = (r.project_no || '').toLowerCase();
+    const itm = (r.item || '').toLowerCase();
+    const mat = (r.material || '').toLowerCase();
+    const head = (r.req_head || '').toLowerCase();
+    const memo = (r.req_memo || '').toLowerCase();
+    const usr = (r.username || '').toLowerCase();
+
+    if (p.includes(textSearch) || pNo.includes(textSearch) || itm.includes(textSearch) ||
+        mat.includes(textSearch) || head.includes(textSearch) || memo.includes(textSearch) || usr.includes(textSearch)) {
+      return true;
+    }
+    if (textNorm.length >= 2) {
+      if (p.replace(/[-_\s]/g, '').includes(textNorm) || pNo.replace(/[-_\s]/g, '').includes(textNorm)) {
+        return true;
+      }
+    }
+    return false;
+  });
+
+  AppState.contractCurrentPage = 1;
+  renderContractReviewsPage(1);
+}
+
+function renderContractReviewsPage(page) {
+  const rows = AppState.contractFilteredRows || [];
+  const totalRows = rows.length;
+  const pageSize = AppState.contractPageSize || 50;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.contractCurrentPage = page;
+
+  // 카운트 배지 & 페이지 인포
+  if (DOM.contractReviewsCount) {
+    DOM.contractReviewsCount.textContent = `${totalRows.toLocaleString()}건`;
+  }
+  if (DOM.contractPageInfo) {
+    DOM.contractPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
+  if (!DOM.contractReviewsTbody) return;
+
+  if (totalRows === 0) {
+    DOM.contractReviewsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">일치하는 계약검토서 데이터가 없습니다.</td></tr>`;
+    if (DOM.contractPageControls) DOM.contractPageControls.innerHTML = '';
+    return;
+  }
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageRows = rows.slice(start, end);
+
+  DOM.contractReviewsTbody.innerHTML = pageRows.map(c => {
+    const isDone = c.status === '완료';
+    const statusBadgeClass = isDone ? 'contract-status-badge completed' : 'contract-status-badge in-progress';
+    return `
+      <tr onclick="openContractReviewDetail('${escapeHtml(c.project_no)}')" style="cursor:pointer;" class="erp-copyable-cell" title="상세 정보 확인 (클릭)">
+        <td style="font-weight:700;color:#60a5fa;">${escapeHtml(c.project_no)}</td>
+        <td>${escapeHtml(c.date || '-')}</td>
+        <td style="font-weight:600;color:#f8fafc;">${escapeHtml(c.customer || '-')}</td>
+        <td>${escapeHtml(c.country || '-')}</td>
+        <td>${escapeHtml(c.item || '-')}</td>
+        <td>${escapeHtml(c.tool_type || '-')}</td>
+        <td style="color:#38bdf8;font-weight:600;">${escapeHtml(c.part_no || '-')}</td>
+        <td style="color:#cbd5e1;font-size:11px;">${escapeHtml(c.material || '-')}</td>
+        <td style="text-align:right;">${escapeHtml(c.qty || '1')}</td>
+        <td style="text-align:center;"><span class="${statusBadgeClass}">${escapeHtml(c.status)}</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  // 페이지네이션 컨트롤러 렌더링
+  renderContractPaginationControls(page, totalPages);
+}
+
+function renderContractPaginationControls(currentPage, totalPages) {
+  if (!DOM.contractPageControls) return;
+
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
+  let btnsHtml = '';
+
+  // 처음으로
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToContractPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
+  
+  // 이전
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToContractPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
+
+  // 슬라이딩 윈도우 페이지 번호
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
+  }
+
+  // 1페이지 버튼
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToContractPage(1)">1</button>`;
+
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToContractPage(${p})">${p}</button>`;
+  });
+
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  // 마지막 페이지
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToContractPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  // 다음
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToContractPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
+
+  // 마지막으로
+  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToContractPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
+
+  DOM.contractPageControls.innerHTML = btnsHtml;
+}
+
+function goToContractPage(page) {
+  renderContractReviewsPage(page);
+  const wrapper = document.querySelector('#viewContractReviews .table-responsive-wrapper');
+  if (wrapper) wrapper.scrollTop = 0;
+}
+
+function openContractReviewDetail(projectNo) {
+  AppState.selectedContractProjectNo = projectNo;
+  if (!DOM.contractDetailModal) return;
+
+  const found = (AppState.contractReviewsData || []).find(r => r.project_no === projectNo);
+  if (!found) {
+    DOM.modalContractTitle.textContent = `계약검토서 [${projectNo}]`;
+    DOM.modalContractBody.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">'${escapeHtml(projectNo)}' 데이터를 찾을 수 없습니다.</div>`;
+    DOM.contractDetailModal.classList.add('show');
+    return;
+  }
+
+  DOM.modalContractTitle.textContent = `계약검토서 상세 [${found.project_no}]`;
+  const isDone = found.status === '완료';
+  const statusBadgeClass = isDone ? 'contract-status-badge completed' : 'contract-status-badge in-progress';
+
+  DOM.modalContractBody.innerHTML = `
+    <div style="padding:4px 0;">
+      <!-- 기본 규격/스펙 그리드 -->
+      <div class="contract-spec-grid">
+        <div class="contract-spec-item">
+          <div class="label">프로젝트 번호</div>
+          <div class="value" style="color:#60a5fa;">${escapeHtml(found.project_no)}</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">등록 일자</div>
+          <div class="value">${escapeHtml(found.date || '-')}</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">고객사</div>
+          <div class="value" style="color:#38bdf8;">${escapeHtml(found.customer || '-')} (${escapeHtml(found.country || '-')})</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">진행 상태</div>
+          <div class="value"><span class="${statusBadgeClass}">${escapeHtml(found.status)}</span></div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">품목 (Item)</div>
+          <div class="value">${escapeHtml(found.item || '-')}</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">금형 형태 (Tool Type)</div>
+          <div class="value">${escapeHtml(found.tool_type || '-')}</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">부품 번호 (Part No)</div>
+          <div class="value" style="color:#34d399;">${escapeHtml(found.part_no || '-')}</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">원재료 소재 (Material)</div>
+          <div class="value">${escapeHtml(found.material || '-')}</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">수량 (Qty)</div>
+          <div class="value">${escapeHtml(found.qty || '1')} EA</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">납기 예정일 (Due Date)</div>
+          <div class="value">${escapeHtml(found.due_date || '-')}</div>
+        </div>
+        <div class="contract-spec-item">
+          <div class="label">담당자 / 부서</div>
+          <div class="value">${escapeHtml(found.username || '-')} (${escapeHtml(found.deptno || '-')})</div>
+        </div>
+      </div>
+
+      <!-- 의뢰 제목 -->
+      ${found.req_head ? `
+      <div style="margin-top:12px; padding:8px 12px; background:rgba(59,130,246,0.08); border-left:3px solid #3b82f6; border-radius:4px;">
+        <div style="font-size:11px; color:#94a3b8; font-weight:600;">의뢰 제목 (Written Request Title)</div>
+        <div style="font-size:13px; color:#f8fafc; font-weight:700; margin-top:2px;">${escapeHtml(found.req_head)}</div>
+      </div>` : ''}
+
+      <!-- 상세 의뢰 메모 / 패키지 규격 (f_reqmemo) 전문 -->
+      <div style="margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label style="font-size:12px; color:#94a3b8; font-weight:600;">📝 상세 요청 내용 & 패키지 규격 메모 (Request Details)</label>
+          <span style="font-size:11px; color:#64748b;">ERP 전산 메모 원문</span>
+        </div>
+        <div class="contract-memo-box">${found.req_memo ? escapeHtml(found.req_memo) : '<span style="color:#64748b;">등록된 세부 의뢰 내용이 없습니다.</span>'}</div>
+      </div>
+    </div>
+  `;
+
+  DOM.contractDetailModal.classList.add('show');
+}
+
+function copyCurrentContractReviewSummary() {
+  if (!AppState.selectedContractProjectNo) return;
+  const found = (AppState.contractReviewsData || []).find(r => r.project_no === AppState.selectedContractProjectNo);
+  if (!found) return;
+
+  let text = `[계약검토서 (Project) 요약]\n`;
+  text += `• 프로젝트 번호: ${found.project_no}\n`;
+  text += `• 등록일자: ${found.date}\n`;
+  text += `• 고객사: ${found.customer} (${found.country})\n`;
+  text += `• 품목: ${found.item} | 금형: ${found.tool_type}\n`;
+  text += `• Part No: ${found.part_no}\n`;
+  text += `• 원재료: ${found.material}\n`;
+  text += `• 수량: ${found.qty} | 납기: ${found.due_date}\n`;
+  text += `• 담당자: ${found.username} (${found.deptno})\n`;
+  text += `• 진행상태: ${found.status}\n`;
+  if (found.req_head) text += `• 의뢰제목: ${found.req_head}\n`;
+  if (found.req_memo) text += `\n[세부 의뢰 내용]\n${found.req_memo}\n`;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('계약검토서 내용이 클립보드에 복사되었습니다.');
+    });
+  } else {
+    showToast('클립보드 복사 완료');
+  }
+}
+
 // --- 8. 탭 및 네비게이션 ---
 
 function printQuotation(quotNo) {
@@ -1651,6 +2016,11 @@ function switchViewerCard(targetId) {
       AppState.quotFilteredRows = AppState.quotationsData || [];
     }
     renderQuotationsPage(AppState.quotCurrentPage || 1);
+  } else if (targetId === 'viewContractReviews') {
+    if (!AppState.contractFilteredRows || AppState.contractFilteredRows.length === 0) {
+      AppState.contractFilteredRows = AppState.contractReviewsData || [];
+    }
+    renderContractReviewsPage(AppState.contractCurrentPage || 1);
   } else if (targetId === 'viewSkyworks') {
     if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
       renderSkyworksTable(AppState.skyworksData);

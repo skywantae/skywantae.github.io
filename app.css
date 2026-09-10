@@ -2622,4 +2622,68 @@ html, body {
   margin-left: 8px;
 }
 
+/* ==========================================================================
+   계약검토서 (Project / Contract Reviews) 전용 스타일
+   ========================================================================== */
+.contract-status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+.contract-status-badge.completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.contract-status-badge.in-progress {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.contract-memo-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-top: 12px;
+  font-family: 'Consolas', 'Courier New', monospace, 'Noto Sans KR', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.contract-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.contract-spec-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.contract-spec-item .label {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 3px;
+  font-weight: 500;
+}
+.contract-spec-item .value {
+  font-size: 13px;
+  color: #f8fafc;
+  font-weight: 600;
+  word-break: break-all;
+}
+
 
