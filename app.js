@@ -3798,7 +3798,7 @@ window.openAdminReplyModal = function(id) {
   }
 };
 
-function submitAdminReply() {
+async function submitAdminReply() {
   const id = DOM.feedbackTargetId?.value;
   if (!id) return;
 
@@ -3823,6 +3823,7 @@ function submitAdminReply() {
   const dateStr = `${y}-${m}-${d} ${hh}:${mm}`;
 
   post.status = status;
+  post.updated_at = dateStr;
   post.reply = {
     author: '시스템 관리자',
     content: replyText,
@@ -3830,13 +3831,19 @@ function submitAdminReply() {
   };
 
   saveFeedbackStorage();
-  syncFeedbackToCloud(); // PC↔모바일 클라우드 실시간 동기화
   if (DOM.feedbackReplyModal) {
     DOM.feedbackReplyModal.classList.remove('show');
     DOM.feedbackReplyModal.classList.remove('active');
   }
   renderFeedbackBoard();
-  showToast('관리자 답변이 성공적으로 등록되었습니다.');
+  showToast('관리자 답변이 로컬에 저장되었습니다. 클라우드 동기화 중...');
+
+  const syncOk = await syncFeedbackToCloud(); // PC↔모바일 클라우드 실시간 동기화
+  if (syncOk) {
+    showToast('관리자 답변이 클라우드에 영구 저장되었습니다.', 'success');
+  } else {
+    showToast('답변이 로컬에 안전하게 보존되었습니다. (네트워크 연결 시 자동 동기화)', 'info');
+  }
 }
 
 window.deleteFeedbackPostById = function(id) {
@@ -3939,7 +3946,7 @@ async function syncFeedbackToCloud() {
 
   async function pushFile(path, contentStr, commitMsg) {
     try {
-      const getRes = await fetch(`${API_BASE}/${path}`, {
+      const getRes = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
         headers: {
           'Authorization': `token ${token}`,
           'Accept': 'application/vnd.github.v3+json'
@@ -3959,7 +3966,7 @@ async function syncFeedbackToCloud() {
       const putBody = { message: commitMsg, content: b64, branch: 'main' };
       if (sha) putBody.sha = sha;
 
-      await fetch(`${API_BASE}/${path}`, {
+      const putRes = await fetch(`${API_BASE}/${path}`, {
         method: 'PUT',
         headers: {
           'Authorization': `token ${token}`,
@@ -3968,20 +3975,35 @@ async function syncFeedbackToCloud() {
         },
         body: JSON.stringify(putBody)
       });
+      if (!putRes.ok) {
+        const errJson = await putRes.json().catch(() => ({}));
+        console.warn(`[CloudSync] pushFile error (${path}):`, putRes.status, errJson);
+        return false;
+      }
+      return true;
     } catch (e) {
       console.warn(`[CloudSync] pushFile error (${path}):`, e);
+      return false;
     }
   }
 
   try {
     const list = (AppState.feedbackData || []).filter(isRealUserFeedback);
     // 1) data/feedback_board.json 동기화
-    await pushFile('data/feedback_board.json', JSON.stringify(list, null, 2), `chore: sync feedback_board.json (${list.length} posts)`);
+    const ok1 = await pushFile('data/feedback_board.json', JSON.stringify(list, null, 2), `chore: sync feedback_board.json (${list.length} posts)`);
+    // 약간의 딜레이로 409 Conflict 방지
+    await new Promise(r => setTimeout(r, 400));
     // 2) data/feedback_board.js 로더 동기화
-    await pushFile('data/feedback_board.js', `window.KOSTAT_FEEDBACK_DATA = ${JSON.stringify(list, null, 2)};\n`, `chore: sync feedback_board.js`);
-    console.log(`기능 요청 게시판 클라우드 동기화 완료 (${list.length}건)`);
+    const ok2 = await pushFile('data/feedback_board.js', `window.KOSTAT_FEEDBACK_DATA = ${JSON.stringify(list, null, 2)};\n`, `chore: sync feedback_board.js`);
+    
+    if (ok1 || ok2) {
+      console.log(`기능 요청 게시판 클라우드 동기화 완료 (${list.length}건)`);
+      return true;
+    }
+    return false;
   } catch (err) {
     console.warn('기능 요청 클라우드 동기화 실패:', err);
+    return false;
   }
 }
 
@@ -3998,16 +4020,35 @@ async function fetchRemoteFeedback(silent = true) {
       if (Array.isArray(remoteData)) {
         const validRemote = remoteData.filter(isRealUserFeedback);
         
-        // [중요] 기존 로컬 글과 원격 글을 ID 기준으로 안전하게 병합 (게시글 유실 원천 방지)
+        function getPostTs(item) {
+          if (!item || typeof item !== 'object') return '';
+          const replied = item.reply && item.reply.replied_at ? item.reply.replied_at : '';
+          const updated = item.updated_at || '';
+          const created = item.created_at || '';
+          const candidates = [replied, updated, created].filter(Boolean);
+          candidates.sort();
+          return candidates.length > 0 ? candidates[candidates.length - 1] : '';
+        }
+
+        // [중요] 기존 로컬 글과 원격 글을 ID별 최신 타임스탬프 기준으로 안전하게 병합 (로컬 최신 수정본 덮어쓰기 원천 차단!)
         const currentList = (AppState.feedbackData || []).filter(isRealUserFeedback);
         const map = new Map();
 
-        // 1) 원격 데이터 등록
-        validRemote.forEach(p => map.set(p.id, p));
-        // 2) 로컬에만 있는 최신 글 보존 (아직 원격에 푸시 반영 중이거나 오프라인 작성 건)
-        currentList.forEach(p => {
-          if (!map.has(p.id)) {
-            map.set(p.id, p);
+        // 1) 로컬에 있는 현재 데이터 우선 등록
+        currentList.forEach(p => map.set(p.id, p));
+
+        // 2) 원격 데이터를 확인하여, 새로운 글이거나 원격이 더 최신인 경우에만 갱신 (로컬의 최근 수정본 보호)
+        validRemote.forEach(rem => {
+          if (!map.has(rem.id)) {
+            map.set(rem.id, rem);
+          } else {
+            const loc = map.get(rem.id);
+            const locTs = getPostTs(loc);
+            const remTs = getPostTs(rem);
+            // 원격이 더 최신인 경우에만 교체!
+            if (remTs > locTs) {
+              map.set(rem.id, rem);
+            }
           }
         });
 
