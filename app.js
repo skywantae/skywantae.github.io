@@ -3045,22 +3045,27 @@ function renderFeedbackPage(page) {
   const pageItems = list.slice(start, end);
 
   DOM.feedbackBoardList.innerHTML = pageItems.map(item => {
+    item = sanitizeFeedbackPost(item);
     let badgeClass = 'pending';
     let badgeText = '검토 중';
-    if (item.status === 'replied') {
+    const st = String(item.status || '').toLowerCase();
+    if (st === 'replied' || st.includes('답변')) {
       badgeClass = 'replied';
       badgeText = '답변 완료';
-    } else if (item.status === 'applied') {
+    } else if (st === 'applied' || st.includes('반영')) {
       badgeClass = 'applied';
       badgeText = '반영 완료';
     }
 
     let replyHtml = '';
     if (item.reply && item.reply.content) {
+      const rawAuthor = String(item.reply.author || '시스템 관리자');
+      const cleanAuthor = rawAuthor.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2B50}-\u{2B55}]|[\u{2300}-\u{23FF}]/gu, '').trim();
+      const replyHeaderTitle = cleanAuthor.endsWith('답변') ? cleanAuthor : `${cleanAuthor || '시스템 관리자'} 답변`;
       replyHtml = `
         <div class="feedback-reply-box">
           <div class="feedback-reply-header">
-            <span>${escapeHtml(item.reply.author || '관리자')} 답변</span>
+            <span>${escapeHtml(replyHeaderTitle)}</span>
             <span style="font-size:11px;color:#94a3b8;">${escapeHtml(item.reply.replied_at || '')}</span>
           </div>
           <div class="feedback-reply-content">${escapeHtml(item.reply.content)}</div>
@@ -3390,17 +3395,40 @@ function deleteCurrentFeedbackPost() {
   window.deleteFeedbackPostById(id);
 }
 
+// 모든 텍스트 필드에서 이모티콘(이모지)을 원천 정제하여 엔터프라이즈 텍스트로 보정
+function sanitizeFeedbackPost(post) {
+  if (!post || typeof post !== 'object') return post;
+  const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2B50}-\u{2B55}]|[\u{2300}-\u{23FF}]/gu;
+  
+  if (post.title) post.title = post.title.replace(emojiRegex, '').trim();
+  if (post.author) post.author = post.author.replace(emojiRegex, '').trim();
+  if (post.content) post.content = post.content.replace(emojiRegex, '').trim();
+  if (post.status) {
+    let s = String(post.status).replace(emojiRegex, '').trim();
+    if (s.includes('반영')) s = 'applied';
+    else if (s.includes('답변')) s = 'replied';
+    else if (s.includes('검토')) s = 'pending';
+    post.status = s;
+  }
+  if (post.reply && typeof post.reply === 'object') {
+    if (post.reply.author) post.reply.author = post.reply.author.replace(emojiRegex, '').trim();
+    if (post.reply.content) post.reply.content = post.reply.content.replace(emojiRegex, '').trim();
+  }
+  return post;
+}
+
 // 가짜 예시 데이터(김철수, 이영희 등) 영구 배제 및 실제 사용자 작성 글 검증
 function isRealUserFeedback(post) {
   if (!post || typeof post !== 'object') return false;
   if (post.id === 'req-1725418800001' || post.id === 'req-1725418800002') return false;
   if (post.author === '영업1팀 김철수' || post.author === '해외영업부 이영희') return false;
+  sanitizeFeedbackPost(post);
   return Boolean(post.title && post.author && post.content);
 }
 
 function saveFeedbackStorage() {
   try {
-    const validList = (AppState.feedbackData || []).filter(isRealUserFeedback);
+    const validList = (AppState.feedbackData || []).filter(isRealUserFeedback).map(sanitizeFeedbackPost);
     AppState.feedbackData = validList;
     const jsonStr = JSON.stringify(validList);
     localStorage.setItem('KOSTAT_FEEDBACK_POSTS', jsonStr);
