@@ -47,11 +47,9 @@
   <!-- [모바일 전용 / 폭 768px 미만] 반응형 100% 풀스크린 탭 전환 바 -->
   <nav class="mobile-nav-switcher" id="mobileNavSwitcher">
     <button class="mobile-nav-btn active" id="btnNavChat" data-panel="chat">
-      <span class="nav-icon">💬</span>
       <span class="nav-text">AI 챗봇</span>
     </button>
     <button class="mobile-nav-btn" id="btnNavViewer" data-panel="viewer">
-      <span class="nav-icon">📊</span>
       <span class="nav-text" id="mobileViewerNavText">ERP 데이터 뷰어</span>
     </button>
   </nav>
@@ -102,8 +100,8 @@
         <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
         <button class="viewer-tab-btn" data-target="viewContractReviews">계약검토서</button>
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
-        <button class="viewer-tab-btn" data-target="viewFeedback">💡 기능 요청</button>
-        <button class="viewer-tab-btn" data-target="viewFaq">📚 FAQ 지식</button>
+        <button class="viewer-tab-btn" data-target="viewFeedback">기능 요청</button>
+        <button class="viewer-tab-btn" data-target="viewFaq">FAQ 지식</button>
       </div>
 
       <!-- 1. 출하 계획 뷰 (기본 활성) -->
@@ -124,7 +122,7 @@
             </select>
             <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
             <button class="action-btn-sm" id="btnReloadShipPlan">새로고침</button>
-            <button class="action-btn-sm warning" id="btnOpenAdminDbModal" title="관리자 전용 출하 엑셀 DB 업데이트">🔒 DB 업데이트</button>
+            <button class="action-btn-sm warning" id="btnOpenAdminDbModal" title="관리자 전용 출하 엑셀 DB 업데이트">DB 업데이트</button>
           </div>
         </div>
         <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
@@ -288,9 +286,9 @@
             <input type="text" id="feedbackSearchInput" class="compact-search" placeholder="제목/작성자 검색..." style="width: 140px;" />
             <select id="feedbackStatusFilter" class="compact-select" title="상태 필터">
               <option value="all">전체 상태</option>
-              <option value="pending">⏳ 검토 중</option>
-              <option value="replied">💬 답변 완료</option>
-              <option value="applied">🚀 반영 완료</option>
+              <option value="pending">검토 중</option>
+              <option value="replied">답변 완료</option>
+              <option value="applied">반영 완료</option>
             </select>
             <select id="feedbackPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
               <option value="10">10개씩</option>
@@ -298,9 +296,9 @@
               <option value="30">30개씩</option>
               <option value="50">50개씩</option>
             </select>
-            <button class="action-btn-sm primary" id="btnOpenNewFeedbackModal">+ 새 요청 등록</button>
-            <button class="action-btn-sm secondary" id="btnRefreshFeedback" title="클라우드 최신 글 동기화">🔄 새로고침</button>
-            <button class="action-btn-sm warning" id="btnToggleBoardAdmin" title="관리자 답변 및 관리 권한 인증">🔒 관리자 모드</button>
+            <button class="action-btn-sm primary" id="btnOpenNewFeedbackModal">새 요청 등록</button>
+            <button class="action-btn-sm secondary" id="btnRefreshFeedback" title="클라우드 최신 글 동기화">새로고침</button>
+            <button class="action-btn-sm warning" id="btnToggleBoardAdmin" title="관리자 답변 및 관리 권한 인증">관리자 모드</button>
           </div>
         </div>
         
@@ -333,11 +331,11 @@
               <option value="50">50개씩</option>
               <option value="100">전체보기</option>
             </select>
-            <button class="action-btn-sm primary" id="btnOpenNewFaqModal">+ 새 FAQ 등록</button>
-            <button class="action-btn-sm warning" id="btnToggleFaqAdmin" title="FAQ 추가/수정/삭제 관리자 모드">🔒 관리자 모드</button>
-            <button class="action-btn-sm" id="btnDeployFaq" style="display:none; background:#10b981; border-color:#10b981; color:#fff;" title="수정된 FAQ 전체 웹앱 및 깃허브 배포">🚀 배포 적용</button>
-            <button class="action-btn-sm secondary" id="btnExportFaqBackup" style="font-size:11px; padding:3px 8px;" title="전체 FAQ JSON 백업 파일 다운로드">💾 백업</button>
-            <button class="action-btn-sm secondary" id="btnImportFaqBackup" style="font-size:11px; padding:3px 8px;" title="백업 파일에서 복원">📥 복원</button>
+            <button class="action-btn-sm primary" id="btnOpenNewFaqModal">새 FAQ 등록</button>
+            <button class="action-btn-sm warning" id="btnToggleFaqAdmin" title="FAQ 추가/수정/삭제 관리자 모드">관리자 모드</button>
+            <button class="action-btn-sm" id="btnDeployFaq" style="display:none; background:#10b981; border-color:#10b981; color:#fff;" title="수정된 FAQ 전체 웹앱 및 깃허브 배포">배포 적용</button>
+            <button class="action-btn-sm secondary" id="btnExportFaqBackup" style="font-size:11px; padding:3px 8px;" title="전체 FAQ JSON 백업 파일 다운로드">백업</button>
+            <button class="action-btn-sm secondary" id="btnImportFaqBackup" style="font-size:11px; padding:3px 8px;" title="백업 파일에서 복원">복원</button>
             <input type="file" id="faqBackupFileInput" accept=".json" style="display:none;" />
           </div>
         </div>
@@ -388,7 +386,7 @@
         <!-- 계약검토서 상세 내용 렌더링 -->
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnModalCopyContractText">📋 요약 복사</button>
+        <button class="action-btn-sm primary" id="btnModalCopyContractText">요약 복사</button>
         <button class="action-btn-sm secondary" id="btnModalCloseContract">닫기</button>
       </div>
     </div>
@@ -420,8 +418,8 @@
         <div class="setting-item">
           <label>관리자 전용 메뉴:</label>
           <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
-            <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%;">🔒 관리자 출하 DB 업데이트</button>
-            <button class="action-btn-sm primary" id="btnSettingsOpenFaqManager" style="width:100%; background:#6366f1; border-color:#6366f1;">📚 사내 FAQ 지식베이스 관리</button>
+            <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%;">관리자 출하 DB 업데이트</button>
+            <button class="action-btn-sm primary" id="btnSettingsOpenFaqManager" style="width:100%; background:#6366f1; border-color:#6366f1;">사내 FAQ 지식베이스 관리</button>
           </div>
         </div>
       </div>
@@ -435,7 +433,7 @@
   <div class="modal-backdrop" id="adminDbModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>🔒 관리자 출하 DB 업데이트</h3>
+        <h3>관리자 출하 DB 업데이트</h3>
         <button class="close-btn" id="btnCloseAdminDbModal">&times;</button>
       </div>
       <div class="modal-body">
@@ -454,13 +452,13 @@
         <!-- Step 2: 엑셀 업로드 및 배포 (인증 후 표시) -->
         <div id="adminUploadSection" class="admin-section" style="display:none;">
           <div class="admin-badge-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span style="font-size:12px; color:#10b981; font-weight:600;">✓ 관리자 인증 완료</span>
+            <span style="font-size:12px; color:#10b981; font-weight:600;">관리자 인증 완료</span>
             <button class="action-btn-sm secondary" id="btnAdminLogout" style="font-size:11px; padding:2px 8px;">로그아웃</button>
           </div>
 
           <div class="admin-dropzone" id="adminDropzone">
             <input type="file" id="adminFileInput" accept=".xls,.xlsx,.csv" style="display:none;" />
-            <div class="dropzone-icon">📥</div>
+            <div class="dropzone-icon" style="font-size:16px;font-weight:700;color:#3b82f6;">FILE</div>
             <div class="dropzone-text">최신 출하 엑셀 파일(Excel.xls, .xlsx)을<br><strong>여기에 끌어다 놓거나 터치하여 선택</strong>하세요.</div>
             <div class="dropzone-sub">사내 전산 ExportShipPlan 양식 자동 파싱 (58,000+건)</div>
           </div>
@@ -497,7 +495,7 @@
         </div>
       </div>
       <div class="modal-footer" id="adminModalFooter">
-        <button class="action-btn-sm primary" id="btnApplyAdminDeploy" style="display:none;">🚀 전체 웹앱에 배포 적용</button>
+        <button class="action-btn-sm primary" id="btnApplyAdminDeploy" style="display:none;">전체 웹앱에 배포 적용</button>
         <button class="action-btn-sm secondary" id="btnCloseAdminDb">닫기</button>
       </div>
     </div>
@@ -507,7 +505,7 @@
   <div class="modal-backdrop" id="feedbackNewModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>💡 새 기능 추가 요청 등록</h3>
+        <h3>새 기능 추가 요청 등록</h3>
         <button class="close-btn" id="btnCloseFeedbackNewModal">&times;</button>
       </div>
       <div class="modal-body">
@@ -535,7 +533,7 @@
   <div class="modal-backdrop" id="feedbackReplyModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>👑 관리자 답변 작성 및 상태 변경</h3>
+        <h3>관리자 답변 작성 및 상태 변경</h3>
         <button class="close-btn" id="btnCloseFeedbackReplyModal">&times;</button>
       </div>
       <div class="modal-body">
@@ -544,9 +542,9 @@
         <div class="form-group" style="margin-bottom:12px;">
           <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">처리 상태 변경</label>
           <select id="feedbackReplyStatusSelect" class="form-input" style="width:100%;">
-            <option value="pending">⏳ 검토 중</option>
-            <option value="replied">💬 답변 완료</option>
-            <option value="applied">🚀 반영 완료</option>
+            <option value="pending">검토 중</option>
+            <option value="replied">답변 완료</option>
+            <option value="applied">반영 완료</option>
           </select>
         </div>
         <div class="form-group">
@@ -566,7 +564,7 @@
   <div class="modal-backdrop" id="boardAdminPinModal">
     <div class="modal-dialog" style="max-width:360px;">
       <div class="modal-header">
-        <h3>🔒 관리자 모드 인증</h3>
+        <h3>관리자 모드 인증</h3>
         <button class="close-btn" id="btnCloseBoardPinModal">&times;</button>
       </div>
       <div class="modal-body">
@@ -589,7 +587,7 @@
   <div class="modal-backdrop" id="feedbackDeleteModal">
     <div class="modal-dialog" style="max-width:380px;">
       <div class="modal-header">
-        <h3 style="color:#f43f5e;">🗑️ 게시글 삭제 확인</h3>
+        <h3 style="color:#f43f5e;">게시글 삭제 확인</h3>
         <button class="close-btn" id="btnCloseFeedbackDeleteModal">&times;</button>
       </div>
       <div class="modal-body">
@@ -612,7 +610,7 @@
   <div class="modal-backdrop" id="faqEditModal">
     <div class="modal-dialog quotation-dialog-lg" style="max-width:680px;">
       <div class="modal-header">
-        <h3 id="faqModalTitle">📚 사내 FAQ 지식 등록 / 수정</h3>
+        <h3 id="faqModalTitle">사내 FAQ 지식 등록 / 수정</h3>
         <button class="close-btn" id="btnCloseFaqEditModal">&times;</button>
       </div>
       <div class="modal-body">
@@ -640,20 +638,19 @@
         <!-- 파일 첨부 섹션 (사진, PDF, 엑셀, 워드, 동영상 최대 30MB) -->
         <div class="form-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <label style="font-size:12px;color:#94a3b8;">📎 첨부 파일 (사진, PDF, 엑셀, 워드, 영상 최대 30MB)</label>
+            <label style="font-size:12px;color:#94a3b8;">첨부 파일 (사진, PDF, 엑셀, 워드, 영상 최대 30MB)</label>
             <span style="font-size:11px;color:#10b981;" id="faqAttachSizeIndicator">0개 첨부됨 (파일당 최대 30MB)</span>
           </div>
           <div class="faq-attach-dropzone" id="faqDropzone">
             <input type="file" id="faqFileInput" accept="image/*,video/*,.pdf,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.csv" multiple style="display:none;" />
-            <div style="font-size:22px;margin-bottom:4px;">📁</div>
-            <div style="font-size:13px;color:#cbd5e1;">파일을 여기로 끌어다 놓거나 <strong>터치하여 파일 선택</strong></div>
+            <div style="font-size:13px;color:#cbd5e1;padding-top:8px;">파일을 여기로 끌어다 놓거나 <strong>터치하여 파일 선택</strong></div>
             <div style="font-size:11px;color:#94a3b8;margin-top:2px;">JPG, PNG, PDF, Excel, Word, MP4 등 (파일당 최대 30MB)</div>
           </div>
           <div id="faqAttachedList" class="faq-attached-items-container" style="margin-top:8px;"></div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnSaveFaqEdit">💾 FAQ 저장</button>
+        <button class="action-btn-sm primary" id="btnSaveFaqEdit">FAQ 저장</button>
         <button class="action-btn-sm secondary" id="btnCancelFaqEdit">취소</button>
       </div>
     </div>
@@ -663,7 +660,7 @@
   <div class="modal-backdrop" id="faqDeleteModal">
     <div class="modal-dialog" style="max-width:380px;">
       <div class="modal-header">
-        <h3 style="color:#f43f5e;">🗑️ FAQ 삭제 확인</h3>
+        <h3 style="color:#f43f5e;">FAQ 삭제 확인</h3>
         <button class="close-btn" id="btnCloseFaqDeleteModal">&times;</button>
       </div>
       <div class="modal-body">
@@ -686,7 +683,7 @@
   <div class="modal-backdrop" id="faqAuthorPinModal">
     <div class="modal-dialog" style="max-width:360px;">
       <div class="modal-header">
-        <h3 style="color:#38bdf8;">🔐 작성자 비밀번호 확인</h3>
+        <h3 style="color:#38bdf8;">작성자 비밀번호 확인</h3>
         <button class="close-btn" id="btnCloseFaqAuthorPinModal">&times;</button>
       </div>
       <div class="modal-body">

@@ -854,7 +854,7 @@ function initUI() {
         await Promise.all(keys.map(k => caches.delete(k)));
       } catch (e) {}
     }
-    showToast('🔄 최신 버전으로 화면을 새로고침합니다...');
+    showToast('최신 버전으로 화면을 새로고침합니다...');
     setTimeout(() => window.location.reload(), 400);
   });
 }
@@ -946,7 +946,7 @@ function searchLocalFAQ(query) {
     let output = `**[사내 규정/FAQ] ${bestMatch.q}**\n\n${bestMatch.a}`;
 
     if (bestMatch.attachments && bestMatch.attachments.length > 0) {
-      output += '\n\n**📎 첨부 파일/미디어:**';
+      output += '\n\n**[첨부 파일/미디어]**';
       bestMatch.attachments.forEach(att => {
         if (att.category === 'image' || (att.type && att.type.startsWith('image/'))) {
           output += `\n![${att.name}](${att.data})`;
@@ -955,7 +955,7 @@ function searchLocalFAQ(query) {
         }
       });
     } else if (bestMatch.images && bestMatch.images.length > 0) {
-      output += '\n\n**📷 첨부 이미지:**';
+      output += '\n\n**[첨부 이미지]**';
       bestMatch.images.forEach(img => {
         const norm = img.replace(/\\/g, '/');
         const src = norm.startsWith('images/') ? `data/${norm}` : (norm.startsWith('data/') ? norm : `data/images/${norm}`);
@@ -964,7 +964,7 @@ function searchLocalFAQ(query) {
     }
 
     if (bestMatch.files && bestMatch.files.length > 0) {
-      output += '\n\n**📊 첨부 문서:**';
+      output += '\n\n**[첨부 문서]**';
       bestMatch.files.forEach(f => {
         const norm = f.replace(/\\/g, '/');
         const src = norm.startsWith('images/') ? `data/${norm}` : (norm.startsWith('data/') ? norm : `data/images/${norm}`);
@@ -1604,7 +1604,7 @@ function copyCellText(text) {
   if (!text || text === '-') return;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast(`📋 복사됨: ${text}`);
+      showToast(`복사됨: ${text}`);
     }).catch(() => {
       showToast(`복사됨: ${text}`);
     });
@@ -2844,8 +2844,8 @@ window.copyCellText = copyCellText;
       const curVerEl = document.getElementById('currentAppVersion');
       if (curVerEl) curVerEl.textContent = `v${nextVer}`;
 
-      showToast(`🎉 배포 완료! 출하 계획 ${AdminState.parsedShipRows.length.toLocaleString()}건 (${AppState.dataDate} 기준)이 반영되었습니다.`);
-      alert(`✅ 성공적으로 배포되었습니다!\n\n• 배포 버전: v${nextVer}\n• 데이터 기준일: ${AppState.dataDate}\n• 총 출하 건수: ${AdminState.parsedShipRows.length.toLocaleString()}건\n• Skyworks PO: ${AdminState.parsedSkyworksRows.length.toLocaleString()}건\n\n모든 사용자의 모바일 기기에 최신 출하 내역이 즉시 동기화됩니다.`);
+      showToast(`배포 완료! 출하 계획 ${AdminState.parsedShipRows.length.toLocaleString()}건 (${AppState.dataDate} 기준)이 반영되었습니다.`);
+      alert(`성공적으로 배포되었습니다!\n\n• 배포 버전: v${nextVer}\n• 데이터 기준일: ${AppState.dataDate}\n• 총 출하 건수: ${AdminState.parsedShipRows.length.toLocaleString()}건\n• Skyworks PO: ${AdminState.parsedSkyworksRows.length.toLocaleString()}건\n\n모든 사용자의 모바일 기기에 최신 출하 내역이 즉시 동기화됩니다.`);
 
       closeAdminModal();
     } catch (err) {
@@ -3032,9 +3032,8 @@ function renderFeedbackPage(page) {
   if (totalRows === 0) {
     DOM.feedbackBoardList.innerHTML = `
       <div class="feedback-empty-state">
-        <div style="font-size:32px;margin-bottom:8px;">💡</div>
         <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">등록된 기능 요청이 없습니다.</div>
-        <div style="font-size:12px;color:#94a3b8;">새로운 아이디어나 필요한 기능이 있다면 [+ 새 요청 등록] 버튼을 눌러보세요.</div>
+        <div style="font-size:12px;color:#94a3b8;">새로운 아이디어나 필요한 기능이 있다면 [새 요청 등록] 버튼을 눌러보세요.</div>
       </div>
     `;
     if (DOM.feedbackPageControls) DOM.feedbackPageControls.innerHTML = '';
@@ -3047,13 +3046,13 @@ function renderFeedbackPage(page) {
 
   DOM.feedbackBoardList.innerHTML = pageItems.map(item => {
     let badgeClass = 'pending';
-    let badgeText = '⏳ 검토 중';
+    let badgeText = '검토 중';
     if (item.status === 'replied') {
       badgeClass = 'replied';
-      badgeText = '💬 답변 완료';
+      badgeText = '답변 완료';
     } else if (item.status === 'applied') {
       badgeClass = 'applied';
-      badgeText = '🚀 반영 완료';
+      badgeText = '반영 완료';
     }
 
     let replyHtml = '';
@@ -3061,7 +3060,7 @@ function renderFeedbackPage(page) {
       replyHtml = `
         <div class="feedback-reply-box">
           <div class="feedback-reply-header">
-            <span>👑 ${escapeHtml(item.reply.author || '관리자')} 답변</span>
+            <span>${escapeHtml(item.reply.author || '관리자')} 답변</span>
             <span style="font-size:11px;color:#94a3b8;">${escapeHtml(item.reply.replied_at || '')}</span>
           </div>
           <div class="feedback-reply-content">${escapeHtml(item.reply.content)}</div>
@@ -3074,10 +3073,10 @@ function renderFeedbackPage(page) {
       adminActionHtml = `
         <div class="feedback-card-actions">
           <button class="action-btn-sm primary" onclick="openAdminReplyModal('${item.id}')" style="font-size:11px;padding:3px 10px;">
-            ${item.reply ? '✏️ 답변 수정' : '💬 답변 작성'}
+            ${item.reply ? '답변 수정' : '답변 작성'}
           </button>
           <button class="action-btn-sm danger" onclick="deleteFeedbackPostById('${item.id}')" style="font-size:11px;padding:3px 10px;">
-            🗑️ 삭제
+            삭제
           </button>
         </div>
       `;
@@ -3196,7 +3195,7 @@ function submitNewFeedback() {
     DOM.feedbackNewModal.classList.remove('active');
   }
   renderFeedbackBoard();
-  showToast('💡 기능 추가 요청이 등록되었습니다. 관리자가 검토 후 답변을 드립니다.');
+  showToast('기능 추가 요청이 등록되었습니다. 관리자가 검토 후 답변을 드립니다.');
 }
 
 function openBoardPinModal() {
@@ -3228,19 +3227,19 @@ async function verifyBoardPin() {
     AppState.isBoardAdmin = true;
     AppState.isFaqAdmin = true;
     if (DOM.btnToggleBoardAdmin) {
-      DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleBoardAdmin.textContent = '관리자 모드 ON';
       DOM.btnToggleBoardAdmin.classList.remove('warning');
       DOM.btnToggleBoardAdmin.classList.add('primary');
     }
     if (DOM.btnToggleFaqAdmin) {
-      DOM.btnToggleFaqAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleFaqAdmin.textContent = '관리자 모드 ON';
       DOM.btnToggleFaqAdmin.classList.remove('warning');
       DOM.btnToggleFaqAdmin.classList.add('primary');
     }
     if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'inline-flex';
     if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'inline-flex';
 
-    showToast('✓ 관리자 인증 완료! 요청 답변 및 FAQ 관리가 가능합니다.');
+    showToast('관리자 인증 완료! 요청 답변 및 FAQ 관리가 가능합니다.');
     renderFeedbackBoard();
     renderFaqList();
   } else {
@@ -3256,7 +3255,7 @@ function toggleBoardAdminMode() {
   if (AppState.isBoardAdmin) {
     AppState.isBoardAdmin = false;
     if (DOM.btnToggleBoardAdmin) {
-      DOM.btnToggleBoardAdmin.textContent = '🔒 관리자 모드';
+      DOM.btnToggleBoardAdmin.textContent = '관리자 모드';
       DOM.btnToggleBoardAdmin.classList.remove('primary');
       DOM.btnToggleBoardAdmin.classList.add('warning');
     }
@@ -3269,11 +3268,11 @@ function toggleBoardAdminMode() {
   if (window.AdminState && window.AdminState.isAuthenticated) {
     AppState.isBoardAdmin = true;
     if (DOM.btnToggleBoardAdmin) {
-      DOM.btnToggleBoardAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleBoardAdmin.textContent = '관리자 모드 ON';
       DOM.btnToggleBoardAdmin.classList.remove('warning');
       DOM.btnToggleBoardAdmin.classList.add('primary');
     }
-    showToast('✓ 관리자 권한이 활성화되었습니다.');
+    showToast('관리자 권한이 활성화되었습니다.');
     renderFeedbackBoard();
     return;
   }
@@ -3345,7 +3344,7 @@ function submitAdminReply() {
     DOM.feedbackReplyModal.classList.remove('active');
   }
   renderFeedbackBoard();
-  showToast('👑 관리자 답변이 성공적으로 등록되었습니다.');
+  showToast('관리자 답변이 성공적으로 등록되었습니다.');
 }
 
 window.deleteFeedbackPostById = function(id) {
@@ -3382,7 +3381,7 @@ function executeDeleteFeedbackPost() {
     DOM.feedbackReplyModal.classList.remove('active');
   }
   renderFeedbackBoard();
-  showToast('🗑️ 요청 게시글이 성공적으로 삭제되었습니다.');
+  showToast('요청 게시글이 성공적으로 삭제되었습니다.');
 }
 
 function deleteCurrentFeedbackPost() {
@@ -3465,7 +3464,7 @@ async function syncFeedbackToCloud() {
     await pushFile('data/feedback_board.json', JSON.stringify(list, null, 2), `chore: sync feedback_board.json (${list.length} posts)`);
     // 2) data/feedback_board.js 로더 동기화
     await pushFile('data/feedback_board.js', `window.KOSTAT_FEEDBACK_DATA = ${JSON.stringify(list, null, 2)};\n`, `chore: sync feedback_board.js`);
-    console.log(`✓ 기능 요청 게시판 클라우드 동기화 완료 (${list.length}건)`);
+    console.log(`기능 요청 게시판 클라우드 동기화 완료 (${list.length}건)`);
   } catch (err) {
     console.warn('기능 요청 클라우드 동기화 실패:', err);
   }
@@ -3503,7 +3502,7 @@ async function fetchRemoteFeedback(silent = true) {
         AppState.feedbackData = merged;
         saveFeedbackStorage();
         renderFeedbackBoard();
-        if (!silent) showToast(`✓ 최신 기능 요청 목록 ${merged.length}건을 동기화했습니다.`);
+        if (!silent) showToast(`최신 기능 요청 목록 ${merged.length}건을 동기화했습니다.`);
         return true;
       }
     }
@@ -3681,7 +3680,7 @@ function renderFaqPage(page) {
   if (totalRows === 0) {
     DOM.faqListContainer.innerHTML = `
       <div class="feedback-empty-state">
-        <div style="font-size:32px;margin-bottom:8px;">📚</div>
+        <div style="font-size:14px;color:#94a3b8;font-weight:600;margin-bottom:8px;">FAQ 지식</div>
         <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">일치하는 사내 FAQ 지식이 없습니다.</div>
         <div style="font-size:12px;color:#94a3b8;">검색어를 변경하거나 우측 상단 [+ 새 FAQ 등록]을 눌러보세요.</div>
       </div>
@@ -3726,25 +3725,25 @@ function renderFaqPage(page) {
               <video controls playsinline preload="metadata" style="max-width:100%;max-height:260px;border-radius:6px;" src="${att.data}">
                 브라우저가 비디오 태그를 지원하지 않습니다.
               </video>
-              <div style="font-size:11px;color:#94a3b8;margin-top:2px;">🎬 ${attName} (${attSize})</div>
+              <div style="font-size:11px;color:#94a3b8;margin-top:2px;">[동영상] ${attName} (${attSize})</div>
             </div>
           `;
         } else if (att.category === 'pdf' || (att.type === 'application/pdf')) {
           filesHtml += `
             <a class="faq-file-chip pdf" href="${att.data}" download="${attName}" target="_blank" rel="noopener">
-              📑 ${attName} <span class="chip-size">${attSize}</span>
+              [PDF] ${attName} <span class="chip-size">${attSize}</span>
             </a>
           `;
         } else if (att.category === 'excel' || (att.name && att.name.match(/\.(xlsx?|csv)$/i))) {
           filesHtml += `
             <a class="faq-file-chip excel" href="${att.data}" download="${attName}" target="_blank" rel="noopener">
-              📊 ${attName} <span class="chip-size">${attSize}</span>
+              [Excel] ${attName} <span class="chip-size">${attSize}</span>
             </a>
           `;
         } else {
           filesHtml += `
             <a class="faq-file-chip doc" href="${att.data}" download="${attName}" target="_blank" rel="noopener">
-              📄 ${attName} <span class="chip-size">${attSize}</span>
+              [문서] ${attName} <span class="chip-size">${attSize}</span>
             </a>
           `;
         }
@@ -3769,7 +3768,7 @@ function renderFaqPage(page) {
         if (fname.toLowerCase().endsWith('.pdf')) {
           legacyFilesHtml += `
             <a class="faq-file-chip pdf" href="${src}" download="${escapeHtml(fname)}" target="_blank" rel="noopener">
-              📑 ${escapeHtml(fname)}
+              [PDF] ${escapeHtml(fname)}
             </a>
           `;
         } else {
@@ -3787,7 +3786,7 @@ function renderFaqPage(page) {
         const fname = norm.split('/').pop();
         legacyFilesHtml += `
           <a class="faq-file-chip excel" href="${src}" download="${escapeHtml(fname)}" target="_blank" rel="noopener">
-            📊 ${escapeHtml(fname)}
+            [Excel] ${escapeHtml(fname)}
           </a>
         `;
       });
@@ -3804,10 +3803,10 @@ function renderFaqPage(page) {
     const actionHtml = `
       <div class="faq-card-actions">
         <button class="action-btn-sm primary" onclick="handleFaqEditClick(${actualIndex})" style="font-size:11px;padding:3px 10px;">
-          ✏️ 수정
+          수정
         </button>
         <button class="action-btn-sm danger" onclick="handleFaqDeleteClick(${actualIndex})" style="font-size:11px;padding:3px 10px;">
-          🗑️ 삭제
+          삭제
         </button>
       </div>
     `;
@@ -3990,7 +3989,7 @@ function toggleFaqAdminMode() {
   if (AppState.isFaqAdmin) {
     AppState.isFaqAdmin = false;
     if (DOM.btnToggleFaqAdmin) {
-      DOM.btnToggleFaqAdmin.textContent = '🔒 관리자 모드';
+      DOM.btnToggleFaqAdmin.textContent = '관리자 모드';
       DOM.btnToggleFaqAdmin.classList.remove('primary');
       DOM.btnToggleFaqAdmin.classList.add('warning');
     }
@@ -4004,13 +4003,13 @@ function toggleFaqAdminMode() {
   if ((window.AdminState && window.AdminState.isAuthenticated) || AppState.isBoardAdmin) {
     AppState.isFaqAdmin = true;
     if (DOM.btnToggleFaqAdmin) {
-      DOM.btnToggleFaqAdmin.textContent = '🔓 관리자 모드 ON';
+      DOM.btnToggleFaqAdmin.textContent = '관리자 모드 ON';
       DOM.btnToggleFaqAdmin.classList.remove('warning');
       DOM.btnToggleFaqAdmin.classList.add('primary');
     }
     if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'inline-flex';
     if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'inline-flex';
-    showToast('✓ 관리자 권한이 활성화되었습니다.');
+    showToast('관리자 권한이 활성화되었습니다.');
     renderFaqList();
     return;
   }
@@ -4022,7 +4021,7 @@ function toggleFaqAdminMode() {
 // FAQ 등록 모달 열기
 function openNewFaqModal() {
   if (DOM.faqEditIndex) DOM.faqEditIndex.value = '-1';
-  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '📚 새 사내 FAQ / 지식 등록';
+  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '새 사내 FAQ / 지식 등록';
   if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = '';
   if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = '';
   if (DOM.faqAuthorPinInput) DOM.faqAuthorPinInput.value = '';
@@ -4044,7 +4043,7 @@ window.openEditFaqModal = function(idx) {
   if (!item) return;
 
   if (DOM.faqEditIndex) DOM.faqEditIndex.value = idx;
-  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '✏️ 사내 FAQ 지식 수정';
+  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '사내 FAQ 지식 수정';
   if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = item.Q || item.question || item.title || '';
   if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = item.category || '';
   if (DOM.faqAuthorPinInput) DOM.faqAuthorPinInput.value = item.author_pin || '';
@@ -4075,7 +4074,7 @@ function handleFaqFiles(files) {
 
   Array.from(files).forEach(file => {
     if (file.size > MAX_SIZE) {
-      showToast(`⚠️ "${file.name}" 파일 크기(${formatFileSize(file.size)})가 30MB를 초과하여 첨부할 수 없습니다.`, 'error');
+      showToast(`"${file.name}" 파일 크기(${formatFileSize(file.size)})가 30MB를 초과하여 첨부할 수 없습니다.`, 'error');
       return;
     }
 
@@ -4122,11 +4121,11 @@ function renderFaqAttachedList() {
 
   DOM.faqAttachedList.innerHTML = list.map((att, i) => {
     totalBytes += (att.size || 0);
-    let icon = '📄';
-    if (att.category === 'image') icon = '🖼️';
-    else if (att.category === 'video') icon = '🎬';
-    else if (att.category === 'pdf') icon = '📑';
-    else if (att.category === 'excel') icon = '📊';
+    let icon = '[문서]';
+    if (att.category === 'image') icon = '[이미지]';
+    else if (att.category === 'video') icon = '[동영상]';
+    else if (att.category === 'pdf') icon = '[PDF]';
+    else if (att.category === 'excel') icon = '[Excel]';
 
     return `
       <div class="faq-attached-item">
@@ -4202,10 +4201,10 @@ function submitFaqEdit() {
       faqItem.Files = AppState.knowledgeData[editIdx].Files;
     }
     AppState.knowledgeData[editIdx] = faqItem;
-    showToast('✓ FAQ 지식이 성공적으로 수정되었습니다.');
+    showToast('FAQ 지식이 성공적으로 수정되었습니다.');
   } else {
     AppState.knowledgeData.unshift(faqItem);
-    showToast('✓ 새 FAQ 지식이 등록되었습니다.');
+    showToast('새 FAQ 지식이 등록되었습니다.');
   }
 
   saveFaqStorage();
@@ -4247,7 +4246,7 @@ function executeDeleteFaq() {
 
   closeFaqDeleteModal();
   renderFaqList();
-  showToast('🗑️ FAQ 항목이 삭제되었습니다.');
+  showToast('FAQ 항목이 삭제되었습니다.');
 }
 
 // FAQ 로컬 영구 스토리지 저장 (절대 유실 방지)
@@ -4298,7 +4297,7 @@ function exportFaqBackup() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast(`💾 FAQ 백업 파일(${filename})이 저장되었습니다.`);
+  showToast(`FAQ 백업 파일(${filename})이 저장되었습니다.`);
 }
 
 // 백업 파일 복원 (.json)
@@ -4318,7 +4317,7 @@ function importFaqBackup(file) {
       }
 
       if (items.length === 0) {
-        showToast('⚠️ 백업 파일에 복원할 FAQ 항목이 없습니다.', 'error');
+        showToast('백업 파일에 복원할 FAQ 항목이 없습니다.', 'error');
         return;
       }
 
@@ -4326,10 +4325,10 @@ function importFaqBackup(file) {
       AppState.knowledgeData = items;
       saveFaqStorage();
       renderFaqList();
-      showToast(`✓ FAQ 백업 데이터가 성공적으로 복원되었습니다. (총 ${items.length}건)`);
+      showToast(`FAQ 백업 데이터가 성공적으로 복원되었습니다. (총 ${items.length}건)`);
     } catch (err) {
       console.error('FAQ 백업 복원 오류:', err);
-      showToast('⚠️ 백업 파일 파싱 실패: ' + err.message, 'error');
+      showToast('백업 파일 파싱 실패: ' + err.message, 'error');
     }
   };
   reader.readAsText(file, 'utf-8');
@@ -4345,7 +4344,7 @@ async function applyFaqDeploy() {
   const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
   
   if (DOM.btnDeployFaq) DOM.btnDeployFaq.disabled = true;
-  showToast('🚀 GitHub 클라우드에 FAQ 실시간 배포를 시작합니다...');
+  showToast('GitHub 클라우드에 FAQ 실시간 배포를 시작합니다...');
 
   const OWNER = 'skywantae';
   const REPO = 'skywantae.github.io';
@@ -4419,7 +4418,7 @@ async function applyFaqDeploy() {
     showToast('5/5 클라우드 백업 스냅샷 저장 중...');
     await pushFile(`data/faq_backups/faq_backup_${ts}.json`, JSON.stringify(AppState.knowledgeData, null, 2), `backup: automated faq snapshot ${ts}`);
 
-    showToast(`🎉 배포 완료! 총 ${count}건의 FAQ가 클라우드에 실시간 반영되었습니다.`);
+    showToast(`배포 완료! 총 ${count}건의 FAQ가 클라우드에 실시간 반영되었습니다.`);
   } catch (err) {
     console.error('FAQ Cloud Deploy Error:', err);
     showToast('배포 중 오류 발생: ' + err.message, 'error');
