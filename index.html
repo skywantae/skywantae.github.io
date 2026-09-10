@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.157" />
+  <link rel="stylesheet" href="app.css?v=1.0.158" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,6 +99,7 @@
         <button class="viewer-tab-btn active" data-target="viewShipPlan">출하 계획</button>
         <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
         <button class="viewer-tab-btn" data-target="viewContractReviews">계약검토서</button>
+        <button class="viewer-tab-btn" data-target="viewDrawings">도면</button>
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
         <button class="viewer-tab-btn" data-target="viewFeedback">기능 요청</button>
         <button class="viewer-tab-btn" data-target="viewFaq">FAQ 지식</button>
@@ -233,7 +234,71 @@
         </div>
       </div>
 
-      <!-- 3. Skyworks PO 뷰 -->
+      <!-- 3. IC Tray 도면 뷰 -->
+      <div class="viewer-content-card" id="viewDrawings" style="display:none;">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>IC Tray 도면 현황</h3>
+            <span class="count-badge" id="drawingsCountBadge">0건</span>
+          </div>
+          <div class="viewer-tools">
+            <input type="text" id="drawingsSearchInput" class="compact-search" placeholder="품번/고객사/규격 검색..." style="width: 170px;" />
+            <select id="drawingsSeriesSelect" class="compact-select">
+              <option value="all">전체 시리즈</option>
+              <option value="KS-80XX, 81XX">KS-80XX/81XX</option>
+              <option value="KS-82XX">KS-82XX</option>
+              <option value="KS-83XX">KS-83XX</option>
+              <option value="KS-84XX">KS-84XX</option>
+              <option value="KS-85XX">KS-85XX</option>
+              <option value="KS-86XX">KS-86XX</option>
+              <option value="KS-87XX">KS-87XX</option>
+              <option value="KS-88XX">KS-88XX</option>
+              <option value="KS-89XX">KS-89XX</option>
+              <option value="KS-RFA">KS-RFA</option>
+            </select>
+            <select id="drawingsPageSizeSelect" class="compact-select">
+              <option value="15">15개씩</option>
+              <option value="30">30개씩</option>
+              <option value="50">50개씩</option>
+              <option value="100">100개씩</option>
+            </select>
+            <button class="action-btn-sm primary" id="btnSearchDrawings">조회</button>
+            <button class="action-btn-sm" id="btnReloadDrawings">새로고침</button>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
+          <table class="modern-table" id="drawingsTable">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>품번 / 모델</th>
+                <th>고객사</th>
+                <th>고객사 P/N</th>
+                <th>규격 (Package Type)</th>
+                <th>내열온도</th>
+                <th>재질</th>
+                <th>도면 파일수</th>
+                <th>최종 수정일</th>
+                <th>도면 다운로드</th>
+              </tr>
+            </thead>
+            <tbody id="drawingsTbody">
+              <tr><td colspan="10" class="text-center py-4">도면 데이터를 불러오는 중입니다...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 도면 하단 페이지네이션 컨트롤러 -->
+        <div class="pagination-container" id="drawingsPagination">
+          <div class="pagination-info" id="drawingsPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-controls" id="drawingsPageControls">
+            <!-- 동적 페이지 번호 버튼 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Skyworks PO 뷰 -->
       <div class="viewer-content-card" id="viewSkyworks">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
@@ -410,7 +475,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.157</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.158</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -726,18 +791,73 @@
     </div>
   </div>
 
+  <!-- 사내 도면 보안 PIN 인증 모달 (보안 자산 보호: PIN 0404) -->
+  <div class="modal-backdrop" id="drawingPinModal">
+    <div class="modal-dialog" style="max-width:380px;">
+      <div class="modal-header">
+        <h3 style="color:#38bdf8;">사내 도면 보안 인증</h3>
+        <button class="close-btn" id="btnCloseDrawingPinModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:14px;">
+          IC Tray 도면은 회사의 중요한 핵심 기술 자산입니다.<br>
+          도면 열람 및 다운로드를 위해 <strong>4자리 보안 PIN</strong>을 입력해 주세요.
+        </div>
+        <input type="hidden" id="drawingPinTargetIndex" />
+        <div class="form-group" style="margin-bottom:8px;">
+          <input type="password" id="drawingPinInput" class="form-input" placeholder="보안 PIN 4자리 입력" maxlength="8" style="width:100%;font-size:18px;letter-spacing:6px;text-align:center;font-weight:700;" inputmode="numeric" />
+        </div>
+        <div id="drawingPinError" style="font-size:12px;color:#f43f5e;display:none;margin-top:6px;text-align:center;">
+          보안 PIN 번호가 일치하지 않습니다.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm primary" id="btnVerifyDrawingPin">인증 확인</button>
+        <button class="action-btn-sm secondary" id="btnCancelDrawingPin">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 도면 상세 정보 및 리비전별 다운로드 모달 -->
+  <div class="modal-backdrop" id="drawingDetailModal">
+    <div class="modal-dialog quotation-dialog-lg" style="max-width:760px;">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="drawingDetailTitle" style="margin:0;font-size:17px;font-weight:700;color:#f8fafc;">도면 상세 정보</h3>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="action-btn-sm secondary" id="btnCopyDrawingSummary" style="font-size:11px;padding:3px 10px;">요약 복사</button>
+          <button class="close-btn" id="btnCloseDrawingDetailModal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="max-height:calc(85vh - 120px);overflow-y:auto;">
+        <!-- 상단 모델 스펙 요약 카드 -->
+        <div id="drawingDetailSpecArea" style="margin-bottom:16px;"></div>
+
+        <!-- 등록된 리비전별 도면 파일 목록 -->
+        <div style="font-size:14px;font-weight:700;color:#f8fafc;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+          <span>등록 도면 파일 목록</span>
+          <span id="drawingDetailFileCount" style="font-size:12px;color:#38bdf8;font-weight:600;"></span>
+        </div>
+        <div id="drawingDetailFileList" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn-sm secondary" id="btnCloseDrawingDetail">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.157"></script>
-  <script src="data/shipplan_data.js?v=1.0.157"></script>
-  <script src="data/quotations_data.js?v=1.0.157"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.157"></script>
-  <script src="data/knowledge_data.js?v=1.0.157"></script>
-  <script src="data/faq_db.js?v=1.0.157"></script>
-  <script src="data/feedback_board.js?v=1.0.157"></script>
+  <script src="data/skyworks_data.js?v=1.0.158"></script>
+  <script src="data/shipplan_data.js?v=1.0.158"></script>
+  <script src="data/quotations_data.js?v=1.0.158"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.158"></script>
+  <script src="data/drawings_data.js?v=1.0.158"></script>
+  <script src="data/knowledge_data.js?v=1.0.158"></script>
+  <script src="data/faq_db.js?v=1.0.158"></script>
+  <script src="data/feedback_board.js?v=1.0.158"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.157"></script>
-  <script src="updater.js?v=1.0.157"></script>
-  <script src="app.js?v=1.0.157"></script>
+  <script src="xlsx.full.min.js?v=1.0.158"></script>
+  <script src="updater.js?v=1.0.158"></script>
+  <script src="app.js?v=1.0.158"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

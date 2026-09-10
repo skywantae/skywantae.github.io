@@ -23,6 +23,15 @@ const AppState = {
   contractFilteredRows: [],
   selectedContractProjectNo: null,
 
+  // IC Tray 도면 상태
+  drawingsData: [],
+  drawingsFilteredRows: [],
+  drawingsCurrentPage: 1,
+  drawingsPageSize: 15,
+  isDrawingAuthenticated: false,
+  pendingDrawingIndex: null,
+  selectedDrawingModel: null,
+
   // 출하 계획 페이징 상태
   shipPlanCurrentPage: 1,
   shipPlanPageSize: 50,
@@ -208,6 +217,39 @@ const DOM = {
   btnCloseContractModal: document.getElementById('btnCloseContractModal'),
   btnModalCloseContract: document.getElementById('btnModalCloseContract'),
   btnModalCopyContractText: document.getElementById('btnModalCopyContractText'),
+
+  // IC Tray 도면 DOM
+  viewDrawings: document.getElementById('viewDrawings'),
+  drawingsCountBadge: document.getElementById('drawingsCountBadge'),
+  drawingsSearchInput: document.getElementById('drawingsSearchInput'),
+  drawingsSeriesSelect: document.getElementById('drawingsSeriesSelect'),
+  drawingsPageSizeSelect: document.getElementById('drawingsPageSizeSelect'),
+  btnSearchDrawings: document.getElementById('btnSearchDrawings'),
+  btnReloadDrawings: document.getElementById('btnReloadDrawings'),
+  drawingsTable: document.getElementById('drawingsTable'),
+  drawingsTbody: document.getElementById('drawingsTbody'),
+  drawingsPagination: document.getElementById('drawingsPagination'),
+  drawingsPageInfo: document.getElementById('drawingsPageInfo'),
+  drawingsPageControls: document.getElementById('drawingsPageControls'),
+
+  // 도면 보안 PIN 모달 DOM
+  drawingPinModal: document.getElementById('drawingPinModal'),
+  drawingPinInput: document.getElementById('drawingPinInput'),
+  drawingPinTargetIndex: document.getElementById('drawingPinTargetIndex'),
+  drawingPinError: document.getElementById('drawingPinError'),
+  btnVerifyDrawingPin: document.getElementById('btnVerifyDrawingPin'),
+  btnCancelDrawingPin: document.getElementById('btnCancelDrawingPin'),
+  btnCloseDrawingPinModal: document.getElementById('btnCloseDrawingPinModal'),
+
+  // 도면 상세 모달 DOM
+  drawingDetailModal: document.getElementById('drawingDetailModal'),
+  drawingDetailTitle: document.getElementById('drawingDetailTitle'),
+  btnCopyDrawingSummary: document.getElementById('btnCopyDrawingSummary'),
+  btnCloseDrawingDetailModal: document.getElementById('btnCloseDrawingDetailModal'),
+  drawingDetailSpecArea: document.getElementById('drawingDetailSpecArea'),
+  drawingDetailFileCount: document.getElementById('drawingDetailFileCount'),
+  drawingDetailFileList: document.getElementById('drawingDetailFileList'),
+  btnCloseDrawingDetail: document.getElementById('btnCloseDrawingDetail'),
 
   // Settings & Refresh
   btnSettings: document.getElementById('btnSettings'),
@@ -412,6 +454,9 @@ async function loadInitialDatabases() {
     if (window.KOSTAT_CONTRACT_REVIEWS_DATA && window.KOSTAT_CONTRACT_REVIEWS_DATA.length > 0) {
       AppState.contractReviewsData = window.KOSTAT_CONTRACT_REVIEWS_DATA;
     }
+    if (window.KOSTAT_DRAWINGS_DATA && window.KOSTAT_DRAWINGS_DATA.length > 0) {
+      AppState.drawingsData = window.KOSTAT_DRAWINGS_DATA;
+    }
     // FAQ 지식 데이터 우선 바인딩 (전용 DB > 번들 객체)
     if (window.KOSTAT_FAQ_DB && window.KOSTAT_FAQ_DB.length > 0) {
       AppState.knowledgeData = window.KOSTAT_FAQ_DB;
@@ -512,11 +557,12 @@ async function loadInitialDatabases() {
     initSkyworksYears();
     renderQuotHistory();
     renderContractReviews();
+    renderDrawingsHistory();
     renderShipPlanHistory();
     renderFeedbackBoard();
     renderFaqList();
 
-    console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}`);
+    console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}, Drawings: ${AppState.drawingsData.length}`);
   } catch (err) {
     console.error('DB Load Error:', err);
     updateStatus(true, getDataDateStatusText());
@@ -826,6 +872,64 @@ function initUI() {
   }
   if (DOM.btnModalCopyContractText) {
     DOM.btnModalCopyContractText.addEventListener('click', copyCurrentContractReviewSummary);
+  }
+
+  // IC Tray 도면 검색 & 필터 & 페이지 크기 & 모달 이벤트
+  if (DOM.drawingsSearchInput) {
+    DOM.drawingsSearchInput.addEventListener('input', debounce(filterDrawingsTable, 200));
+    DOM.drawingsSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterDrawingsTable();
+    });
+  }
+  if (DOM.drawingsSeriesSelect) {
+    DOM.drawingsSeriesSelect.addEventListener('change', filterDrawingsTable);
+  }
+  if (DOM.drawingsPageSizeSelect) {
+    DOM.drawingsPageSizeSelect.addEventListener('change', () => {
+      AppState.drawingsPageSize = parseInt(DOM.drawingsPageSizeSelect.value, 10) || 15;
+      AppState.drawingsCurrentPage = 1;
+      renderDrawingsPage(1);
+    });
+  }
+  if (DOM.btnSearchDrawings) {
+    DOM.btnSearchDrawings.addEventListener('click', filterDrawingsTable);
+  }
+  if (DOM.btnReloadDrawings) {
+    DOM.btnReloadDrawings.addEventListener('click', () => {
+      if (DOM.drawingsSearchInput) DOM.drawingsSearchInput.value = '';
+      if (DOM.drawingsSeriesSelect) DOM.drawingsSeriesSelect.value = 'all';
+      renderDrawingsHistory();
+    });
+  }
+
+  // 사내 도면 보안 PIN 모달 이벤트 (암호: 0404)
+  if (DOM.btnVerifyDrawingPin) {
+    DOM.btnVerifyDrawingPin.addEventListener('click', verifyDrawingPin);
+  }
+  if (DOM.drawingPinInput) {
+    DOM.drawingPinInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyDrawingPin();
+      }
+    });
+  }
+  if (DOM.btnCancelDrawingPin) {
+    DOM.btnCancelDrawingPin.addEventListener('click', closeDrawingPinModal);
+  }
+  if (DOM.btnCloseDrawingPinModal) {
+    DOM.btnCloseDrawingPinModal.addEventListener('click', closeDrawingPinModal);
+  }
+
+  // 도면 상세 모달 이벤트
+  if (DOM.btnCloseDrawingDetailModal) {
+    DOM.btnCloseDrawingDetailModal.addEventListener('click', closeDrawingDetailModal);
+  }
+  if (DOM.btnCloseDrawingDetail) {
+    DOM.btnCloseDrawingDetail.addEventListener('click', closeDrawingDetailModal);
+  }
+  if (DOM.btnCopyDrawingSummary) {
+    DOM.btnCopyDrawingSummary.addEventListener('click', copyDrawingSummaryText);
   }
 
   // 설정 모달
@@ -2149,6 +2253,382 @@ function copyCurrentContractReviewSummary() {
   }
 }
 
+// --- 7-1. IC Tray 도면 뷰어 & 보안 PIN(0404) 다운로드 엔진 ---
+
+function renderDrawingsHistory() {
+  if (DOM.drawingsSearchInput) DOM.drawingsSearchInput.value = '';
+  if (DOM.drawingsSeriesSelect) DOM.drawingsSeriesSelect.value = 'all';
+  AppState.drawingsFilteredRows = AppState.drawingsData || [];
+  AppState.drawingsCurrentPage = 1;
+  renderDrawingsPage(1);
+}
+
+function filterDrawingsTable() {
+  const search = DOM.drawingsSearchInput ? DOM.drawingsSearchInput.value.toLowerCase().trim() : '';
+  const searchNorm = search.replace(/[-_\s]/g, '');
+  const series = DOM.drawingsSeriesSelect ? DOM.drawingsSeriesSelect.value : 'all';
+
+  AppState.drawingsFilteredRows = (AppState.drawingsData || []).filter(r => {
+    // 1. 시리즈 필터
+    if (series && series !== 'all') {
+      if (series === 'KS-80XX, 81XX') {
+        if (r.series !== 'KS-80XX, 81XX' && r.series !== 'KS-80XX' && r.series !== 'KS-81XX') {
+          return false;
+        }
+      } else if (r.series !== series) {
+        return false;
+      }
+    }
+
+    // 2. 품번/고객사/규격/재질/온도 및 파일명 통합 검색
+    if (!search) return true;
+
+    const m = (r.model || '').toLowerCase();
+    const c = (r.customer || '').toLowerCase();
+    const cpn = (r.customer_pn || '').toLowerCase();
+    const pkg = (r.pkg_type || '').toLowerCase();
+    const mat = (r.material || '').toLowerCase();
+    const temp = (r.temp || '').toLowerCase();
+    const s = (r.series || '').toLowerCase();
+
+    if (m.includes(search) || c.includes(search) || cpn.includes(search) ||
+        pkg.includes(search) || mat.includes(search) || temp.includes(search) || s.includes(search)) {
+      return true;
+    }
+
+    // 하이픈/공백 제거 정규화 검색
+    if (searchNorm.length >= 2) {
+      if (m.replace(/[-_\s]/g, '').includes(searchNorm) ||
+          cpn.replace(/[-_\s]/g, '').includes(searchNorm) ||
+          c.replace(/[-_\s]/g, '').includes(searchNorm)) {
+        return true;
+      }
+    }
+
+    // 도면 파일명 내부 검색
+    if (r.files && r.files.length > 0) {
+      for (let i = 0; i < r.files.length; i++) {
+        const fn = (r.files[i].filename || '').toLowerCase();
+        if (fn.includes(search)) return true;
+        if (searchNorm.length >= 2 && fn.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
+      }
+    }
+
+    return false;
+  });
+
+  AppState.drawingsCurrentPage = 1;
+  renderDrawingsPage(1);
+}
+
+function renderDrawingsPage(page) {
+  const rows = AppState.drawingsFilteredRows || [];
+  const totalRows = rows.length;
+  const pageSize = AppState.drawingsPageSize || 15;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.drawingsCurrentPage = page;
+
+  // 카운트 배지 & 페이지 인포
+  if (DOM.drawingsCountBadge) {
+    DOM.drawingsCountBadge.textContent = `${totalRows.toLocaleString()}건`;
+  }
+  if (DOM.drawingsPageInfo) {
+    DOM.drawingsPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
+  if (!DOM.drawingsTbody) return;
+
+  if (totalRows === 0) {
+    DOM.drawingsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">일치하는 도면 데이터가 없습니다.</td></tr>`;
+    if (DOM.drawingsPageControls) DOM.drawingsPageControls.innerHTML = '';
+    return;
+  }
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageRows = rows.slice(start, end);
+
+  DOM.drawingsTbody.innerHTML = pageRows.map((r, i) => {
+    const rowNo = start + i + 1;
+    // 최신 수정일 계산
+    let latestDate = '-';
+    if (r.files && r.files.length > 0) {
+      const dates = r.files.map(f => f.mtime).filter(Boolean).sort().reverse();
+      if (dates.length > 0) latestDate = dates[0].substring(0, 10);
+    }
+    const fileCount = r.files ? r.files.length : (r.file_count || 0);
+
+    return `
+      <tr onclick="handleDrawingModelClick('${escapeHtml(r.model)}')" style="cursor:pointer;" class="erp-copyable-cell" title="도면 상세 및 다운로드 (클릭)">
+        <td style="text-align:center;color:#94a3b8;font-size:12px;">${rowNo}</td>
+        <td style="font-weight:700;color:#38bdf8;">${escapeHtml(r.model)}</td>
+        <td style="font-weight:600;color:#f8fafc;">${escapeHtml(r.customer || '-')}</td>
+        <td style="color:#a5b4fc;">${escapeHtml(r.customer_pn || '-')}</td>
+        <td style="color:#cbd5e1;">${escapeHtml(r.pkg_type || '-')}</td>
+        <td style="text-align:center;color:#e2e8f0;">${escapeHtml(r.temp || '-')}</td>
+        <td style="text-align:center;color:#cbd5e1;">${escapeHtml(r.material || '-')}</td>
+        <td style="text-align:center;"><span class="count-badge" style="background:rgba(14,165,233,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-size:11px;">PDF ${fileCount}개</span></td>
+        <td style="text-align:center;color:#94a3b8;font-size:12px;">${escapeHtml(latestDate)}</td>
+        <td style="text-align:center;">
+          <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 10px;" onclick="event.stopPropagation(); handleDrawingModelClick('${escapeHtml(r.model)}');">열람/다운로드</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // 페이지네이션 컨트롤러 렌더링
+  renderDrawingsPaginationControls(page, totalPages);
+}
+
+function renderDrawingsPaginationControls(currentPage, totalPages) {
+  if (!DOM.drawingsPageControls) return;
+
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
+  let btnsHtml = '';
+
+  // 처음으로
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToDrawingsPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
+  
+  // 이전
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToDrawingsPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
+
+  // 슬라이딩 윈도우 페이지 번호
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
+  }
+
+  // 1페이지 버튼
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToDrawingsPage(1)">1</button>`;
+
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToDrawingsPage(${p})">${p}</button>`;
+  });
+
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  // 마지막 페이지
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToDrawingsPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  // 다음
+  btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToDrawingsPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
+
+  // 마지막으로
+  btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToDrawingsPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
+
+  DOM.drawingsPageControls.innerHTML = btnsHtml;
+}
+
+window.goToDrawingsPage = function(page) {
+  renderDrawingsPage(page);
+  const wrapper = document.querySelector('#viewDrawings .table-responsive-wrapper');
+  if (wrapper) wrapper.scrollTop = 0;
+};
+
+function handleDrawingModelClick(modelName) {
+  AppState.selectedDrawingModel = modelName;
+  if (!AppState.isDrawingAuthenticated) {
+    openDrawingPinModal(modelName);
+  } else {
+    openDrawingDetailModal(modelName);
+  }
+}
+window.handleDrawingModelClick = handleDrawingModelClick;
+
+// --- 보안 PIN 모달 제어 (비밀번호: 0404) ---
+function openDrawingPinModal(modelName) {
+  if (DOM.drawingPinTargetIndex) DOM.drawingPinTargetIndex.value = modelName || '';
+  if (DOM.drawingPinInput) DOM.drawingPinInput.value = '';
+  if (DOM.drawingPinError) DOM.drawingPinError.style.display = 'none';
+  if (DOM.drawingPinModal) DOM.drawingPinModal.classList.add('show');
+  setTimeout(() => {
+    if (DOM.drawingPinInput) DOM.drawingPinInput.focus();
+  }, 150);
+}
+
+function closeDrawingPinModal() {
+  if (DOM.drawingPinModal) DOM.drawingPinModal.classList.remove('show');
+  if (DOM.drawingPinInput) DOM.drawingPinInput.value = '';
+  if (DOM.drawingPinError) DOM.drawingPinError.style.display = 'none';
+}
+
+function verifyDrawingPin() {
+  const pin = DOM.drawingPinInput ? DOM.drawingPinInput.value.trim() : '';
+  if (pin === '0404') {
+    AppState.isDrawingAuthenticated = true;
+    closeDrawingPinModal();
+    showToast('보안 PIN 인증 성공: 도면 열람 권한이 부여되었습니다.', 'success');
+    const target = (DOM.drawingPinTargetIndex ? DOM.drawingPinTargetIndex.value : '') || AppState.selectedDrawingModel;
+    if (target) {
+      openDrawingDetailModal(target);
+    }
+  } else {
+    if (DOM.drawingPinError) {
+      DOM.drawingPinError.textContent = '보안 PIN 번호(4자리)가 일치하지 않습니다.';
+      DOM.drawingPinError.style.display = 'block';
+    }
+    if (DOM.drawingPinInput) {
+      DOM.drawingPinInput.value = '';
+      DOM.drawingPinInput.focus();
+    }
+  }
+}
+
+// --- 도면 상세 모달 제어 ---
+function openDrawingDetailModal(modelName) {
+  AppState.selectedDrawingModel = modelName;
+  if (!DOM.drawingDetailModal) return;
+
+  const item = (AppState.drawingsData || []).find(d => d.model === modelName);
+  if (!item) {
+    if (DOM.drawingDetailTitle) DOM.drawingDetailTitle.textContent = `도면 상세 [${modelName}]`;
+    if (DOM.drawingDetailSpecArea) DOM.drawingDetailSpecArea.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">'${escapeHtml(modelName)}' 도면 데이터를 찾을 수 없습니다.</div>`;
+    if (DOM.drawingDetailFileList) DOM.drawingDetailFileList.innerHTML = '';
+    DOM.drawingDetailModal.classList.add('show');
+    return;
+  }
+
+  if (DOM.drawingDetailTitle) {
+    DOM.drawingDetailTitle.textContent = `IC Tray 도면 상세 [${item.model}]`;
+  }
+  if (DOM.drawingDetailFileCount) {
+    DOM.drawingDetailFileCount.textContent = `총 ${(item.files ? item.files.length : 0)}개 PDF 도면 등록`;
+  }
+
+  // 상단 스펙 요약 그리드 렌더링
+  if (DOM.drawingDetailSpecArea) {
+    DOM.drawingDetailSpecArea.innerHTML = `
+      <div style="background:rgba(30,41,59,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-md);padding:14px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;">
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">품번 / 모델</span><strong style="color:#38bdf8;font-size:15px;">${escapeHtml(item.model)}</strong></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">시리즈</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.series || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">고객사</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.customer || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">고객사 P/N</span><span style="color:#a5b4fc;font-weight:600;">${escapeHtml(item.customer_pn || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">패키지 규격 (Package Type)</span><span style="color:#e2e8f0;">${escapeHtml(item.pkg_type || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">내열온도 / 재질</span><span style="color:#e2e8f0;">${escapeHtml(item.temp || '-')} / ${escapeHtml(item.material || '-')}</span></div>
+      </div>
+    `;
+  }
+
+  // 등록 도면 파일 목록 렌더링
+  if (DOM.drawingDetailFileList) {
+    if (!item.files || item.files.length === 0) {
+      DOM.drawingDetailFileList.innerHTML = `<div style="text-align:center;padding:20px;color:#94a3b8;">등록된 PDF 도면 파일이 없습니다.</div>`;
+    } else {
+      DOM.drawingDetailFileList.innerHTML = item.files.map((f, idx) => {
+        const sizeKb = (f.size / 1024).toFixed(1);
+        const dateStr = f.mtime ? f.mtime.substring(0, 10) : '-';
+        return `
+          <div style="background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:240px;flex:1;">
+              <span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700;">PDF</span>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#f8fafc;word-break:break-all;">${escapeHtml(f.filename)}</div>
+                <div style="font-size:11px;color:#94a3b8;">크기: ${sizeKb} KB | 수정일: ${dateStr}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button type="button" class="action-btn-sm secondary" style="font-size:11px;padding:3px 8px;" onclick="copyDrawingPath('${escapeHtml(f.rel_path)}')">경로 복사</button>
+              <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 12px;" onclick="downloadDrawingFile('${escapeHtml(item.model)}', '${escapeHtml(f.filename)}', '${escapeHtml(f.rel_path)}')">다운로드</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  DOM.drawingDetailModal.classList.add('show');
+}
+window.openDrawingDetailModal = openDrawingDetailModal;
+
+function closeDrawingDetailModal() {
+  if (DOM.drawingDetailModal) DOM.drawingDetailModal.classList.remove('show');
+}
+
+function copyDrawingPath(relPath) {
+  const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(fullPath).then(() => {
+      showToast('사내 네트워크 경로가 복사되었습니다: ' + fullPath, 'success');
+    }).catch(() => {
+      showToast('사내 경로 복사: ' + fullPath, 'info');
+    });
+  } else {
+    showToast('사내 경로 복사: ' + fullPath, 'info');
+  }
+}
+window.copyDrawingPath = copyDrawingPath;
+
+function downloadDrawingFile(model, filename, relPath) {
+  const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
+  
+  // 사내 경로를 클립보드에 우선 자동 복사
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(fullPath).catch(() => {});
+  }
+
+  // 브라우저 다운로드 또는 새 창 열기 시도
+  try {
+    const link = document.createElement('a');
+    link.href = 'data/drawings/' + relPath;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (_) {}
+
+  showToast(`도면 다운로드 요청: ${filename} (사내 경로 복사 완료)`, 'success');
+}
+window.downloadDrawingFile = downloadDrawingFile;
+
+function copyDrawingSummaryText() {
+  if (!AppState.selectedDrawingModel) return;
+  const item = (AppState.drawingsData || []).find(d => d.model === AppState.selectedDrawingModel);
+  if (!item) return;
+
+  let text = `[IC Tray 도면 상세 정보]\n`;
+  text += `• 품번 / 모델: ${item.model}\n`;
+  text += `• 시리즈: ${item.series || '-'}\n`;
+  text += `• 고객사: ${item.customer || '-'}\n`;
+  text += `• 고객사 P/N: ${item.customer_pn || '-'}\n`;
+  text += `• 패키지 규격: ${item.pkg_type || '-'}\n`;
+  text += `• 내열온도 / 재질: ${item.temp || '-'} / ${item.material || '-'}\n`;
+  text += `• 등록 도면 수: ${item.files ? item.files.length : 0}개 파일\n\n`;
+
+  text += `[등록 도면 파일 목록]\n`;
+  if (item.files && item.files.length > 0) {
+    item.files.forEach((f, idx) => {
+      const sizeKb = (f.size / 1024).toFixed(1);
+      const dateStr = f.mtime ? f.mtime.substring(0, 10) : '-';
+      text += `${idx + 1}. ${f.filename} (${sizeKb} KB, ${dateStr})\n   - 경로: Z:\\KQC\\IC TRAY DRAWING\\${f.rel_path.replace(/\//g, '\\')}\n`;
+    });
+  } else {
+    text += `등록된 도면 파일 없음\n`;
+  }
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('도면 상세 정보 및 파일 목록이 복사되었습니다.');
+    });
+  } else {
+    showToast('클립보드 복사 완료');
+  }
+}
+
 // --- 8. 탭 및 네비게이션 ---
 
 function printQuotation(quotNo) {
@@ -2181,6 +2661,8 @@ function switchMobileTab(tab) {
   const tabTargetMap = {
     'shipplan': 'viewShipPlan',
     'quotations': 'viewQuotations',
+    'contract_reviews': 'viewContractReviews',
+    'drawings': 'viewDrawings',
     'skyworks': 'viewSkyworks'
   };
   if (tabTargetMap[tab]) {
@@ -2242,6 +2724,11 @@ function switchViewerCard(targetId) {
       AppState.contractFilteredRows = AppState.contractReviewsData || [];
     }
     renderContractReviewsPage(AppState.contractCurrentPage || 1);
+  } else if (targetId === 'viewDrawings') {
+    if (!AppState.drawingsFilteredRows || AppState.drawingsFilteredRows.length === 0) {
+      AppState.drawingsFilteredRows = AppState.drawingsData || [];
+    }
+    renderDrawingsPage(AppState.drawingsCurrentPage || 1);
   } else if (targetId === 'viewSkyworks') {
     if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
       renderSkyworksTable(AppState.skyworksData);
