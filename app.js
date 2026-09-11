@@ -2472,8 +2472,9 @@ function verifyDrawingPin() {
   const pin = DOM.drawingPinInput ? DOM.drawingPinInput.value.trim() : '';
   if (pin === '0404') {
     AppState.isDrawingAuthenticated = true;
+    AppState.drawingPin = pin;
     closeDrawingPinModal();
-    showToast('보안 PIN 인증 성공: 도면 열람 권한이 부여되었습니다.', 'success');
+    showToast('보안 PIN 인증 성공: 도면 열람 및 다운로드 권한이 활성화되었습니다.', 'success');
     const target = (DOM.drawingPinTargetIndex ? DOM.drawingPinTargetIndex.value : '') || AppState.selectedDrawingModel;
     if (target) {
       openDrawingDetailModal(target);
@@ -2544,7 +2545,7 @@ function openDrawingDetailModal(modelName) {
             </div>
             <div style="display:flex;gap:6px;align-items:center;">
               <button type="button" class="action-btn-sm secondary" style="font-size:11px;padding:3px 8px;" onclick="copyDrawingPath('${escapeHtml(f.rel_path)}')">경로 복사</button>
-              <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 12px;" onclick="downloadDrawingFile('${escapeHtml(item.model)}', '${escapeHtml(f.filename)}', '${escapeHtml(f.rel_path)}')">다운로드</button>
+              <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 12px;" onclick="downloadDrawingFile('${escapeHtml(item.model)}', '${escapeHtml(f.filename)}', '${escapeHtml(f.rel_path)}', this)">다운로드</button>
             </div>
           </div>
         `;
@@ -2574,7 +2575,34 @@ function copyDrawingPath(relPath) {
 }
 window.copyDrawingPath = copyDrawingPath;
 
-function downloadDrawingFile(model, filename, relPath) {
+const DRAWING_AUTH_CIPHER = 'PfDlQ4CqhAesc39QyDrWqHU5yAi39qawYW7ymLTIEkKi+Gkj8sBdW9omUkrMr+3C84UbQ+nDVbL/lR0osbgj+sYpjj8=';
+const DRAWING_AUTH_SALT = 'kostat_drawing_auth_salt_2026';
+
+async function getDrawingAuthToken(pin) {
+  if (AppState.drawingAuthToken) return AppState.drawingAuthToken;
+  try {
+    const rawBytes = Uint8Array.from(atob(DRAWING_AUTH_CIPHER), c => c.charCodeAt(0));
+    const nonce = rawBytes.subarray(0, 12);
+    const ct = rawBytes.subarray(12);
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin || '0404'), { name: 'PBKDF2' }, false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: enc.encode(DRAWING_AUTH_SALT), iterations: 50000, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt']
+    );
+    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, ct);
+    AppState.drawingAuthToken = new TextDecoder().decode(decrypted);
+    return AppState.drawingAuthToken;
+  } catch (e) {
+    console.warn('[DrawingAuth] 토큰 복호화 실패:', e);
+    return null;
+  }
+}
+
+async function downloadDrawingFile(model, filename, relPath, btnEl) {
   const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
   
   // 사내 경로를 클립보드에 우선 자동 복사
@@ -2582,17 +2610,52 @@ function downloadDrawingFile(model, filename, relPath) {
     navigator.clipboard.writeText(fullPath).catch(() => {});
   }
 
-  // 브라우저 다운로드 또는 새 창 열기 시도
+  showToast(`도면 다운로드 요청 중: ${filename}`, 'info');
+  const originalText = btnEl ? btnEl.textContent : '다운로드';
+  if (btnEl) {
+    btnEl.disabled = true;
+    btnEl.textContent = '다운로드 중...';
+  }
+
   try {
+    const token = await getDrawingAuthToken(AppState.drawingPin || '0404');
+    if (!token) throw new Error('인증 토큰 획득 실패');
+
+    // GitHub API로 보안 전용 저장소(kostat-drawings)에서 바이너리 원본 스트림 획득
+    const encodedPath = (relPath || '').split('/').map(encodeURIComponent).join('/');
+    const apiUrl = `https://api.github.com/repos/skywantae/kostat-drawings/contents/${encodedPath}`;
+
+    const res = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3.raw'
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`파일 서버 응답 코드: ${res.status}`);
+    }
+
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
     const link = document.createElement('a');
-    link.href = 'data/drawings/' + relPath;
+    link.href = blobUrl;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  } catch (_) {}
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
 
-  showToast(`도면 다운로드 요청: ${filename} (사내 경로 복사 완료)`, 'success');
+    showToast(`도면 다운로드 완료: ${filename}`, 'success');
+  } catch (err) {
+    console.warn('[DrawingDownload] 다운로드 안내:', err);
+    showToast(`사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창 또는 실행창에 붙여넣어 열어보실 수 있습니다)`, 'info');
+  } finally {
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.textContent = originalText;
+    }
+  }
 }
 window.downloadDrawingFile = downloadDrawingFile;
 
