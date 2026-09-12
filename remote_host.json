@@ -1,8 +1,8 @@
 {
-  "active_url": "https://petite-nhs-hull-hospital.trycloudflare.com",
+  "active_url": "https://recall-baseball-anytime-years.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-12 10:55:24",
+  "updated_at": "2026-09-12 10:56:17",
   "status": "online",
   "devices": {
     "dev_desktop_h2q3k25": {
@@ -17,9 +17,9 @@
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://petite-nhs-hull-hospital.trycloudflare.com",
+      "active_url": "https://recall-baseball-anytime-years.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-12 10:55:24",
+      "updated_at": "2026-09-12 10:56:17",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
