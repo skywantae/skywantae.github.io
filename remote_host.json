@@ -1,8 +1,8 @@
 {
-  "active_url": "https://austin-analog-indices-picture.trycloudflare.com",
+  "active_url": "https://full-der-arrow-christopher.trycloudflare.com",
   "pin": "8805",
   "device_name": "💻 OVERSEAS",
-  "updated_at": "2026-09-16 06:31:37",
+  "updated_at": "2026-09-16 06:32:31",
   "status": "online",
   "devices": {
     "dev_desktop_h2q3k25": {
@@ -17,9 +17,9 @@
     "dev_desktop_kqi331h": {
       "id": "dev_desktop_kqi331h",
       "name": "💻 OVERSEAS",
-      "active_url": "https://austin-analog-indices-picture.trycloudflare.com",
+      "active_url": "https://full-der-arrow-christopher.trycloudflare.com",
       "pin": "8805",
-      "updated_at": "2026-09-16 06:31:37",
+      "updated_at": "2026-09-16 06:32:31",
       "status": "online",
       "local_url": "http://192.168.0.5:8765"
     }
