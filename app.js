@@ -3222,6 +3222,38 @@ window.copyCellText = copyCellText;
           }
         }
 
+        // 2016~2020 고정 과거 출하 데이터 보존 및 병합
+        const fixedHistoricalRows = (AppState.shipPlanData || []).filter(r => {
+          const d = String(r.e || r.s || '').replace(/[-.\s]/g, '');
+          return d && d < '20210101';
+        });
+        if (fixedHistoricalRows.length > 0) {
+          const seenHashes = new Set(shipRows.map(r => `${r.c}|${r.p}|${r.k}|${r.e}|${r.s}`));
+          for (const fRow of fixedHistoricalRows) {
+            const h = `${fRow.c}|${fRow.p}|${fRow.k}|${fRow.e}|${fRow.s}`;
+            if (!seenHashes.has(h)) {
+              shipRows.push(fRow);
+            }
+          }
+          shipRows.sort((a, b) => String(b.e || '').localeCompare(String(a.e || '')));
+        }
+
+        // Skyworks 2016~2020 과거 데이터 보존 및 병합
+        const fixedSkyRows = (AppState.skyworksData || []).filter(r => {
+          const d = String(r.exfactorydate || r.shipdate || '').replace(/[-.\s]/g, '');
+          return d && d < '20210101';
+        });
+        if (fixedSkyRows.length > 0) {
+          const seenSky = new Set(skyworksRows.map(r => `${r.customer_name}|${r.pono}|${r.kostat_pn}|${r.exfactorydate}`));
+          for (const fs of fixedSkyRows) {
+            const h = `${fs.customer_name}|${fs.pono}|${fs.kostat_pn}|${fs.exfactorydate}`;
+            if (!seenSky.has(h)) {
+              skyworksRows.push(fs);
+            }
+          }
+          skyworksRows.sort((a, b) => String(b.exfactorydate || '').localeCompare(String(a.exfactorydate || '')));
+        }
+
         const effectiveDate = latestDate || todayIso;
         AdminState.parsedShipRows = shipRows;
         AdminState.parsedSkyworksRows = skyworksRows;
