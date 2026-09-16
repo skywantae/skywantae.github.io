@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.164" />
+  <link rel="stylesheet" href="app.css?v=1.0.165" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -639,7 +639,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.164</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.165</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -1048,6 +1048,11 @@
           <div id="modalArchiveDesc" class="archive-desc-box">-</div>
         </div>
 
+        <div class="archive-detail-section" id="modalArchiveAttachmentsSection" style="display:none;">
+          <h4 class="archive-section-title">첨부 파일</h4>
+          <div id="modalArchiveAttachmentsList" class="archive-attachments-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;"></div>
+        </div>
+
         <div class="archive-detail-section" id="modalArchiveTagsSection">
           <h4 class="archive-section-title">관련 태그</h4>
           <div id="modalArchiveTags" class="archive-tags-list"></div>
@@ -1096,6 +1101,18 @@
         <div class="form-group">
           <label for="archiveInputDesc" style="font-size:12px;font-weight:600;color:#cbd5e1;">상세 설명 및 사용 가이드 <span style="color:#ef4444;">*</span></label>
           <textarea id="archiveInputDesc" class="form-control" rows="5" placeholder="기능 소개, 설치 및 실행 방법, 요구사항 등을 자유롭게 작성해 주세요." required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;resize:vertical;"></textarea>
+        </div>
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;color:#cbd5e1;display:flex;justify-content:space-between;align-items:center;">
+            <span>첨부 파일 (엑셀, PDF, 이미지, 워드 등)</span>
+            <span id="archiveAttachSizeIndicator" style="font-size:11px;color:var(--text-secondary);">0개 첨부됨 (파일당 최대 30MB)</span>
+          </label>
+          <div class="faq-attach-dropzone" id="archiveAttachDropzone" style="margin-top:6px;cursor:pointer;">
+            <input type="file" id="archiveFileInput" multiple accept=".xlsx,.xls,.csv,.pdf,.docx,.doc,.pptx,.txt,.png,.jpg,.jpeg,.gif,.webp,.zip" style="display:none;" />
+            <div style="font-size:13px;color:#cbd5e1;font-weight:600;">파일을 마우스로 끌어다 놓거나 클릭하여 선택</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">지원 포맷: Excel(.xlsx, .xls, .csv), PDF, Word(.docx, .doc, .pptx), 이미지, 압축파일 등</div>
+          </div>
+          <div id="archiveAttachedList" class="faq-attached-items-container" style="margin-top:8px;"></div>
         </div>
         <div class="form-group">
           <label for="archiveInputDownloadUrl" style="font-size:12px;font-weight:600;color:#cbd5e1;">다운로드 링크 (URL)</label>
@@ -1147,20 +1164,20 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.164"></script>
-  <script src="data/shipplan_data.js?v=1.0.164"></script>
-  <script src="data/quotations_data.js?v=1.0.164"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.164"></script>
-  <script src="data/drawings_data.js?v=1.0.164"></script>
-  <script src="data/knowledge_data.js?v=1.0.164"></script>
-  <script src="data/faq_db.js?v=1.0.164"></script>
-  <script src="data/feedback_board.js?v=1.0.164"></script>
-  <script src="data/archive_data.js?v=1.0.164"></script>
+  <script src="data/skyworks_data.js?v=1.0.165"></script>
+  <script src="data/shipplan_data.js?v=1.0.165"></script>
+  <script src="data/quotations_data.js?v=1.0.165"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.165"></script>
+  <script src="data/drawings_data.js?v=1.0.165"></script>
+  <script src="data/knowledge_data.js?v=1.0.165"></script>
+  <script src="data/faq_db.js?v=1.0.165"></script>
+  <script src="data/feedback_board.js?v=1.0.165"></script>
+  <script src="data/archive_data.js?v=1.0.165"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.164"></script>
-  <script src="exceljs.min.js?v=1.0.164"></script>
-  <script src="updater.js?v=1.0.164"></script>
-  <script src="app.js?v=1.0.164"></script>
+  <script src="xlsx.full.min.js?v=1.0.165"></script>
+  <script src="exceljs.min.js?v=1.0.165"></script>
+  <script src="updater.js?v=1.0.165"></script>
+  <script src="app.js?v=1.0.165"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

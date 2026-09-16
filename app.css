@@ -3257,7 +3257,7 @@ html, body {
 .archive-board-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   padding: 8px 0 24px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -3269,18 +3269,22 @@ html, body {
 .archive-item-card {
   background: rgba(30, 41, 59, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px 18px;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
 }
 
 .archive-item-card:hover {
-  border-color: rgba(59, 130, 246, 0.45);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
 }
 
 .archive-item-card.pinned {
@@ -3288,12 +3292,12 @@ html, body {
   background: linear-gradient(150deg, rgba(30, 41, 59, 0.85) 0%, rgba(45, 36, 18, 0.35) 100%);
 }
 
-.archive-item-header {
+.archive-item-main {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .archive-item-title-row {
@@ -3304,11 +3308,14 @@ html, body {
 }
 
 .archive-item-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #f8fafc;
   line-height: 1.4;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .archive-ver-badge {
@@ -3333,41 +3340,32 @@ html, body {
   border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
+.archive-attach-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
 .archive-item-meta {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 12px;
   color: #94a3b8;
+  flex-wrap: wrap;
 }
 
-.archive-item-desc {
-  background: rgba(15, 23, 42, 0.45);
-  border-radius: 8px;
-  padding: 12px 14px;
-  font-size: 13.5px;
-  color: #cbd5e1;
-  line-height: 1.65;
-  white-space: pre-wrap;
-  word-break: break-word;
-  border-left: 3px solid #3b82f6;
-}
-
-.archive-item-actions {
+.archive-item-right {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  padding-top: 8px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
-}
-
-.archive-item-links {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .archive-btn-download {
@@ -3378,7 +3376,7 @@ html, body {
   color: #fff;
   border: 1px solid #3b82f6;
   border-radius: 6px;
-  padding: 6px 14px;
+  padding: 6px 13px;
   font-size: 12.5px;
   font-weight: 600;
   text-decoration: none;
@@ -3416,6 +3414,82 @@ html, body {
   display: flex;
   gap: 6px;
   align-items: center;
+}
+
+.archive-attachments-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.archive-file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f1f5f9;
+}
+
+.archive-file-chip:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.archive-file-chip.excel {
+  background: rgba(16, 185, 129, 0.16);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.archive-file-chip.pdf {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.archive-file-chip.word {
+  background: rgba(59, 130, 246, 0.16);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+.archive-file-chip.image {
+  background: rgba(168, 85, 247, 0.16);
+  color: #d8b4fe;
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+.archive-file-chip.file {
+  background: rgba(100, 116, 139, 0.2);
+  color: #cbd5e1;
+  border-color: rgba(100, 116, 139, 0.4);
+}
+
+.archive-chip-size {
+  font-size: 11px;
+  opacity: 0.75;
+  font-weight: 400;
+}
+
+@media (max-width: 640px) {
+  .archive-item-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+  .archive-item-right {
+    justify-content: flex-end;
+  }
 }
 
 .archive-card-tags {

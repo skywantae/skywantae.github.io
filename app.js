@@ -60,8 +60,9 @@ const AppState = {
   archiveData: [],
   archiveFilteredRows: [],
   archiveCurrentPage: 1,
-  archivePageSize: 12,
+  archivePageSize: 15,
   isArchiveAdmin: false,
+  currentArchiveAttachments: [],
 
   // 상태
   dbReady: false,
@@ -433,6 +434,8 @@ const DOM = {
   modalArchiveSummary: document.getElementById('modalArchiveSummary'),
   modalArchiveDesc: document.getElementById('modalArchiveDesc'),
   modalArchiveTags: document.getElementById('modalArchiveTags'),
+  modalArchiveAttachmentsSection: document.getElementById('modalArchiveAttachmentsSection'),
+  modalArchiveAttachmentsList: document.getElementById('modalArchiveAttachmentsList'),
   modalArchiveLinks: document.getElementById('modalArchiveLinks'),
   btnModalArchiveDownload: document.getElementById('btnModalArchiveDownload'),
   btnModalArchiveGithub: document.getElementById('btnModalArchiveGithub'),
@@ -444,12 +447,14 @@ const DOM = {
   btnCloseArchiveEditModal: document.getElementById('btnCloseArchiveEditModal'),
   archiveEditId: document.getElementById('archiveEditId'),
   archiveInputTitle: document.getElementById('archiveInputTitle'),
-  archiveInputCategory: document.getElementById('archiveInputCategory'),
   archiveInputVersion: document.getElementById('archiveInputVersion'),
   archiveInputAuthor: document.getElementById('archiveInputAuthor'),
   archiveInputPin: document.getElementById('archiveInputPin'),
-  archiveInputSummary: document.getElementById('archiveInputSummary'),
   archiveInputDesc: document.getElementById('archiveInputDesc'),
+  archiveAttachDropzone: document.getElementById('archiveAttachDropzone'),
+  archiveFileInput: document.getElementById('archiveFileInput'),
+  archiveAttachedList: document.getElementById('archiveAttachedList'),
+  archiveAttachSizeIndicator: document.getElementById('archiveAttachSizeIndicator'),
   archiveInputDownloadUrl: document.getElementById('archiveInputDownloadUrl'),
   archiveInputGithubUrl: document.getElementById('archiveInputGithubUrl'),
   archiveInputTags: document.getElementById('archiveInputTags'),
@@ -5909,36 +5914,59 @@ function initArchiveEvents() {
     }, 200));
   }
 
-  // 2. 카테고리 필터
-  if (DOM.archiveCategoryFilter) {
-    DOM.archiveCategoryFilter.addEventListener('change', () => {
-      AppState.archiveCurrentPage = 1;
-      renderArchiveBoard();
-    });
-  }
-
-  // 3. 페이지 크기 셀렉트
+  // 2. 페이지 크기 셀렉트
   if (DOM.archivePageSizeSelect) {
     DOM.archivePageSizeSelect.addEventListener('change', () => {
-      AppState.archivePageSize = parseInt(DOM.archivePageSizeSelect.value, 10) || 12;
+      AppState.archivePageSize = parseInt(DOM.archivePageSizeSelect.value, 10) || 15;
       AppState.archiveCurrentPage = 1;
       renderArchiveBoard();
     });
   }
 
-  // 4. 새 자료 등록 버튼
+  // 3. 새 자료 등록 버튼
   if (DOM.btnOpenNewArchiveModal) {
     DOM.btnOpenNewArchiveModal.addEventListener('click', () => openArchiveEditModal());
   }
 
-  // 5. 새로고침 (클라우드 동기화)
+  // 4. 새로고침 (클라우드 동기화)
   if (DOM.btnRefreshArchive) {
     DOM.btnRefreshArchive.addEventListener('click', () => fetchRemoteArchive(false));
   }
 
-  // 6. 관리자 모드 토글
+  // 5. 관리자 모드 토글
   if (DOM.btnToggleArchiveAdmin) {
     DOM.btnToggleArchiveAdmin.addEventListener('click', toggleArchiveAdminMode);
+  }
+
+  // 6. 첨부파일 드래그 앤 드롭 및 파일 선택
+  if (DOM.archiveAttachDropzone && DOM.archiveFileInput) {
+    DOM.archiveAttachDropzone.addEventListener('click', () => {
+      DOM.archiveFileInput.click();
+    });
+    DOM.archiveAttachDropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      DOM.archiveAttachDropzone.classList.add('dragover');
+    });
+    DOM.archiveAttachDropzone.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      DOM.archiveAttachDropzone.classList.remove('dragover');
+    });
+    DOM.archiveAttachDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      DOM.archiveAttachDropzone.classList.remove('dragover');
+      if (e.dataTransfer && e.dataTransfer.files) {
+        handleArchiveFiles(e.dataTransfer.files);
+      }
+    });
+    DOM.archiveFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handleArchiveFiles(e.target.files);
+        e.target.value = '';
+      }
+    });
   }
 
   // 7. 상세 모달 닫기
@@ -5982,6 +6010,82 @@ function initArchiveEvents() {
       });
     }
   });
+}
+
+// 첨부파일 드래그앤드롭 및 파일 선택 핸들러
+function handleArchiveFiles(fileList) {
+  if (!fileList || fileList.length === 0) return;
+  const MAX_BYTES = 30 * 1024 * 1024; // 30MB
+  const files = Array.from(fileList);
+
+  files.forEach(file => {
+    if (file.size > MAX_BYTES) {
+      alert(`'${file.name}' 파일이 너무 큽니다. 파일당 최대 30MB 이하만 첨부 가능합니다.`);
+      return;
+    }
+
+    const fName = file.name.toLowerCase();
+    let cat = 'file';
+    if (file.type.startsWith('image/') || fName.match(/\.(png|jpe?g|gif|webp|svg)$/)) cat = 'image';
+    else if (file.type === 'application/pdf' || fName.endsWith('.pdf')) cat = 'pdf';
+    else if (fName.match(/\.(xlsx?|csv)$/)) cat = 'excel';
+    else if (fName.match(/\.(docx?|pptx?|txt)$/)) cat = 'word';
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      AppState.currentArchiveAttachments.push({
+        id: 'att-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+        name: file.name,
+        size: file.size,
+        type: file.type || 'application/octet-stream',
+        category: cat,
+        data: e.target.result
+      });
+      renderArchiveAttachedList();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderArchiveAttachedList() {
+  if (!DOM.archiveAttachedList) return;
+  const list = AppState.currentArchiveAttachments || [];
+  let totalBytes = 0;
+
+  if (list.length === 0) {
+    DOM.archiveAttachedList.innerHTML = '';
+    if (DOM.archiveAttachSizeIndicator) {
+      DOM.archiveAttachSizeIndicator.textContent = '0개 첨부됨 (파일당 최대 30MB)';
+    }
+    return;
+  }
+
+  DOM.archiveAttachedList.innerHTML = list.map(att => {
+    totalBytes += (att.size || 0);
+    let label = '[문서]';
+    if (att.category === 'excel') label = '[Excel]';
+    else if (att.category === 'pdf') label = '[PDF]';
+    else if (att.category === 'image') label = '[이미지]';
+    else if (att.category === 'word') label = '[Word]';
+
+    return `
+      <div class="faq-attached-item">
+        <span class="faq-attached-icon">${label}</span>
+        <span class="faq-attached-name" title="${escapeHtml(att.name)}">${escapeHtml(att.name)}</span>
+        <span class="faq-attached-size">${formatFileSize(att.size)}</span>
+        <button type="button" class="faq-attached-remove" onclick="removeArchiveAttachment('${att.id}')" title="삭제">&times;</button>
+      </div>
+    `;
+  }).join('');
+
+  if (DOM.archiveAttachSizeIndicator) {
+    DOM.archiveAttachSizeIndicator.textContent = `${list.length}개 첨부됨 (총 ${formatFileSize(totalBytes)} / 최대 30MB)`;
+  }
+}
+
+function removeArchiveAttachment(id) {
+  AppState.currentArchiveAttachments = (AppState.currentArchiveAttachments || []).filter(a => a.id !== id);
+  renderArchiveAttachedList();
 }
 
 function filterArchiveData() {
@@ -6029,7 +6133,7 @@ function renderArchiveBoard() {
 function renderArchivePage(page) {
   if (!DOM.archiveCardListContainer) return;
 
-  const pageSize = AppState.archivePageSize || 10;
+  const pageSize = AppState.archivePageSize || 15;
   const totalItems = AppState.archiveFilteredRows.length;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
 
@@ -6054,13 +6158,16 @@ function renderArchivePage(page) {
 
   const html = pageItems.map(item => {
     const isPinnedClass = item.is_pinned ? ' pinned' : '';
-    const tagsHtml = (item.tags || []).map(t => `<span class="archive-tag">#${escapeHtml(t)}</span>`).join('');
-    
+    const attachments = item.attachments || [];
+    const attachBadge = attachments.length > 0
+      ? `<span class="archive-attach-badge">첨부 ${attachments.length}개</span>`
+      : '';
+
     // 관리자 또는 본인 관리 버튼
     const adminBtns = AppState.isArchiveAdmin ? `
-      <div class="archive-card-admin-btns">
-        <button class="action-btn-sm" style="padding:3px 8px;font-size:11px;" onclick="openArchiveEditModal('${item.id}')">수정</button>
-        <button class="action-btn-sm danger" style="padding:3px 8px;font-size:11px;" onclick="openArchiveDeleteModal('${item.id}')">삭제</button>
+      <div class="archive-card-admin-btns" onclick="event.stopPropagation();">
+        <button class="action-btn-sm" style="padding:3px 8px;font-size:11px;" onclick="openArchiveEditModal('${item.id}'); event.stopPropagation();">수정</button>
+        <button class="action-btn-sm danger" style="padding:3px 8px;font-size:11px;" onclick="openArchiveDeleteModal('${item.id}'); event.stopPropagation();">삭제</button>
       </div>
     ` : '';
 
@@ -6068,49 +6175,51 @@ function renderArchivePage(page) {
     let linkButtons = '';
     if (item.download_url) {
       linkButtons += `
-        <a class="archive-btn-download" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event)">
+        <a class="archive-btn-download" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event); event.stopPropagation();">
           다운로드 바로가기
         </a>
+      `;
+    } else if (attachments.length > 0) {
+      linkButtons += `
+        <button class="archive-btn-download" onclick="openArchiveDetail('${item.id}'); event.stopPropagation();">
+          첨부파일 (${attachments.length})
+        </button>
       `;
     }
     // GitHub 링크 버튼
     if (item.github_url) {
       linkButtons += `
-        <a class="archive-btn-github" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer">
-          GitHub 저장소
+        <a class="archive-btn-github" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">
+          GitHub
         </a>
       `;
     }
 
-    const descHtml = renderMarkdown(item.description || item.summary || '등록된 프로그램 설명이 없습니다.');
+    const tagsHtml = (item.tags && item.tags.length > 0)
+      ? `<span>|</span><span>#${escapeHtml(item.tags.join(' #'))}</span>`
+      : '';
 
     return `
-      <div class="archive-item-card${isPinnedClass}" id="archive-item-${item.id}">
-        <div class="archive-item-header">
+      <div class="archive-item-card${isPinnedClass}" id="archive-item-${item.id}" onclick="openArchiveDetail('${item.id}')" title="클릭하여 상세 정보 및 첨부파일 확인">
+        <div class="archive-item-main">
           <div class="archive-item-title-row">
             <h4 class="archive-item-title">${escapeHtml(item.title)}</h4>
             ${item.version ? `<span class="archive-ver-badge">${escapeHtml(item.version)}</span>` : ''}
             ${item.is_pinned ? '<span class="archive-pinned-badge">고정 추천</span>' : ''}
+            ${attachBadge}
           </div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div class="archive-item-meta">
-              <span>작성: ${escapeHtml(item.author || '신경섭')}</span>
-              <span>|</span>
-              <span>${item.date || '-'}</span>
-              <span>|</span>
-              <span>다운로드: ${(item.download_count || 0).toLocaleString()}회</span>
-            </div>
-            ${adminBtns}
+          <div class="archive-item-meta">
+            <span>작성: ${escapeHtml(item.author || '신경섭')}</span>
+            <span>|</span>
+            <span>${item.date || '-'}</span>
+            <span>|</span>
+            <span>다운로드: ${(item.download_count || 0).toLocaleString()}회</span>
+            ${tagsHtml}
           </div>
         </div>
-        
-        <div class="archive-item-desc">${descHtml}</div>
-
-        <div class="archive-item-actions">
-          <div class="archive-item-links">
-            ${linkButtons || '<span style="font-size:12px;color:#94a3b8;">등록된 외부 다운로드 링크가 없습니다.</span>'}
-          </div>
-          ${tagsHtml ? `<div class="archive-card-tags">${tagsHtml}</div>` : ''}
+        <div class="archive-item-right" onclick="event.stopPropagation();">
+          ${linkButtons}
+          ${adminBtns}
         </div>
       </div>
     `;
@@ -6157,22 +6266,61 @@ function renderArchivePagination(totalPages, totalItems, currentPage) {
   DOM.archivePageControls.innerHTML = controlsHtml;
 }
 
-// 상세 모달 열기
+// 상세 모달 열기 (클릭 시 팝업)
 function openArchiveDetail(id) {
   const item = (AppState.archiveData || []).find(it => it.id === id);
   if (!item) return;
 
-  if (DOM.modalArchiveCat) {
-    DOM.modalArchiveCat.textContent = item.category || '기타';
-    DOM.modalArchiveCat.className = `archive-cat-badge ${getCategoryClass(item.category)}`;
-  }
   if (DOM.modalArchiveTitle) DOM.modalArchiveTitle.textContent = item.title || '';
   if (DOM.modalArchiveVer) DOM.modalArchiveVer.textContent = item.version || 'v1.0.0';
   if (DOM.modalArchiveAuthor) DOM.modalArchiveAuthor.textContent = item.author || '신경섭';
   if (DOM.modalArchiveDate) DOM.modalArchiveDate.textContent = item.date || '-';
   if (DOM.modalArchiveDownloads) DOM.modalArchiveDownloads.textContent = `${(item.download_count || 0).toLocaleString()}회`;
-  if (DOM.modalArchiveSummary) DOM.modalArchiveSummary.textContent = item.summary || '-';
-  if (DOM.modalArchiveDesc) DOM.modalArchiveDesc.textContent = item.description || '-';
+  if (DOM.modalArchiveSummary) {
+    DOM.modalArchiveSummary.textContent = item.summary || (item.description ? item.description.slice(0, 100) : '-');
+  }
+  if (DOM.modalArchiveDesc) {
+    DOM.modalArchiveDesc.innerHTML = renderMarkdown(item.description || item.summary || '등록된 프로그램 설명이 없습니다.');
+  }
+
+  // 첨부 파일 목록 렌더링
+  if (DOM.modalArchiveAttachmentsSection && DOM.modalArchiveAttachmentsList) {
+    const atts = item.attachments || [];
+    if (atts.length > 0) {
+      const attsHtml = atts.map(att => {
+        const attName = escapeHtml(att.name || '첨부파일');
+        const attSize = formatFileSize(att.size || 0);
+        let catClass = 'file';
+        let catLabel = '[파일]';
+        const fName = (att.name || '').toLowerCase();
+        if (att.category === 'excel' || fName.match(/\.(xlsx?|csv)$/)) {
+          catClass = 'excel';
+          catLabel = '[Excel]';
+        } else if (att.category === 'pdf' || fName.endsWith('.pdf')) {
+          catClass = 'pdf';
+          catLabel = '[PDF]';
+        } else if (att.category === 'image' || fName.match(/\.(png|jpe?g|gif|webp|svg)$/)) {
+          catClass = 'image';
+          catLabel = '[이미지]';
+        } else if (att.category === 'word' || fName.match(/\.(docx?|pptx?|txt)$/)) {
+          catClass = 'word';
+          catLabel = '[문서]';
+        }
+
+        return `
+          <a class="archive-file-chip ${catClass}" href="${att.data}" download="${attName}" onclick="handleArchiveAttachmentClick('${item.id}', event)">
+            ${catLabel} ${attName} <span class="archive-chip-size">(${attSize})</span>
+          </a>
+        `;
+      }).join('');
+
+      DOM.modalArchiveAttachmentsList.innerHTML = attsHtml;
+      DOM.modalArchiveAttachmentsSection.style.display = 'block';
+    } else {
+      DOM.modalArchiveAttachmentsList.innerHTML = '';
+      DOM.modalArchiveAttachmentsSection.style.display = 'none';
+    }
+  }
 
   // 태그 목록
   if (DOM.modalArchiveTags) {
@@ -6219,9 +6367,22 @@ function openArchiveDetail(id) {
   if (DOM.btnModalArchiveDownload) {
     if (item.download_url) {
       DOM.btnModalArchiveDownload.style.display = 'inline-flex';
+      DOM.btnModalArchiveDownload.textContent = '다운로드 바로가기';
       DOM.btnModalArchiveDownload.onclick = (e) => {
         handleArchiveDownloadClick(item.id, e);
         window.open(item.download_url, '_blank', 'noopener,noreferrer');
+      };
+    } else if (item.attachments && item.attachments.length > 0) {
+      DOM.btnModalArchiveDownload.style.display = 'inline-flex';
+      DOM.btnModalArchiveDownload.textContent = `첫 번째 파일 다운로드 (${item.attachments[0].name})`;
+      DOM.btnModalArchiveDownload.onclick = (e) => {
+        handleArchiveAttachmentClick(item.id, e);
+        const a = document.createElement('a');
+        a.href = item.attachments[0].data;
+        a.download = item.attachments[0].name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       };
     } else {
       DOM.btnModalArchiveDownload.style.display = 'none';
@@ -6242,6 +6403,10 @@ function openArchiveDetail(id) {
     DOM.archiveDetailModal.classList.add('show');
     DOM.archiveDetailModal.classList.add('active');
   }
+}
+
+function handleArchiveAttachmentClick(id, event) {
+  handleArchiveDownloadClick(id, event);
 }
 
 function closeArchiveDetailModal() {
@@ -6284,6 +6449,10 @@ function openArchiveEditModal(id = null) {
   if (DOM.archiveInputGithubUrl) DOM.archiveInputGithubUrl.value = item ? (item.github_url || '') : '';
   if (DOM.archiveInputTags) DOM.archiveInputTags.value = item && item.tags ? item.tags.join(', ') : '';
   if (DOM.archiveInputPinned) DOM.archiveInputPinned.checked = Boolean(item && item.is_pinned);
+
+  // 첨부파일 바인딩
+  AppState.currentArchiveAttachments = (item && Array.isArray(item.attachments)) ? JSON.parse(JSON.stringify(item.attachments)) : [];
+  renderArchiveAttachedList();
 
   if (DOM.archiveEditModal) {
     DOM.archiveEditModal.classList.add('show');
@@ -6337,6 +6506,7 @@ async function saveArchivePost() {
   const tags = tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
   const today = new Date().toISOString().slice(0, 10);
   const summary = desc.slice(0, 120);
+  const attachments = [...(AppState.currentArchiveAttachments || [])];
 
   if (isEdit) {
     const existing = (AppState.archiveData || []).find(it => it.id === editId);
@@ -6359,6 +6529,7 @@ async function saveArchivePost() {
     existing.description = desc;
     existing.download_url = downloadUrl;
     existing.github_url = githubUrl;
+    existing.attachments = attachments;
     existing.tags = tags;
     existing.is_pinned = isPinned;
     existing.updated_at = new Date().toISOString();
@@ -6374,6 +6545,7 @@ async function saveArchivePost() {
       description: desc,
       github_url: githubUrl,
       download_url: downloadUrl,
+      attachments,
       tags,
       download_count: 0,
       is_pinned: isPinned,
@@ -6654,6 +6826,8 @@ window.openArchiveDetail = openArchiveDetail;
 window.openArchiveEditModal = openArchiveEditModal;
 window.openArchiveDeleteModal = openArchiveDeleteModal;
 window.handleArchiveDownloadClick = handleArchiveDownloadClick;
+window.handleArchiveAttachmentClick = handleArchiveAttachmentClick;
+window.removeArchiveAttachment = removeArchiveAttachment;
 window.renderArchivePage = renderArchivePage;
 
 
