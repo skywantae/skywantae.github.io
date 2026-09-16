@@ -564,17 +564,24 @@ async function loadInitialDatabases() {
     } else if (window.KOSTAT_KNOWLEDGE_DATA && window.KOSTAT_KNOWLEDGE_DATA.length > 0) {
       AppState.knowledgeData = window.KOSTAT_KNOWLEDGE_DATA;
     }
-    // 자료실 데이터 우선 바인딩
-    if (window.KOSTAT_ARCHIVE_DATA && window.KOSTAT_ARCHIVE_DATA.length > 0) {
-      AppState.archiveData = window.KOSTAT_ARCHIVE_DATA;
-    }
-    // 로컬 스토리지에 캐시된 자료실 데이터 로드 (최신 수정본 보호)
+    // 자료실 데이터 바인딩 (구버전 더미 데이터 영구 제거)
+    AppState.archiveData = (window.KOSTAT_ARCHIVE_DATA || []).filter(item => item && item.id && !['arc-1', 'arc-2', 'arc-3'].includes(item.id));
     try {
+      // 삭제 톰스톤에 구버전 더미 ID 영구 추가
+      const deletedRaw = localStorage.getItem('KOSTAT_DELETED_ARCHIVE_IDS');
+      const delArr = deletedRaw ? JSON.parse(deletedRaw) : [];
+      ['arc-1', 'arc-2', 'arc-3'].forEach(id => {
+        if (!delArr.includes(id)) delArr.push(id);
+      });
+      localStorage.setItem('KOSTAT_DELETED_ARCHIVE_IDS', JSON.stringify(delArr));
+
       const savedArchive = localStorage.getItem('KOSTAT_ARCHIVE_DATA');
       if (savedArchive) {
         const parsed = JSON.parse(savedArchive);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          AppState.archiveData = parsed;
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed.filter(item => item && item.id && !['arc-1', 'arc-2', 'arc-3'].includes(item.id));
+          AppState.archiveData = cleaned;
+          localStorage.setItem('KOSTAT_ARCHIVE_DATA', JSON.stringify(cleaned));
         }
       }
     } catch (_) {}
@@ -5982,21 +5989,15 @@ function filterArchiveData() {
   const allItems = (AppState.archiveData || []).filter(item => item && item.id && !deletedSet.has(item.id));
   
   const query = (DOM.archiveSearchInput ? DOM.archiveSearchInput.value : '').trim().toLowerCase();
-  const selectedCat = DOM.archiveCategoryFilter ? DOM.archiveCategoryFilter.value : 'all';
 
   let filtered = allItems.filter(item => {
-    // 카테고리 필터
-    if (selectedCat !== 'all' && item.category !== selectedCat) {
-      return false;
-    }
-    // 검색어 필터
+    // 검색어 필터 (제목, 설명, 작성자, 태그)
     if (query) {
       const matchTitle = (item.title || '').toLowerCase().includes(query);
-      const matchSummary = (item.summary || '').toLowerCase().includes(query);
-      const matchDesc = (item.description || '').toLowerCase().includes(query);
+      const matchDesc = (item.description || item.summary || '').toLowerCase().includes(query);
       const matchAuthor = (item.author || '').toLowerCase().includes(query);
       const matchTags = Array.isArray(item.tags) && item.tags.some(t => String(t).toLowerCase().includes(query));
-      if (!matchTitle && !matchSummary && !matchDesc && !matchAuthor && !matchTags) {
+      if (!matchTitle && !matchDesc && !matchAuthor && !matchTags) {
         return false;
       }
     }
@@ -6028,7 +6029,7 @@ function renderArchiveBoard() {
 function renderArchivePage(page) {
   if (!DOM.archiveCardListContainer) return;
 
-  const pageSize = AppState.archivePageSize || 12;
+  const pageSize = AppState.archivePageSize || 10;
   const totalItems = AppState.archiveFilteredRows.length;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
 
@@ -6041,69 +6042,79 @@ function renderArchivePage(page) {
 
   if (pageItems.length === 0) {
     DOM.archiveCardListContainer.innerHTML = `
-      <div style="text-align:center; padding:50px 20px; color:#94a3b8; background:rgba(30,41,59,0.3); border-radius:var(--radius-md); border:1px dashed rgba(255,255,255,0.1);">
-        <p style="font-size:15px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">등록된 프로그램 및 자료가 없습니다.</p>
-        <p style="font-size:12px; color:#64748b; margin:0;">상단의 [새 자료 등록] 버튼을 눌러 첫 번째 작업물이나 유틸리티를 배포해 보세요.</p>
+      <div class="feedback-empty-state">
+        <div style="font-size:14px;color:#94a3b8;font-weight:600;margin-bottom:8px;">사내 자료실</div>
+        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">등록된 프로그램 및 자료가 없습니다.</div>
+        <div style="font-size:12px;color:#94a3b8;">우측 상단의 [새 자료 등록] 버튼을 눌러 프로그램이나 작업물을 올려보세요.</div>
       </div>
     `;
     renderArchivePagination(totalPages, totalItems, page);
     return;
   }
 
-  let html = '<div class="archive-grid">';
-  pageItems.forEach(item => {
+  const html = pageItems.map(item => {
     const isPinnedClass = item.is_pinned ? ' pinned' : '';
-    const catClass = getCategoryClass(item.category);
     const tagsHtml = (item.tags || []).map(t => `<span class="archive-tag">#${escapeHtml(t)}</span>`).join('');
     
     // 관리자 또는 본인 관리 버튼
     const adminBtns = AppState.isArchiveAdmin ? `
       <div class="archive-card-admin-btns">
-        <button class="action-btn-sm" style="padding:2px 6px;font-size:11px;" onclick="openArchiveEditModal('${item.id}')">수정</button>
-        <button class="action-btn-sm danger" style="padding:2px 6px;font-size:11px;" onclick="openArchiveDeleteModal('${item.id}')">삭제</button>
+        <button class="action-btn-sm" style="padding:3px 8px;font-size:11px;" onclick="openArchiveEditModal('${item.id}')">수정</button>
+        <button class="action-btn-sm danger" style="padding:3px 8px;font-size:11px;" onclick="openArchiveDeleteModal('${item.id}')">삭제</button>
       </div>
     ` : '';
 
-    // 다운로드 버튼 액션
-    const downloadBtn = item.download_url ? `
-      <a class="archive-btn-action primary" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event)">다운로드</a>
-    ` : '';
-
+    // 다운로드 버튼
+    let linkButtons = '';
+    if (item.download_url) {
+      linkButtons += `
+        <a class="archive-btn-download" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event)">
+          다운로드 바로가기
+        </a>
+      `;
+    }
     // GitHub 링크 버튼
-    const githubBtn = item.github_url ? `
-      <a class="archive-btn-action github" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer">GitHub</a>
-    ` : '';
+    if (item.github_url) {
+      linkButtons += `
+        <a class="archive-btn-github" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer">
+          GitHub 저장소
+        </a>
+      `;
+    }
 
-    html += `
-      <div class="archive-card${isPinnedClass}" data-id="${item.id}">
-        <div class="archive-card-header">
-          <div class="archive-badges">
-            <span class="archive-cat-badge ${catClass}">${escapeHtml(item.category || '기타')}</span>
+    const descHtml = renderMarkdown(item.description || item.summary || '등록된 프로그램 설명이 없습니다.');
+
+    return `
+      <div class="archive-item-card${isPinnedClass}" id="archive-item-${item.id}">
+        <div class="archive-item-header">
+          <div class="archive-item-title-row">
+            <h4 class="archive-item-title">${escapeHtml(item.title)}</h4>
             ${item.version ? `<span class="archive-ver-badge">${escapeHtml(item.version)}</span>` : ''}
             ${item.is_pinned ? '<span class="archive-pinned-badge">고정 추천</span>' : ''}
           </div>
-          ${adminBtns}
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="archive-item-meta">
+              <span>작성: ${escapeHtml(item.author || '신경섭')}</span>
+              <span>|</span>
+              <span>${item.date || '-'}</span>
+              <span>|</span>
+              <span>다운로드: ${(item.download_count || 0).toLocaleString()}회</span>
+            </div>
+            ${adminBtns}
+          </div>
         </div>
         
-        <h4 class="archive-card-title" onclick="openArchiveDetail('${item.id}')">${escapeHtml(item.title)}</h4>
-        <p class="archive-card-summary" onclick="openArchiveDetail('${item.id}')">${escapeHtml(item.summary || '')}</p>
-        
-        ${tagsHtml ? `<div class="archive-card-tags">${tagsHtml}</div>` : ''}
+        <div class="archive-item-desc">${descHtml}</div>
 
-        <div class="archive-card-meta">
-          <span>작성: ${escapeHtml(item.author || '신경섭')} | ${item.date || '-'}</span>
-          <span>다운로드: ${(item.download_count || 0).toLocaleString()}회</span>
-        </div>
-
-        <div class="archive-card-actions">
-          <button class="archive-btn-action secondary" onclick="openArchiveDetail('${item.id}')">상세보기</button>
-          ${downloadBtn}
-          ${githubBtn}
+        <div class="archive-item-actions">
+          <div class="archive-item-links">
+            ${linkButtons || '<span style="font-size:12px;color:#94a3b8;">등록된 외부 다운로드 링크가 없습니다.</span>'}
+          </div>
+          ${tagsHtml ? `<div class="archive-card-tags">${tagsHtml}</div>` : ''}
         </div>
       </div>
     `;
-  });
-  html += '</div>';
+  }).join('');
 
   DOM.archiveCardListContainer.innerHTML = html;
   renderArchivePagination(totalPages, totalItems, page);
@@ -6265,12 +6276,10 @@ function openArchiveEditModal(id = null) {
   }
 
   if (DOM.archiveInputTitle) DOM.archiveInputTitle.value = item ? (item.title || '') : '';
-  if (DOM.archiveInputCategory) DOM.archiveInputCategory.value = item ? (item.category || '전산 프로그램') : '전산 프로그램';
   if (DOM.archiveInputVersion) DOM.archiveInputVersion.value = item ? (item.version || '') : 'v1.0.0';
   if (DOM.archiveInputAuthor) DOM.archiveInputAuthor.value = item ? (item.author || '') : '신경섭';
   if (DOM.archiveInputPin) DOM.archiveInputPin.value = '';
-  if (DOM.archiveInputSummary) DOM.archiveInputSummary.value = item ? (item.summary || '') : '';
-  if (DOM.archiveInputDesc) DOM.archiveInputDesc.value = item ? (item.description || '') : '';
+  if (DOM.archiveInputDesc) DOM.archiveInputDesc.value = item ? (item.description || item.summary || '') : '';
   if (DOM.archiveInputDownloadUrl) DOM.archiveInputDownloadUrl.value = item ? (item.download_url || '') : '';
   if (DOM.archiveInputGithubUrl) DOM.archiveInputGithubUrl.value = item ? (item.github_url || '') : '';
   if (DOM.archiveInputTags) DOM.archiveInputTags.value = item && item.tags ? item.tags.join(', ') : '';
@@ -6295,11 +6304,9 @@ async function saveArchivePost() {
   const isEdit = Boolean(editId);
 
   const title = (DOM.archiveInputTitle ? DOM.archiveInputTitle.value : '').trim();
-  const category = DOM.archiveInputCategory ? DOM.archiveInputCategory.value : '전산 프로그램';
   const version = (DOM.archiveInputVersion ? DOM.archiveInputVersion.value : '').trim() || 'v1.0.0';
   const author = (DOM.archiveInputAuthor ? DOM.archiveInputAuthor.value : '').trim();
   const pin = (DOM.archiveInputPin ? DOM.archiveInputPin.value : '').trim();
-  const summary = (DOM.archiveInputSummary ? DOM.archiveInputSummary.value : '').trim();
   const desc = (DOM.archiveInputDesc ? DOM.archiveInputDesc.value : '').trim();
   const downloadUrl = (DOM.archiveInputDownloadUrl ? DOM.archiveInputDownloadUrl.value : '').trim();
   const githubUrl = (DOM.archiveInputGithubUrl ? DOM.archiveInputGithubUrl.value : '').trim();
@@ -6321,19 +6328,15 @@ async function saveArchivePost() {
     if (DOM.archiveInputPin) DOM.archiveInputPin.focus();
     return;
   }
-  if (!summary) {
-    alert('한 줄 요약을 입력해 주세요.');
-    if (DOM.archiveInputSummary) DOM.archiveInputSummary.focus();
-    return;
-  }
   if (!desc) {
-    alert('상세 설명 및 사용 가이드를 입력해 주세요.');
+    alert('프로그램 설명 및 사용 가이드를 입력해 주세요.');
     if (DOM.archiveInputDesc) DOM.archiveInputDesc.focus();
     return;
   }
 
   const tags = tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
   const today = new Date().toISOString().slice(0, 10);
+  const summary = desc.slice(0, 120);
 
   if (isEdit) {
     const existing = (AppState.archiveData || []).find(it => it.id === editId);
@@ -6350,7 +6353,6 @@ async function saveArchivePost() {
     }
 
     existing.title = title;
-    existing.category = category;
     existing.version = version;
     existing.author = author;
     existing.summary = summary;
@@ -6364,7 +6366,6 @@ async function saveArchivePost() {
     const newPost = {
       id: `arc-${Date.now()}`,
       title,
-      category,
       version,
       author,
       pin,
@@ -6612,6 +6613,7 @@ async function fetchRemoteArchive(silent = true) {
 
     if (Array.isArray(remoteData)) {
       const deletedSet = getDeletedArchiveIds();
+      ['arc-1', 'arc-2', 'arc-3'].forEach(id => deletedSet.add(id));
       const validRemote = remoteData.filter(item => item && item.id && !deletedSet.has(item.id));
 
       const map = new Map();

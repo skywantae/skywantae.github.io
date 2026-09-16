@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.163" />
+  <link rel="stylesheet" href="app.css?v=1.0.164" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -428,19 +428,11 @@
             <span class="count-badge" id="archiveCountBadge">0건</span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="archiveSearchInput" class="compact-search" placeholder="프로그램/자료 검색..." style="width: 140px;" />
-            <select id="archiveCategoryFilter" class="compact-select" title="카테고리 필터">
-              <option value="all">전체 카테고리</option>
-              <option value="전산 프로그램">전산 프로그램</option>
-              <option value="업무 자동화">업무 자동화</option>
-              <option value="엑셀 도구">엑셀 도구</option>
-              <option value="유틸리티">유틸리티</option>
-              <option value="매뉴얼/문서">매뉴얼/문서</option>
-            </select>
+            <input type="text" id="archiveSearchInput" class="compact-search" placeholder="프로그램/자료 검색..." style="width: 160px;" />
             <select id="archivePageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="6">6개씩</option>
-              <option value="12">12개씩</option>
-              <option value="24">24개씩</option>
+              <option value="10">10개씩</option>
+              <option value="20">20개씩</option>
+              <option value="30">30개씩</option>
               <option value="50">50개씩</option>
             </select>
             <button class="action-btn-sm primary" id="btnOpenNewArchiveModal">새 자료 등록</button>
@@ -647,7 +639,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.163</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.164</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -1022,7 +1014,6 @@
     <div class="modal-dialog modal-dialog-lg" style="max-width:760px;">
       <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span class="archive-cat-badge" id="modalArchiveCat">카테고리</span>
           <h3 id="modalArchiveTitle" style="margin:0;font-size:17px;font-weight:700;color:#f8fafc;">프로그램 상세 정보</h3>
         </div>
         <button class="close-btn" id="btnCloseArchiveDetailModal">&times;</button>
@@ -1088,35 +1079,19 @@
           <label for="archiveInputTitle" style="font-size:12px;font-weight:600;color:#cbd5e1;">프로그램 / 자료명 <span style="color:#ef4444;">*</span></label>
           <input type="text" id="archiveInputTitle" class="form-control" placeholder="예: KOSTAT ERP 전산 통합 프로그램" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="form-group">
-            <label for="archiveInputCategory" style="font-size:12px;font-weight:600;color:#cbd5e1;">카테고리 <span style="color:#ef4444;">*</span></label>
-            <select id="archiveInputCategory" class="form-control" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;">
-              <option value="전산 프로그램">전산 프로그램</option>
-              <option value="업무 자동화">업무 자동화</option>
-              <option value="엑셀 도구">엑셀 도구</option>
-              <option value="유틸리티">유틸리티</option>
-              <option value="매뉴얼/문서">매뉴얼/문서</option>
-            </select>
-          </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
           <div class="form-group">
             <label for="archiveInputVersion" style="font-size:12px;font-weight:600;color:#cbd5e1;">버전</label>
             <input type="text" id="archiveInputVersion" class="form-control" placeholder="예: v1.0.0" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
           </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div class="form-group">
             <label for="archiveInputAuthor" style="font-size:12px;font-weight:600;color:#cbd5e1;">작성자 / 개발자 <span style="color:#ef4444;">*</span></label>
             <input type="text" id="archiveInputAuthor" class="form-control" placeholder="예: 신경섭" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
           </div>
           <div class="form-group">
-            <label for="archiveInputPin" style="font-size:12px;font-weight:600;color:#cbd5e1;">비밀번호(PIN) <span style="color:#ef4444;">*</span> <span style="font-size:11px;color:var(--text-secondary);">(4자리)</span></label>
-            <input type="password" id="archiveInputPin" class="form-control" maxlength="4" placeholder="4자리 숫자" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;letter-spacing:3px;" />
+            <label for="archiveInputPin" style="font-size:12px;font-weight:600;color:#cbd5e1;">비밀번호 <span style="color:#ef4444;">*</span> <span style="font-size:10px;color:var(--text-secondary);">(4자리)</span></label>
+            <input type="password" id="archiveInputPin" class="form-control" maxlength="4" placeholder="4자리" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;letter-spacing:3px;" />
           </div>
-        </div>
-        <div class="form-group">
-          <label for="archiveInputSummary" style="font-size:12px;font-weight:600;color:#cbd5e1;">한 줄 요약 <span style="color:#ef4444;">*</span></label>
-          <input type="text" id="archiveInputSummary" class="form-control" placeholder="프로그램의 주요 기능을 한 줄로 요약해 주세요." required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
         </div>
         <div class="form-group">
           <label for="archiveInputDesc" style="font-size:12px;font-weight:600;color:#cbd5e1;">상세 설명 및 사용 가이드 <span style="color:#ef4444;">*</span></label>
@@ -1172,20 +1147,20 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.163"></script>
-  <script src="data/shipplan_data.js?v=1.0.163"></script>
-  <script src="data/quotations_data.js?v=1.0.163"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.163"></script>
-  <script src="data/drawings_data.js?v=1.0.163"></script>
-  <script src="data/knowledge_data.js?v=1.0.163"></script>
-  <script src="data/faq_db.js?v=1.0.163"></script>
-  <script src="data/feedback_board.js?v=1.0.163"></script>
-  <script src="data/archive_data.js?v=1.0.163"></script>
+  <script src="data/skyworks_data.js?v=1.0.164"></script>
+  <script src="data/shipplan_data.js?v=1.0.164"></script>
+  <script src="data/quotations_data.js?v=1.0.164"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.164"></script>
+  <script src="data/drawings_data.js?v=1.0.164"></script>
+  <script src="data/knowledge_data.js?v=1.0.164"></script>
+  <script src="data/faq_db.js?v=1.0.164"></script>
+  <script src="data/feedback_board.js?v=1.0.164"></script>
+  <script src="data/archive_data.js?v=1.0.164"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.163"></script>
-  <script src="exceljs.min.js?v=1.0.163"></script>
-  <script src="updater.js?v=1.0.163"></script>
-  <script src="app.js?v=1.0.163"></script>
+  <script src="xlsx.full.min.js?v=1.0.164"></script>
+  <script src="exceljs.min.js?v=1.0.164"></script>
+  <script src="updater.js?v=1.0.164"></script>
+  <script src="app.js?v=1.0.164"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
