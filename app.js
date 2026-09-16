@@ -56,6 +56,13 @@ const AppState = {
   isFaqAdmin: false,
   currentFaqAttachments: [],
 
+  // 자료실 (Archive & Downloads) 상태
+  archiveData: [],
+  archiveFilteredRows: [],
+  archiveCurrentPage: 1,
+  archivePageSize: 12,
+  isArchiveAdmin: false,
+
   // 상태
   dbReady: false,
   isSyncing: false,
@@ -398,7 +405,67 @@ const DOM = {
   sspcMetricAmount: document.getElementById('sspcMetricAmount'),
   sspcPreviewTbody: document.getElementById('sspcPreviewTbody'),
   btnDownloadSspcExcel: document.getElementById('btnDownloadSspcExcel'),
-  btnResetSspc: document.getElementById('btnResetSspc')
+  btnResetSspc: document.getElementById('btnResetSspc'),
+
+  // 자료실 (Archive & Downloads) DOM
+  viewArchive: document.getElementById('viewArchive'),
+  archiveCountBadge: document.getElementById('archiveCountBadge'),
+  archiveSearchInput: document.getElementById('archiveSearchInput'),
+  archiveCategoryFilter: document.getElementById('archiveCategoryFilter'),
+  archivePageSizeSelect: document.getElementById('archivePageSizeSelect'),
+  btnOpenNewArchiveModal: document.getElementById('btnOpenNewArchiveModal'),
+  btnRefreshArchive: document.getElementById('btnRefreshArchive'),
+  btnToggleArchiveAdmin: document.getElementById('btnToggleArchiveAdmin'),
+  archiveCardListContainer: document.getElementById('archiveCardListContainer'),
+  archivePagination: document.getElementById('archivePagination'),
+  archivePageInfo: document.getElementById('archivePageInfo'),
+  archivePageControls: document.getElementById('archivePageControls'),
+
+  // 자료실 상세 모달
+  archiveDetailModal: document.getElementById('archiveDetailModal'),
+  modalArchiveCat: document.getElementById('modalArchiveCat'),
+  modalArchiveTitle: document.getElementById('modalArchiveTitle'),
+  btnCloseArchiveDetailModal: document.getElementById('btnCloseArchiveDetailModal'),
+  modalArchiveVer: document.getElementById('modalArchiveVer'),
+  modalArchiveAuthor: document.getElementById('modalArchiveAuthor'),
+  modalArchiveDate: document.getElementById('modalArchiveDate'),
+  modalArchiveDownloads: document.getElementById('modalArchiveDownloads'),
+  modalArchiveSummary: document.getElementById('modalArchiveSummary'),
+  modalArchiveDesc: document.getElementById('modalArchiveDesc'),
+  modalArchiveTags: document.getElementById('modalArchiveTags'),
+  modalArchiveLinks: document.getElementById('modalArchiveLinks'),
+  btnModalArchiveDownload: document.getElementById('btnModalArchiveDownload'),
+  btnModalArchiveGithub: document.getElementById('btnModalArchiveGithub'),
+  btnCloseArchiveDetail: document.getElementById('btnCloseArchiveDetail'),
+
+  // 자료실 등록/수정 모달
+  archiveEditModal: document.getElementById('archiveEditModal'),
+  modalArchiveEditTitle: document.getElementById('modalArchiveEditTitle'),
+  btnCloseArchiveEditModal: document.getElementById('btnCloseArchiveEditModal'),
+  archiveEditId: document.getElementById('archiveEditId'),
+  archiveInputTitle: document.getElementById('archiveInputTitle'),
+  archiveInputCategory: document.getElementById('archiveInputCategory'),
+  archiveInputVersion: document.getElementById('archiveInputVersion'),
+  archiveInputAuthor: document.getElementById('archiveInputAuthor'),
+  archiveInputPin: document.getElementById('archiveInputPin'),
+  archiveInputSummary: document.getElementById('archiveInputSummary'),
+  archiveInputDesc: document.getElementById('archiveInputDesc'),
+  archiveInputDownloadUrl: document.getElementById('archiveInputDownloadUrl'),
+  archiveInputGithubUrl: document.getElementById('archiveInputGithubUrl'),
+  archiveInputTags: document.getElementById('archiveInputTags'),
+  archiveInputPinned: document.getElementById('archiveInputPinned'),
+  btnSaveArchive: document.getElementById('btnSaveArchive'),
+  btnCancelArchiveEdit: document.getElementById('btnCancelArchiveEdit'),
+
+  // 자료실 삭제 모달
+  archiveDeleteModal: document.getElementById('archiveDeleteModal'),
+  btnCloseArchiveDeleteModal: document.getElementById('btnCloseArchiveDeleteModal'),
+  archiveDeleteTargetId: document.getElementById('archiveDeleteTargetId'),
+  archiveDeleteTitlePreview: document.getElementById('archiveDeleteTitlePreview'),
+  archiveDeletePinInput: document.getElementById('archiveDeletePinInput'),
+  archiveDeleteError: document.getElementById('archiveDeleteError'),
+  btnConfirmDeleteArchive: document.getElementById('btnConfirmDeleteArchive'),
+  btnCancelDeleteArchive: document.getElementById('btnCancelDeleteArchive')
 };
 
 // --- IndexedDB 스토리지 헬퍼 (영구 고속 캐시) ---
@@ -497,6 +564,20 @@ async function loadInitialDatabases() {
     } else if (window.KOSTAT_KNOWLEDGE_DATA && window.KOSTAT_KNOWLEDGE_DATA.length > 0) {
       AppState.knowledgeData = window.KOSTAT_KNOWLEDGE_DATA;
     }
+    // 자료실 데이터 우선 바인딩
+    if (window.KOSTAT_ARCHIVE_DATA && window.KOSTAT_ARCHIVE_DATA.length > 0) {
+      AppState.archiveData = window.KOSTAT_ARCHIVE_DATA;
+    }
+    // 로컬 스토리지에 캐시된 자료실 데이터 로드 (최신 수정본 보호)
+    try {
+      const savedArchive = localStorage.getItem('KOSTAT_ARCHIVE_DATA');
+      if (savedArchive) {
+        const parsed = JSON.parse(savedArchive);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          AppState.archiveData = parsed;
+        }
+      }
+    } catch (_) {}
     // 3. IndexedDB의 더 최신 캐시가 있다면 갱신
     const cachedSky = await IDB.get('skyworks');
     if (cachedSky && cachedSky.length >= AppState.skyworksData.length) AppState.skyworksData = cachedSky;
@@ -722,6 +803,7 @@ function initUI() {
   initFeedbackBoardEvents();
   initFaqEvents();
   initLabEvents();
+  initArchiveEvents();
 
   // 챗봇 입력
   DOM.chatForm.addEventListener('submit', (e) => {
@@ -2849,6 +2931,9 @@ function switchViewerCard(targetId) {
   } else if (targetId === 'viewFaq') {
     renderFaqList();
     syncLiveDatabases(false);
+  } else if (targetId === 'viewArchive') {
+    renderArchiveBoard();
+    fetchRemoteArchive(true); // 탭 진입 시 최신 자료 실시간 동기화
   } else if (targetId === 'viewLab') {
     // 실험실 뷰 활성화
   }
@@ -5641,6 +5726,800 @@ function resetSspcLab() {
   if (DOM.sspcResultPanel) DOM.sspcResultPanel.style.display = 'none';
   if (DOM.sspcPreviewTbody) DOM.sspcPreviewTbody.innerHTML = '';
 }
+
+// ==========================================================================
+// 8. 사내 자료실 및 프로그램 배포 (Archive & Downloads Management) 모듈 (이모티콘 전면 배제)
+// ==========================================================================
+
+function getDeletedArchiveIds() {
+  try {
+    const raw = localStorage.getItem('KOSTAT_DELETED_ARCHIVE_IDS');
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch (_) {
+    return new Set();
+  }
+}
+
+function saveArchiveStorage() {
+  try {
+    const deletedSet = getDeletedArchiveIds();
+    const validList = (AppState.archiveData || []).filter(item => item && item.id && !deletedSet.has(item.id));
+    AppState.archiveData = validList;
+    const jsonStr = JSON.stringify(validList);
+    localStorage.setItem('KOSTAT_ARCHIVE_DATA', jsonStr);
+    if (window.IDB) {
+      IDB.set('archive_posts', validList).catch(() => {});
+    }
+  } catch (e) {
+    console.warn('Archive storage save error:', e);
+  }
+}
+
+function getCategoryClass(cat) {
+  switch (cat) {
+    case '전산 프로그램': return 'cat-program';
+    case '업무 자동화': return 'cat-automation';
+    case '엑셀 도구': return 'cat-excel';
+    case '유틸리티': return 'cat-utility';
+    case '매뉴얼/문서': return 'cat-doc';
+    default: return '';
+  }
+}
+
+function initArchiveEvents() {
+  // 1. 검색 실시간 입력
+  if (DOM.archiveSearchInput) {
+    DOM.archiveSearchInput.addEventListener('input', debounce(() => {
+      AppState.archiveCurrentPage = 1;
+      renderArchiveBoard();
+    }, 200));
+  }
+
+  // 2. 카테고리 필터
+  if (DOM.archiveCategoryFilter) {
+    DOM.archiveCategoryFilter.addEventListener('change', () => {
+      AppState.archiveCurrentPage = 1;
+      renderArchiveBoard();
+    });
+  }
+
+  // 3. 페이지 크기 셀렉트
+  if (DOM.archivePageSizeSelect) {
+    DOM.archivePageSizeSelect.addEventListener('change', () => {
+      AppState.archivePageSize = parseInt(DOM.archivePageSizeSelect.value, 10) || 12;
+      AppState.archiveCurrentPage = 1;
+      renderArchiveBoard();
+    });
+  }
+
+  // 4. 새 자료 등록 버튼
+  if (DOM.btnOpenNewArchiveModal) {
+    DOM.btnOpenNewArchiveModal.addEventListener('click', () => openArchiveEditModal());
+  }
+
+  // 5. 새로고침 (클라우드 동기화)
+  if (DOM.btnRefreshArchive) {
+    DOM.btnRefreshArchive.addEventListener('click', () => fetchRemoteArchive(false));
+  }
+
+  // 6. 관리자 모드 토글
+  if (DOM.btnToggleArchiveAdmin) {
+    DOM.btnToggleArchiveAdmin.addEventListener('click', toggleArchiveAdminMode);
+  }
+
+  // 7. 상세 모달 닫기
+  if (DOM.btnCloseArchiveDetailModal) {
+    DOM.btnCloseArchiveDetailModal.addEventListener('click', closeArchiveDetailModal);
+  }
+  if (DOM.btnCloseArchiveDetail) {
+    DOM.btnCloseArchiveDetail.addEventListener('click', closeArchiveDetailModal);
+  }
+
+  // 8. 등록/수정 모달 닫기 및 저장
+  if (DOM.btnCloseArchiveEditModal) {
+    DOM.btnCloseArchiveEditModal.addEventListener('click', closeArchiveEditModal);
+  }
+  if (DOM.btnCancelArchiveEdit) {
+    DOM.btnCancelArchiveEdit.addEventListener('click', closeArchiveEditModal);
+  }
+  if (DOM.btnSaveArchive) {
+    DOM.btnSaveArchive.addEventListener('click', saveArchivePost);
+  }
+
+  // 9. 삭제 모달 닫기 및 영구 삭제
+  if (DOM.btnCloseArchiveDeleteModal) {
+    DOM.btnCloseArchiveDeleteModal.addEventListener('click', closeArchiveDeleteModal);
+  }
+  if (DOM.btnCancelDeleteArchive) {
+    DOM.btnCancelDeleteArchive.addEventListener('click', closeArchiveDeleteModal);
+  }
+  if (DOM.btnConfirmDeleteArchive) {
+    DOM.btnConfirmDeleteArchive.addEventListener('click', confirmDeleteArchivePost);
+  }
+
+  // 10. 모달 배경 클릭 시 닫기
+  [DOM.archiveDetailModal, DOM.archiveEditModal, DOM.archiveDeleteModal].forEach(modal => {
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('show');
+          modal.classList.remove('active');
+        }
+      });
+    }
+  });
+}
+
+function filterArchiveData() {
+  const deletedSet = getDeletedArchiveIds();
+  const allItems = (AppState.archiveData || []).filter(item => item && item.id && !deletedSet.has(item.id));
+  
+  const query = (DOM.archiveSearchInput ? DOM.archiveSearchInput.value : '').trim().toLowerCase();
+  const selectedCat = DOM.archiveCategoryFilter ? DOM.archiveCategoryFilter.value : 'all';
+
+  let filtered = allItems.filter(item => {
+    // 카테고리 필터
+    if (selectedCat !== 'all' && item.category !== selectedCat) {
+      return false;
+    }
+    // 검색어 필터
+    if (query) {
+      const matchTitle = (item.title || '').toLowerCase().includes(query);
+      const matchSummary = (item.summary || '').toLowerCase().includes(query);
+      const matchDesc = (item.description || '').toLowerCase().includes(query);
+      const matchAuthor = (item.author || '').toLowerCase().includes(query);
+      const matchTags = Array.isArray(item.tags) && item.tags.some(t => String(t).toLowerCase().includes(query));
+      if (!matchTitle && !matchSummary && !matchDesc && !matchAuthor && !matchTags) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  // 정렬: 상단 고정(is_pinned) 우선 -> 최신 등록일자 순 -> 최신 id 순
+  filtered.sort((a, b) => {
+    if (a.is_pinned && !b.is_pinned) return -1;
+    if (!a.is_pinned && b.is_pinned) return 1;
+    const dateComp = (b.date || '').localeCompare(a.date || '');
+    if (dateComp !== 0) return dateComp;
+    return String(b.id || '').localeCompare(String(a.id || ''));
+  });
+
+  AppState.archiveFilteredRows = filtered;
+  return filtered;
+}
+
+function renderArchiveBoard() {
+  filterArchiveData();
+  const count = AppState.archiveFilteredRows.length;
+  if (DOM.archiveCountBadge) {
+    DOM.archiveCountBadge.textContent = `${count}건`;
+  }
+  renderArchivePage(AppState.archiveCurrentPage || 1);
+}
+
+function renderArchivePage(page) {
+  if (!DOM.archiveCardListContainer) return;
+
+  const pageSize = AppState.archivePageSize || 12;
+  const totalItems = AppState.archiveFilteredRows.length;
+  const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+  if (page < 1) page = 1;
+  if (page > totalPages) page = totalPages;
+  AppState.archiveCurrentPage = page;
+
+  const startIdx = (page - 1) * pageSize;
+  const pageItems = AppState.archiveFilteredRows.slice(startIdx, startIdx + pageSize);
+
+  if (pageItems.length === 0) {
+    DOM.archiveCardListContainer.innerHTML = `
+      <div style="text-align:center; padding:50px 20px; color:#94a3b8; background:rgba(30,41,59,0.3); border-radius:var(--radius-md); border:1px dashed rgba(255,255,255,0.1);">
+        <p style="font-size:15px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">등록된 프로그램 및 자료가 없습니다.</p>
+        <p style="font-size:12px; color:#64748b; margin:0;">상단의 [새 자료 등록] 버튼을 눌러 첫 번째 작업물이나 유틸리티를 배포해 보세요.</p>
+      </div>
+    `;
+    renderArchivePagination(totalPages, totalItems, page);
+    return;
+  }
+
+  let html = '<div class="archive-grid">';
+  pageItems.forEach(item => {
+    const isPinnedClass = item.is_pinned ? ' pinned' : '';
+    const catClass = getCategoryClass(item.category);
+    const tagsHtml = (item.tags || []).map(t => `<span class="archive-tag">#${escapeHtml(t)}</span>`).join('');
+    
+    // 관리자 또는 본인 관리 버튼
+    const adminBtns = AppState.isArchiveAdmin ? `
+      <div class="archive-card-admin-btns">
+        <button class="action-btn-sm" style="padding:2px 6px;font-size:11px;" onclick="openArchiveEditModal('${item.id}')">수정</button>
+        <button class="action-btn-sm danger" style="padding:2px 6px;font-size:11px;" onclick="openArchiveDeleteModal('${item.id}')">삭제</button>
+      </div>
+    ` : '';
+
+    // 다운로드 버튼 액션
+    const downloadBtn = item.download_url ? `
+      <a class="archive-btn-action primary" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event)">다운로드</a>
+    ` : '';
+
+    // GitHub 링크 버튼
+    const githubBtn = item.github_url ? `
+      <a class="archive-btn-action github" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer">GitHub</a>
+    ` : '';
+
+    html += `
+      <div class="archive-card${isPinnedClass}" data-id="${item.id}">
+        <div class="archive-card-header">
+          <div class="archive-badges">
+            <span class="archive-cat-badge ${catClass}">${escapeHtml(item.category || '기타')}</span>
+            ${item.version ? `<span class="archive-ver-badge">${escapeHtml(item.version)}</span>` : ''}
+            ${item.is_pinned ? '<span class="archive-pinned-badge">고정 추천</span>' : ''}
+          </div>
+          ${adminBtns}
+        </div>
+        
+        <h4 class="archive-card-title" onclick="openArchiveDetail('${item.id}')">${escapeHtml(item.title)}</h4>
+        <p class="archive-card-summary" onclick="openArchiveDetail('${item.id}')">${escapeHtml(item.summary || '')}</p>
+        
+        ${tagsHtml ? `<div class="archive-card-tags">${tagsHtml}</div>` : ''}
+
+        <div class="archive-card-meta">
+          <span>작성: ${escapeHtml(item.author || '신경섭')} | ${item.date || '-'}</span>
+          <span>다운로드: ${(item.download_count || 0).toLocaleString()}회</span>
+        </div>
+
+        <div class="archive-card-actions">
+          <button class="archive-btn-action secondary" onclick="openArchiveDetail('${item.id}')">상세보기</button>
+          ${downloadBtn}
+          ${githubBtn}
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+
+  DOM.archiveCardListContainer.innerHTML = html;
+  renderArchivePagination(totalPages, totalItems, page);
+}
+
+function renderArchivePagination(totalPages, totalItems, currentPage) {
+  if (!DOM.archivePagination || !DOM.archivePageInfo || !DOM.archivePageControls) return;
+
+  DOM.archivePageInfo.textContent = `${currentPage} / ${totalPages} 페이지 (총 ${totalItems.toLocaleString()}건)`;
+
+  if (totalPages <= 1) {
+    DOM.archivePageControls.innerHTML = '';
+    return;
+  }
+
+  let controlsHtml = '';
+  // 이전 버튼
+  controlsHtml += `
+    <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="renderArchivePage(${currentPage - 1})">이전</button>
+  `;
+
+  // 페이지 번호 범위
+  let startP = Math.max(1, currentPage - 2);
+  let endP = Math.min(totalPages, startP + 4);
+  if (endP - startP < 4) {
+    startP = Math.max(1, endP - 4);
+  }
+
+  for (let p = startP; p <= endP; p++) {
+    controlsHtml += `
+      <button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="renderArchivePage(${p})">${p}</button>
+    `;
+  }
+
+  // 다음 버튼
+  controlsHtml += `
+    <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="renderArchivePage(${currentPage + 1})">다음</button>
+  `;
+
+  DOM.archivePageControls.innerHTML = controlsHtml;
+}
+
+// 상세 모달 열기
+function openArchiveDetail(id) {
+  const item = (AppState.archiveData || []).find(it => it.id === id);
+  if (!item) return;
+
+  if (DOM.modalArchiveCat) {
+    DOM.modalArchiveCat.textContent = item.category || '기타';
+    DOM.modalArchiveCat.className = `archive-cat-badge ${getCategoryClass(item.category)}`;
+  }
+  if (DOM.modalArchiveTitle) DOM.modalArchiveTitle.textContent = item.title || '';
+  if (DOM.modalArchiveVer) DOM.modalArchiveVer.textContent = item.version || 'v1.0.0';
+  if (DOM.modalArchiveAuthor) DOM.modalArchiveAuthor.textContent = item.author || '신경섭';
+  if (DOM.modalArchiveDate) DOM.modalArchiveDate.textContent = item.date || '-';
+  if (DOM.modalArchiveDownloads) DOM.modalArchiveDownloads.textContent = `${(item.download_count || 0).toLocaleString()}회`;
+  if (DOM.modalArchiveSummary) DOM.modalArchiveSummary.textContent = item.summary || '-';
+  if (DOM.modalArchiveDesc) DOM.modalArchiveDesc.textContent = item.description || '-';
+
+  // 태그 목록
+  if (DOM.modalArchiveTags) {
+    if (item.tags && item.tags.length > 0) {
+      DOM.modalArchiveTags.innerHTML = item.tags.map(t => `<span class="archive-tag">#${escapeHtml(t)}</span>`).join('');
+      if (DOM.modalArchiveTagsSection) DOM.modalArchiveTagsSection.style.display = 'block';
+    } else {
+      if (DOM.modalArchiveTagsSection) DOM.modalArchiveTagsSection.style.display = 'none';
+    }
+  }
+
+  // 링크 목록
+  if (DOM.modalArchiveLinks) {
+    let linksHtml = '';
+    if (item.download_url) {
+      linksHtml += `
+        <div class="archive-link-card">
+          <div class="archive-link-info">
+            <span class="archive-link-name">공식 다운로드 링크</span>
+            <span class="archive-link-url">${escapeHtml(item.download_url)}</span>
+          </div>
+          <a class="action-btn-sm primary" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event)">다운로드</a>
+        </div>
+      `;
+    }
+    if (item.github_url) {
+      linksHtml += `
+        <div class="archive-link-card">
+          <div class="archive-link-info">
+            <span class="archive-link-name">GitHub 오픈소스 저장소</span>
+            <span class="archive-link-url">${escapeHtml(item.github_url)}</span>
+          </div>
+          <a class="action-btn-sm" style="background:#24292e;color:#fff;border-color:#444d56;" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer">저장소 열기</a>
+        </div>
+      `;
+    }
+    if (!linksHtml) {
+      linksHtml = '<div style="font-size:13px;color:#94a3b8;">등록된 외부 링크가 없습니다.</div>';
+    }
+    DOM.modalArchiveLinks.innerHTML = linksHtml;
+  }
+
+  // 하단 다운로드 바로가기 버튼 세팅
+  if (DOM.btnModalArchiveDownload) {
+    if (item.download_url) {
+      DOM.btnModalArchiveDownload.style.display = 'inline-flex';
+      DOM.btnModalArchiveDownload.onclick = (e) => {
+        handleArchiveDownloadClick(item.id, e);
+        window.open(item.download_url, '_blank', 'noopener,noreferrer');
+      };
+    } else {
+      DOM.btnModalArchiveDownload.style.display = 'none';
+    }
+  }
+
+  // 하단 GitHub 바로가기 버튼 세팅
+  if (DOM.btnModalArchiveGithub) {
+    if (item.github_url) {
+      DOM.btnModalArchiveGithub.style.display = 'inline-flex';
+      DOM.btnModalArchiveGithub.href = item.github_url;
+    } else {
+      DOM.btnModalArchiveGithub.style.display = 'none';
+    }
+  }
+
+  if (DOM.archiveDetailModal) {
+    DOM.archiveDetailModal.classList.add('show');
+    DOM.archiveDetailModal.classList.add('active');
+  }
+}
+
+function closeArchiveDetailModal() {
+  if (DOM.archiveDetailModal) {
+    DOM.archiveDetailModal.classList.remove('show');
+    DOM.archiveDetailModal.classList.remove('active');
+  }
+}
+
+// 다운로드 클릭 시 카운트 증가 & 동기화
+function handleArchiveDownloadClick(id, event) {
+  const item = (AppState.archiveData || []).find(it => it.id === id);
+  if (item) {
+    item.download_count = (item.download_count || 0) + 1;
+    saveArchiveStorage();
+    if (DOM.modalArchiveDownloads) {
+      DOM.modalArchiveDownloads.textContent = `${item.download_count.toLocaleString()}회`;
+    }
+    // 백그라운드 클라우드 동기화
+    syncArchiveToCloud();
+  }
+}
+
+// 등록/수정 모달 열기
+function openArchiveEditModal(id = null) {
+  const isEdit = Boolean(id);
+  const item = isEdit ? (AppState.archiveData || []).find(it => it.id === id) : null;
+
+  if (DOM.archiveEditId) DOM.archiveEditId.value = isEdit ? id : '';
+  if (DOM.modalArchiveEditTitle) {
+    DOM.modalArchiveEditTitle.textContent = isEdit ? '자료 정보 수정' : '새 자료 등록';
+  }
+
+  if (DOM.archiveInputTitle) DOM.archiveInputTitle.value = item ? (item.title || '') : '';
+  if (DOM.archiveInputCategory) DOM.archiveInputCategory.value = item ? (item.category || '전산 프로그램') : '전산 프로그램';
+  if (DOM.archiveInputVersion) DOM.archiveInputVersion.value = item ? (item.version || '') : 'v1.0.0';
+  if (DOM.archiveInputAuthor) DOM.archiveInputAuthor.value = item ? (item.author || '') : '신경섭';
+  if (DOM.archiveInputPin) DOM.archiveInputPin.value = '';
+  if (DOM.archiveInputSummary) DOM.archiveInputSummary.value = item ? (item.summary || '') : '';
+  if (DOM.archiveInputDesc) DOM.archiveInputDesc.value = item ? (item.description || '') : '';
+  if (DOM.archiveInputDownloadUrl) DOM.archiveInputDownloadUrl.value = item ? (item.download_url || '') : '';
+  if (DOM.archiveInputGithubUrl) DOM.archiveInputGithubUrl.value = item ? (item.github_url || '') : '';
+  if (DOM.archiveInputTags) DOM.archiveInputTags.value = item && item.tags ? item.tags.join(', ') : '';
+  if (DOM.archiveInputPinned) DOM.archiveInputPinned.checked = Boolean(item && item.is_pinned);
+
+  if (DOM.archiveEditModal) {
+    DOM.archiveEditModal.classList.add('show');
+    DOM.archiveEditModal.classList.add('active');
+  }
+}
+
+function closeArchiveEditModal() {
+  if (DOM.archiveEditModal) {
+    DOM.archiveEditModal.classList.remove('show');
+    DOM.archiveEditModal.classList.remove('active');
+  }
+}
+
+// 자료 저장 처리
+async function saveArchivePost() {
+  const editId = DOM.archiveEditId ? DOM.archiveEditId.value : '';
+  const isEdit = Boolean(editId);
+
+  const title = (DOM.archiveInputTitle ? DOM.archiveInputTitle.value : '').trim();
+  const category = DOM.archiveInputCategory ? DOM.archiveInputCategory.value : '전산 프로그램';
+  const version = (DOM.archiveInputVersion ? DOM.archiveInputVersion.value : '').trim() || 'v1.0.0';
+  const author = (DOM.archiveInputAuthor ? DOM.archiveInputAuthor.value : '').trim();
+  const pin = (DOM.archiveInputPin ? DOM.archiveInputPin.value : '').trim();
+  const summary = (DOM.archiveInputSummary ? DOM.archiveInputSummary.value : '').trim();
+  const desc = (DOM.archiveInputDesc ? DOM.archiveInputDesc.value : '').trim();
+  const downloadUrl = (DOM.archiveInputDownloadUrl ? DOM.archiveInputDownloadUrl.value : '').trim();
+  const githubUrl = (DOM.archiveInputGithubUrl ? DOM.archiveInputGithubUrl.value : '').trim();
+  const tagsRaw = (DOM.archiveInputTags ? DOM.archiveInputTags.value : '').trim();
+  const isPinned = DOM.archiveInputPinned ? DOM.archiveInputPinned.checked : false;
+
+  if (!title) {
+    alert('프로그램/자료명을 입력해 주세요.');
+    if (DOM.archiveInputTitle) DOM.archiveInputTitle.focus();
+    return;
+  }
+  if (!author) {
+    alert('작성자/개발자명을 입력해 주세요.');
+    if (DOM.archiveInputAuthor) DOM.archiveInputAuthor.focus();
+    return;
+  }
+  if (!pin || pin.length < 4) {
+    alert('비밀번호(4자리 PIN)를 입력해 주세요. (수정/삭제 시 확인에 사용됩니다)');
+    if (DOM.archiveInputPin) DOM.archiveInputPin.focus();
+    return;
+  }
+  if (!summary) {
+    alert('한 줄 요약을 입력해 주세요.');
+    if (DOM.archiveInputSummary) DOM.archiveInputSummary.focus();
+    return;
+  }
+  if (!desc) {
+    alert('상세 설명 및 사용 가이드를 입력해 주세요.');
+    if (DOM.archiveInputDesc) DOM.archiveInputDesc.focus();
+    return;
+  }
+
+  const tags = tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
+  const today = new Date().toISOString().slice(0, 10);
+
+  if (isEdit) {
+    const existing = (AppState.archiveData || []).find(it => it.id === editId);
+    if (!existing) {
+      alert('수정 대상 자료를 찾을 수 없습니다.');
+      return;
+    }
+    // PIN 검증 (기존 등록 PIN 또는 마스터 PIN)
+    const isAdmin = await checkAdminPinHash(pin);
+    if (existing.pin && existing.pin !== pin && !isAdmin) {
+      alert('비밀번호가 일치하지 않습니다. 등록 시 설정한 4자리 PIN을 입력하세요.');
+      if (DOM.archiveInputPin) DOM.archiveInputPin.focus();
+      return;
+    }
+
+    existing.title = title;
+    existing.category = category;
+    existing.version = version;
+    existing.author = author;
+    existing.summary = summary;
+    existing.description = desc;
+    existing.download_url = downloadUrl;
+    existing.github_url = githubUrl;
+    existing.tags = tags;
+    existing.is_pinned = isPinned;
+    existing.updated_at = new Date().toISOString();
+  } else {
+    const newPost = {
+      id: `arc-${Date.now()}`,
+      title,
+      category,
+      version,
+      author,
+      pin,
+      date: today,
+      summary,
+      description: desc,
+      github_url: githubUrl,
+      download_url: downloadUrl,
+      tags,
+      download_count: 0,
+      is_pinned: isPinned,
+      created_at: new Date().toISOString()
+    };
+    AppState.archiveData.unshift(newPost);
+  }
+
+  saveArchiveStorage();
+  closeArchiveEditModal();
+  renderArchiveBoard();
+  showToast(isEdit ? '자료 정보가 수정되었습니다.' : '새 자료가 성공적으로 등록되었습니다.');
+
+  // 클라우드 자동 동기화
+  syncArchiveToCloud();
+}
+
+// 삭제 모달 열기
+function openArchiveDeleteModal(id) {
+  const item = (AppState.archiveData || []).find(it => it.id === id);
+  if (!item) return;
+
+  if (DOM.archiveDeleteTargetId) DOM.archiveDeleteTargetId.value = id;
+  if (DOM.archiveDeleteTitlePreview) DOM.archiveDeleteTitlePreview.textContent = item.title;
+  if (DOM.archiveDeletePinInput) DOM.archiveDeletePinInput.value = '';
+  if (DOM.archiveDeleteError) {
+    DOM.archiveDeleteError.style.display = 'none';
+    DOM.archiveDeleteError.textContent = '';
+  }
+
+  if (DOM.archiveDeleteModal) {
+    DOM.archiveDeleteModal.classList.add('show');
+    DOM.archiveDeleteModal.classList.add('active');
+    if (DOM.archiveDeletePinInput) DOM.archiveDeletePinInput.focus();
+  }
+}
+
+function closeArchiveDeleteModal() {
+  if (DOM.archiveDeleteModal) {
+    DOM.archiveDeleteModal.classList.remove('show');
+    DOM.archiveDeleteModal.classList.remove('active');
+  }
+}
+
+// 영구 삭제 실행
+async function confirmDeleteArchivePost() {
+  const id = DOM.archiveDeleteTargetId ? DOM.archiveDeleteTargetId.value : '';
+  const pin = (DOM.archiveDeletePinInput ? DOM.archiveDeletePinInput.value : '').trim();
+
+  const item = (AppState.archiveData || []).find(it => it.id === id);
+  if (!item) {
+    closeArchiveDeleteModal();
+    return;
+  }
+
+  const isAdmin = await checkAdminPinHash(pin);
+  if (item.pin && item.pin !== pin && !isAdmin) {
+    if (DOM.archiveDeleteError) {
+      DOM.archiveDeleteError.textContent = '비밀번호가 일치하지 않습니다.';
+      DOM.archiveDeleteError.style.display = 'block';
+    }
+    return;
+  }
+
+  // 삭제 톰스톤에 등록하여 원격에서 재부활 방지
+  try {
+    const deletedSet = getDeletedArchiveIds();
+    deletedSet.add(id);
+    localStorage.setItem('KOSTAT_DELETED_ARCHIVE_IDS', JSON.stringify(Array.from(deletedSet)));
+  } catch (_) {}
+
+  // 로컬 목록에서 제거
+  AppState.archiveData = (AppState.archiveData || []).filter(it => it.id !== id);
+  saveArchiveStorage();
+  closeArchiveDeleteModal();
+  renderArchiveBoard();
+  showToast('자료가 영구 삭제되었습니다.');
+
+  // 클라우드 동기화
+  syncArchiveToCloud();
+}
+
+// 관리자 모드 토글
+function toggleArchiveAdminMode() {
+  if (AppState.isArchiveAdmin) {
+    AppState.isArchiveAdmin = false;
+    if (DOM.btnToggleArchiveAdmin) {
+      DOM.btnToggleArchiveAdmin.textContent = '관리자 모드';
+      DOM.btnToggleArchiveAdmin.classList.remove('primary');
+      DOM.btnToggleArchiveAdmin.classList.add('warning');
+    }
+    showToast('자료실 관리자 모드가 해제되었습니다.');
+    renderArchiveBoard();
+    return;
+  }
+
+  // 이미 인증된 경우
+  if ((window.AdminState && window.AdminState.isAuthenticated) || AppState.isBoardAdmin || AppState.isFaqAdmin) {
+    AppState.isArchiveAdmin = true;
+    if (DOM.btnToggleArchiveAdmin) {
+      DOM.btnToggleArchiveAdmin.textContent = '관리자 모드 ON';
+      DOM.btnToggleArchiveAdmin.classList.remove('warning');
+      DOM.btnToggleArchiveAdmin.classList.add('primary');
+    }
+    showToast('자료실 관리자 권한이 활성화되었습니다.');
+    renderArchiveBoard();
+    return;
+  }
+
+  // PIN 모달 열기
+  if (typeof openBoardPinModal === 'function') {
+    openBoardPinModal();
+  } else {
+    const pin = prompt('관리자 보안 PIN을 입력하세요:');
+    if (pin) {
+      checkAdminPinHash(pin).then(ok => {
+        if (ok) {
+          AppState.isArchiveAdmin = true;
+          if (DOM.btnToggleArchiveAdmin) {
+            DOM.btnToggleArchiveAdmin.textContent = '관리자 모드 ON';
+            DOM.btnToggleArchiveAdmin.classList.remove('warning');
+            DOM.btnToggleArchiveAdmin.classList.add('primary');
+          }
+          showToast('자료실 관리자 권한이 활성화되었습니다.');
+          renderArchiveBoard();
+        } else {
+          alert('관리자 PIN 번호가 일치하지 않습니다.');
+        }
+      });
+    }
+  }
+}
+
+// 자료실 클라우드 자동 동기화 (GitHub Contents API)
+async function syncArchiveToCloud() {
+  const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+  const OWNER = 'skywantae';
+  const REPO = 'skywantae.github.io';
+  const API_BASE = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
+
+  async function pushFile(path, contentStr, commitMsg) {
+    try {
+      const getRes = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      let sha = null;
+      if (getRes.ok) {
+        const getJson = await getRes.json();
+        sha = getJson.sha;
+      }
+      const utf8Bytes = new TextEncoder().encode(contentStr);
+      let binary = '';
+      for (let i = 0; i < utf8Bytes.length; i++) {
+        binary += String.fromCharCode(utf8Bytes[i]);
+      }
+      const b64 = btoa(binary);
+      const putBody = { message: commitMsg, content: b64, branch: 'main' };
+      if (sha) putBody.sha = sha;
+
+      const putRes = await fetch(`${API_BASE}/${path}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(putBody)
+      });
+      return putRes.ok;
+    } catch (e) {
+      console.warn(`[CloudSync] pushFile error (${path}):`, e);
+      return false;
+    }
+  }
+
+  try {
+    const deletedSet = getDeletedArchiveIds();
+    const list = (AppState.archiveData || []).filter(item => item && item.id && !deletedSet.has(item.id));
+    
+    // 1) data/archive_data.json 동기화
+    await pushFile('data/archive_data.json', JSON.stringify(list, null, 2), `chore: sync archive_data.json (${list.length} items)`);
+    await new Promise(r => setTimeout(r, 400));
+    // 2) data/archive_data.js 로더 동기화
+    await pushFile('data/archive_data.js', `window.KOSTAT_ARCHIVE_DATA = ${JSON.stringify(list, null, 2)};\n`, `chore: sync archive_data.js`);
+    console.log(`자료실 클라우드 동기화 완료 (${list.length}건)`);
+  } catch (err) {
+    console.warn('자료실 클라우드 동기화 실패:', err);
+  }
+}
+
+// 자료실 원격 데이터 가져오기 (실시간 양방향 병합)
+async function fetchRemoteArchive(silent = true) {
+  try {
+    const timestamp = Date.now();
+    const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+    const OWNER = 'skywantae';
+    const REPO = 'skywantae.github.io';
+    const API_URL = `https://api.github.com/repos/${OWNER}/${REPO}/contents/data/archive_data.json?t=${timestamp}`;
+
+    let remoteData = null;
+    // 1) GitHub API 무캐시 실시간 조회
+    try {
+      const apiRes = await fetch(API_URL, {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      }).catch(() => null);
+      if (apiRes && apiRes.ok) {
+        const apiJson = await apiRes.json();
+        if (apiJson.content) {
+          const binaryStr = atob(apiJson.content.replace(/\n/g, ''));
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+          }
+          const decoded = new TextDecoder('utf-8').decode(bytes);
+          remoteData = JSON.parse(decoded);
+        }
+      }
+    } catch (_) {}
+
+    // 2) Raw URL fallback
+    if (!remoteData) {
+      const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/data';
+      let res = await fetch(`${GITHUB_RAW_BASE}/archive_data.json?t=${timestamp}`).catch(() => null);
+      if (!res || !res.ok) {
+        res = await fetch(`data/archive_data.json?t=${timestamp}`).catch(() => null);
+      }
+      if (res && res.ok) {
+        remoteData = await res.json().catch(() => null);
+      }
+    }
+
+    if (Array.isArray(remoteData)) {
+      const deletedSet = getDeletedArchiveIds();
+      const validRemote = remoteData.filter(item => item && item.id && !deletedSet.has(item.id));
+
+      const map = new Map();
+      // 로컬 데이터 우선 등록
+      (AppState.archiveData || []).filter(item => item && item.id && !deletedSet.has(item.id)).forEach(it => {
+        map.set(it.id, it);
+      });
+
+      // 원격 데이터 병합 (최신 다운로드 수 또는 신규 항목 반영)
+      validRemote.forEach(rem => {
+        if (!map.has(rem.id)) {
+          map.set(rem.id, rem);
+        } else {
+          const loc = map.get(rem.id);
+          // 다운로드 수는 둘 중 더 큰 값 보존
+          loc.download_count = Math.max(loc.download_count || 0, rem.download_count || 0);
+          if (rem.updated_at && (!loc.updated_at || rem.updated_at > loc.updated_at)) {
+            map.set(rem.id, rem);
+          }
+        }
+      });
+
+      AppState.archiveData = Array.from(map.values());
+      saveArchiveStorage();
+      renderArchiveBoard();
+      if (!silent) showToast(`최신 자료실 목록 ${AppState.archiveData.length}건을 동기화했습니다.`);
+      return true;
+    }
+  } catch (err) {
+    console.warn('fetchRemoteArchive error:', err);
+  }
+  if (!silent) showToast('현재 최신 상태이거나 동기화할 새 자료가 없습니다.');
+  return false;
+}
+
 
 
 

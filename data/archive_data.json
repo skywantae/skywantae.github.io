@@ -1,0 +1,62 @@
+[
+  {
+    "id": "arc-2",
+    "title": "SSPC 주간 매출 보고서 자동 변환기",
+    "category": "업무 자동화",
+    "version": "v1.0.0",
+    "author": "신경섭",
+    "date": "2026-09-16",
+    "summary": "Delivery List 엑셀 원본에서 SSPC 고객사 주문을 자동 추출하여 공식 보고 양식(SSPC 매출 YYMMDD.xlsx)으로 1초 만에 자동 생성",
+    "description": "매주 수요일 강도균 수석님께 송부하는 SSPC 주간 매출 보고서를 엑셀 첨부만으로 자동 변환해주는 자동화 도구입니다.\n\n주요 기능:\n- 당월 시트(SEPT 2026 등) 자동 감지 및 시트 선택\n- SSPC 고객사 주문 자동 필터링 및 합계 수식(=SUM) 적용\n- 공식 18개 열 포맷 및 열 너비 정밀 세팅\n- 웹앱 '실험실' 탭 및 Python 로컬 CLI 스크립트(sspc_processor.py) 동시 지원",
+    "github_url": "https://github.com/skywantae/KOSTAT-ERP-Chatbot",
+    "download_url": "https://skywantae.github.io/",
+    "tags": [
+      "SSPC",
+      "엑셀자동화",
+      "주간보고",
+      "영업매출"
+    ],
+    "download_count": 18,
+    "is_pinned": true
+  },
+  {
+    "id": "arc-1",
+    "title": "KOSTAT ERP 전산 통합 프로그램 (Registrar)",
+    "category": "전산 프로그램",
+    "version": "v1.0.161",
+    "author": "신경섭",
+    "date": "2026-09-16",
+    "summary": "출하 계획(111,628건), 견적서, 계약검토서, IC Tray 도면(4,082건) 오프라인 통합 전산 데스크톱 솔루션",
+    "description": "사내 ERP 전산 데이터베이스를 실시간 동기화하고 오프라인 환경에서도 초고속 조회를 지원하는 데스크톱 전산 통합 프로그램입니다.\n\n주요 기능:\n- 출하 계획 11만 건 초고속 검색 및 필터링 (2016~2026 전체 데이터)\n- MSSQL 견적서 및 계약검토서 프로젝트 상세 조회\n- IC Tray 도면 4,082건 비공개 스토리지 실시간 PDF 다운로드 엔진 탑재\n- Skyworks PO 선적 일정 추적 및 관리",
+    "github_url": "https://github.com/skywantae/KOSTAT-ERP-Chatbot",
+    "download_url": "https://github.com/skywantae/KOSTAT-ERP-Chatbot/releases",
+    "tags": [
+      "ERP",
+      "출하계획",
+      "도면",
+      "견적서",
+      "계약검토서"
+    ],
+    "download_count": 42,
+    "is_pinned": true
+  },
+  {
+    "id": "arc-3",
+    "title": "KOSTAT 초저지연 원격 데스크톱 접속기",
+    "category": "유틸리티",
+    "version": "v1.0.0",
+    "author": "신경섭",
+    "date": "2026-09-14",
+    "summary": "사내 원격 업무 및 다른 노트북 화면 제어를 지원하는 초저지연 원격 데스크톱 프로그램",
+    "description": "사내망 및 외부에서 다른 PC/노트북에 원격으로 접속하여 화면을 실시간 확인하고 제어할 수 있는 경량화 원격 접속 클라이언트입니다.\n\n주요 기능:\n- WebRTC / WebSocket 기반 초저지연 화면 전송\n- 마우스 및 키보드 실시간 제어\n- 별도 복잡한 설치 없이 배치 파일(start_remote.bat)로 원클릭 기동",
+    "github_url": "https://github.com/skywantae/KOSTAT-ERP-Chatbot/tree/main/remote_desktop",
+    "download_url": "",
+    "tags": [
+      "원격접속",
+      "유틸리티",
+      "원격제어"
+    ],
+    "download_count": 9,
+    "is_pinned": false
+  }
+]
