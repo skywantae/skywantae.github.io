@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kostat-pwa-v1.0.162'; // {AUTO_REPLACE_CACHE_VERSION}
+const CACHE_NAME = 'kostat-pwa-v1.0.163'; // {AUTO_REPLACE_CACHE_VERSION}
 
 const ASSETS_TO_CACHE = [
   './',
@@ -7,6 +7,7 @@ const ASSETS_TO_CACHE = [
   './app.js',
   './updater.js',
   './xlsx.full.min.js',
+  './exceljs.min.js',
   './manifest.json',
   './icon.png',
   './logo.png',

@@ -5334,25 +5334,22 @@ const LabState = {
 // 18개 표준 열 매핑 (입력 시트 0-indexed 열 번호)
 const LAB_COLS_TO_KEEP = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 17, 18, 19, 21];
 
+// 18개 열 정확한 너비 (Target Excel 원본과 100% 동일)
 const LAB_COLUMN_WIDTHS = [
-  { wch: 7.0 },  // A: ITEM
-  { wch: 12.0 }, // B: Ship Date
-  { wch: 14.0 }, // C: CUSTOMER
-  { wch: 7.5 },  // D: AREA
-  { wch: 11.0 }, // E: SHIP TO
-  { wch: 7.5 },  // F: CTR/AREA
-  { wch: 32.0 }, // G: KOSTAT P/N
-  { wch: 9.0 },  // H: COLOR/TEMP
-  { wch: 62.0 }, // I: Package / Discription
-  { wch: 11.0 }, // J: CUSTOMER P/N
-  { wch: 25.0 }, // K: PO NO
-  { wch: 23.0 }, // L: Q'TY
-  { wch: 12.0 }, // M: U/P
-  { wch: 17.5 }, // N: AMOUNT
-  { wch: 7.5 },  // O: DR NUMBER
-  { wch: 18.5 }, // P: INVOICE / LOCAL INV NO
-  { wch: 9.0 },  // Q: RELATED HQ INVOICE NO
-  { wch: 21.0 }  // R: OTHER REMARKS
+  6.7, 11.9, 14.0, 7.2, 10.3, 7.2, 31.6, 8.7, 61.3, 10.8,
+  25.0, 22.7, 11.9, 17.2, 7.1, 18.5, 8.7, 20.9
+];
+
+// 18개 열 정확한 헤더 색상 매핑 (Target Excel 원본과 100% 동일)
+const LAB_HEADER_COLORS = [
+  'FF008000', 'FF008000', // A, B (Green)
+  'FFFF0000', 'FFFF0000', // C, D (Red)
+  'FF000080', 'FF000080', // E, F (Navy)
+  'FF993366', 'FF993366', 'FF993366', 'FF993366', 'FF993366', // G, H, I, J, K (Plum)
+  'FF003366', 'FF003366', 'FF003366', // L, M, N (Dark Blue)
+  'FFFF6600',             // O (Orange/Rust)
+  'FF000080', 'FF000080', // P, Q (Navy)
+  'FFFFFF00'              // R (Yellow)
 ];
 
 function initLabEvents() {
@@ -5618,9 +5615,14 @@ function renderSspcPreviewTable(rows) {
   DOM.sspcPreviewTbody.appendChild(frag);
 }
 
-function generateAndDownloadSspcExcel() {
+async function generateAndDownloadSspcExcel() {
   if (!LabState.sspcRows || LabState.sspcRows.length === 0) {
     alert('다운로드할 SSPC 주문 데이터가 없습니다.');
+    return;
+  }
+
+  if (typeof ExcelJS === 'undefined') {
+    alert('엑셀 서식 처리 라이브러리(ExcelJS)를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
     return;
   }
 
@@ -5630,86 +5632,211 @@ function generateAndDownloadSspcExcel() {
   const dd = String(dt.getDate()).padStart(2, '0');
   const fileName = `SSPC 매출 ${yy}${mm}${dd}.xlsx`;
 
-  const ws = {};
-  let outR = 2; // Row 3 (0-indexed: 2)
+  showToast('보고서 엑셀 파일을 생성하고 있습니다...');
 
-  // Row 3: 대분류 헤더
-  const r3Headers = {
-    1: 'Actual ',
-    2: 'CUSTOMER',
-    4: 'SHIP TO',
-    6: 'PO INFORMATION',
-    11: 'ACTUAL SHIPPED',
-    15: 'INVOICE'
-  };
-  for (let c = 0; c < 18; c++) {
-    if (r3Headers[c]) {
-      ws[XLSX.utils.encode_cell({ r: outR, c })] = { t: 's', v: r3Headers[c] };
+  try {
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Sheet1 (2)', {
+      views: [{ showGridLines: true }]
+    });
+
+    // 1. 열 너비 설정 (A~R 18개 열 정확 매핑)
+    LAB_COLUMN_WIDTHS.forEach((w, idx) => {
+      ws.getColumn(idx + 1).width = w;
+    });
+
+    // 2. 행 높이 설정
+    ws.getRow(1).height = 13.2;
+    ws.getRow(2).height = 13.2;
+    ws.getRow(3).height = 21.0;
+    ws.getRow(4).height = 84.0;
+
+    // 3. 스타일 객체 정의 (맑은 고딕 14pt, 얇은 실선 테두리)
+    const thinBorder = {
+      top: { style: 'thin', color: { argb: 'FF000000' } },
+      bottom: { style: 'thin', color: { argb: 'FF000000' } },
+      left: { style: 'thin', color: { argb: 'FF000000' } },
+      right: { style: 'thin', color: { argb: 'FF000000' } }
+    };
+
+    // 4. Row 3: 대분류 헤더
+    const r3Headers = {
+      2: 'Actual ',
+      3: 'CUSTOMER',
+      5: 'SHIP TO',
+      7: 'PO INFORMATION',
+      12: 'ACTUAL SHIPPED',
+      16: 'INVOICE'
+    };
+    const row3 = ws.getRow(3);
+    for (let c = 1; c <= 18; c++) {
+      const cell = row3.getCell(c);
+      cell.value = r3Headers[c] || null;
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: LAB_HEADER_COLORS[c - 1] }
+      };
+      cell.border = thinBorder;
+      cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      cell.font = {
+        name: '맑은 고딕',
+        size: 14,
+        bold: false,
+        color: { argb: c === 18 ? 'FF000000' : 'FFFFFFFF' }
+      };
     }
-  }
-  outR++; // outR = 3 (Row 4 in Excel)
 
-  // Row 4: 서브 헤더
-  const r4Headers = [
-    'ITEM', 'Ship Date', 'NAME', 'AREA', 'NAME', 'CTR/\nAREA',
-    'KOSTAT \nP/N', 'COLOR/TEMP \nor Length', 'Package / Discription', 'CUSTOMER \nP/N', 'PO NO',
-    "Q'TY", 'U/P', 'AMOUNT', '', '', '', 'OTHER REMARKS'
-  ];
-  r4Headers.forEach((h, c) => {
-    if (h) {
-      ws[XLSX.utils.encode_cell({ r: outR, c })] = { t: 's', v: h };
+    // 5. Row 4: 서브 헤더
+    const r4Headers = [
+      'ITEM', 'Ship Date', 'NAME', 'AREA', 'NAME', 'CTR/\nAREA',
+      'KOSTAT \nP/N', 'COLOR/TEMP \nor Length', 'Package / Discription', 'CUSTOMER \nP/N', 'PO NO',
+      "Q'TY", 'U/P', 'AMOUNT', null, null, null, 'OTHER REMARKS'
+    ];
+    const row4 = ws.getRow(4);
+    for (let c = 1; c <= 18; c++) {
+      const cell = row4.getCell(c);
+      cell.value = r4Headers[c - 1] || null;
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: LAB_HEADER_COLORS[c - 1] }
+      };
+      cell.border = thinBorder;
+      cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      cell.font = {
+        name: '맑은 고딕',
+        size: 14,
+        bold: false,
+        color: { argb: c === 18 ? 'FF000000' : 'FFFFFFFF' }
+      };
     }
-  });
-  outR++; // outR = 4 (Row 5 in Excel - 데이터 시작)
 
-  const startDataRow = outR + 1; // 1-based (5)
+    // 6. Row 5 ~ N: 데이터 행 적재
+    let curRowIdx = 5;
+    LabState.sspcRows.forEach(r => {
+      const row = ws.getRow(curRowIdx);
+      row.height = 22.5;
 
-  // 데이터 행 적재
-  LabState.sspcRows.forEach(r => {
-    for (let c = 0; c < 18; c++) {
-      const val = r[c];
-      if (val !== null && val !== undefined && val !== '') {
-        const cellRef = XLSX.utils.encode_cell({ r: outR, c });
-        if (c === 1 && val instanceof Date) {
-          ws[cellRef] = { t: 'd', v: val, z: 'yyyy-mm-dd' };
-        } else if (typeof val === 'number') {
-          if (c === 11) {
-            ws[cellRef] = { t: 'n', v: val, z: '#,##0' };
-          } else if (c === 12) {
-            ws[cellRef] = { t: 'n', v: val, z: '0.00' };
-          } else if (c === 13) {
-            ws[cellRef] = { t: 'n', v: val, z: '$#,##0.00' };
-          } else {
-            ws[cellRef] = { t: 'n', v: val };
+      for (let c = 1; c <= 18; c++) {
+        const cell = row.getCell(c);
+        let val = r[c - 1];
+
+        cell.border = thinBorder;
+        cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: c === 16 };
+        cell.font = {
+          name: '맑은 고딕',
+          size: 14,
+          bold: false,
+          color: { argb: c === 14 ? 'FFFF0000' : 'FF000000' }
+        };
+
+        if (val !== null && val !== undefined && val !== '') {
+          // Col 2 (B): Ship Date -> m/d/yy
+          if (c === 2) {
+            if (val instanceof Date) {
+              cell.value = new Date(Date.UTC(val.getFullYear(), val.getMonth(), val.getDate()));
+              cell.numFmt = 'm/d/yy';
+            } else if (typeof val === 'number' && val > 20000 && val < 60000) {
+              const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+              cell.value = new Date(excelEpoch.getTime() + val * 86400000);
+              cell.numFmt = 'm/d/yy';
+            } else if (typeof val === 'string' && val.trim()) {
+              const dObj = new Date(val);
+              if (!isNaN(dObj.getTime())) {
+                cell.value = new Date(Date.UTC(dObj.getFullYear(), dObj.getMonth(), dObj.getDate()));
+                cell.numFmt = 'm/d/yy';
+              } else {
+                cell.value = val;
+              }
+            } else {
+              cell.value = val;
+            }
+          }
+          // Col 12 (L): Q'TY -> #,##0
+          else if (c === 12) {
+            const num = Number(val);
+            cell.value = isNaN(num) ? val : num;
+            cell.numFmt = '#,##0';
+          }
+          // Col 13 (M): U/P -> #,##0.0000
+          else if (c === 13) {
+            const num = Number(val);
+            cell.value = isNaN(num) ? val : num;
+            cell.numFmt = '#,##0.0000';
+          }
+          // Col 14 (N): AMOUNT -> 통화 서식 & 빨간색 폰트
+          else if (c === 14) {
+            let num = typeof val === 'number' ? val : parseFloat(String(val).replace(/[^0-9.-]/g, ''));
+            cell.value = isNaN(num) ? val : num;
+            cell.numFmt = '_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* "-"??_ ;_-@_ ';
+          }
+          else {
+            cell.value = val;
           }
         } else {
-          ws[cellRef] = { t: 's', v: String(val) };
+          cell.value = null;
         }
       }
+      curRowIdx++;
+    });
+
+    const lastDataRow = curRowIdx - 1;
+
+    // 7. 합계 행 (Total Row)
+    if (LabState.sspcRows.length > 0) {
+      const totalRowIdx = curRowIdx;
+      const totalRow = ws.getRow(totalRowIdx);
+      totalRow.height = 21.0;
+
+      // Col L (12): 'Total'
+      const c12 = totalRow.getCell(12);
+      c12.value = 'Total';
+      c12.font = { name: '맑은 고딕', size: 14, bold: false, color: { argb: 'FF000000' } };
+      c12.alignment = { horizontal: 'center', vertical: 'middle' };
+      c12.border = {
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } }
+      };
+
+      // Col M (13): 빈 셀
+      const c13 = totalRow.getCell(13);
+      c13.value = null;
+      c13.border = {
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } }
+      };
+
+      // Col N (14): =SUM(N5:N{lastDataRow})
+      const c14 = totalRow.getCell(14);
+      c14.value = { formula: `SUM(N5:N${lastDataRow})` };
+      c14.font = { name: '맑은 고딕', size: 14, bold: false, color: { argb: 'FFFF0000' } };
+      c14.alignment = { horizontal: 'center', vertical: 'middle' };
+      c14.numFmt = '_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* "-"??_ ;_-@_ ';
+      c14.border = {
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
+      };
     }
-    outR++;
-  });
 
-  const lastDataRow = outR; // 1-based
+    // 8. 브라우저 파일 다운로드 트리거
+    const buffer = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 
-  // 합계 행 (Total Row)
-  ws[XLSX.utils.encode_cell({ r: outR, c: 11 })] = { t: 's', v: 'Total' };
-  ws[XLSX.utils.encode_cell({ r: outR, c: 13 })] = {
-    t: 'n',
-    f: `SUM(N${startDataRow}:N${lastDataRow})`,
-    z: '$#,##0.00'
-  };
-
-  // 범위 및 너비 지정
-  ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: outR, c: 17 } });
-  ws['!cols'] = LAB_COLUMN_WIDTHS;
-
-  // 워크북 생성 및 다운로드
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1 (2)');
-
-  XLSX.writeFile(wb, fileName);
-  showToast(`'${fileName}' 다운로드가 완료되었습니다.`);
+    showToast(`'${fileName}' 다운로드가 완료되었습니다.`);
+  } catch (err) {
+    console.error('[SSPC Excel Gen Error]', err);
+    alert('엑셀 파일 생성 중 오류가 발생했습니다:\n' + err.message);
+  }
 }
 
 function resetSspcLab() {
