@@ -6520,6 +6520,14 @@ async function fetchRemoteArchive(silent = true) {
   return false;
 }
 
+// Global scope window exports for inline HTML event handlers
+window.openArchiveDetail = openArchiveDetail;
+window.openArchiveEditModal = openArchiveEditModal;
+window.openArchiveDeleteModal = openArchiveDeleteModal;
+window.handleArchiveDownloadClick = handleArchiveDownloadClick;
+window.renderArchivePage = renderArchivePage;
+
+
 
 
 

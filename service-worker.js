@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kostat-pwa-v1.0.161'; // {AUTO_REPLACE_CACHE_VERSION}
+const CACHE_NAME = 'kostat-pwa-v1.0.162'; // {AUTO_REPLACE_CACHE_VERSION}
 
 const ASSETS_TO_CACHE = [
   './',
@@ -17,7 +17,8 @@ const ASSETS_TO_CACHE = [
   './data/drawings_data.js',
   './data/knowledge_data.js',
   './data/faq_db.js',
-  './data/feedback_board.js'
+  './data/feedback_board.js',
+  './data/archive_data.js'
 ];
 
 // 1. Install Event: 초기 캐싱 및 즉시 skipWaiting
