@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.165" />
+  <link rel="stylesheet" href="app.css?v=1.0.166" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,7 +116,7 @@
           </div>
           <div class="viewer-tools">
             <input type="text" id="shipPlanCustomerInput" class="compact-search" placeholder="고객사 검색..." style="width: 130px;" />
-            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명/PO/기타..." />
+            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명/PO/인보이스..." />
             <select id="shipPlanPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
               <option value="50">50개씩</option>
               <option value="100">100개씩</option>
@@ -132,11 +132,11 @@
           <table class="modern-table" id="shipPlanTable">
             <thead>
               <tr>
-                <th>출고일</th><th>선적일</th><th>고객사</th><th>PO번호</th><th>부품번호</th><th>수량</th><th>잔여</th>
+                <th>출고일</th><th>선적일</th><th>고객사</th><th>PO번호</th><th>부품번호</th><th>수량</th><th>잔여</th><th>Invoice No</th>
               </tr>
             </thead>
             <tbody id="shipPlanTbody">
-              <tr><td colspan="7" class="text-center py-4">출하 계획 데이터를 불러오는 중입니다...</td></tr>
+              <tr><td colspan="8" class="text-center py-4">출하 계획 데이터를 불러오는 중입니다...</td></tr>
             </tbody>
           </table>
         </div>
@@ -639,7 +639,7 @@
         <div class="setting-item">
           <label>앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.165</strong></span>
+            <span>현재 버전: <strong id="currentAppVersion">v1.0.166</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -1164,20 +1164,20 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.165"></script>
-  <script src="data/shipplan_data.js?v=1.0.165"></script>
-  <script src="data/quotations_data.js?v=1.0.165"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.165"></script>
-  <script src="data/drawings_data.js?v=1.0.165"></script>
-  <script src="data/knowledge_data.js?v=1.0.165"></script>
-  <script src="data/faq_db.js?v=1.0.165"></script>
-  <script src="data/feedback_board.js?v=1.0.165"></script>
-  <script src="data/archive_data.js?v=1.0.165"></script>
+  <script src="data/skyworks_data.js?v=1.0.166"></script>
+  <script src="data/shipplan_data.js?v=1.0.166"></script>
+  <script src="data/quotations_data.js?v=1.0.166"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.166"></script>
+  <script src="data/drawings_data.js?v=1.0.166"></script>
+  <script src="data/knowledge_data.js?v=1.0.166"></script>
+  <script src="data/faq_db.js?v=1.0.166"></script>
+  <script src="data/feedback_board.js?v=1.0.166"></script>
+  <script src="data/archive_data.js?v=1.0.166"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.165"></script>
-  <script src="exceljs.min.js?v=1.0.165"></script>
-  <script src="updater.js?v=1.0.165"></script>
-  <script src="app.js?v=1.0.165"></script>
+  <script src="xlsx.full.min.js?v=1.0.166"></script>
+  <script src="exceljs.min.js?v=1.0.166"></script>
+  <script src="updater.js?v=1.0.166"></script>
+  <script src="app.js?v=1.0.166"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

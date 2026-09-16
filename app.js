@@ -1390,16 +1390,17 @@ function filterShipPlanTable() {
       }
     }
 
-    // 2. 부품명/PO/기타 검색어 필터
+    // 2. 부품명/PO/인보이스/기타 검색어 필터
     if (!partSearch) return true;
 
     const k = (r.k || '').toLowerCase();
     const p = (r.p || '').toLowerCase();
     const f = (r.f || '').toLowerCase();
+    const inv = (r.i || '').toLowerCase();
 
-    if (k.includes(partSearch) || p.includes(partSearch) || f.includes(partSearch)) return true;
+    if (k.includes(partSearch) || p.includes(partSearch) || f.includes(partSearch) || inv.includes(partSearch)) return true;
     if (partNorm.length >= 2) {
-      if (k.replace(/[-_\s]/g, '').includes(partNorm) || p.replace(/[-_\s]/g, '').includes(partNorm)) return true;
+      if (k.replace(/[-_\s]/g, '').includes(partNorm) || p.replace(/[-_\s]/g, '').includes(partNorm) || inv.replace(/[-_\s]/g, '').includes(partNorm)) return true;
     }
     return false;
   });
@@ -1428,7 +1429,7 @@ function renderShipPlanPage(page) {
   if (!DOM.shipPlanTbody) return;
 
   if (totalRows === 0) {
-    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">일치하는 출하 계획 데이터가 없습니다.</td></tr>`;
+    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">일치하는 출하 계획 데이터가 없습니다.</td></tr>`;
     if (DOM.shipPlanPageControls) DOM.shipPlanPageControls.innerHTML = '';
     return;
   }
@@ -1446,6 +1447,7 @@ function renderShipPlanPage(page) {
       <td style="color:#38bdf8;">${escapeHtml(r.k || '-')}</td>
       <td style="text-align:right;">${r.q ? Number(r.q).toLocaleString() : '0'}</td>
       <td style="text-align:right;color:#34d399;font-weight:600;">${r.b ? Number(r.b).toLocaleString() : '0'}</td>
+      <td style="color:#a78bfa;font-family:monospace;font-weight:500;">${escapeHtml(r.i || '-')}</td>
     </tr>
   `).join('');
 
@@ -3321,6 +3323,7 @@ window.copyCellText = copyCellText;
         const candShip = ['shipdate', 'ship_date', '선적일', '선적예정일'];
         const candQty = ['poqty', 'po_qty', '수량', '발주수량'];
         const candBal = ['balance', '잔여수량', '잔여'];
+        const candInv = ['invoiceno', 'invoicenumber', 'invoice_no', 'invoice', '송장번호', '인보이스', '송장'];
         const candFwd = ['fowarder', 'forwarder', '포워더', '운송사'];
 
         const shipRows = [];
@@ -3337,12 +3340,13 @@ window.copyCellText = copyCellText;
           const ship = findVal(r, candShip);
           const qty = parseInt(findVal(r, candQty), 10) || 0;
           const bal = parseInt(findVal(r, candBal), 10) || 0;
+          const inv = findVal(r, candInv);
           const fwd = findVal(r, candFwd);
 
           if (!cust && !pono && !pn) continue; // 빈 행 무시
 
           const compactShipItem = {
-            c: cust, p: pono, k: pn, e: ex, s: ship, q: qty, b: bal, f: fwd
+            c: cust, p: pono, k: pn, e: ex, s: ship, q: qty, b: bal, i: inv, f: fwd
           };
           shipRows.push(compactShipItem);
 
