@@ -30,7 +30,7 @@
       </div>
       <div class="connection-pill" id="connStatusPill">
         <span class="status-dot online" id="statusDot"></span>
-        <span class="status-text" id="statusText">2026년 9월 3일 자 데이터 적용 중</span>
+        <span class="status-text" id="statusText">2026년 9월 15일 자 데이터 적용 중</span>
       </div>
     </div>
     
@@ -103,6 +103,7 @@
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
         <button class="viewer-tab-btn" data-target="viewFeedback">기능 요청</button>
         <button class="viewer-tab-btn" data-target="viewFaq">FAQ 지식</button>
+        <button class="viewer-tab-btn" data-target="viewLab">실험실</button>
       </div>
 
       <!-- 1. 출하 계획 뷰 (기본 활성) -->
@@ -414,6 +415,133 @@
           <div class="pagination-info" id="faqPageInfo">0 / 0 페이지 (총 0건)</div>
           <div class="pagination-controls" id="faqPageControls">
             <!-- 동적 페이지 번호 버튼 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. 실험실 (Lab) 뷰 -->
+      <div class="viewer-content-card" id="viewLab" style="display:none;">
+        <div class="viewer-card-header">
+          <div class="viewer-title-group">
+            <h3>실험실 (Lab)</h3>
+            <span class="count-badge" id="labStatusBadge">자동화 도구</span>
+          </div>
+          <div class="viewer-tools">
+            <span style="font-size:12px; color:var(--text-secondary);">사내 업무 자동화 및 실험 기능</span>
+          </div>
+        </div>
+        
+        <div class="lab-container" id="labContainer">
+          <!-- 카드 1: SSPC 매출 자료 송부 - 강도균 수석님 -->
+          <div class="lab-card">
+            <div class="lab-card-header">
+              <div class="lab-card-title-box">
+                <span class="lab-badge primary">자동화</span>
+                <h4>SSPC 매출 자료 송부 - 강도균 수석님</h4>
+              </div>
+              <span class="lab-sub-badge">주간 보고 양식 변환기</span>
+            </div>
+            
+            <div class="lab-card-body">
+              <p class="lab-desc">
+                Delivery List 엑셀 파일(.xls, .xlsx)을 첨부하면 당월 시트를 자동 감지하여 CUSTOMER가 <strong>SSPC</strong>인 주문 내역을 필터링하고, 공식 보고 규격 엑셀 파일(<code>SSPC 매출 YYMMDD.xlsx</code>)로 즉시 변환 및 생성합니다.
+              </p>
+              
+              <!-- 파일 드롭존 / 업로드 영역 -->
+              <div class="lab-dropzone" id="sspcDropzone">
+                <input type="file" id="sspcFileInput" accept=".xls,.xlsx" style="display:none;" />
+                <div class="lab-dropzone-content" id="sspcDropzoneContent">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="lab-upload-icon">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <div class="lab-dropzone-text">
+                    <strong style="color:var(--text-primary); font-size:14px;">Delivery List 엑셀 파일을 여기에 끌어다 놓거나 클릭하여 선택</strong>
+                    <span style="color:var(--text-secondary); font-size:12px; margin-top:4px;">지원 파일: .xls, .xlsx (예: Delivery List Kostat (2026) AS OF SEPT 15, 2026.xls)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 파일 처리 결과 대시보드 (파일 로드 시 표시) -->
+              <div class="lab-result-panel" id="sspcResultPanel" style="display:none;">
+                <div class="lab-file-info-bar">
+                  <div class="lab-file-meta">
+                    <span class="lab-file-name" id="sspcFileName">-</span>
+                    <span class="lab-file-size" id="sspcFileSize">-</span>
+                  </div>
+                  <div class="lab-sheet-selector-box">
+                    <label for="sspcSheetSelect" style="font-size:12px; font-weight:600; color:var(--text-secondary);">대상 시트:</label>
+                    <select id="sspcSheetSelect" class="compact-select" style="min-width:140px; font-weight:600;"></select>
+                  </div>
+                </div>
+
+                <!-- 통계 지표 카드 그리드 -->
+                <div class="lab-metrics-grid">
+                  <div class="lab-metric-card">
+                    <div class="lab-metric-label">SSPC 오더 건수</div>
+                    <div class="lab-metric-val" id="sspcMetricCount">0건</div>
+                  </div>
+                  <div class="lab-metric-card">
+                    <div class="lab-metric-label">총 출하 수량 (Q'TY)</div>
+                    <div class="lab-metric-val" id="sspcMetricQty">0</div>
+                  </div>
+                  <div class="lab-metric-card">
+                    <div class="lab-metric-label">총 매출 합계 (AMOUNT)</div>
+                    <div class="lab-metric-val highlight" id="sspcMetricAmount">$0.00</div>
+                  </div>
+                </div>
+
+                <!-- 데이터 미리보기 테이블 -->
+                <div class="lab-preview-wrapper">
+                  <div class="lab-preview-header">
+                    <span style="font-size:12px; font-weight:600; color:var(--text-primary);">데이터 미리보기</span>
+                    <span style="font-size:11px; color:var(--text-secondary);">공식 18개 열 매핑 및 합계 수식(=SUM) 적용 완료</span>
+                  </div>
+                  <div class="table-responsive-wrapper" style="max-height:260px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+                    <table class="modern-table" id="sspcPreviewTable">
+                      <thead>
+                        <tr>
+                          <th>ITEM</th><th>Ship Date</th><th>고객사</th><th>지역</th><th>SHIP TO</th><th>CTR</th>
+                          <th>부품번호</th><th>Package/Description</th><th>CUSTOMER P/N</th><th>PO NO</th><th>수량</th>
+                          <th>단가</th><th>금액</th><th>INV NO</th>
+                        </tr>
+                      </thead>
+                      <tbody id="sspcPreviewTbody">
+                        <!-- 동적 렌더링 -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 하단 액션 버튼 -->
+                <div class="lab-action-row">
+                  <button class="action-btn-sm primary" id="btnDownloadSspcExcel" style="font-weight:600; padding:8px 18px; font-size:13px;">
+                    SSPC 매출 엑셀 파일 다운로드 (.xlsx)
+                  </button>
+                  <button class="action-btn-sm secondary" id="btnResetSspc">다른 파일 선택</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 카드 2: 주간보고서 자동화 -->
+          <div class="lab-card coming-soon-card">
+            <div class="lab-card-header">
+              <div class="lab-card-title-box">
+                <span class="lab-badge secondary">개발 예정</span>
+                <h4>주간보고서 자동화</h4>
+              </div>
+              <span class="lab-sub-badge pending">준비 중</span>
+            </div>
+            <div class="lab-card-body">
+              <p class="lab-desc" style="margin-bottom:8px;">
+                주간 영업 및 출하 실적, 수주 현황을 집계하여 사내 보고 양식에 맞춰 주간보고서를 원클릭으로 자동 생성하는 기능입니다.
+              </p>
+              <div class="lab-pending-notice">
+                <span style="font-weight:600;">안내:</span> 본 기능은 사용자의 추가 업무 지시 및 세부 보고 양식 규격에 맞춰 후속 탑재될 예정입니다.
+              </div>
+            </div>
           </div>
         </div>
       </div>

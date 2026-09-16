@@ -61,7 +61,7 @@ const AppState = {
   isSyncing: false,
   lastSyncTime: null,
   activeTab: 'shipplan',
-  dataDate: '2026년 9월 4일',
+  dataDate: '2026년 9월 15일',
   currentQuotNo: null
 };
 
@@ -126,7 +126,26 @@ function formatKoreanDate(dateStr) {
   if (AppState && AppState.dataDate && !AppState.dataDate.includes('0월') && !AppState.dataDate.includes(' 0일')) {
     return AppState.dataDate;
   }
-  return '2026년 9월 4일';
+  return '2026년 9월 15일';
+}
+
+function detectLatestDataDateFromShipPlan() {
+  const rows = AppState.shipPlanData || window.KOSTAT_SHIPPLAN_DATA;
+  if (!rows || rows.length === 0) return null;
+  const limit = Math.min(rows.length, 1500);
+  const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  let maxDate = '';
+  for (let i = 0; i < limit; i++) {
+    const r = rows[i];
+    const d1 = String(r.e || r.exfactorydate || '').replace(/[^0-9]/g, '').slice(0, 8);
+    const d2 = String(r.s || r.shipdate || '').replace(/[^0-9]/g, '').slice(0, 8);
+    if (d1 && d1.length === 8 && d1 <= nowStr && d1 > maxDate) maxDate = d1;
+    if (d2 && d2.length === 8 && d2 <= nowStr && d2 > maxDate) maxDate = d2;
+  }
+  if (maxDate && maxDate.length === 8) {
+    return `${maxDate.slice(0, 4)}-${maxDate.slice(4, 6)}-${maxDate.slice(6, 8)}`;
+  }
+  return null;
 }
 
 function getDataDateStatusText() {
@@ -364,7 +383,22 @@ const DOM = {
   faqLightboxBody: document.getElementById('faqLightboxBody'),
   faqLightboxDownloadBtn: document.getElementById('faqLightboxDownloadBtn'),
   btnCloseFaqLightbox: document.getElementById('btnCloseFaqLightbox'),
-  btnCloseFaqLightbox2: document.getElementById('btnCloseFaqLightbox2')
+  btnCloseFaqLightbox2: document.getElementById('btnCloseFaqLightbox2'),
+
+  // 실험실 (Lab) DOM
+  viewLab: document.getElementById('viewLab'),
+  sspcDropzone: document.getElementById('sspcDropzone'),
+  sspcFileInput: document.getElementById('sspcFileInput'),
+  sspcResultPanel: document.getElementById('sspcResultPanel'),
+  sspcFileName: document.getElementById('sspcFileName'),
+  sspcFileSize: document.getElementById('sspcFileSize'),
+  sspcSheetSelect: document.getElementById('sspcSheetSelect'),
+  sspcMetricCount: document.getElementById('sspcMetricCount'),
+  sspcMetricQty: document.getElementById('sspcMetricQty'),
+  sspcMetricAmount: document.getElementById('sspcMetricAmount'),
+  sspcPreviewTbody: document.getElementById('sspcPreviewTbody'),
+  btnDownloadSspcExcel: document.getElementById('btnDownloadSspcExcel'),
+  btnResetSspc: document.getElementById('btnResetSspc')
 };
 
 // --- IndexedDB 스토리지 헬퍼 (영구 고속 캐시) ---
@@ -476,11 +510,13 @@ async function loadInitialDatabases() {
     const cachedContract = await IDB.get('contract_reviews');
     if (cachedContract && cachedContract.length >= AppState.contractReviewsData.length) AppState.contractReviewsData = cachedContract;
 
-    // 0) localStorage에 저장된 실제 ERP 데이터 기준일자 즉시 로드 (새로고침 즉각 유지)
+    // 0) localStorage에 저장된 실제 ERP 데이터 기준일자 즉시 로드 (단, 구버전 2026-09-04 캐시는 최신 2026-09-15로 즉시 갱신)
     try {
       const savedDate = localStorage.getItem('KOSTAT_ERP_DATA_DATE');
-      if (savedDate) {
+      if (savedDate && savedDate !== '2026-09-04' && savedDate >= '2026-09-15') {
         AppState.dataDate = formatKoreanDate(savedDate);
+      } else {
+        AppState.dataDate = '2026년 9월 15일';
       }
     } catch (_) {}
 
@@ -498,6 +534,15 @@ async function loadInitialDatabases() {
         }
       }
     } catch (e) {}
+
+    // 로드된 shipplan 데이터가 있으면 최근 주문/출고일 동적 감지하여 보정
+    try {
+      const detectedDate = detectLatestDataDateFromShipPlan();
+      if (detectedDate && (!AppState.dataDate || AppState.dataDate.includes('9월 4일'))) {
+        AppState.dataDate = formatKoreanDate(detectedDate);
+        localStorage.setItem('KOSTAT_ERP_DATA_DATE', detectedDate);
+      }
+    } catch (_) {}
 
     // 기능 요청 게시판 데이터 로드 (IndexedDB + LocalStorage 영구 보존 & 가짜 예시 완전 배제)
     let localFeedback = null;
@@ -676,6 +721,7 @@ function updateStatus(isOnline, text) {
 function initUI() {
   initFeedbackBoardEvents();
   initFaqEvents();
+  initLabEvents();
 
   // 챗봇 입력
   DOM.chatForm.addEventListener('submit', (e) => {
@@ -2803,6 +2849,8 @@ function switchViewerCard(targetId) {
   } else if (targetId === 'viewFaq') {
     renderFaqList();
     syncLiveDatabases(false);
+  } else if (targetId === 'viewLab') {
+    // 실험실 뷰 활성화
   }
 }
 
@@ -5182,6 +5230,418 @@ function formatFileSize(bytes) {
   }
   return `${val.toFixed(1)} ${units[i]}`;
 }
+
+// ==========================================================================
+// 실험실 (Lab) 모듈 - SSPC 매출 자료 자동화 & 주간보고서
+// ==========================================================================
+const LabState = {
+  file: null,
+  fileName: '',
+  fileSize: '',
+  workbook: null,
+  detectedSheet: '',
+  currentSheet: '',
+  sspcRows: [],
+  totalQty: 0,
+  totalAmount: 0
+};
+
+// 18개 표준 열 매핑 (입력 시트 0-indexed 열 번호)
+const LAB_COLS_TO_KEEP = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 17, 18, 19, 21];
+
+const LAB_COLUMN_WIDTHS = [
+  { wch: 7.0 },  // A: ITEM
+  { wch: 12.0 }, // B: Ship Date
+  { wch: 14.0 }, // C: CUSTOMER
+  { wch: 7.5 },  // D: AREA
+  { wch: 11.0 }, // E: SHIP TO
+  { wch: 7.5 },  // F: CTR/AREA
+  { wch: 32.0 }, // G: KOSTAT P/N
+  { wch: 9.0 },  // H: COLOR/TEMP
+  { wch: 62.0 }, // I: Package / Discription
+  { wch: 11.0 }, // J: CUSTOMER P/N
+  { wch: 25.0 }, // K: PO NO
+  { wch: 23.0 }, // L: Q'TY
+  { wch: 12.0 }, // M: U/P
+  { wch: 17.5 }, // N: AMOUNT
+  { wch: 7.5 },  // O: DR NUMBER
+  { wch: 18.5 }, // P: INVOICE / LOCAL INV NO
+  { wch: 9.0 },  // Q: RELATED HQ INVOICE NO
+  { wch: 21.0 }  // R: OTHER REMARKS
+];
+
+function initLabEvents() {
+  if (!DOM.sspcDropzone || !DOM.sspcFileInput) return;
+
+  // 1. 드롭존 클릭 시 파일 선택창 열기
+  DOM.sspcDropzone.addEventListener('click', () => {
+    DOM.sspcFileInput.value = '';
+    DOM.sspcFileInput.click();
+  });
+
+  // 2. 드래그 앤 드롭
+  DOM.sspcDropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    DOM.sspcDropzone.classList.add('dragover');
+  });
+
+  DOM.sspcDropzone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    DOM.sspcDropzone.classList.remove('dragover');
+  });
+
+  DOM.sspcDropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    DOM.sspcDropzone.classList.remove('dragover');
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      handleSspcFile(files[0]);
+    }
+  });
+
+  // 3. 파일 입력 변경
+  DOM.sspcFileInput.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleSspcFile(file);
+    }
+  });
+
+  // 4. 시트 변경 이벤트
+  if (DOM.sspcSheetSelect) {
+    DOM.sspcSheetSelect.addEventListener('change', () => {
+      const selectedSheet = DOM.sspcSheetSelect.value;
+      if (selectedSheet && LabState.workbook) {
+        processSspcSheet(selectedSheet);
+      }
+    });
+  }
+
+  // 5. 다운로드 버튼
+  if (DOM.btnDownloadSspcExcel) {
+    DOM.btnDownloadSspcExcel.addEventListener('click', generateAndDownloadSspcExcel);
+  }
+
+  // 6. 초기화 / 다른 파일 선택 버튼
+  if (DOM.btnResetSspc) {
+    DOM.btnResetSspc.addEventListener('click', resetSspcLab);
+  }
+}
+
+function handleSspcFile(file) {
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext !== 'xls' && ext !== 'xlsx') {
+    alert('지원되지 않는 파일 형식입니다. .xls 또는 .xlsx 엑셀 파일을 선택해 주세요.');
+    return;
+  }
+
+  if (typeof XLSX === 'undefined') {
+    alert('엑셀 처리 라이브러리(SheetJS)를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+    return;
+  }
+
+  LabState.file = file;
+  LabState.fileName = file.name;
+  LabState.fileSize = formatFileSize(file.size);
+
+  if (DOM.sspcFileName) DOM.sspcFileName.textContent = file.name;
+  if (DOM.sspcFileSize) DOM.sspcFileSize.textContent = LabState.fileSize;
+
+  showToast('엑셀 파일을 분석하고 있습니다...');
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+      LabState.workbook = workbook;
+
+      if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+        throw new Error('워크북 내에 시트가 존재하지 않습니다.');
+      }
+
+      // 대상 시트 자동 감지 (당월 시트: 예 'SEPT 2026')
+      const targetSheet = autoDetectDeliverySheet(workbook.SheetNames);
+      LabState.detectedSheet = targetSheet;
+
+      // 시트 선택 셀렉트 박스 채우기
+      if (DOM.sspcSheetSelect) {
+        DOM.sspcSheetSelect.innerHTML = '';
+        workbook.SheetNames.forEach(sname => {
+          const opt = document.createElement('option');
+          opt.value = sname;
+          opt.textContent = sname + (sname === targetSheet ? ' (당월 감지)' : '');
+          if (sname === targetSheet) opt.selected = true;
+          DOM.sspcSheetSelect.appendChild(opt);
+        });
+      }
+
+      processSspcSheet(targetSheet);
+      showToast(`'${targetSheet}' 시트에서 SSPC 주문을 성공적으로 추출했습니다.`);
+    } catch (err) {
+      console.error('[SSPC Parse Error]', err);
+      alert('엑셀 파일 파싱 중 오류가 발생했습니다:\n' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function autoDetectDeliverySheet(sheetNames) {
+  const now = new Date();
+  const yearStr = String(now.getFullYear());
+  const monthIdx = now.getMonth(); // 0-based
+  const monthMap = {
+    0: ['JAN'], 1: ['FEB'], 2: ['MAR'], 3: ['APR'],
+    4: ['MAY'], 5: ['JUN', 'JUNE'], 6: ['JUL', 'JULY'],
+    7: ['AUG'], 8: ['SEP', 'SEPT'], 9: ['OCT'],
+    10: ['NOV'], 11: ['DEC']
+  };
+  const tokens = monthMap[monthIdx] || [];
+
+  // 1순위: 연도와 월 토큰이 모두 포함된 시트 (예: SEPT 2026)
+  for (const s of sheetNames) {
+    const sUp = s.toUpperCase();
+    if (sUp.includes(yearStr) && tokens.some(t => sUp.includes(t))) {
+      return s;
+    }
+  }
+
+  // 2순위: 월 토큰만 포함된 시트
+  for (let i = sheetNames.length - 1; i >= 0; i--) {
+    const sUp = sheetNames[i].toUpperCase();
+    if (tokens.some(t => sUp.includes(t))) {
+      return sheetNames[i];
+    }
+  }
+
+  // 3순위: 워크북의 마지막 시트
+  return sheetNames[sheetNames.length - 1];
+}
+
+function processSspcSheet(sheetName) {
+  if (!LabState.workbook) return;
+  LabState.currentSheet = sheetName;
+  const ws = LabState.workbook.Sheets[sheetName];
+  if (!ws) return;
+
+  const sspcRows = [];
+  let totalQty = 0;
+  let totalAmount = 0;
+
+  // Excel 행 스캔 (0-indexed: row 4부터 데이터)
+  const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:V200');
+  const maxR = Math.min(range.e.r, 2000);
+
+  for (let r = 4; r <= maxR; r++) {
+    // Col C (index 2) - CUSTOMER NAME
+    const custCell = ws[XLSX.utils.encode_cell({ r, c: 2 })];
+    const custVal = custCell && custCell.v ? String(custCell.v).trim().toUpperCase() : '';
+    if (custVal.includes('SSPC')) {
+      const rowItem = {};
+      LAB_COLS_TO_KEEP.forEach((inC, outIdx) => {
+        const cell = ws[XLSX.utils.encode_cell({ r, c: inC })];
+        rowItem[outIdx] = cell ? cell.v : null;
+      });
+      sspcRows.push(rowItem);
+
+      // 수량 (Col L, outIdx 11)
+      const qtyVal = Number(rowItem[11]) || 0;
+      totalQty += qtyVal;
+
+      // 금액 (Col N, outIdx 13)
+      let amtVal = 0;
+      if (typeof rowItem[13] === 'number') {
+        amtVal = rowItem[13];
+      } else if (rowItem[13]) {
+        amtVal = parseFloat(String(rowItem[13]).replace(/[^0-9.-]/g, '')) || 0;
+      }
+      totalAmount += amtVal;
+    }
+  }
+
+  LabState.sspcRows = sspcRows;
+  LabState.totalQty = totalQty;
+  LabState.totalAmount = totalAmount;
+
+  // 통계 지표 업데이트
+  if (DOM.sspcMetricCount) DOM.sspcMetricCount.textContent = `${sspcRows.length.toLocaleString()}건`;
+  if (DOM.sspcMetricQty) DOM.sspcMetricQty.textContent = totalQty.toLocaleString();
+  if (DOM.sspcMetricAmount) {
+    DOM.sspcMetricAmount.textContent = `$${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  // 테이블 미리보기 렌더링
+  renderSspcPreviewTable(sspcRows);
+
+  // 화면 전환: 드롭존 숨기고 결과 패널 표시
+  if (DOM.sspcDropzone) DOM.sspcDropzone.style.display = 'none';
+  if (DOM.sspcResultPanel) DOM.sspcResultPanel.style.display = 'flex';
+}
+
+function renderSspcPreviewTable(rows) {
+  if (!DOM.sspcPreviewTbody) return;
+  DOM.sspcPreviewTbody.innerHTML = '';
+
+  if (!rows || rows.length === 0) {
+    DOM.sspcPreviewTbody.innerHTML = `<tr><td colspan="14" class="text-center py-4" style="color:var(--text-secondary);">선택된 시트에 SSPC 고객사 주문이 존재하지 않습니다.</td></tr>`;
+    return;
+  }
+
+  const previewList = rows.slice(0, 20);
+  const frag = document.createDocumentFragment();
+
+  previewList.forEach(r => {
+    const tr = document.createElement('tr');
+    
+    // 날짜 포맷
+    let shipDateStr = '-';
+    if (r[1]) {
+      if (r[1] instanceof Date) {
+        shipDateStr = `${r[1].getFullYear()}-${String(r[1].getMonth() + 1).padStart(2, '0')}-${String(r[1].getDate()).padStart(2, '0')}`;
+      } else {
+        shipDateStr = String(r[1]);
+      }
+    }
+
+    const qty = Number(r[11]) || 0;
+    const up = Number(r[12]) || 0;
+    const amount = Number(r[13]) || 0;
+
+    tr.innerHTML = `
+      <td>${escapeHtml(r[0] || '')}</td>
+      <td style="white-space:nowrap;">${escapeHtml(shipDateStr)}</td>
+      <td><strong>${escapeHtml(r[2] || '')}</strong></td>
+      <td>${escapeHtml(r[3] || '')}</td>
+      <td>${escapeHtml(r[4] || '')}</td>
+      <td>${escapeHtml(r[5] || '')}</td>
+      <td><span class="part-no-highlight">${escapeHtml(r[6] || '')}</span></td>
+      <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r[8] || '')}">${escapeHtml(r[8] || '')}</td>
+      <td>${escapeHtml(r[9] || '')}</td>
+      <td>${escapeHtml(r[10] || '')}</td>
+      <td class="text-right">${qty.toLocaleString()}</td>
+      <td class="text-right">${up.toFixed(2)}</td>
+      <td class="text-right font-weight-bold" style="color:#10b981;">$${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td>${escapeHtml(r[15] || '')}</td>
+    `;
+    frag.appendChild(tr);
+  });
+
+  DOM.sspcPreviewTbody.appendChild(frag);
+}
+
+function generateAndDownloadSspcExcel() {
+  if (!LabState.sspcRows || LabState.sspcRows.length === 0) {
+    alert('다운로드할 SSPC 주문 데이터가 없습니다.');
+    return;
+  }
+
+  const dt = new Date();
+  const yy = String(dt.getFullYear()).slice(-2);
+  const mm = String(dt.getMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getDate()).padStart(2, '0');
+  const fileName = `SSPC 매출 ${yy}${mm}${dd}.xlsx`;
+
+  const ws = {};
+  let outR = 2; // Row 3 (0-indexed: 2)
+
+  // Row 3: 대분류 헤더
+  const r3Headers = {
+    1: 'Actual ',
+    2: 'CUSTOMER',
+    4: 'SHIP TO',
+    6: 'PO INFORMATION',
+    11: 'ACTUAL SHIPPED',
+    15: 'INVOICE'
+  };
+  for (let c = 0; c < 18; c++) {
+    if (r3Headers[c]) {
+      ws[XLSX.utils.encode_cell({ r: outR, c })] = { t: 's', v: r3Headers[c] };
+    }
+  }
+  outR++; // outR = 3 (Row 4 in Excel)
+
+  // Row 4: 서브 헤더
+  const r4Headers = [
+    'ITEM', 'Ship Date', 'NAME', 'AREA', 'NAME', 'CTR/\nAREA',
+    'KOSTAT \nP/N', 'COLOR/TEMP \nor Length', 'Package / Discription', 'CUSTOMER \nP/N', 'PO NO',
+    "Q'TY", 'U/P', 'AMOUNT', '', '', '', 'OTHER REMARKS'
+  ];
+  r4Headers.forEach((h, c) => {
+    if (h) {
+      ws[XLSX.utils.encode_cell({ r: outR, c })] = { t: 's', v: h };
+    }
+  });
+  outR++; // outR = 4 (Row 5 in Excel - 데이터 시작)
+
+  const startDataRow = outR + 1; // 1-based (5)
+
+  // 데이터 행 적재
+  LabState.sspcRows.forEach(r => {
+    for (let c = 0; c < 18; c++) {
+      const val = r[c];
+      if (val !== null && val !== undefined && val !== '') {
+        const cellRef = XLSX.utils.encode_cell({ r: outR, c });
+        if (c === 1 && val instanceof Date) {
+          ws[cellRef] = { t: 'd', v: val, z: 'yyyy-mm-dd' };
+        } else if (typeof val === 'number') {
+          if (c === 11) {
+            ws[cellRef] = { t: 'n', v: val, z: '#,##0' };
+          } else if (c === 12) {
+            ws[cellRef] = { t: 'n', v: val, z: '0.00' };
+          } else if (c === 13) {
+            ws[cellRef] = { t: 'n', v: val, z: '$#,##0.00' };
+          } else {
+            ws[cellRef] = { t: 'n', v: val };
+          }
+        } else {
+          ws[cellRef] = { t: 's', v: String(val) };
+        }
+      }
+    }
+    outR++;
+  });
+
+  const lastDataRow = outR; // 1-based
+
+  // 합계 행 (Total Row)
+  ws[XLSX.utils.encode_cell({ r: outR, c: 11 })] = { t: 's', v: 'Total' };
+  ws[XLSX.utils.encode_cell({ r: outR, c: 13 })] = {
+    t: 'n',
+    f: `SUM(N${startDataRow}:N${lastDataRow})`,
+    z: '$#,##0.00'
+  };
+
+  // 범위 및 너비 지정
+  ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: outR, c: 17 } });
+  ws['!cols'] = LAB_COLUMN_WIDTHS;
+
+  // 워크북 생성 및 다운로드
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1 (2)');
+
+  XLSX.writeFile(wb, fileName);
+  showToast(`'${fileName}' 다운로드가 완료되었습니다.`);
+}
+
+function resetSspcLab() {
+  LabState.file = null;
+  LabState.fileName = '';
+  LabState.fileSize = '';
+  LabState.workbook = null;
+  LabState.sspcRows = [];
+  LabState.totalQty = 0;
+  LabState.totalAmount = 0;
+
+  if (DOM.sspcFileInput) DOM.sspcFileInput.value = '';
+  if (DOM.sspcDropzone) DOM.sspcDropzone.style.display = 'block';
+  if (DOM.sspcResultPanel) DOM.sspcResultPanel.style.display = 'none';
+  if (DOM.sspcPreviewTbody) DOM.sspcPreviewTbody.innerHTML = '';
+}
+
 
 
 
