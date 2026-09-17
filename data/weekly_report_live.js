@@ -1,8 +1,8 @@
 window.KOSTAT_WEEKLY_REPORT_LIVE = {
   "title": "2026년 9월 3주차 (0914-0918) 해외영업부 주간보고서",
   "week_label": "9월 3주차 (0914-0918)",
-  "last_updated_at": "오전 11:15:09",
-  "last_updated_by": "김완태 사원",
+  "last_updated_at": "오전 11:30:25",
+  "last_updated_by": "한준희 책임",
   "kpi": {
     "target": 2404602,
     "current": 640579.34,
@@ -23,8 +23,8 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
           "site": "Skyworks (미국/싱가폴)",
           "target": 350000,
           "current": 109724,
-          "additional": 340275.45,
-          "expected": 449999.45,
+          "additional": 0,
+          "expected": 109724,
           "note": "NPI 34종 완료 후 SG 검토"
         }
       ],
