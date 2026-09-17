@@ -6840,24 +6840,59 @@ window.renderArchivePage = renderArchivePage;
 // =====================================================
 function switchLabSubTab(tabId, btn) {
   document.querySelectorAll('.lab-sub-panel').forEach(p => p.style.display = 'none');
-  document.querySelectorAll('.lab-sub-tab-btn').forEach(b => {
-    b.style.background = 'var(--bg-card)';
+  document.querySelectorAll('.lab-main-tab-btn, .lab-sub-tab-btn').forEach(b => {
+    b.style.background = 'var(--bg-card-sub)';
     b.style.color = 'var(--text-secondary)';
+    b.style.borderColor = 'var(--border-color)';
+    b.style.fontWeight = '600';
     b.classList.remove('active');
   });
   const panel = document.getElementById(tabId);
   if (panel) panel.style.display = '';
   if (btn) {
-    btn.style.background = 'var(--primary)';
-    btn.style.color = '#fff';
+    btn.style.background = '#2563eb';
+    btn.style.color = '#ffffff';
+    btn.style.borderColor = '#2563eb';
+    btn.style.fontWeight = '700';
     btn.classList.add('active');
+  }
+  const badge = document.getElementById('labStatusBadge');
+  if (badge) {
+    if (tabId === 'labSubTools') badge.textContent = '업무 자동화 도구';
+    else if (tabId === 'labSubGimpo') badge.textContent = '김포공장 Tray 재고';
+    else if (tabId === 'labSubPH') badge.textContent = '필리핀 지사 리포트';
   }
 }
 window.switchLabSubTab = switchLabSubTab;
 
-// 필리핀 내부 서브탭 전환
+// 업무 자동화 도구 내부 뷰 전환 (SSPC / 주간보고서)
+function switchLabToolView(viewId, btn) {
+  ['toolViewSspc', 'toolViewWeekly'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.querySelectorAll('.lab-tool-sub-btn').forEach(b => {
+    b.style.background = 'var(--bg-card)';
+    b.style.color = 'var(--text-secondary)';
+    b.style.borderColor = 'var(--border-color)';
+    b.style.fontWeight = '600';
+    b.classList.remove('active');
+  });
+  const target = document.getElementById(viewId);
+  if (target) target.style.display = '';
+  if (btn) {
+    btn.style.background = 'var(--bg-card-sub)';
+    btn.style.color = 'var(--primary)';
+    btn.style.borderColor = 'var(--primary)';
+    btn.style.fontWeight = '700';
+    btn.classList.add('active');
+  }
+}
+window.switchLabToolView = switchLabToolView;
+
+// 필리핀 내부 서브탭 전환 (RAG 스마트 브리핑 / 프로젝트 / 데일리 / 방문)
 function switchPhInnerTab(tabId, btn) {
-  ['phDailyView', 'phProjectView', 'phVisitView'].forEach(id => {
+  ['phRagView', 'phProjectView', 'phDailyView', 'phVisitView'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -6865,15 +6900,20 @@ function switchPhInnerTab(tabId, btn) {
     b.style.background = 'var(--bg-card)';
     b.style.color = 'var(--text-secondary)';
     b.style.borderColor = 'var(--border-color)';
+    b.style.fontWeight = '600';
     b.classList.remove('active');
   });
   const panel = document.getElementById(tabId);
   if (panel) panel.style.display = '';
   if (btn) {
-    btn.style.background = 'var(--primary)';
-    btn.style.color = '#fff';
-    btn.style.borderColor = 'var(--primary)';
+    btn.style.background = '#2563eb';
+    btn.style.color = '#ffffff';
+    btn.style.borderColor = '#2563eb';
+    btn.style.fontWeight = '700';
     btn.classList.add('active');
+  }
+  if (tabId === 'phRagView') {
+    renderPhRagResults();
   }
 }
 window.switchPhInnerTab = switchPhInnerTab;
@@ -7039,99 +7079,304 @@ function setupGimpoFileUpload() {
 
 
 // =====================================================
-// 필리핀 Daily Report 렌더링 엔진
+// 필리핀 Daily Report & 프로젝트 스마트 RAG 렌더링 엔진
 // =====================================================
 let _phData = null;
+let _phRagSearchTimer = null;
 
 function initPhDailyReport() {
   _phData = window.KOSTAT_PH_DAILY_REPORT || null;
   if (!_phData) {
-    document.getElementById('phReportInfo').textContent = '데이터 없음';
+    const info = document.getElementById('phReportInfo');
+    if (info) info.textContent = '데이터 없음';
     return;
   }
-  const s = _phData.summary;
-  document.getElementById('phReportInfo').textContent =
-    '출처: ' + (_phData.source_file || '') +
-    ' / Daily: ' + formatNum(s.daily_report_count) + '건' +
-    ' / 고객사: ' + formatNum(s.customer_count) + '개' +
-    ' / 프로젝트: ' + formatNum(s.total_projects) + '건';
+  const s = _phData.summary || {};
+  const info = document.getElementById('phReportInfo');
+  if (info) {
+    info.textContent =
+      '출처: ' + (_phData.source_file || '') +
+      ' / 일일보고: ' + formatNum(s.daily_report_count) + '건' +
+      ' / 고객사: ' + formatNum(s.customer_count) + '개' +
+      ' / 프로젝트: ' + formatNum(s.total_projects) + '건';
+  }
 
-  renderPhDaily();
   populatePhCustomerFilter();
+  renderPhRagResults();
   renderPhProjects();
+  renderPhDaily();
   renderPhVisits();
 }
 
-function renderPhDaily() {
-  const container = document.getElementById('phDailyList');
+function onPhRagSearchInput() {
+  if (_phRagSearchTimer) clearTimeout(_phRagSearchTimer);
+  _phRagSearchTimer = setTimeout(renderPhRagResults, 200);
+}
+window.onPhRagSearchInput = onPhRagSearchInput;
+
+function setPhRagChip(query) {
+  const input = document.getElementById('phRagSearchInput');
+  const custSel = document.getElementById('phRagCustomerFilter');
+  const statusSel = document.getElementById('phRagStatusFilter');
+
+  if (['Ongoing', 'Done', 'Closed', 'Dropped', '진행중'].includes(query)) {
+    if (statusSel) statusSel.value = (query === '진행중' ? 'Ongoing' : query);
+  } else if (['ATP', 'SSPC', 'TIPI', 'ATEC'].includes(query)) {
+    if (custSel) custSel.value = query;
+  } else {
+    if (input) input.value = query;
+  }
+  renderPhRagResults();
+}
+window.setPhRagChip = setPhRagChip;
+
+function togglePhRaw(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+}
+window.togglePhRaw = togglePhRaw;
+
+function populatePhCustomerFilter() {
+  if (!_phData || !_phData.projects) return;
+  const customers = Object.keys(_phData.projects).sort();
+  const selList = [
+    document.getElementById('phRagCustomerFilter'),
+    document.getElementById('phCustomerFilter')
+  ];
+
+  for (const sel of selList) {
+    if (!sel) continue;
+    const firstVal = sel.options[0] ? sel.options[0].textContent : '전체 고객사';
+    sel.innerHTML = '';
+    const optAll = document.createElement('option');
+    optAll.value = 'ALL';
+    optAll.textContent = firstVal;
+    sel.appendChild(optAll);
+
+    for (const c of customers) {
+      const opt = document.createElement('option');
+      opt.value = c;
+      const stats = (_phData.summary && _phData.summary.project_stats && _phData.summary.project_stats[c]) || {};
+      opt.textContent = c + ' (' + (stats.total || (_phData.projects[c] || []).length) + ')';
+      sel.appendChild(opt);
+    }
+  }
+}
+
+// -----------------------------------------------------
+// 1. RAG 스마트 종합 브리핑 및 요약본 검색 렌더링
+// -----------------------------------------------------
+function renderPhRagResults() {
+  const container = document.getElementById('phRagResultsList');
+  const briefCard = document.getElementById('phRagBriefContent');
+  const briefStats = document.getElementById('phRagBriefStats');
   if (!container || !_phData) return;
 
-  const reports = _phData.daily_reports || [];
-  const q = (document.getElementById('phDailySearchInput')?.value || '').trim().toLowerCase();
+  const q = (document.getElementById('phRagSearchInput')?.value || '').trim().toLowerCase();
+  const custFilter = document.getElementById('phRagCustomerFilter')?.value || 'ALL';
+  const statusFilter = document.getElementById('phRagStatusFilter')?.value || 'ALL';
+  const periodFilter = document.getElementById('phRagPeriodFilter')?.value || 'ALL';
 
-  let filtered = reports;
-  if (q) {
-    const terms = q.split(/\s+/);
-    filtered = reports.filter(r => {
-      const combined = r.date + ' ' + r.entries.map(e => e.customer + ' ' + e.detail + ' ' + e.pending + ' ' + e.remark).join(' ');
-      return terms.every(t => combined.toLowerCase().includes(t));
-    });
+  // 매칭 프로젝트 수집
+  let matchedProjects = [];
+  for (const [cust, plist] of Object.entries(_phData.projects || {})) {
+    if (custFilter !== 'ALL' && cust !== custFilter) continue;
+    for (const p of plist) {
+      if (statusFilter !== 'ALL' && p.status !== statusFilter) continue;
+      if (q) {
+        const textToSearch = (cust + ' ' + (p.topic || '') + ' ' + (p.summary_ko || '') + ' ' + (p.progress_ko || '') + ' ' + (p.progress || '') + ' ' + (p.status || '') + ' ' + (p.status_ko || '')).toLowerCase();
+        const terms = q.split(/\s+/);
+        if (!terms.every(t => textToSearch.includes(t))) continue;
+      }
+      matchedProjects.push({ ...p, _customer: cust });
+    }
   }
 
-  if (filtered.length === 0) {
-    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">검색 결과 없음</div>';
+  // 매칭 일일 보고 수집
+  let matchedDaily = [];
+  const now = new Date();
+  const dailyList = _phData.daily_reports || [];
+  for (const dr of dailyList) {
+    const dStr = dr.date;
+    if (periodFilter === '7d') {
+      const d = new Date(dStr);
+      if ((now - d) / (1000 * 3600 * 24) > 7) continue;
+    } else if (periodFilter === '30d') {
+      const d = new Date(dStr);
+      if ((now - d) / (1000 * 3600 * 24) > 30) continue;
+    } else if (periodFilter === '2026') {
+      if (!dStr.startsWith('2026')) continue;
+    } else if (periodFilter === '2025') {
+      if (!dStr.startsWith('2025')) continue;
+    }
+
+    const matchedEntries = [];
+    for (const e of dr.entries || []) {
+      if (custFilter !== 'ALL' && e.customer && e.customer !== custFilter && !e.customer.includes(custFilter)) continue;
+      if (q) {
+        const tSearch = (dr.date + ' ' + (e.customer || '') + ' ' + (e.detail || '') + ' ' + (e.summary_ko || '') + ' ' + (e.detail_ko || '') + ' ' + (e.pending || '') + ' ' + (e.remark || '')).toLowerCase();
+        const terms = q.split(/\s+/);
+        if (!terms.every(t => tSearch.includes(t))) continue;
+      }
+      matchedEntries.push(e);
+    }
+    if (matchedEntries.length > 0) {
+      matchedDaily.push({ ...dr, entries: matchedEntries });
+    }
+  }
+
+  // RAG AI 실시간 종합 브리핑 카드 동적 생성
+  const totalCount = matchedProjects.length + matchedDaily.length;
+  if (briefStats) {
+    briefStats.textContent = '프로젝트 ' + matchedProjects.length + '건 / 일일보고 ' + matchedDaily.length + '일치 매칭';
+  }
+
+  if (briefCard) {
+    if (custFilter !== 'ALL' && _phData.customer_briefs && _phData.customer_briefs[custFilter]) {
+      const cb = _phData.customer_briefs[custFilter];
+      briefCard.innerHTML = '<strong>' + escapeHtml(cb.customer) + ' 고객사 AI 브리핑:</strong> ' +
+        escapeHtml(cb.brief) +
+        '<div style="margin-top:6px; font-size:11px; color:var(--text-secondary);">' +
+        '진행중: <strong style="color:var(--primary);">' + cb.ongoing + '건</strong> | 완료: <strong style="color:var(--success);">' + cb.done + '건</strong> | 종결: ' + cb.closed + '건 | 드롭: ' + cb.dropped + '건' +
+        (cb.key_models && cb.key_models.length ? ' | 주요 모델: ' + cb.key_models.join(', ') : '') +
+        '</div>';
+    } else if (q) {
+      const ongoingCnt = matchedProjects.filter(p => p.status === 'Ongoing').length;
+      const droppedCnt = matchedProjects.filter(p => p.status === 'Dropped').length;
+      const doneCnt = matchedProjects.filter(p => p.status === 'Done' || p.status === 'Closed').length;
+      let topIssue = '';
+      if (matchedProjects.length > 0 && matchedProjects[0].summary_ko) {
+        topIssue = '대표 안건: ' + matchedProjects[0].summary_ko;
+      } else if (matchedDaily.length > 0 && matchedDaily[0].day_summary_ko) {
+        topIssue = '최근 안건: ' + matchedDaily[0].day_summary_ko;
+      }
+      briefCard.innerHTML = '<strong>키워드 [' + escapeHtml(q) + '] RAG 분석 브리핑:</strong> ' +
+        '총 ' + totalCount + '건 매칭 (프로젝트 ' + matchedProjects.length + '건 [진행 ' + ongoingCnt + '건, 완료/종결 ' + doneCnt + '건, 드롭 ' + droppedCnt + '건], 일일보고 ' + matchedDaily.length + '일치).' +
+        (topIssue ? '<div style="margin-top:4px; font-weight:600; color:var(--text-primary);">' + escapeHtml(topIssue) + '</div>' : '');
+    } else {
+      briefCard.innerHTML = '<strong>필리핀 지사 종합 현황 브리핑:</strong> ' +
+        '총 21개 고객사, 197개 프로젝트, 399일치 일일 업무 보고 수록. ' +
+        '<span style="color:var(--primary); font-weight:600;">상단 고객사 필터나 추천 칩을 클릭하시면 AI 요약 및 맞춤 브리핑이 실시간 제공됩니다.</span>';
+    }
+  }
+
+  // 결과 카드 렌더링 (요약본 중심: Summary-First)
+  if (totalCount === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:35px; color:var(--text-dim); font-size:12px;">조건에 일치하는 프로젝트 또는 업무 보고가 없습니다.</div>';
     return;
   }
 
-  // 최근 30일만 기본 표시
-  const display = filtered.slice(0, 30);
   let html = '';
-  for (const report of display) {
-    html += '<div style="margin-bottom:12px; border:1px solid var(--border-color); border-radius:10px; overflow:hidden;">';
-    html += '<div style="padding:10px 12px; background:var(--bg-card-sub); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">';
-    html += '<span style="font-weight:700; font-size:13px; color:var(--text-primary);">' + report.date + '</span>';
-    html += '<span style="font-size:10px; color:var(--text-dim);">' + report.entries.length + '건</span>';
+  let cardIdx = 0;
+
+  // 1. 프로젝트 요약 카드
+  for (const p of matchedProjects.slice(0, 40)) {
+    cardIdx++;
+    const rawId = 'rag_proj_raw_' + cardIdx;
+    const statusColor = p.status === 'Ongoing' ? '#2563eb' :
+                         p.status === 'Done' ? 'var(--success)' :
+                         p.status === 'Closed' ? 'var(--text-dim)' :
+                         p.status === 'Dropped' ? 'var(--danger)' : 'var(--text-secondary)';
+    const statusKr = p.status_ko || p.status;
+
+    html += '<div style="margin-bottom:10px; padding:12px; border:1px solid var(--border-color); border-radius:10px; background:var(--bg-card); border-left:4px solid ' + statusColor + '; box-shadow:0 1px 3px rgba(0,0,0,0.05);">';
+    
+    // 카드 상단 헤더
+    html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">';
+    html += '<div style="display:flex; gap:6px; align-items:center;">';
+    html += '<span style="font-size:10.5px; font-weight:700; color:#fff; background:var(--primary); padding:2px 7px; border-radius:4px;">' + escapeHtml(p._customer) + '</span>';
+    html += '<span style="font-size:10px; font-weight:600; color:' + statusColor + '; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; border:1px solid ' + statusColor + ';">' + escapeHtml(statusKr) + '</span>';
     html += '</div>';
-    for (const entry of report.entries) {
+    if (p.days) {
+      html += '<span style="font-size:10px; color:var(--warning); font-weight:600;">경과: ' + p.days + '일</span>';
+    }
+    html += '</div>';
+
+    // 프로젝트 제목
+    html += '<div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:6px;">' + escapeHtml(p.topic) + '</div>';
+
+    // 핵심 한 줄 요약 박스
+    if (p.summary_ko) {
+      html += '<div style="background:rgba(37,99,235,0.07); border-left:3px solid #2563eb; padding:6px 10px; border-radius:4px; font-size:11.5px; font-weight:600; color:var(--text-primary); margin-bottom:8px; line-height:1.5;">' + escapeHtml(p.summary_ko) + '</div>';
+    }
+
+    // 핵심 불릿 포인트
+    if (p.bullets_ko && p.bullets_ko.length > 0) {
+      html += '<div style="font-size:11px; color:var(--text-secondary); line-height:1.6; margin-bottom:8px; padding-left:4px;">';
+      for (const b of p.bullets_ko) {
+        html += '<div style="margin-bottom:2px;">• ' + escapeHtml(b) + '</div>';
+      }
+      html += '</div>';
+    }
+
+    // HQ 의견 및 기간
+    if (p.hq_comment) {
+      html += '<div style="font-size:10.5px; color:var(--accent); font-weight:600; margin-bottom:4px;">[HQ 본사의견] ' + escapeHtml(p.hq_comment) + '</div>';
+    }
+    if (p.start || p.target) {
+      html += '<div style="font-size:10px; color:var(--text-dim); margin-bottom:6px;">시작일: ' + (p.start || '-') + ' / 목표일: ' + (p.target || '-') + '</div>';
+    }
+
+    // 영문 원문 접기/펼치기 토글
+    html += '<div style="margin-top:6px; border-top:1px dashed var(--border-color); padding-top:6px; display:flex; justify-content:space-between; align-items:center;">';
+    html += '<span style="font-size:10px; color:var(--text-dim);">필리핀 지사 영문 원문</span>';
+    html += '<button onclick="togglePhRaw(\'' + rawId + '\')" style="background:none; border:none; color:var(--primary); font-size:10.5px; font-weight:600; cursor:pointer; padding:2px 6px;">[원문 영문 보기/접기]</button>';
+    html += '</div>';
+    html += '<div id="' + rawId + '" style="display:none; margin-top:6px; padding:8px 10px; background:var(--bg-card-sub); border-radius:6px; font-size:10.5px; color:var(--text-secondary); line-height:1.5; font-family:\'Inter\',monospace; white-space:pre-wrap;">' + escapeHtml(p.progress_en || p.progress) + '</div>';
+
+    html += '</div>';
+  }
+
+  // 2. 일일 업무 보고 요약 카드
+  for (const dr of matchedDaily.slice(0, 15)) {
+    cardIdx++;
+    html += '<div style="margin-bottom:10px; border:1px solid var(--border-color); border-radius:10px; overflow:hidden; background:var(--bg-card);">';
+    html += '<div style="padding:8px 12px; background:var(--bg-card-sub); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">';
+    html += '<span style="font-weight:700; font-size:12.5px; color:var(--text-primary);">' + dr.date + ' 일일 업무 보고</span>';
+    html += '<span style="font-size:10px; color:var(--text-dim);">' + dr.entries.length + '건</span>';
+    html += '</div>';
+
+    if (dr.day_summary_ko) {
+      html += '<div style="padding:6px 12px; background:rgba(37,99,235,0.04); font-size:11px; font-weight:600; color:var(--primary); border-bottom:1px solid var(--border-color);">' + escapeHtml(dr.day_summary_ko) + '</div>';
+    }
+
+    for (const e of dr.entries) {
+      cardIdx++;
+      const eRawId = 'rag_entry_raw_' + cardIdx;
       html += '<div style="padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.03);">';
-      if (entry.customer) {
-        html += '<span style="display:inline-block; font-size:10px; font-weight:600; color:var(--primary); background:rgba(59,130,246,0.1); padding:2px 6px; border-radius:4px; margin-bottom:4px;">' + escapeHtml(entry.customer) + '</span>';
+      if (e.customer) {
+        html += '<span style="display:inline-block; font-size:10px; font-weight:700; color:#2563eb; background:rgba(37,99,235,0.1); padding:2px 6px; border-radius:4px; margin-bottom:4px;">' + escapeHtml(e.customer) + '</span>';
       }
-      html += '<div style="font-size:12px; color:var(--text-primary); line-height:1.5;">' + escapeHtml(entry.detail) + '</div>';
-      if (entry.pending) {
-        html += '<div style="font-size:10px; color:var(--warning); margin-top:2px;">[Pending] ' + escapeHtml(entry.pending) + '</div>';
+      if (e.summary_ko) {
+        html += '<div style="font-size:11.5px; font-weight:600; color:var(--text-primary); margin-bottom:3px;">' + escapeHtml(e.summary_ko) + '</div>';
       }
-      if (entry.remark) {
-        html += '<div style="font-size:10px; color:var(--text-dim); margin-top:2px;">' + escapeHtml(entry.remark) + '</div>';
+      if (e.detail_ko) {
+        html += '<div style="font-size:11px; color:var(--text-secondary); line-height:1.5;">' + escapeHtml(e.detail_ko) + '</div>';
       }
+      if (e.pending_ko || e.pending) {
+        html += '<div style="font-size:10px; color:var(--warning); margin-top:2px;">[후속조치] ' + escapeHtml(e.pending_ko || e.pending) + '</div>';
+      }
+      html += '<div style="text-align:right; margin-top:4px;">';
+      html += '<button onclick="togglePhRaw(\'' + eRawId + '\')" style="background:none; border:none; color:var(--text-dim); font-size:10px; cursor:pointer;">[영문 원문]</button>';
+      html += '</div>';
+      html += '<div id="' + eRawId + '" style="display:none; margin-top:4px; padding:6px; background:var(--bg-card-sub); border-radius:4px; font-size:10px; color:var(--text-dim); line-height:1.4; white-space:pre-wrap;">' + escapeHtml(e.detail_en || e.detail) + '</div>';
       html += '</div>';
     }
     html += '</div>';
   }
-  if (filtered.length > 30) {
-    html += '<div style="text-align:center; padding:12px; color:var(--text-dim); font-size:11px;">외 ' + (filtered.length - 30) + '건 (검색어로 필터링하세요)</div>';
+
+  if (matchedProjects.length > 40 || matchedDaily.length > 15) {
+    html += '<div style="text-align:center; padding:12px; color:var(--text-dim); font-size:11px;">검색 결과가 많아 주요 항목 위주로 표시되었습니다. 검색어를 좁혀주세요.</div>';
   }
+
   container.innerHTML = html;
 }
+window.renderPhRagResults = renderPhRagResults;
 
-function filterPhDaily() {
-  renderPhDaily();
-}
-window.filterPhDaily = filterPhDaily;
-
-function populatePhCustomerFilter() {
-  const sel = document.getElementById('phCustomerFilter');
-  if (!sel || !_phData || !_phData.projects) return;
-  const customers = Object.keys(_phData.projects).sort();
-  for (const c of customers) {
-    const opt = document.createElement('option');
-    opt.value = c;
-    const stats = _phData.summary.project_stats[c] || {};
-    opt.textContent = c + ' (' + (stats.total || 0) + ')';
-    sel.appendChild(opt);
-  }
-}
-
+// -----------------------------------------------------
+// 2. 고객사별 프로젝트 뷰 (요약본 중심)
+// -----------------------------------------------------
 function renderPhProjects() {
   const container = document.getElementById('phProjectList');
   if (!container || !_phData) return;
@@ -7157,35 +7402,140 @@ function renderPhProjects() {
     return;
   }
 
-  let html = '<div style="font-size:11px; color:var(--text-secondary); margin-bottom:6px;">총 ' + projects.length + '건</div>';
+  let html = '<div style="font-size:11px; color:var(--text-secondary); margin-bottom:8px;">총 ' + projects.length + '건 프로젝트 (요약본 표시)</div>';
+  let idx = 0;
   for (const p of projects) {
-    const statusColor = p.status === 'Ongoing' ? 'var(--primary)' :
+    idx++;
+    const rawId = 'proj_view_raw_' + idx;
+    const statusColor = p.status === 'Ongoing' ? '#2563eb' :
                          p.status === 'Done' ? 'var(--success)' :
                          p.status === 'Closed' ? 'var(--text-dim)' :
                          p.status === 'Dropped' ? 'var(--danger)' : 'var(--text-secondary)';
-    html += '<div style="margin-bottom:8px; padding:10px; border:1px solid var(--border-color); border-radius:8px; border-left:3px solid ' + statusColor + ';">';
-    html += '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">';
-    html += '<span style="font-size:10px; font-weight:600; color:' + statusColor + '; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:3px;">' + escapeHtml(p._customer) + ' / ' + escapeHtml(p.status) + '</span>';
+    const statusKr = p.status_ko || p.status;
+
+    html += '<div style="margin-bottom:10px; padding:12px; border:1px solid var(--border-color); border-radius:10px; background:var(--bg-card); border-left:4px solid ' + statusColor + ';">';
+    html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">';
+    html += '<div style="display:flex; gap:6px; align-items:center;">';
+    html += '<span style="font-size:10.5px; font-weight:700; color:#fff; background:var(--primary); padding:2px 7px; border-radius:4px;">' + escapeHtml(p._customer) + '</span>';
+    html += '<span style="font-size:10px; font-weight:600; color:' + statusColor + '; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; border:1px solid ' + statusColor + ';">' + escapeHtml(statusKr) + '</span>';
+    html += '</div>';
     if (p.days) {
-      html += '<span style="font-size:10px; color:var(--warning);">' + p.days + 'days</span>';
+      html += '<span style="font-size:10px; color:var(--warning); font-weight:600;">경과: ' + p.days + '일</span>';
     }
     html += '</div>';
-    html += '<div style="font-size:12px; font-weight:600; color:var(--text-primary); margin-bottom:4px;">' + escapeHtml(p.topic) + '</div>';
-    if (p.progress) {
-      html += '<div style="font-size:11px; color:var(--text-secondary); line-height:1.5;">' + escapeHtml(p.progress) + '</div>';
+
+    html += '<div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:6px;">' + escapeHtml(p.topic) + '</div>';
+
+    if (p.summary_ko) {
+      html += '<div style="background:rgba(37,99,235,0.07); border-left:3px solid #2563eb; padding:6px 10px; border-radius:4px; font-size:11.5px; font-weight:600; color:var(--text-primary); margin-bottom:8px; line-height:1.5;">' + escapeHtml(p.summary_ko) + '</div>';
+    }
+
+    if (p.bullets_ko && p.bullets_ko.length > 0) {
+      html += '<div style="font-size:11px; color:var(--text-secondary); line-height:1.6; margin-bottom:6px;">';
+      for (const b of p.bullets_ko) {
+        html += '<div>• ' + escapeHtml(b) + '</div>';
+      }
+      html += '</div>';
+    } else if (p.progress_ko) {
+      html += '<div style="font-size:11px; color:var(--text-secondary); line-height:1.5; margin-bottom:6px;">' + escapeHtml(p.progress_ko) + '</div>';
+    }
+
+    if (p.hq_comment) {
+      html += '<div style="font-size:10.5px; color:var(--accent); font-weight:600; margin-top:4px;">[HQ 본사의견] ' + escapeHtml(p.hq_comment) + '</div>';
     }
     if (p.start || p.target) {
-      html += '<div style="font-size:10px; color:var(--text-dim); margin-top:4px;">Start: ' + (p.start || '-') + ' / Target: ' + (p.target || '-') + '</div>';
+      html += '<div style="font-size:10px; color:var(--text-dim); margin-top:4px;">시작: ' + (p.start || '-') + ' / 목표: ' + (p.target || '-') + '</div>';
     }
-    if (p.hq_comment) {
-      html += '<div style="font-size:10px; color:var(--accent); margin-top:4px;">[HQ] ' + escapeHtml(p.hq_comment) + '</div>';
-    }
+
+    html += '<div style="margin-top:6px; border-top:1px dashed var(--border-color); padding-top:4px; text-align:right;">';
+    html += '<button onclick="togglePhRaw(\'' + rawId + '\')" style="background:none; border:none; color:var(--text-dim); font-size:10px; cursor:pointer;">[영문 원문 접기/펼치기]</button>';
+    html += '</div>';
+    html += '<div id="' + rawId + '" style="display:none; margin-top:4px; padding:6px 10px; background:var(--bg-card-sub); border-radius:6px; font-size:10.5px; color:var(--text-dim); line-height:1.4; font-family:\'Inter\',monospace; white-space:pre-wrap;">' + escapeHtml(p.progress_en || p.progress) + '</div>';
+
     html += '</div>';
   }
   container.innerHTML = html;
 }
 window.renderPhProjects = renderPhProjects;
 
+// -----------------------------------------------------
+// 3. 일일 업무 보고 뷰 (날짜별 총괄 요약 + 한국어 번역)
+// -----------------------------------------------------
+function renderPhDaily() {
+  const container = document.getElementById('phDailyList');
+  if (!container || !_phData) return;
+
+  const reports = _phData.daily_reports || [];
+  const q = (document.getElementById('phDailySearchInput')?.value || '').trim().toLowerCase();
+
+  let filtered = reports;
+  if (q) {
+    const terms = q.split(/\s+/);
+    filtered = reports.filter(r => {
+      const combined = r.date + ' ' + (r.day_summary_ko || '') + ' ' + r.entries.map(e => (e.customer || '') + ' ' + (e.summary_ko || '') + ' ' + (e.detail_ko || '') + ' ' + (e.detail || '') + ' ' + (e.pending || '')).join(' ');
+      return terms.every(t => combined.toLowerCase().includes(t));
+    });
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">검색 결과 없음</div>';
+    return;
+  }
+
+  const display = filtered.slice(0, 30);
+  let html = '';
+  let idx = 0;
+  for (const report of display) {
+    idx++;
+    html += '<div style="margin-bottom:12px; border:1px solid var(--border-color); border-radius:10px; overflow:hidden; background:var(--bg-card);">';
+    html += '<div style="padding:10px 12px; background:var(--bg-card-sub); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">';
+    html += '<span style="font-weight:700; font-size:13px; color:var(--text-primary);">' + report.date + ' 일일 보고</span>';
+    html += '<span style="font-size:10px; color:var(--text-dim);">' + report.entries.length + '건</span>';
+    html += '</div>';
+
+    if (report.day_summary_ko) {
+      html += '<div style="padding:6px 12px; background:rgba(37,99,235,0.04); font-size:11px; font-weight:600; color:var(--primary); border-bottom:1px solid var(--border-color);">' + escapeHtml(report.day_summary_ko) + '</div>';
+    }
+
+    for (const entry of report.entries) {
+      idx++;
+      const eRawId = 'daily_view_raw_' + idx;
+      html += '<div style="padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.03);">';
+      if (entry.customer) {
+        html += '<span style="display:inline-block; font-size:10px; font-weight:700; color:#2563eb; background:rgba(37,99,235,0.1); padding:2px 6px; border-radius:4px; margin-bottom:4px;">' + escapeHtml(entry.customer) + '</span>';
+      }
+      if (entry.summary_ko) {
+        html += '<div style="font-size:11.5px; font-weight:600; color:var(--text-primary); margin-bottom:3px;">' + escapeHtml(entry.summary_ko) + '</div>';
+      }
+      html += '<div style="font-size:11px; color:var(--text-secondary); line-height:1.5;">' + escapeHtml(entry.detail_ko || entry.detail) + '</div>';
+      if (entry.pending_ko || entry.pending) {
+        html += '<div style="font-size:10px; color:var(--warning); margin-top:2px;">[후속조치] ' + escapeHtml(entry.pending_ko || entry.pending) + '</div>';
+      }
+      if (entry.remark) {
+        html += '<div style="font-size:10px; color:var(--text-dim); margin-top:2px;">[비고] ' + escapeHtml(entry.remark) + '</div>';
+      }
+      html += '<div style="text-align:right; margin-top:4px;">';
+      html += '<button onclick="togglePhRaw(\'' + eRawId + '\')" style="background:none; border:none; color:var(--text-dim); font-size:10px; cursor:pointer;">[영문 원문]</button>';
+      html += '</div>';
+      html += '<div id="' + eRawId + '" style="display:none; margin-top:4px; padding:6px; background:var(--bg-card-sub); border-radius:4px; font-size:10px; color:var(--text-dim); line-height:1.4; white-space:pre-wrap;">' + escapeHtml(entry.detail_en || entry.detail) + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  if (filtered.length > 30) {
+    html += '<div style="text-align:center; padding:12px; color:var(--text-dim); font-size:11px;">외 ' + (filtered.length - 30) + '건 (날짜나 검색어로 필터링하세요)</div>';
+  }
+  container.innerHTML = html;
+}
+
+function filterPhDaily() {
+  renderPhDaily();
+}
+window.filterPhDaily = filterPhDaily;
+
+// -----------------------------------------------------
+// 4. 주간 방문 일정 뷰
+// -----------------------------------------------------
 function renderPhVisits() {
   const container = document.getElementById('phVisitList');
   if (!container || !_phData) return;
@@ -7202,7 +7552,7 @@ function renderPhVisits() {
     html += '<div style="padding:10px 12px; background:var(--bg-card-sub); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">';
     html += '<span style="font-weight:700; font-size:13px; color:var(--text-primary);">WW' + v.week + ' (' + v.year + ')</span>';
     if (v.reporter) {
-      html += '<span style="font-size:10px; color:var(--text-dim);">Reporter: ' + escapeHtml(v.reporter) + '</span>';
+      html += '<span style="font-size:10px; color:var(--text-dim);">작성자: ' + escapeHtml(v.reporter) + '</span>';
     }
     html += '</div>';
     for (const sch of v.schedule) {

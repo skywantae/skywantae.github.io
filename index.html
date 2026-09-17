@@ -460,23 +460,162 @@
         <div class="viewer-card-header">
           <div class="viewer-title-group">
             <h3>실험실 (Lab)</h3>
-            <span class="count-badge" id="labStatusBadge">자동화 도구</span>
+            <span class="count-badge" id="labStatusBadge">업무 자동화 도구</span>
           </div>
           <div class="viewer-tools">
-            <span style="font-size:12px; color:var(--text-secondary);">사내 업무 자동화 및 실험 기능</span>
+            <span style="font-size:12px; color:var(--text-secondary);">사내 업무 자동화 및 글로벌 지사 현황</span>
           </div>
         </div>
 
-        <!-- 실험실 서브 탭 네비게이션 -->
-        <div class="lab-sub-tabs" style="display:flex; gap:4px; padding:0 16px 12px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
-          <button class="lab-sub-tab-btn active" data-lab-tab="labSubGimpo" onclick="switchLabSubTab('labSubGimpo', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border:1px solid var(--border-color); border-radius:8px; background:var(--primary); color:#fff; cursor:pointer; white-space:nowrap;">김포공장 Tray 재고</button>
-          <button class="lab-sub-tab-btn" data-lab-tab="labSubPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">필리핀 Daily Report</button>
-          <button class="lab-sub-tab-btn" data-lab-tab="labSubTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">업무 자동화 도구</button>
+        <!-- 최상위 세그먼트 서브탭 바 -->
+        <div class="lab-main-segment-bar" style="display:flex; gap:8px; padding:10px 16px; background:var(--bg-card); border-bottom:1px solid var(--border-color); flex-wrap:wrap;">
+          <button class="lab-main-tab-btn active" id="btnLabTabTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">업무 자동화 도구</button>
+          <button class="lab-main-tab-btn" id="btnLabTabGimpo" onclick="switchLabSubTab('labSubGimpo', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">김포공장 Tray 재고</button>
+          <button class="lab-main-tab-btn" id="btnLabTabPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">필리핀 지사 리포트 & 프로젝트</button>
         </div>
 
-        <!-- ===== 서브탭 1: 김포공장 Tray 재고 현황 ===== -->
-        <div class="lab-sub-panel" id="labSubGimpo">
-          <div style="padding:0 16px;">
+        <!-- ===== 서브탭 1: 업무 자동화 도구 (기존 SSPC + 주간보고서 분리 정리) ===== -->
+        <div class="lab-sub-panel" id="labSubTools">
+          <div style="padding:14px 16px 8px;">
+            <!-- 내부 기능 탭 스위처 -->
+            <div style="display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:10px; flex-wrap:wrap;">
+              <button class="lab-tool-sub-btn active" id="btnToolSspc" onclick="switchLabToolView('toolViewSspc', this)" style="padding:7px 14px; font-size:12px; font-weight:700; border-radius:6px; border:1px solid var(--primary); background:var(--bg-card-sub); color:var(--primary); cursor:pointer;">SSPC 매출 자료 변환기 (강도균 수석님)</button>
+              <button class="lab-tool-sub-btn" id="btnToolWeekly" onclick="switchLabToolView('toolViewWeekly', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-secondary); cursor:pointer;">해외영업부 주간보고서 실시간 협업</button>
+            </div>
+
+            <!-- 도구 1: SSPC 매출 자료 변환기 -->
+            <div id="toolViewSspc">
+              <div class="lab-container" style="padding:0;">
+                <div class="lab-card" style="margin-bottom:0;">
+                  <div class="lab-card-header">
+                    <div class="lab-card-title-box">
+                      <span class="lab-badge primary">자동화</span>
+                      <h4>SSPC 매출 자료 송부 - 강도균 수석님</h4>
+                    </div>
+                    <span class="lab-sub-badge">주간 보고 양식 변환기</span>
+                  </div>
+                  
+                  <div class="lab-card-body">
+                    <p class="lab-desc">
+                      Delivery List 엑셀 파일(.xls, .xlsx)을 첨부하면 당월 시트를 자동 감지하여 CUSTOMER가 <strong>SSPC</strong>인 주문 내역을 필터링하고, 공식 보고 규격 엑셀 파일(<code>SSPC 매출 YYMMDD.xlsx</code>)로 즉시 변환 및 생성합니다.
+                    </p>
+                    
+                    <!-- 파일 드롭존 / 업로드 영역 -->
+                    <div class="lab-dropzone" id="sspcDropzone">
+                      <input type="file" id="sspcFileInput" accept=".xls,.xlsx" style="display:none;" />
+                      <div class="lab-dropzone-content" id="sspcDropzoneContent">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="lab-upload-icon">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <div class="lab-dropzone-text">
+                          <strong style="color:var(--text-primary); font-size:14px;">Delivery List 엑셀 파일을 여기에 끌어다 놓거나 클릭하여 선택</strong>
+                          <span style="color:var(--text-secondary); font-size:12px; margin-top:4px;">지원 파일: .xls, .xlsx (예: Delivery List Kostat (2026) AS OF SEPT 15, 2026.xls)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 파일 처리 결과 대시보드 (파일 로드 시 표시) -->
+                    <div class="lab-result-panel" id="sspcResultPanel" style="display:none;">
+                      <div class="lab-file-info-bar">
+                        <div class="lab-file-meta">
+                          <span class="lab-file-name" id="sspcFileName">-</span>
+                          <span class="lab-file-size" id="sspcFileSize">-</span>
+                        </div>
+                        <div class="lab-sheet-selector-box">
+                          <label for="sspcSheetSelect" style="font-size:12px; font-weight:600; color:var(--text-secondary);">대상 시트:</label>
+                          <select id="sspcSheetSelect" class="compact-select" style="min-width:140px; font-weight:600;"></select>
+                        </div>
+                      </div>
+
+                      <!-- 통계 지표 카드 그리드 -->
+                      <div class="lab-metrics-grid">
+                        <div class="lab-metric-card">
+                          <div class="lab-metric-label">SSPC 오더 건수</div>
+                          <div class="lab-metric-val" id="sspcMetricCount">0건</div>
+                        </div>
+                        <div class="lab-metric-card">
+                          <div class="lab-metric-label">총 출하 수량 (Q'TY)</div>
+                          <div class="lab-metric-val" id="sspcMetricQty">0</div>
+                        </div>
+                        <div class="lab-metric-card">
+                          <div class="lab-metric-label">총 매출 합계 (AMOUNT)</div>
+                          <div class="lab-metric-val highlight" id="sspcMetricAmount">$0.00</div>
+                        </div>
+                      </div>
+
+                      <!-- 데이터 미리보기 테이블 -->
+                      <div class="lab-preview-wrapper">
+                        <div class="lab-preview-header">
+                          <span style="font-size:12px; font-weight:600; color:var(--text-primary);">데이터 미리보기</span>
+                          <span style="font-size:11px; color:var(--text-secondary);">공식 18개 열 매핑 및 합계 수식(=SUM) 적용 완료</span>
+                        </div>
+                        <div class="table-responsive-wrapper" style="max-height:260px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+                          <table class="modern-table" id="sspcPreviewTable">
+                            <thead>
+                              <tr>
+                                <th>ITEM</th><th>Ship Date</th><th>고객사</th><th>지역</th><th>SHIP TO</th><th>CTR</th>
+                                <th>부품번호</th><th>Package/Description</th><th>CUSTOMER P/N</th><th>PO NO</th><th>수량</th>
+                                <th>단가</th><th>금액</th><th>INV NO</th>
+                              </tr>
+                            </thead>
+                            <tbody id="sspcPreviewTbody">
+                              <!-- 동적 렌더링 -->
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <!-- 하단 액션 버튼 -->
+                      <div class="lab-action-row">
+                        <button class="action-btn-sm primary" id="btnDownloadSspcExcel" style="font-weight:600; padding:8px 18px; font-size:13px;">
+                          SSPC 매출 엑셀 파일 다운로드 (.xlsx)
+                        </button>
+                        <button class="action-btn-sm secondary" id="btnResetSspc">다른 파일 선택</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 도구 2: 해외영업부 주간보고서 실시간 협업 워크스페이스 -->
+            <div id="toolViewWeekly" style="display:none;">
+              <div class="lab-container" style="padding:0;">
+                <div class="lab-card" id="weeklyReportLabCard" style="border-color: #3b82f6; margin-bottom:0;">
+                  <div class="lab-card-header">
+                    <div class="lab-card-title-box">
+                      <span class="lab-badge primary" style="background:#2563eb; color:#ffffff;">실시간 협업 LIVE</span>
+                      <h4>해외영업부 주간보고서 실시간 협업 워크스페이스</h4>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                      <span class="lab-sub-badge" style="background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.3);">제1안 브리핑형</span>
+                      <a href="weekly_report_prototype.html" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
+                        전체화면 새 창 열기
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="lab-card-body" style="padding:12px;">
+                    <p class="lab-desc" style="margin-bottom:12px;">
+                      파일(PPT/Excel) 업로드 없이, 모든 팀원이 온라인에서 <strong>매출 실적 및 예상치, 샘플 진행 현황, 특이사항</strong>을 직접 실시간으로 편집하고 자동 동기화하는 클라우드 협업 시스템입니다. (수정 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
+                    </p>
+                    
+                    <!-- 워크스페이스 임베드 컨테이너 -->
+                    <div style="width:100%; height:780px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
+                      <iframe src="weekly_report_prototype.html" style="width:100%; height:100%; border:none;" title="해외영업부 주간보고서 실시간 워크스페이스"></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== 서브탭 2: 김포공장 Tray 재고 현황 ===== -->
+        <div class="lab-sub-panel" id="labSubGimpo" style="display:none;">
+          <div style="padding:14px 16px;">
             <!-- 기준일자 헤더 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
@@ -539,13 +678,13 @@
           </div>
         </div>
 
-        <!-- ===== 서브탭 2: 필리핀 Daily Report ===== -->
+        <!-- ===== 서브탭 3: 필리핀 지사 리포트 & 프로젝트 (RAG 스마트 검색 & 요약 중심 뷰) ===== -->
         <div class="lab-sub-panel" id="labSubPH" style="display:none;">
-          <div style="padding:0 16px;">
+          <div style="padding:14px 16px;">
             <!-- 상단 헤더 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary);">필리핀 지사 Daily Report & 프로젝트 현황</h4>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary);">필리핀 지사 리포트 & 프로젝트 스마트 현황</h4>
                 <span style="font-size:11px; color:var(--text-secondary);" id="phReportInfo">데이터 로딩중...</span>
               </div>
               <div style="display:flex; gap:6px;">
@@ -554,35 +693,84 @@
               </div>
             </div>
 
-            <!-- 필리핀 내부 서브탭: 데일리 / 프로젝트 -->
-            <div style="display:flex; gap:4px; margin-bottom:12px;">
-              <button class="ph-inner-tab active" data-ph-tab="phDailyView" onclick="switchPhInnerTab('phDailyView', this)" style="padding:6px 12px; font-size:11px; font-weight:600; border:1px solid var(--primary); border-radius:6px; background:var(--primary); color:#fff; cursor:pointer;">일일 업무 보고</button>
-              <button class="ph-inner-tab" data-ph-tab="phProjectView" onclick="switchPhInnerTab('phProjectView', this)" style="padding:6px 12px; font-size:11px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer;">고객사별 프로젝트</button>
-              <button class="ph-inner-tab" data-ph-tab="phVisitView" onclick="switchPhInnerTab('phVisitView', this)" style="padding:6px 12px; font-size:11px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer;">주간 방문 일정</button>
+            <!-- 내부 뷰 스위처: RAG 스마트 브리핑 | 고객사별 프로젝트 | 일일 업무 보고 | 주간 방문 일정 -->
+            <div style="display:flex; gap:4px; margin-bottom:12px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
+              <button class="ph-inner-tab active" data-ph-tab="phRagView" onclick="switchPhInnerTab('phRagView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:700; border:1px solid #2563eb; border-radius:6px; background:#2563eb; color:#fff; cursor:pointer; white-space:nowrap;">RAG 스마트 검색 & 브리핑</button>
+              <button class="ph-inner-tab" data-ph-tab="phProjectView" onclick="switchPhInnerTab('phProjectView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">고객사별 프로젝트 (요약본)</button>
+              <button class="ph-inner-tab" data-ph-tab="phDailyView" onclick="switchPhInnerTab('phDailyView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">일일 업무 보고 (번역 요약)</button>
+              <button class="ph-inner-tab" data-ph-tab="phVisitView" onclick="switchPhInnerTab('phVisitView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">주간 방문 일정</button>
             </div>
 
-            <!-- 데일리 업무 뷰 -->
-            <div id="phDailyView">
+            <!-- 1) RAG 스마트 검색 & 종합 브리핑 뷰 -->
+            <div id="phRagView">
+              <!-- 검색창 -->
               <div style="margin-bottom:8px;">
-                <input type="text" id="phDailySearchInput" placeholder="날짜, 고객사, 업무내용 검색..." style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; outline:none;" oninput="filterPhDaily()" />
+                <input type="text" id="phRagSearchInput" placeholder="고객사명(ATP, SSPC 등), 부품번호, 날짜(2026-09), 이슈 키워드 입력..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="onPhRagSearchInput()" />
               </div>
-              <div id="phDailyList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+
+              <!-- 빠른 추천 칩 -->
+              <div style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px;">
+                <span style="font-size:11px; color:var(--text-dim); align-self:center; white-space:nowrap;">빠른 질의:</span>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('ATP')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATP 현황</button>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('SSPC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">SSPC 현황</button>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('TIPI')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">TIPI 현황</button>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('ATEC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATEC 현황</button>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('진행중')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">진행중 프로젝트</button>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('단가')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">단가/견적 이슈</button>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('어닐링')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">어닐링 공정</button>
+                <button class="action-btn-sm secondary" onclick="setPhRagChip('2026-09')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">2026년 9월 보고</button>
+              </div>
+
+              <!-- 다차원 필터 바 -->
+              <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
+                <select id="phRagCustomerFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px; min-width:110px;">
+                  <option value="ALL">전체 고객사 (21개사)</option>
+                </select>
+                <select id="phRagStatusFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
+                  <option value="ALL">전체 상태</option>
+                  <option value="Ongoing">진행중 (Ongoing)</option>
+                  <option value="Done">완료 (Done)</option>
+                  <option value="Closed">종결 (Closed)</option>
+                  <option value="Dropped">드롭 (Dropped)</option>
+                </select>
+                <select id="phRagPeriodFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
+                  <option value="ALL">전체 기간</option>
+                  <option value="7d">최근 7일</option>
+                  <option value="30d">최근 30일</option>
+                  <option value="2026">2026년 전체</option>
+                  <option value="2025">2025년</option>
+                </select>
+              </div>
+
+              <!-- RAG AI 실시간 종합 브리핑 카드 -->
+              <div id="phRagAiBriefCard" style="margin-bottom:12px; padding:12px 14px; background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-left:4px solid #2563eb; border-radius:8px;">
+                <div style="font-size:11px; font-weight:700; color:#2563eb; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+                  <span>RAG 스마트 종합 브리핑</span>
+                  <span id="phRagBriefStats" style="font-weight:600; color:var(--text-secondary); font-size:10px;"></span>
+                </div>
+                <div id="phRagBriefContent" style="font-size:12px; color:var(--text-primary); line-height:1.6;">
+                  상단 검색창에 고객사명이나 날짜, 키워드를 입력하시면 AI 종합 브리핑과 요약 카드가 자동 생성됩니다.
+                </div>
+              </div>
+
+              <!-- 결과 요약 카드 목록 -->
+              <div id="phRagResultsList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                <!-- 동적 렌더링 -->
               </div>
             </div>
 
-            <!-- 프로젝트 현황 뷰 -->
+            <!-- 2) 고객사별 프로젝트 뷰 (요약본 중심) -->
             <div id="phProjectView" style="display:none;">
-              <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+              <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
                 <select id="phCustomerFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; min-width:120px;">
                   <option value="ALL">전체 고객사</option>
                 </select>
                 <select id="phStatusFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px;">
                   <option value="ALL">전체 상태</option>
-                  <option value="Ongoing">Ongoing</option>
-                  <option value="Done">Done</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Dropped">Dropped</option>
+                  <option value="Ongoing">진행중 (Ongoing)</option>
+                  <option value="Done">완료 (Done)</option>
+                  <option value="Closed">종결 (Closed)</option>
+                  <option value="Dropped">드롭 (Dropped)</option>
                 </select>
               </div>
               <div id="phProjectList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
@@ -590,7 +778,17 @@
               </div>
             </div>
 
-            <!-- 주간 방문 일정 뷰 -->
+            <!-- 3) 일일 업무 보고 뷰 (날짜별 총괄 요약 + 한국어 번역) -->
+            <div id="phDailyView" style="display:none;">
+              <div style="margin-bottom:8px;">
+                <input type="text" id="phDailySearchInput" placeholder="날짜(2026-09), 고객사, 업무내용 검색..." style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; outline:none;" oninput="filterPhDaily()" />
+              </div>
+              <div id="phDailyList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+              </div>
+            </div>
+
+            <!-- 4) 주간 방문 일정 뷰 -->
             <div id="phVisitView" style="display:none;">
               <div id="phVisitList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
                 <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
@@ -598,131 +796,6 @@
             </div>
           </div>
         </div>
-
-        <!-- ===== 서브탭 3: 업무 자동화 도구 (기존 SSPC + 주간보고서) ===== -->
-        <div class="lab-sub-panel" id="labSubTools" style="display:none;">
-        <div class="lab-container" id="labContainer">
-          <!-- 카드 1: SSPC 매출 자료 송부 - 강도균 수석님 -->
-          <div class="lab-card">
-            <div class="lab-card-header">
-              <div class="lab-card-title-box">
-                <span class="lab-badge primary">자동화</span>
-                <h4>SSPC 매출 자료 송부 - 강도균 수석님</h4>
-              </div>
-              <span class="lab-sub-badge">주간 보고 양식 변환기</span>
-            </div>
-            
-            <div class="lab-card-body">
-              <p class="lab-desc">
-                Delivery List 엑셀 파일(.xls, .xlsx)을 첨부하면 당월 시트를 자동 감지하여 CUSTOMER가 <strong>SSPC</strong>인 주문 내역을 필터링하고, 공식 보고 규격 엑셀 파일(<code>SSPC 매출 YYMMDD.xlsx</code>)로 즉시 변환 및 생성합니다.
-              </p>
-              
-              <!-- 파일 드롭존 / 업로드 영역 -->
-              <div class="lab-dropzone" id="sspcDropzone">
-                <input type="file" id="sspcFileInput" accept=".xls,.xlsx" style="display:none;" />
-                <div class="lab-dropzone-content" id="sspcDropzoneContent">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="lab-upload-icon">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <div class="lab-dropzone-text">
-                    <strong style="color:var(--text-primary); font-size:14px;">Delivery List 엑셀 파일을 여기에 끌어다 놓거나 클릭하여 선택</strong>
-                    <span style="color:var(--text-secondary); font-size:12px; margin-top:4px;">지원 파일: .xls, .xlsx (예: Delivery List Kostat (2026) AS OF SEPT 15, 2026.xls)</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 파일 처리 결과 대시보드 (파일 로드 시 표시) -->
-              <div class="lab-result-panel" id="sspcResultPanel" style="display:none;">
-                <div class="lab-file-info-bar">
-                  <div class="lab-file-meta">
-                    <span class="lab-file-name" id="sspcFileName">-</span>
-                    <span class="lab-file-size" id="sspcFileSize">-</span>
-                  </div>
-                  <div class="lab-sheet-selector-box">
-                    <label for="sspcSheetSelect" style="font-size:12px; font-weight:600; color:var(--text-secondary);">대상 시트:</label>
-                    <select id="sspcSheetSelect" class="compact-select" style="min-width:140px; font-weight:600;"></select>
-                  </div>
-                </div>
-
-                <!-- 통계 지표 카드 그리드 -->
-                <div class="lab-metrics-grid">
-                  <div class="lab-metric-card">
-                    <div class="lab-metric-label">SSPC 오더 건수</div>
-                    <div class="lab-metric-val" id="sspcMetricCount">0건</div>
-                  </div>
-                  <div class="lab-metric-card">
-                    <div class="lab-metric-label">총 출하 수량 (Q'TY)</div>
-                    <div class="lab-metric-val" id="sspcMetricQty">0</div>
-                  </div>
-                  <div class="lab-metric-card">
-                    <div class="lab-metric-label">총 매출 합계 (AMOUNT)</div>
-                    <div class="lab-metric-val highlight" id="sspcMetricAmount">$0.00</div>
-                  </div>
-                </div>
-
-                <!-- 데이터 미리보기 테이블 -->
-                <div class="lab-preview-wrapper">
-                  <div class="lab-preview-header">
-                    <span style="font-size:12px; font-weight:600; color:var(--text-primary);">데이터 미리보기</span>
-                    <span style="font-size:11px; color:var(--text-secondary);">공식 18개 열 매핑 및 합계 수식(=SUM) 적용 완료</span>
-                  </div>
-                  <div class="table-responsive-wrapper" style="max-height:260px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-                    <table class="modern-table" id="sspcPreviewTable">
-                      <thead>
-                        <tr>
-                          <th>ITEM</th><th>Ship Date</th><th>고객사</th><th>지역</th><th>SHIP TO</th><th>CTR</th>
-                          <th>부품번호</th><th>Package/Description</th><th>CUSTOMER P/N</th><th>PO NO</th><th>수량</th>
-                          <th>단가</th><th>금액</th><th>INV NO</th>
-                        </tr>
-                      </thead>
-                      <tbody id="sspcPreviewTbody">
-                        <!-- 동적 렌더링 -->
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- 하단 액션 버튼 -->
-                <div class="lab-action-row">
-                  <button class="action-btn-sm primary" id="btnDownloadSspcExcel" style="font-weight:600; padding:8px 18px; font-size:13px;">
-                    SSPC 매출 엑셀 파일 다운로드 (.xlsx)
-                  </button>
-                  <button class="action-btn-sm secondary" id="btnResetSspc">다른 파일 선택</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 카드 2: 해외영업부 주간보고서 실시간 협업 워크스페이스 -->
-          <div class="lab-card" id="weeklyReportLabCard" style="border-color: #3b82f6;">
-            <div class="lab-card-header">
-              <div class="lab-card-title-box">
-                <span class="lab-badge primary" style="background:#2563eb; color:#ffffff;">실시간 협업 LIVE</span>
-                <h4>해외영업부 주간보고서 실시간 협업 워크스페이스</h4>
-              </div>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <span class="lab-sub-badge" style="background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.3);">제1안 브리핑형</span>
-                <a href="weekly_report_prototype.html" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
-                  전체화면 새 창 열기
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                </a>
-              </div>
-            </div>
-            <div class="lab-card-body" style="padding:12px;">
-              <p class="lab-desc" style="margin-bottom:12px;">
-                파일(PPT/Excel) 업로드 없이, 모든 팀원이 온라인에서 <strong>매출 실적 및 예상치, 샘플 진행 현황, 특이사항</strong>을 직접 실시간으로 편집하고 자동 동기화하는 클라우드 협업 시스템입니다. (수정 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
-              </p>
-              
-              <!-- 워크스페이스 임베드 컨테이너 -->
-              <div style="width:100%; height:780px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                <iframe src="weekly_report_prototype.html" style="width:100%; height:100%; border:none;" title="해외영업부 주간보고서 실시간 워크스페이스"></iframe>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div><!-- /labSubTools -->
       </div>
 
     </section>
