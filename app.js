@@ -6998,6 +6998,40 @@ function filterGimpoStock() {
 }
 window.filterGimpoStock = filterGimpoStock;
 
+function showGimpoAccessGuide() {
+  const p = document.getElementById('gimpoAccessGuidePanel');
+  if (p) {
+    p.style.display = (p.style.display === 'none' || !p.style.display) ? 'block' : 'none';
+  }
+}
+window.showGimpoAccessGuide = showGimpoAccessGuide;
+
+function copyGimpoNetUseCmd() {
+  const cmd = 'net use Z: \\\\kostat-nas.myds.me@SSL@5006\\DavWWWRoot /user:teokim kim2606!!## /persistent:yes';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(cmd).then(() => {
+      showToast('Z: 드라이브 연결 명령어가 복사되었습니다.', 'success');
+    }).catch(() => {
+      prompt('아래 명령어를 복사하여 명령 프롬프트(CMD)에 붙여넣으세요:', cmd);
+    });
+  } else {
+    prompt('아래 명령어를 복사하여 명령 프롬프트(CMD)에 붙여넣으세요:', cmd);
+  }
+}
+window.copyGimpoNetUseCmd = copyGimpoNetUseCmd;
+
+function copyGimpoPassword() {
+  const pw = 'kim2606!!##';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(pw).then(() => {
+      showToast('비밀번호(kim2606!!##)가 복사되었습니다.', 'success');
+    });
+  } else {
+    prompt('비밀번호를 복사하세요:', pw);
+  }
+}
+window.copyGimpoPassword = copyGimpoPassword;
+
 // 김포공장 엑셀 수동 업로드 (클라이언트사이드 파싱)
 function setupGimpoFileUpload() {
   const input = document.getElementById('gimpoStockFileInput');
