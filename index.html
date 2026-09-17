@@ -466,7 +466,141 @@
             <span style="font-size:12px; color:var(--text-secondary);">사내 업무 자동화 및 실험 기능</span>
           </div>
         </div>
-        
+
+        <!-- 실험실 서브 탭 네비게이션 -->
+        <div class="lab-sub-tabs" style="display:flex; gap:4px; padding:0 16px 12px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
+          <button class="lab-sub-tab-btn active" data-lab-tab="labSubGimpo" onclick="switchLabSubTab('labSubGimpo', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border:1px solid var(--border-color); border-radius:8px; background:var(--primary); color:#fff; cursor:pointer; white-space:nowrap;">김포공장 Tray 재고</button>
+          <button class="lab-sub-tab-btn" data-lab-tab="labSubPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">필리핀 Daily Report</button>
+          <button class="lab-sub-tab-btn" data-lab-tab="labSubTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">업무 자동화 도구</button>
+        </div>
+
+        <!-- ===== 서브탭 1: 김포공장 Tray 재고 현황 ===== -->
+        <div class="lab-sub-panel" id="labSubGimpo">
+          <div style="padding:0 16px;">
+            <!-- 기준일자 헤더 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary);">김포공장 Tray 재고 현황</h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="gimpoAsOfDate">기준일 로딩중...</span>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="action-btn-sm secondary" onclick="document.getElementById('gimpoStockFileInput').click()" style="font-size:11px; padding:5px 10px;">엑셀 수동 업로드</button>
+                <input type="file" id="gimpoStockFileInput" accept=".xlsx,.xls" style="display:none;" />
+              </div>
+            </div>
+
+            <!-- 핵심 지표 카드 -->
+            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:14px;">
+              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
+                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">총 재고</div>
+                <div style="font-size:18px; font-weight:700; color:var(--primary);" id="gimpoTotalStock">-</div>
+              </div>
+              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
+                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">보유 품목 수</div>
+                <div style="font-size:18px; font-weight:700; color:var(--accent);" id="gimpoActiveItems">-</div>
+              </div>
+              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
+                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">생산부 재고</div>
+                <div style="font-size:16px; font-weight:700; color:var(--success);" id="gimpoProdTotal">-</div>
+                <div style="font-size:10px; color:var(--text-dim); margin-top:2px;" id="gimpoProdDetail">공정: - / 포장: -</div>
+              </div>
+              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
+                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">자재부 창고 재고</div>
+                <div style="font-size:16px; font-weight:700; color:var(--warning);" id="gimpoMatTotal">-</div>
+              </div>
+            </div>
+
+            <!-- 검색 바 -->
+            <div style="margin-bottom:10px;">
+              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처 검색..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="filterGimpoStock()" />
+            </div>
+
+            <!-- 결과 카운트 -->
+            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:6px;" id="gimpoResultCount">-</div>
+
+            <!-- 재고 데이터 테이블 -->
+            <div style="border-radius:10px; border:1px solid var(--border-color); overflow:hidden; max-height:55vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+              <table class="modern-table" style="font-size:11px; width:100%;">
+                <thead>
+                  <tr>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">규격</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">거래처</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">생산부</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">자재부</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">합계</th>
+                  </tr>
+                </thead>
+                <tbody id="gimpoStockTbody">
+                  <tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== 서브탭 2: 필리핀 Daily Report ===== -->
+        <div class="lab-sub-panel" id="labSubPH" style="display:none;">
+          <div style="padding:0 16px;">
+            <!-- 상단 헤더 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary);">필리핀 지사 Daily Report & 프로젝트 현황</h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="phReportInfo">데이터 로딩중...</span>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="action-btn-sm secondary" onclick="document.getElementById('phReportFileInput').click()" style="font-size:11px; padding:5px 10px;">엑셀 업데이트 업로드</button>
+                <input type="file" id="phReportFileInput" accept=".xlsx,.xls" style="display:none;" />
+              </div>
+            </div>
+
+            <!-- 필리핀 내부 서브탭: 데일리 / 프로젝트 -->
+            <div style="display:flex; gap:4px; margin-bottom:12px;">
+              <button class="ph-inner-tab active" data-ph-tab="phDailyView" onclick="switchPhInnerTab('phDailyView', this)" style="padding:6px 12px; font-size:11px; font-weight:600; border:1px solid var(--primary); border-radius:6px; background:var(--primary); color:#fff; cursor:pointer;">일일 업무 보고</button>
+              <button class="ph-inner-tab" data-ph-tab="phProjectView" onclick="switchPhInnerTab('phProjectView', this)" style="padding:6px 12px; font-size:11px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer;">고객사별 프로젝트</button>
+              <button class="ph-inner-tab" data-ph-tab="phVisitView" onclick="switchPhInnerTab('phVisitView', this)" style="padding:6px 12px; font-size:11px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer;">주간 방문 일정</button>
+            </div>
+
+            <!-- 데일리 업무 뷰 -->
+            <div id="phDailyView">
+              <div style="margin-bottom:8px;">
+                <input type="text" id="phDailySearchInput" placeholder="날짜, 고객사, 업무내용 검색..." style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; outline:none;" oninput="filterPhDaily()" />
+              </div>
+              <div id="phDailyList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+              </div>
+            </div>
+
+            <!-- 프로젝트 현황 뷰 -->
+            <div id="phProjectView" style="display:none;">
+              <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+                <select id="phCustomerFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; min-width:120px;">
+                  <option value="ALL">전체 고객사</option>
+                </select>
+                <select id="phStatusFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px;">
+                  <option value="ALL">전체 상태</option>
+                  <option value="Ongoing">Ongoing</option>
+                  <option value="Done">Done</option>
+                  <option value="Closed">Closed</option>
+                  <option value="Dropped">Dropped</option>
+                </select>
+              </div>
+              <div id="phProjectList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+              </div>
+            </div>
+
+            <!-- 주간 방문 일정 뷰 -->
+            <div id="phVisitView" style="display:none;">
+              <div id="phVisitList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== 서브탭 3: 업무 자동화 도구 (기존 SSPC + 주간보고서) ===== -->
+        <div class="lab-sub-panel" id="labSubTools" style="display:none;">
         <div class="lab-container" id="labContainer">
           <!-- 카드 1: SSPC 매출 자료 송부 - 강도균 수석님 -->
           <div class="lab-card">
@@ -588,6 +722,7 @@
             </div>
           </div>
         </div>
+        </div><!-- /labSubTools -->
       </div>
 
     </section>
@@ -1181,6 +1316,8 @@
   <script src="data/faq_db.js?v=1.0.167"></script>
   <script src="data/feedback_board.js?v=1.0.167"></script>
   <script src="data/archive_data.js?v=1.0.167"></script>
+  <script src="data/gimpo_tray_stock_data.js?v=1.0.167"></script>
+  <script src="data/ph_daily_report_data.js?v=1.0.167"></script>
   
   <script src="xlsx.full.min.js?v=1.0.167"></script>
   <script src="exceljs.min.js?v=1.0.167"></script>

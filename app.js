@@ -6835,6 +6835,521 @@ window.removeArchiveAttachment = removeArchiveAttachment;
 window.renderArchivePage = renderArchivePage;
 
 
+// =====================================================
+// 실험실 서브탭 전환 엔진
+// =====================================================
+function switchLabSubTab(tabId, btn) {
+  document.querySelectorAll('.lab-sub-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.lab-sub-tab-btn').forEach(b => {
+    b.style.background = 'var(--bg-card)';
+    b.style.color = 'var(--text-secondary)';
+    b.classList.remove('active');
+  });
+  const panel = document.getElementById(tabId);
+  if (panel) panel.style.display = '';
+  if (btn) {
+    btn.style.background = 'var(--primary)';
+    btn.style.color = '#fff';
+    btn.classList.add('active');
+  }
+}
+window.switchLabSubTab = switchLabSubTab;
+
+// 필리핀 내부 서브탭 전환
+function switchPhInnerTab(tabId, btn) {
+  ['phDailyView', 'phProjectView', 'phVisitView'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.querySelectorAll('.ph-inner-tab').forEach(b => {
+    b.style.background = 'var(--bg-card)';
+    b.style.color = 'var(--text-secondary)';
+    b.style.borderColor = 'var(--border-color)';
+    b.classList.remove('active');
+  });
+  const panel = document.getElementById(tabId);
+  if (panel) panel.style.display = '';
+  if (btn) {
+    btn.style.background = 'var(--primary)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--primary)';
+    btn.classList.add('active');
+  }
+}
+window.switchPhInnerTab = switchPhInnerTab;
+
+
+// =====================================================
+// 김포공장 Tray 재고 현황 렌더링 엔진
+// =====================================================
+let _gimpoStockData = null;
+let _gimpoFilteredItems = [];
+
+function initGimpoStock() {
+  _gimpoStockData = window.KOSTAT_GIMPO_TRAY_STOCK || null;
+  if (!_gimpoStockData || !_gimpoStockData.items) {
+    document.getElementById('gimpoAsOfDate').textContent = '데이터 없음';
+    return;
+  }
+  const s = _gimpoStockData.summary;
+  document.getElementById('gimpoAsOfDate').textContent =
+    '기준: ' + _gimpoStockData.as_of_date + ' ' + (_gimpoStockData.as_of_time || '') +
+    ' / 출처: ' + (_gimpoStockData.source_file || '');
+  document.getElementById('gimpoTotalStock').textContent = formatNum(s.total_stock) + ' EA';
+  document.getElementById('gimpoActiveItems').textContent = formatNum(s.active_items) + '종';
+  document.getElementById('gimpoProdTotal').textContent = formatNum(s.prod_total) + ' EA';
+  document.getElementById('gimpoProdDetail').textContent =
+    '공정: ' + formatNum(s.prod_wip) + ' / 포장: ' + formatNum(s.prod_pack);
+  document.getElementById('gimpoMatTotal').textContent = formatNum(s.mat_total) + ' EA';
+
+  _gimpoFilteredItems = _gimpoStockData.items;
+  renderGimpoStock();
+}
+
+function formatNum(n) {
+  if (n === undefined || n === null) return '-';
+  return Number(n).toLocaleString('ko-KR');
+}
+
+function renderGimpoStock() {
+  const tbody = document.getElementById('gimpoStockTbody');
+  if (!tbody) return;
+
+  const items = _gimpoFilteredItems;
+  const count = document.getElementById('gimpoResultCount');
+  if (count) count.textContent = '검색 결과: ' + items.length + '건';
+
+  if (items.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과 없음</td></tr>';
+    return;
+  }
+
+  // 성능 최적화: 최초 100개만 렌더, 스크롤 시 추가
+  const displayItems = items.slice(0, 200);
+  let html = '';
+  for (const item of displayItems) {
+    const ptClass = item.pt > 0 ? 'color:var(--success)' : 'color:var(--text-dim)';
+    const mtClass = item.mt > 0 ? 'color:var(--warning)' : 'color:var(--text-dim)';
+    const ttClass = 'color:var(--primary); font-weight:700';
+    html += '<tr style="border-bottom:1px solid var(--border-color);">' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.p) + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.s || '') + '">' + escapeHtml(item.s || item.t || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c) + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ptClass + ';">' + formatNum(item.pt) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + mtClass + ';">' + formatNum(item.mt) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + ';">' + formatNum(item.tt) + '</td>' +
+      '</tr>';
+  }
+  if (items.length > 200) {
+    html += '<tr><td colspan="6" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function filterGimpoStock() {
+  if (!_gimpoStockData) return;
+  const q = (document.getElementById('gimpoSearchInput').value || '').trim().toLowerCase();
+  if (!q) {
+    _gimpoFilteredItems = _gimpoStockData.items;
+  } else {
+    const terms = q.split(/\s+/);
+    _gimpoFilteredItems = _gimpoStockData.items.filter(item => {
+      const target = (item.p + ' ' + item.m + ' ' + item.s + ' ' + item.t + ' ' + item.c + ' ' + item.r).toLowerCase();
+      return terms.every(t => target.includes(t));
+    });
+  }
+  renderGimpoStock();
+}
+window.filterGimpoStock = filterGimpoStock;
+
+// 김포공장 엑셀 수동 업로드 (클라이언트사이드 파싱)
+function setupGimpoFileUpload() {
+  const input = document.getElementById('gimpoStockFileInput');
+  if (!input) return;
+  input.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const wb = XLSX.read(ev.target.result, { type: 'array' });
+        let targetSheet = null;
+        for (const sn of wb.SheetNames) {
+          if (sn.replace(/\s+/g, '').includes('TRAY재고현황')) {
+            targetSheet = sn;
+            break;
+          }
+        }
+        if (!targetSheet) {
+          showToast('TRAY 재고현황 시트를 찾을 수 없습니다.', 'error');
+          return;
+        }
+        const ws = wb.Sheets[targetSheet];
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        const items = [];
+        for (let i = 4; i < rows.length; i++) {
+          const row = rows[i];
+          if (!row) continue;
+          const partNo = String(row[2] || '').trim();
+          const matCode = String(row[0] || '').trim();
+          if (!partNo && !matCode) continue;
+          const toNum = (v) => { const n = parseInt(String(v || 0).replace(/,/g, '')); return isNaN(n) ? 0 : n; };
+          const prodWip = toNum(row[11]);
+          const prodPack = toNum(row[12]);
+          const prodTotal = toNum(row[13]) || (prodWip + prodPack);
+          const matTotal = toNum(row[14]);
+          const totalStock = prodTotal + matTotal;
+          if (totalStock <= 0) continue;
+          items.push({
+            p: partNo, m: matCode,
+            t: String(row[3] || '').trim(),
+            s: String(row[5] || '').trim(),
+            c: '',
+            pt: prodTotal, pw: prodWip, pp: prodPack,
+            mt: matTotal, tt: totalStock, wh: {}
+          });
+        }
+        items.sort((a, b) => b.tt - a.tt);
+        const totalStock = items.reduce((s, i) => s + i.tt, 0);
+        const prodSum = items.reduce((s, i) => s + i.pt, 0);
+        const matSum = items.reduce((s, i) => s + i.mt, 0);
+        _gimpoStockData = {
+          as_of_date: new Date().toISOString().slice(0, 10),
+          as_of_time: '수동 업로드',
+          source_file: file.name,
+          summary: { total_stock: totalStock, active_items: items.length, prod_total: prodSum, mat_total: matSum, prod_wip: 0, prod_pack: 0 },
+          items: items
+        };
+        document.getElementById('gimpoAsOfDate').textContent = '기준: ' + _gimpoStockData.as_of_date + ' (수동 업로드: ' + file.name + ')';
+        document.getElementById('gimpoTotalStock').textContent = formatNum(totalStock) + ' EA';
+        document.getElementById('gimpoActiveItems').textContent = formatNum(items.length) + '종';
+        document.getElementById('gimpoProdTotal').textContent = formatNum(prodSum) + ' EA';
+        document.getElementById('gimpoMatTotal').textContent = formatNum(matSum) + ' EA';
+        _gimpoFilteredItems = items;
+        renderGimpoStock();
+        showToast(file.name + ' 업로드 완료: ' + items.length + '개 품목', 'success');
+      } catch (err) {
+        showToast('엑셀 파싱 오류: ' + err.message, 'error');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    input.value = '';
+  });
+}
+
+
+// =====================================================
+// 필리핀 Daily Report 렌더링 엔진
+// =====================================================
+let _phData = null;
+
+function initPhDailyReport() {
+  _phData = window.KOSTAT_PH_DAILY_REPORT || null;
+  if (!_phData) {
+    document.getElementById('phReportInfo').textContent = '데이터 없음';
+    return;
+  }
+  const s = _phData.summary;
+  document.getElementById('phReportInfo').textContent =
+    '출처: ' + (_phData.source_file || '') +
+    ' / Daily: ' + formatNum(s.daily_report_count) + '건' +
+    ' / 고객사: ' + formatNum(s.customer_count) + '개' +
+    ' / 프로젝트: ' + formatNum(s.total_projects) + '건';
+
+  renderPhDaily();
+  populatePhCustomerFilter();
+  renderPhProjects();
+  renderPhVisits();
+}
+
+function renderPhDaily() {
+  const container = document.getElementById('phDailyList');
+  if (!container || !_phData) return;
+
+  const reports = _phData.daily_reports || [];
+  const q = (document.getElementById('phDailySearchInput')?.value || '').trim().toLowerCase();
+
+  let filtered = reports;
+  if (q) {
+    const terms = q.split(/\s+/);
+    filtered = reports.filter(r => {
+      const combined = r.date + ' ' + r.entries.map(e => e.customer + ' ' + e.detail + ' ' + e.pending + ' ' + e.remark).join(' ');
+      return terms.every(t => combined.toLowerCase().includes(t));
+    });
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">검색 결과 없음</div>';
+    return;
+  }
+
+  // 최근 30일만 기본 표시
+  const display = filtered.slice(0, 30);
+  let html = '';
+  for (const report of display) {
+    html += '<div style="margin-bottom:12px; border:1px solid var(--border-color); border-radius:10px; overflow:hidden;">';
+    html += '<div style="padding:10px 12px; background:var(--bg-card-sub); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">';
+    html += '<span style="font-weight:700; font-size:13px; color:var(--text-primary);">' + report.date + '</span>';
+    html += '<span style="font-size:10px; color:var(--text-dim);">' + report.entries.length + '건</span>';
+    html += '</div>';
+    for (const entry of report.entries) {
+      html += '<div style="padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.03);">';
+      if (entry.customer) {
+        html += '<span style="display:inline-block; font-size:10px; font-weight:600; color:var(--primary); background:rgba(59,130,246,0.1); padding:2px 6px; border-radius:4px; margin-bottom:4px;">' + escapeHtml(entry.customer) + '</span>';
+      }
+      html += '<div style="font-size:12px; color:var(--text-primary); line-height:1.5;">' + escapeHtml(entry.detail) + '</div>';
+      if (entry.pending) {
+        html += '<div style="font-size:10px; color:var(--warning); margin-top:2px;">[Pending] ' + escapeHtml(entry.pending) + '</div>';
+      }
+      if (entry.remark) {
+        html += '<div style="font-size:10px; color:var(--text-dim); margin-top:2px;">' + escapeHtml(entry.remark) + '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  if (filtered.length > 30) {
+    html += '<div style="text-align:center; padding:12px; color:var(--text-dim); font-size:11px;">외 ' + (filtered.length - 30) + '건 (검색어로 필터링하세요)</div>';
+  }
+  container.innerHTML = html;
+}
+
+function filterPhDaily() {
+  renderPhDaily();
+}
+window.filterPhDaily = filterPhDaily;
+
+function populatePhCustomerFilter() {
+  const sel = document.getElementById('phCustomerFilter');
+  if (!sel || !_phData || !_phData.projects) return;
+  const customers = Object.keys(_phData.projects).sort();
+  for (const c of customers) {
+    const opt = document.createElement('option');
+    opt.value = c;
+    const stats = _phData.summary.project_stats[c] || {};
+    opt.textContent = c + ' (' + (stats.total || 0) + ')';
+    sel.appendChild(opt);
+  }
+}
+
+function renderPhProjects() {
+  const container = document.getElementById('phProjectList');
+  if (!container || !_phData) return;
+
+  const custFilter = document.getElementById('phCustomerFilter')?.value || 'ALL';
+  const statusFilter = document.getElementById('phStatusFilter')?.value || 'ALL';
+
+  let projects = [];
+  if (custFilter === 'ALL') {
+    for (const [cust, projs] of Object.entries(_phData.projects || {})) {
+      projs.forEach(p => projects.push({ ...p, _customer: cust }));
+    }
+  } else {
+    (_phData.projects[custFilter] || []).forEach(p => projects.push({ ...p, _customer: custFilter }));
+  }
+
+  if (statusFilter !== 'ALL') {
+    projects = projects.filter(p => p.status === statusFilter);
+  }
+
+  if (projects.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">프로젝트 없음</div>';
+    return;
+  }
+
+  let html = '<div style="font-size:11px; color:var(--text-secondary); margin-bottom:6px;">총 ' + projects.length + '건</div>';
+  for (const p of projects) {
+    const statusColor = p.status === 'Ongoing' ? 'var(--primary)' :
+                         p.status === 'Done' ? 'var(--success)' :
+                         p.status === 'Closed' ? 'var(--text-dim)' :
+                         p.status === 'Dropped' ? 'var(--danger)' : 'var(--text-secondary)';
+    html += '<div style="margin-bottom:8px; padding:10px; border:1px solid var(--border-color); border-radius:8px; border-left:3px solid ' + statusColor + ';">';
+    html += '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">';
+    html += '<span style="font-size:10px; font-weight:600; color:' + statusColor + '; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:3px;">' + escapeHtml(p._customer) + ' / ' + escapeHtml(p.status) + '</span>';
+    if (p.days) {
+      html += '<span style="font-size:10px; color:var(--warning);">' + p.days + 'days</span>';
+    }
+    html += '</div>';
+    html += '<div style="font-size:12px; font-weight:600; color:var(--text-primary); margin-bottom:4px;">' + escapeHtml(p.topic) + '</div>';
+    if (p.progress) {
+      html += '<div style="font-size:11px; color:var(--text-secondary); line-height:1.5;">' + escapeHtml(p.progress) + '</div>';
+    }
+    if (p.start || p.target) {
+      html += '<div style="font-size:10px; color:var(--text-dim); margin-top:4px;">Start: ' + (p.start || '-') + ' / Target: ' + (p.target || '-') + '</div>';
+    }
+    if (p.hq_comment) {
+      html += '<div style="font-size:10px; color:var(--accent); margin-top:4px;">[HQ] ' + escapeHtml(p.hq_comment) + '</div>';
+    }
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+window.renderPhProjects = renderPhProjects;
+
+function renderPhVisits() {
+  const container = document.getElementById('phVisitList');
+  if (!container || !_phData) return;
+
+  const visits = _phData.visits || [];
+  if (visits.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">방문 일정 없음</div>';
+    return;
+  }
+
+  let html = '';
+  for (const v of visits.slice(0, 10)) {
+    html += '<div style="margin-bottom:12px; border:1px solid var(--border-color); border-radius:10px; overflow:hidden;">';
+    html += '<div style="padding:10px 12px; background:var(--bg-card-sub); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">';
+    html += '<span style="font-weight:700; font-size:13px; color:var(--text-primary);">WW' + v.week + ' (' + v.year + ')</span>';
+    if (v.reporter) {
+      html += '<span style="font-size:10px; color:var(--text-dim);">Reporter: ' + escapeHtml(v.reporter) + '</span>';
+    }
+    html += '</div>';
+    for (const sch of v.schedule) {
+      html += '<div style="padding:6px 12px; border-bottom:1px solid rgba(255,255,255,0.03); display:flex; gap:8px; align-items:flex-start;">';
+      html += '<span style="font-size:11px; color:var(--primary); font-weight:600; min-width:30px;">' + escapeHtml(sch.day) + '</span>';
+      html += '<div style="flex:1;">';
+      if (sch.customer) html += '<span style="font-size:11px; font-weight:600; color:var(--text-primary);">' + escapeHtml(sch.customer) + '</span>';
+      if (sch.action) html += '<div style="font-size:11px; color:var(--text-secondary);">' + escapeHtml(sch.action) + '</div>';
+      if (sch.remark) html += '<div style="font-size:10px; color:var(--text-dim);">' + escapeHtml(sch.remark) + '</div>';
+      html += '</div></div>';
+    }
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+// 필리핀 엑셀 업데이트 업로드
+function setupPhFileUpload() {
+  const input = document.getElementById('phReportFileInput');
+  if (!input) return;
+  input.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const wb = XLSX.read(ev.target.result, { type: 'array' });
+        let dailyCount = 0;
+        let projCount = 0;
+
+        // DAILY REPORT 시트 파싱
+        for (const sn of wb.SheetNames) {
+          if (sn.toUpperCase().includes('DAILY REPORT')) {
+            const dateMatch = sn.match(/(\d{8})/);
+            if (!dateMatch) continue;
+            const rawDate = dateMatch[1];
+            const dateStr = rawDate.slice(0,4) + '-' + rawDate.slice(4,6) + '-' + rawDate.slice(6);
+            const ws = wb.Sheets[sn];
+            const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+            const entries = [];
+            for (let i = 1; i < rows.length; i++) {
+              const row = rows[i];
+              if (!row || !row[2]) continue;
+              entries.push({
+                customer: String(row[1] || '').trim(),
+                detail: String(row[2] || '').trim(),
+                pending: String(row[3] || '').trim(),
+                remark: String(row[4] || '').trim()
+              });
+            }
+            if (entries.length > 0) {
+              if (!_phData) _phData = { daily_reports: [], projects: {}, visits: [], summary: {} };
+              // Upsert: 같은 날짜면 교체
+              const existIdx = _phData.daily_reports.findIndex(r => r.date === dateStr);
+              if (existIdx >= 0) {
+                _phData.daily_reports[existIdx] = { date: dateStr, entries };
+              } else {
+                _phData.daily_reports.push({ date: dateStr, entries });
+              }
+              _phData.daily_reports.sort((a, b) => b.date.localeCompare(a.date));
+              dailyCount += entries.length;
+            }
+          }
+        }
+
+        // 고객사 프로젝트 시트 파싱
+        const knownCustomers = ['ATP', 'SSPC', 'TIPI', 'TICL', 'ASE', 'ST MICRO', 'Analog', 'DHL',
+          'ONSEMI', 'TongHsing', 'Eaton', 'Eaton FPIP', 'TE', 'Microchip',
+          'AMS', 'INARI PH', 'Littelfuse', 'ATEC', 'Cirtek', 'ROHM', 'CG Semi'];
+        for (const sn of wb.SheetNames) {
+          if (knownCustomers.includes(sn.trim())) {
+            const ws = wb.Sheets[sn];
+            const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+            const projects = [];
+            for (let i = 1; i < rows.length; i++) {
+              const row = rows[i];
+              if (!row) continue;
+              const topic = String(row[2] || '').trim();
+              const progress = String(row[3] || '').trim();
+              if (!topic && !progress) continue;
+              const status = String(row[8] || '').trim();
+              let statusNorm = status;
+              const sl = status.toLowerCase().replace(/\s/g, '');
+              if (['ongoing', 'on-going'].includes(sl)) statusNorm = 'Ongoing';
+              else if (['done', 'completed'].includes(sl)) statusNorm = 'Done';
+              else if (['closed', 'close'].includes(sl)) statusNorm = 'Closed';
+              else if (['dropped', 'drop'].includes(sl)) statusNorm = 'Dropped';
+
+              projects.push({
+                item: String(row[1] || '').trim(),
+                topic, progress,
+                start: '', target: '', days: '',
+                status: statusNorm || 'Unknown',
+                remark: String(row[9] || '').trim(),
+                hq_comment: String(row[12] || '').trim()
+              });
+            }
+            if (projects.length > 0) {
+              if (!_phData) _phData = { daily_reports: [], projects: {}, visits: [], summary: {} };
+              _phData.projects[sn.trim()] = projects;
+              projCount += projects.length;
+            }
+          }
+        }
+
+        if (dailyCount > 0 || projCount > 0) {
+          renderPhDaily();
+          renderPhProjects();
+          showToast(file.name + ' 업데이트: Daily ' + dailyCount + '건, 프로젝트 ' + projCount + '건', 'success');
+        } else {
+          showToast('업데이트할 데이터가 없습니다.', 'warning');
+        }
+      } catch (err) {
+        showToast('엑셀 파싱 오류: ' + err.message, 'error');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    input.value = '';
+  });
+}
+
+
+// =====================================================
+// 초기화: 실험실 탭 진입 시 데이터 로딩
+// =====================================================
+(function() {
+  const origShowPanel = window.showPanel;
+  if (origShowPanel) {
+    window.showPanel = function(panelName) {
+      origShowPanel(panelName);
+      if (panelName === 'lab') {
+        if (!_gimpoStockData) initGimpoStock();
+        if (!_phData) initPhDailyReport();
+      }
+    };
+  }
+  // 앱 로드 시에도 데이터 번들이 있으면 초기화
+  document.addEventListener('DOMContentLoaded', function() {
+    setupGimpoFileUpload();
+    setupPhFileUpload();
+    // 실험실 탭이 기본 표시되어 있으면 즉시 로딩
+    setTimeout(function() {
+      if (window.KOSTAT_GIMPO_TRAY_STOCK) initGimpoStock();
+      if (window.KOSTAT_PH_DAILY_REPORT) initPhDailyReport();
+    }, 300);
+  });
+})();
 
 
 
