@@ -628,27 +628,6 @@
               </div>
             </div>
 
-            <!-- 핵심 지표 카드 -->
-            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:14px;">
-              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
-                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">총 재고</div>
-                <div style="font-size:18px; font-weight:700; color:var(--primary);" id="gimpoTotalStock">-</div>
-              </div>
-              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
-                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">보유 품목 수</div>
-                <div style="font-size:18px; font-weight:700; color:var(--accent);" id="gimpoActiveItems">-</div>
-              </div>
-              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
-                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">생산부 재고</div>
-                <div style="font-size:16px; font-weight:700; color:var(--success);" id="gimpoProdTotal">-</div>
-                <div style="font-size:10px; color:var(--text-dim); margin-top:2px;" id="gimpoProdDetail">공정: - / 포장: -</div>
-              </div>
-              <div style="background:var(--bg-card-sub); border-radius:10px; padding:12px; border:1px solid var(--border-color);">
-                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">자재부 창고 재고</div>
-                <div style="font-size:16px; font-weight:700; color:var(--warning);" id="gimpoMatTotal">-</div>
-              </div>
-            </div>
-
             <!-- 검색 바 -->
             <div style="margin-bottom:10px;">
               <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처 검색..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="filterGimpoStock()" />
@@ -658,7 +637,7 @@
             <div style="font-size:11px; color:var(--text-secondary); margin-bottom:6px;" id="gimpoResultCount">-</div>
 
             <!-- 재고 데이터 테이블 -->
-            <div style="border-radius:10px; border:1px solid var(--border-color); overflow:hidden; max-height:55vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+            <div style="border-radius:10px; border:1px solid var(--border-color); overflow:hidden; max-height:calc(100vh - 240px); min-height:450px; overflow-y:auto; -webkit-overflow-scrolling:touch;">
               <table class="modern-table" style="font-size:11px; width:100%;">
                 <thead>
                   <tr>

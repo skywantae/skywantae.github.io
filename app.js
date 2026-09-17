@@ -6932,15 +6932,11 @@ function initGimpoStock() {
     return;
   }
   const s = _gimpoStockData.summary;
-  document.getElementById('gimpoAsOfDate').textContent =
-    '기준: ' + _gimpoStockData.as_of_date + ' ' + (_gimpoStockData.as_of_time || '') +
-    ' / 출처: ' + (_gimpoStockData.source_file || '');
-  document.getElementById('gimpoTotalStock').textContent = formatNum(s.total_stock) + ' EA';
-  document.getElementById('gimpoActiveItems').textContent = formatNum(s.active_items) + '종';
-  document.getElementById('gimpoProdTotal').textContent = formatNum(s.prod_total) + ' EA';
-  document.getElementById('gimpoProdDetail').textContent =
-    '공정: ' + formatNum(s.prod_wip) + ' / 포장: ' + formatNum(s.prod_pack);
-  document.getElementById('gimpoMatTotal').textContent = formatNum(s.mat_total) + ' EA';
+  const asOfEl = document.getElementById('gimpoAsOfDate');
+  if (asOfEl) {
+    asOfEl.textContent = '기준: ' + _gimpoStockData.as_of_date + ' ' + (_gimpoStockData.as_of_time || '') +
+      ' / 출처: ' + (_gimpoStockData.source_file || '');
+  }
 
   _gimpoFilteredItems = _gimpoStockData.items;
   renderGimpoStock();
@@ -7060,11 +7056,8 @@ function setupGimpoFileUpload() {
           summary: { total_stock: totalStock, active_items: items.length, prod_total: prodSum, mat_total: matSum, prod_wip: 0, prod_pack: 0 },
           items: items
         };
-        document.getElementById('gimpoAsOfDate').textContent = '기준: ' + _gimpoStockData.as_of_date + ' (수동 업로드: ' + file.name + ')';
-        document.getElementById('gimpoTotalStock').textContent = formatNum(totalStock) + ' EA';
-        document.getElementById('gimpoActiveItems').textContent = formatNum(items.length) + '종';
-        document.getElementById('gimpoProdTotal').textContent = formatNum(prodSum) + ' EA';
-        document.getElementById('gimpoMatTotal').textContent = formatNum(matSum) + ' EA';
+        const asOfUpload = document.getElementById('gimpoAsOfDate');
+        if (asOfUpload) asOfUpload.textContent = '기준: ' + _gimpoStockData.as_of_date + ' (수동 업로드: ' + file.name + ')';
         _gimpoFilteredItems = items;
         renderGimpoStock();
         showToast(file.name + ' 업로드 완료: ' + items.length + '개 품목', 'success');
