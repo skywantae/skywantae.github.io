@@ -561,21 +561,29 @@
             </div>
           </div>
 
-          <!-- 카드 2: 주간보고서 자동화 -->
-          <div class="lab-card coming-soon-card">
+          <!-- 카드 2: 해외영업부 주간보고서 실시간 협업 워크스페이스 -->
+          <div class="lab-card" id="weeklyReportLabCard" style="border-color: #3b82f6;">
             <div class="lab-card-header">
               <div class="lab-card-title-box">
-                <span class="lab-badge secondary">개발 예정</span>
-                <h4>주간보고서 자동화</h4>
+                <span class="lab-badge primary" style="background:#2563eb; color:#ffffff;">실시간 협업 LIVE</span>
+                <h4>해외영업부 주간보고서 실시간 협업 워크스페이스</h4>
               </div>
-              <span class="lab-sub-badge pending">준비 중</span>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <span class="lab-sub-badge" style="background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.3);">제1안 브리핑형</span>
+                <a href="weekly_report_prototype.html" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
+                  전체화면 새 창 열기
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+              </div>
             </div>
-            <div class="lab-card-body">
-              <p class="lab-desc" style="margin-bottom:8px;">
-                주간 영업 및 출하 실적, 수주 현황을 집계하여 사내 보고 양식에 맞춰 주간보고서를 원클릭으로 자동 생성하는 기능입니다.
+            <div class="lab-card-body" style="padding:12px;">
+              <p class="lab-desc" style="margin-bottom:12px;">
+                파일(PPT/Excel) 업로드 없이, 모든 팀원이 온라인에서 <strong>매출 실적 및 예상치, 샘플 진행 현황, 특이사항</strong>을 직접 실시간으로 편집하고 자동 동기화하는 클라우드 협업 시스템입니다. (수정 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
               </p>
-              <div class="lab-pending-notice">
-                <span style="font-weight:600;">안내:</span> 본 기능은 사용자의 추가 업무 지시 및 세부 보고 양식 규격에 맞춰 후속 탑재될 예정입니다.
+              
+              <!-- 워크스페이스 임베드 컨테이너 -->
+              <div style="width:100%; height:780px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
+                <iframe src="weekly_report_prototype.html" style="width:100%; height:100%; border:none;" title="해외영업부 주간보고서 실시간 워크스페이스"></iframe>
               </div>
             </div>
           </div>

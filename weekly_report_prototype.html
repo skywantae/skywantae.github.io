@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KOSTAT ERP - 해외영업부 주간보고서 실시간 협업 시스템 (Live Workspace)</title>
+  <style>
+    :root {
+      --bg-base: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-sub: #162032;
+      --bg-card-hover: #1e293d;
+      --border-color: #1e293b;
+      --border-light: #334155;
+      --border-accent: rgba(59, 130, 246, 0.4);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #3b82f6;
+      --primary-light: #60a5fa;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --accent: #8b5cf6;
+      --accent-light: #a78bfa;
+      --success: #10b981;
+      --success-light: #34d399;
+      --warning: #f59e0b;
+      --warning-light: #fbbf24;
+      --danger: #ef4444;
+      --cyan: #06b6d4;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Pretendard", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      padding-bottom: 80px;
+    }
+
+    /* 고정 헤더 */
+    .app-header {
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 12px 24px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-badge {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .app-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .week-badge {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: var(--primary-light);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* 프로필 선택기 */
+    .user-select-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-light);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .user-select-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    .user-select-dropdown {
+      background: transparent;
+      border: none;
+      color: var(--primary-light);
+      font-size: 12px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .user-select-dropdown option {
+      background: var(--bg-card);
+      color: #fff;
+    }
+
+    /* 실시간 동기화 상태 바 */
+    .sync-status-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--success-light);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+      animation: pulseAnim 1.8s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .btn-action {
+      background: var(--bg-card-sub);
+      color: var(--text-muted);
+      border: 1px solid var(--border-light);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: var(--border-light);
+      color: #fff;
+    }
+
+    .btn-action.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .btn-action.primary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-action.success {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    /* 담당자 순서 탭 (한준희 -> 김샘물 -> 이가진 -> 이상철 -> 김완태) */
+    .member-tab-nav {
+      display: flex;
+      gap: 6px;
+      background: #0d131f;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    .member-tab-btn {
+      flex: 1;
+      min-width: 140px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .member-tab-btn:hover {
+      background: var(--bg-card-sub);
+      color: #fff;
+    }
+
+    .member-tab-btn.active {
+      background: var(--bg-card);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-light);
+    }
+
+    .member-tab-btn .role-pill {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-dim);
+    }
+
+    .member-tab-btn.active .role-pill {
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--primary-light);
+      font-weight: 700;
+    }
+
+    /* 메인 컨테이너 */
+    .main-container {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* 팀 전체 KPI 서머리 바 */
+    .kpi-summary-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px 16px;
+      position: relative;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+      border-radius: 8px 0 0 8px;
+    }
+
+    .kpi-card.accent::before { background: var(--accent); }
+    .kpi-card.success::before { background: var(--success); }
+    .kpi-card.warning::before { background: var(--warning); }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .kpi-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      font-family: monospace;
+    }
+
+    .kpi-subtext {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .progress-track {
+      background: rgba(255, 255, 255, 0.08);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      border-radius: 3px;
+    }
+
+    /* 담당자 상세 안내 카드 */
+    .member-profile-card {
+      background: linear-gradient(135deg, rgba(22, 32, 50, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .member-info-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .member-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .member-name-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .member-accounts-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* 3대 패널 그리드 */
+    .tri-panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr 1.15fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 1200px) {
+      .tri-panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .collab-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .collab-panel-header {
+      background: var(--bg-card-sub);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collab-panel-body {
+      padding: 14px;
+      flex: 1;
+      overflow-y: auto;
+      max-height: 700px;
+    }
+
+    /* 1. 매출 아이템 카드 */
+    .sales-site-card {
+      background: #0d131f;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .sales-site-card:hover {
+      border-color: var(--border-light);
+    }
+
+    .sales-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .sales-site-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sales-edit-badge {
+      font-size: 10px;
+      color: var(--primary-light);
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .sales-edit-badge:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .sales-input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .input-group-sm {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .input-group-sm label {
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .input-sm {
+      background: #070a12;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      font-size: 12px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      outline: none;
+    }
+
+    .input-sm:focus {
+      border-color: var(--primary);
+    }
+
+    .sales-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+    }
+
+    /* 2. 주간 이슈 카드 */
+    .issue-item-card {
+      background: #0d131f;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .issue-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .issue-topic-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+      color: var(--primary-light);
+      font-size: 13px;
+      font-weight: 700;
+      width: 70%;
+      padding: 2px 4px;
+      outline: none;
+    }
+
+    .issue-topic-input:focus {
+      border-bottom-color: var(--primary);
+    }
+
+    .issue-tag-select {
+      background: #162032;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .bullet-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .bullet-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .bullet-dot {
+      color: var(--primary-light);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .bullet-textarea {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      font-size: 12px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      line-height: 1.4;
+      resize: vertical;
+      min-height: 32px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .bullet-textarea:focus {
+      border-color: var(--primary);
+      background: #070a12;
+    }
+
+    .bullet-del-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 12px;
+    }
+    .bullet-del-btn:hover { color: var(--danger); }
+
+    .add-bullet-btn {
+      background: transparent;
+      border: 1px dashed var(--border-color);
+      color: var(--text-dim);
+      font-size: 11px;
+      width: 100%;
+      padding: 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .add-bullet-btn:hover {
+      border-color: var(--border-light);
+      color: var(--text-muted);
+    }
+
+    /* 3. 샘플 관리 테이블 */
+    .sample-live-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .sample-live-table th {
+      background: #0b101c;
+      color: var(--text-muted);
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .sample-live-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+
+    .sample-live-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-toggle-btn {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: var(--primary-light);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .status-toggle-btn.close {
+      background: rgba(100, 116, 139, 0.2);
+      border-color: rgba(100, 116, 139, 0.4);
+      color: var(--text-dim);
+    }
+
+    .table-inline-input {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 4px;
+      border-radius: 3px;
+      width: 100%;
+    }
+
+    .table-inline-input:focus {
+      background: #070a12;
+      border-color: var(--primary);
+    }
+
+    /* 토스트 알림 */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      background: #1e293b;
+      border: 1px solid var(--primary);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      animation: toastIn 0.25s ease forwards;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="title-group">
+        <span class="app-badge">실시간 협업</span>
+        <h1 class="app-title">해외영업부 주간보고서 통합 뷰어</h1>
+        <span class="week-badge" id="headerWeekLabel">9월 3주차 (0914-0918)</span>
+      </div>
+
+      <div class="header-controls">
+        <!-- 현재 접속자(작성자) 프로필 선택기 -->
+        <div class="user-select-box">
+          <span class="user-select-label">내 프로필:</span>
+          <select class="user-select-dropdown" id="currentUserSelect" onchange="changeCurrentUser(this.value)">
+            <option value="한준희 책임" selected>한준희 책임</option>
+            <option value="김샘물 선임">김샘물 선임</option>
+            <option value="이가진 선임">이가진 선임</option>
+            <option value="이상철 선임">이상철 선임</option>
+            <option value="김완태 사원">김완태 사원</option>
+          </select>
+        </div>
+
+        <!-- 실시간 동기화 상태 -->
+        <div class="sync-status-box">
+          <span class="pulse-dot"></span>
+          <span id="syncStatusText">실시간 동기화 됨</span>
+        </div>
+
+        <button class="btn-action primary" onclick="forceSyncRemote()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+          지금 동기화
+        </button>
+      </div>
+    </div>
+
+    <!-- 팀원 순서 탭 (한준희 -> 김샘물 -> 이가진 -> 이상철 -> 김완태 순) -->
+    <nav class="member-tab-nav">
+      <button class="member-tab-btn" onclick="selectMember('ALL', this)" id="tabMemberALL">
+        <span>전체 팀 종합</span>
+        <span class="role-pill">전체</span>
+      </button>
+      <button class="member-tab-btn active" onclick="selectMember('hjh', this)" id="tabMember_hjh">
+        <span>1. 한준희 책임</span>
+        <span class="role-pill">책임</span>
+      </button>
+      <button class="member-tab-btn" onclick="selectMember('ksm', this)" id="tabMember_ksm">
+        <span>2. 김샘물 선임</span>
+        <span class="role-pill">선임</span>
+      </button>
+      <button class="member-tab-btn" onclick="selectMember('lgj', this)" id="tabMember_lgj">
+        <span>3. 이가진 선임</span>
+        <span class="role-pill">선임</span>
+      </button>
+      <button class="member-tab-btn" onclick="selectMember('lsc', this)" id="tabMember_lsc">
+        <span>4. 이상철 선임</span>
+        <span class="role-pill">선임</span>
+      </button>
+      <button class="member-tab-btn" onclick="selectMember('kwt', this)" id="tabMember_kwt">
+        <span>5. 김완태 사원</span>
+        <span class="role-pill">사원</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- 메인 작업 영역 -->
+  <main class="main-container">
+
+    <!-- 1. 팀 전체 실시간 집계 KPI 리본 (숫자 변경 시 실시간 재계산) -->
+    <div class="kpi-summary-bar">
+      <div class="kpi-card">
+        <div class="kpi-label">9월 해외영업 경영목표</div>
+        <div class="kpi-val" id="kpiTargetVal">$2,404,602</div>
+        <div class="kpi-subtext">전년 동월: $2,802,301</div>
+      </div>
+      <div class="kpi-card accent">
+        <div class="kpi-label">마감 예상 실적 (자동 집계)</div>
+        <div class="kpi-val" id="kpiExpectedVal">$1,836,000</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="kpiProgressBar" style="width: 76.4%;"></div>
+        </div>
+        <div class="kpi-subtext">목표 대비 달성예상율: <strong style="color:var(--success-light);" id="kpiRateText">76.4%</strong></div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">현재 매출 + 추가 예상액</div>
+        <div class="kpi-val" id="kpiCurrentAddVal">$640.5K + $1,195.4K</div>
+        <div class="kpi-subtext" id="kpiLastEditInfo">최근 수정: 김완태 사원 (방금 전)</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">주간 툴링 / 샘플 진행</div>
+        <div class="kpi-val" id="kpiSampleStats">398건 <span style="font-size:13px;color:var(--text-dim);">진행중</span></div>
+        <div class="kpi-subtext">전체 5명 담당자 샘플 실시간 연동</div>
+      </div>
+    </div>
+
+    <!-- 2. 선택된 담당자 브리핑 카드 -->
+    <div class="member-profile-card">
+      <div class="member-info-left">
+        <div class="member-avatar" id="memberAvatar">김</div>
+        <div>
+          <div class="member-name-text" id="memberNameHeader">김완태 사원</div>
+          <div class="member-accounts-text" id="memberAccountsHeader">관할: US / PH (TI-PH, Amkor PH, ATP, SSPC, Skyworks)</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <span class="app-badge" style="background:#1e293b;border:1px solid var(--border-light);color:var(--primary-light);">동시 편집 활성화</span>
+      </div>
+    </div>
+
+    <!-- 3. 실시간 동시 협업 3대 패널 그리드 -->
+    <div class="tri-panel-grid">
+      
+      <!-- 패널 1: 관할 사이트 예상 매출 (인라인 실시간 편집) -->
+      <div class="collab-panel">
+        <div class="collab-panel-header">
+          <span class="panel-title-text">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            관할 사이트 9월 예상 매출 (실시간 수정)
+          </span>
+          <button class="btn-action" style="font-size:11px;padding:3px 8px;" onclick="addNewSite()">+ 사이트 추가</button>
+        </div>
+        <div class="collab-panel-body" id="panelSalesContainer">
+          <!-- 동적 렌더링 -->
+        </div>
+      </div>
+
+      <!-- 패널 2: 주간 특이사항 및 프로젝트 현황 (인라인 실시간 편집) -->
+      <div class="collab-panel">
+        <div class="collab-panel-header">
+          <span class="panel-title-text">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            주간 특이사항 및 프로젝트 이슈 (실시간 수정)
+          </span>
+          <button class="btn-action" style="font-size:11px;padding:3px 8px;" onclick="addNewIssue()">+ 특이사항 추가</button>
+        </div>
+        <div class="collab-panel-body" id="panelIssuesContainer">
+          <!-- 동적 렌더링 -->
+        </div>
+      </div>
+
+      <!-- 패널 3: 주간 샘플 발송 & 고객 승인 추적 (인라인 실시간 편집) -->
+      <div class="collab-panel">
+        <div class="collab-panel-header">
+          <span class="panel-title-text">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            진행 중 샘플 및 승인 현황 (실시간 수정)
+          </span>
+          <button class="btn-action" style="font-size:11px;padding:3px 8px;" onclick="addNewSample()">+ 샘플 추가</button>
+        </div>
+        <div class="collab-panel-body" style="padding:0;">
+          <table class="sample-live-table">
+            <thead>
+              <tr>
+                <th>상태</th>
+                <th>고객사</th>
+                <th>품번 / 품목</th>
+                <th>수량</th>
+                <th>진행사항 / 메모</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="panelSamplesTbody">
+              <!-- 동적 렌더링 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- 토스트 컨테이너 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 인라인 스크립트: 실시간 데이터베이스 & 협업 동기화 엔진 -->
+  <script>
+    // 1. 초기 데이터
+    let LIVE_DB = {"title": "2026년 9월 3주차 (0914-0918) 해외영업부 주간보고서", "week_label": "9월 3주차 (0914-0918)", "last_updated_at": "2026-09-17 11:15", "last_updated_by": "김완태 사원", "kpi": {"target": 2404602, "current": 640579.34, "expected": 1836000.0, "rate": 76.4}, "members": [{"id": "hjh", "name": "한준희 책임", "role": "책임", "short_name": "한준희", "badge": "책임", "regions": "US / SG", "accounts": "Skyworks NPI / C/T Hybrid / 2DID", "sales": [{"site": "Skyworks (미국/싱가폴)", "target": 350000, "current": 109724.55, "additional": 340275.45, "expected": 450000, "note": "NPI 34종 완료 후 SG 검토"}], "issues": [{"id": "iss_hjh_1", "topic": "Skyworks C/T Hybrid PC NPI Project", "tag": "NPI 전환", "bullets": ["추가 Filter Conversion 43종 중 34모델 NPI 진행 완료, 당분간 SG 상황 검토", "WLCSP Project: 9종 진행 중 (2종 FAI 샘플 평가 중)"]}, {"id": "iss_hjh_2", "topic": "2DID 신규 설비 도입 및 글로벌 공장 셋업", "tag": "설비 셋업", "bullets": ["필리핀 공장 2대 셋업 완료, 한국 공장 3대 도입 완료(총 7대 가동)", "12월 초 필리핀으로 설비 2대 추가 이동 계획"]}, {"id": "iss_hjh_3", "topic": "REEL 개발 완료 및 차기 파이프라인 연계", "tag": "양산 대기", "bullets": ["REEL 개발 완료에 따라 Hybrid PC 추가 접수 예정 (32종 Filter PJT 접수 완료)"]}], "samples": [{"id": "smp_hjh_1", "customer": "Skyworks", "pn": "KS-0804-1661-PC", "item": "C/T Hybrid", "qty": 2, "status": "OPEN", "date": "2026-09-08", "note": "고객 승인 대기"}, {"id": "smp_hjh_2", "customer": "Skyworks", "pn": "KS-0804-1662-PC", "item": "C/T Hybrid", "qty": 2, "status": "OPEN", "date": "2026-09-08", "note": "고객 승인 대기"}, {"id": "smp_hjh_3", "customer": "Skyworks", "pn": "KS-1208-1895", "item": "C/T Reel", "qty": 10, "status": "OPEN", "date": "2026-09-02", "note": "샘플 출하 완료"}, {"id": "smp_hjh_4", "customer": "Skyworks", "pn": "KS-0804-1680-PC", "item": "C/T 2DID", "qty": 2, "status": "OPEN", "date": "2026-09-09", "note": "라인 평가 중"}]}, {"id": "ksm", "name": "김샘물 선임", "role": "선임", "short_name": "김샘물", "badge": "선임", "regions": "TW / MY", "accounts": "ASE, SPIL, Broadcom, Infineon", "sales": [{"site": "ASE / SPIL (대만)", "target": 759000, "current": 306302.26, "additional": 293697.74, "expected": 600000, "note": "9/21 TnR 단가 인상 PO 반영"}, {"site": "Broadcom / Inari (말레이시아)", "target": 340999, "current": 33852.7, "additional": 146147.3, "expected": 180000, "note": "LPAO 단가 .6 협의"}, {"site": "Infineon (말레이시아)", "target": 100000, "current": 25906.7, "additional": 59093.3, "expected": 85000, "note": "신규 SAP 전환 후 정상화"}], "issues": [{"id": "iss_ksm_1", "topic": "Broadcom / Inari MY Buy-Off 대응", "tag": "금형 증작", "bullets": ["KS-881490-2 금형 증작 완료 및 베트남 이전 완료 (단가 .6 조정)", "Inari MY 측에서 LPAO 품목 Particle test 요청에 따른 공정 검증"]}, {"id": "iss_ksm_2", "topic": "대만 ASECL PCN 이슈 및 단가 인상", "tag": "PCN 검토", "bullets": ["SPIL GIS 측의 ASECL 압박으로 PCN 진행 중단 및 샘플 규격(Warpage OOS) 재점검", "9/21부터 SPIL, ASE 대상 TnR 제품군 단가 인상 PO 적용"]}, {"id": "iss_ksm_3", "topic": "Infineon 신규 SAP 도입 및 수급 관리", "tag": "SAP 전환", "bullets": ["기존 재고 소진 후 new PO/PN 적용 체제로 전환", "Denka PS Sheet 수급 불균형에 따른 대체 원재료 검토 병행"]}], "samples": [{"id": "smp_ksm_1", "customer": "ASE", "pn": "KS-881818", "item": "TRAY MPPO", "qty": 25, "status": "OPEN", "date": "2026-09-08", "note": "금형 테스트 중"}, {"id": "smp_ksm_2", "customer": "Broadcom", "pn": "KS-871382-2", "item": "TRAY MPPO", "qty": 50, "status": "OPEN", "date": "2026-08-24", "note": "9월말 QUAL 제출 예정"}, {"id": "smp_ksm_3", "customer": "UNISEM", "pn": "KS-1612-692", "item": "C/T", "qty": 515, "status": "OPEN", "date": "2026-09-05", "note": "고객 승인 대기"}, {"id": "smp_ksm_4", "customer": "ASE", "pn": "PBCK13724", "item": "REEL", "qty": 20, "status": "CLOSE", "date": "2026-08-15", "note": "승인 완료"}]}, {"id": "lgj", "name": "이가진 선임", "role": "선임", "short_name": "이가진", "badge": "선임", "regions": "TW", "accounts": "Amkor TW, SPIL, KYEC, Sigurd", "sales": [{"site": "Amkor / SPIL (대만)", "target": 150000, "current": 48000.0, "additional": 72000.0, "expected": 120000, "note": "신규 C/T 테이프 승인 연계"}], "issues": [{"id": "iss_lgj_1", "topic": "대만 신규 C/T 및 Tray 금형 개발", "tag": "샘플 제출", "bullets": ["Amkor TW: KS-890280 (MPPO LP) 신규 트레이 금형 제작 진행", "SPIL TW: C/T 300M 규격(KS-2416-786, KS-2420-188, KS-2412-664) 신규 승인 진행", "KYEC / Sigurd: KS-871587, KS-880546 정기 오더 관리"]}], "samples": [{"id": "smp_lgj_1", "customer": "Amkor TW", "pn": "KS-890280", "item": "TRAY MPPO LP", "qty": 50, "status": "OPEN", "date": "2026-09-10", "note": "샘플 제출 완료"}, {"id": "smp_lgj_2", "customer": "SPIL", "pn": "KS-2416-786", "item": "C/T 300M", "qty": 10, "status": "OPEN", "date": "2026-09-05", "note": "고객 승인 대기"}, {"id": "smp_lgj_3", "customer": "KYEC", "pn": "KS-871587", "item": "TRAY 125/150", "qty": 50, "status": "OPEN", "date": "2026-09-04", "note": "진행중"}]}, {"id": "lsc", "name": "이상철 선임", "role": "선임", "short_name": "이상철", "badge": "선임", "regions": "TH / VN", "accounts": "UTAC-TH, Hana Micron, Hanwha", "sales": [{"site": "UTAC (태국)", "target": 20000, "current": 1200.0, "additional": 18800.0, "expected": 20000, "note": "트레이 정기 오더 진행"}, {"site": "Hana Micron (베트남)", "target": 50000, "current": 21000.0, "additional": 53698.49, "expected": 74698.49, "note": "진료 매출 목표 초과 달성"}], "issues": [{"id": "iss_lsc_1", "topic": "태국 Hanwha NxMD 신규 금형 3벌 제작", "tag": "금형 제작", "bullets": ["신규 Tray 금형 3벌 혜주에서 제작 완료 (KS-871649, KS-871650, KS-871651)", "내부 Test용 월 1K 사용 예상에 따른 추가 양산 협의"]}, {"id": "iss_lsc_2", "topic": "베트남 하나마이크론 매출 순항", "tag": "초과 달성", "bullets": ["진료 매출 ,000 정상 인식, 총 예상 ,698 (목표 대비 149% 달성)", "베트남 법인 내료 및 신소재 품목 수주 확대"]}], "samples": [{"id": "smp_lsc_1", "customer": "UTAC-TH", "pn": "KS-870752", "item": "TRAY", "qty": 50, "status": "OPEN", "date": "2026-09-05", "note": "승인 대기"}, {"id": "smp_lsc_2", "customer": "UTAC-TH", "pn": "KS-870229", "item": "TRAY", "qty": 50, "status": "OPEN", "date": "2026-08-28", "note": "승인 대기"}, {"id": "smp_lsc_3", "customer": "UTAC-TH", "pn": "KS-870575", "item": "TRAY", "qty": 50, "status": "OPEN", "date": "2026-08-28", "note": "승인 대기"}]}, {"id": "kwt", "name": "김완태 사원", "role": "사원", "short_name": "김완태", "badge": "사원", "regions": "US / PH", "accounts": "TI-PH, Amkor PH, ATP, SSPC", "sales": [{"site": "Amkor / ATP / SSPC (필리핀)", "target": 300000, "current": 123090.51, "additional": 176909.49, "expected": 300000, "note": "ATP , SSPC  목표 달성 순항"}, {"site": "Skyworks 글로벌", "target": 350000, "current": 109724.55, "additional": 340275.45, "expected": 450000, "note": "NPI 및 양산 PO 연계"}], "issues": [{"id": "iss_kwt_1", "topic": "필리핀 법인 신규 금형 및 정규 도면 배포", "tag": "도면 배포", "bullets": ["KS-870849(00) Amkor Philippine 도면 신규 등록 및 모바일/보안 클라우드 동기화 완료 (2026-09-17)", "ATEC 향 신규 JEDEC Tray KS-890277 샘플 제출 완료 및 양산 대기"]}, {"id": "iss_kwt_2", "topic": "TI-PH 및 SFA PH 신규 수주 진행", "tag": "신규 수주", "bullets": ["TI-PH 향 신규 트레이 KS-881800 샘플 발송 완료 (고객 평가 중)", "SFA PH 신규 SSD 진행 건 관련하여 FCST 수령 및 양산 셋업"]}], "samples": [{"id": "smp_kwt_1", "customer": "TI-PH", "pn": "KS-881800", "item": "TRAY MPPO", "qty": 50, "status": "OPEN", "date": "2026-09-12", "note": "고객 평가 진행중"}, {"id": "smp_kwt_2", "customer": "Amkor PH", "pn": "KS-870849", "item": "TRAY MLF 9x9", "qty": 50, "status": "OPEN", "date": "2026-09-17", "note": "도면 배포 및 양산 대기"}, {"id": "smp_kwt_3", "customer": "ATEC PH", "pn": "KS-890277", "item": "TRAY JEDEC", "qty": 50, "status": "CLOSE", "date": "2026-08-20", "note": "승인 완료, 양산 대기"}]}]};
+    let ACTIVE_MEMBER_ID = 'hjh'; // 1순위: 한준희 책임
+    let CURRENT_USER_NAME = '한준희 책임';
+    let DEBOUNCE_TIMER = null;
+
+    // 로컬 스토리지 캐시 로드 (있을 경우 최신본 반영)
+    const cachedLocal = localStorage.getItem('kostat_weekly_report_live_cache');
+    if (cachedLocal) {
+      try {
+        const parsed = JSON.parse(cachedLocal);
+        if (parsed && parsed.members) {
+          LIVE_DB = parsed;
+        }
+      } catch (e) {}
+    }
+
+    // 접속자 프로필 로컬 복원
+    try {
+      const savedProfile = localStorage.getItem('kostat_my_profile');
+      if (savedProfile) {
+        CURRENT_USER_NAME = savedProfile;
+      }
+    } catch(e) {}
+
+    // 2. 작성자 변경
+    function changeCurrentUser(name) {
+      CURRENT_USER_NAME = name;
+      try { localStorage.setItem('kostat_my_profile', name); } catch(e) {}
+      showToast(`작성자 프로필이 '${name}'(으)로 설정되었습니다.`);
+      const map = {
+        '한준희 책임': 'hjh',
+        '김샘물 선임': 'ksm',
+        '이가진 선임': 'lgj',
+        '이상철 선임': 'lsc',
+        '김완태 사원': 'kwt'
+      };
+      if (map[name]) {
+        const btn = document.getElementById('tabMember_' + map[name]);
+        if (btn) selectMember(map[name], btn);
+      }
+    }
+
+    // 3. 담당자 탭 선택
+    function selectMember(memberId, btnEl) {
+      ACTIVE_MEMBER_ID = memberId;
+      document.querySelectorAll('.member-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      renderMemberView();
+    }
+
+    // 4. 담당자 화면 렌더링
+    function renderMemberView() {
+      const isAll = (ACTIVE_MEMBER_ID === 'ALL');
+      const m = LIVE_DB.members.find(x => x.id === ACTIVE_MEMBER_ID);
+
+      // 프로필 카드 갱신
+      const avatarEl = document.getElementById('memberAvatar');
+      const nameEl = document.getElementById('memberNameHeader');
+      const accEl = document.getElementById('memberAccountsHeader');
+
+      if (isAll) {
+        avatarEl.textContent = '팀';
+        nameEl.textContent = '해외영업팀 전체 종합';
+        accEl.textContent = '한준희 책임, 김샘물 선임, 이가진 선임, 이상철 선임, 김완태 사원 5명 관할 전 지역 통합 브리핑';
+      } else if (m) {
+        avatarEl.textContent = m.short_name.slice(-1);
+        nameEl.textContent = m.name;
+        accEl.textContent = `관할 지역: ${m.regions} | 주요 사이트: ${m.accounts}`;
+      }
+
+      // (A) 매출 패널 렌더링
+      renderSalesPanel(isAll, m);
+
+      // (B) 특이사항 패널 렌더링
+      renderIssuesPanel(isAll, m);
+
+      // (C) 샘플 패널 렌더링
+      renderSamplesPanel(isAll, m);
+
+      // 팀 KPI 전체 재계산
+      recalculateTeamKpi();
+    }
+
+    // --- (A) 매출 패널 렌더링 & 인라인 수정 ---
+    function renderSalesPanel(isAll, member) {
+      const container = document.getElementById('panelSalesContainer');
+      let sitesList = [];
+
+      if (isAll) {
+        LIVE_DB.members.forEach(mem => {
+          (mem.sales || []).forEach((s, idx) => {
+            sitesList.push({ ...s, memberId: mem.id, memberName: mem.name, siteIdx: idx });
+          });
+        });
+      } else if (member) {
+        sitesList = (member.sales || []).map((s, idx) => ({ ...s, memberId: member.id, memberName: member.name, siteIdx: idx }));
+      }
+
+      if (sitesList.length === 0) {
+        container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;">등록된 사이트가 없습니다. [+ 사이트 추가] 버튼을 눌러보세요.</div>`;
+        return;
+      }
+
+      container.innerHTML = sitesList.map(item => {
+        const rate = item.target > 0 ? Math.round((item.expected / item.target) * 100) : 0;
+        const isAchieved = rate >= 100;
+        return `
+          <div class="sales-site-card">
+            <div class="sales-card-top">
+              <div>
+                <span class="sales-site-title">${item.site}</span>
+                <span style="font-size:10px;color:var(--text-dim);margin-left:6px;">(${item.memberName})</span>
+              </div>
+              <button class="bullet-del-btn" title="사이트 삭제" onclick="deleteSite('${item.memberId}', ${item.siteIdx})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+
+            <div class="sales-input-grid">
+              <div class="input-group-sm">
+                <label>당월 목표 ($)</label>
+                <input type="number" class="input-sm" value="${item.target}" oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'target', this.value)" />
+              </div>
+              <div class="input-group-sm">
+                <label>현재 매출 ($)</label>
+                <input type="number" class="input-sm" value="${item.current}" oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'current', this.value)" />
+              </div>
+              <div class="input-group-sm">
+                <label>추가 예상 ($)</label>
+                <input type="number" class="input-sm" value="${item.additional}" oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'additional', this.value)" />
+              </div>
+            </div>
+
+            <div class="progress-track">
+              <div class="progress-fill" style="width: ${Math.min(100, rate)}%;"></div>
+            </div>
+
+            <div class="sales-summary-row">
+              <span style="color:var(--text-muted);font-size:10px;">${item.note || '메모 없음'}</span>
+              <span style="color:${isAchieved ? 'var(--success-light)' : 'var(--primary-light)'};font-weight:700;">
+                총 예상: $${Math.round(item.expected).toLocaleString()} (${rate}%)
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateSalesField(memId, siteIdx, field, val) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.sales[siteIdx]) return;
+
+      const num = parseFloat(val) || 0;
+      mem.sales[siteIdx][field] = num;
+
+      // 총 예상액 자동 재계산 (현재 + 추가예상)
+      mem.sales[siteIdx].expected = (mem.sales[siteIdx].current || 0) + (mem.sales[siteIdx].additional || 0);
+
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 ${mem.sales[siteIdx].site} 매출을 수정했습니다.`);
+      renderSalesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+      recalculateTeamKpi();
+    }
+
+    function addNewSite() {
+      const mem = LIVE_DB.members.find(x => x.id === (ACTIVE_MEMBER_ID === 'ALL' ? 'kwt' : ACTIVE_MEMBER_ID));
+      if (!mem) return;
+
+      const siteName = prompt('추가할 고객사 또는 사이트명을 입력하세요:', '신규 사이트');
+      if (!siteName) return;
+
+      mem.sales.push({
+        site: siteName,
+        target: 50000,
+        current: 10000,
+        additional: 40000,
+        expected: 50000,
+        note: '신규 등록 사이트'
+      });
+
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 새 사이트 '${siteName}'을(를) 추가했습니다.`);
+      renderSalesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+      recalculateTeamKpi();
+    }
+
+    function deleteSite(memId, siteIdx) {
+      if (!confirm('이 사이트 매출 카드를 삭제하시겠습니까?')) return;
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem) return;
+      mem.sales.splice(siteIdx, 1);
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 사이트를 삭제했습니다.`);
+      renderSalesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+      recalculateTeamKpi();
+    }
+
+    // --- (B) 주간 특이사항 패널 렌더링 & 인라인 수정 ---
+    function renderIssuesPanel(isAll, member) {
+      const container = document.getElementById('panelIssuesContainer');
+      let issuesList = [];
+
+      if (isAll) {
+        LIVE_DB.members.forEach(mem => {
+          (mem.issues || []).forEach((iss, idx) => {
+            issuesList.push({ ...iss, memberId: mem.id, memberName: mem.name, issueIdx: idx });
+          });
+        });
+      } else if (member) {
+        issuesList = (member.issues || []).map((iss, idx) => ({ ...iss, memberId: member.id, memberName: member.name, issueIdx: idx }));
+      }
+
+      if (issuesList.length === 0) {
+        container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;">등록된 특이사항이 없습니다. [+ 특이사항 추가]를 눌러보세요.</div>`;
+        return;
+      }
+
+      container.innerHTML = issuesList.map(item => `
+        <div class="issue-item-card">
+          <div class="issue-item-header">
+            <input type="text" class="issue-topic-input" value="${escapeAttr(item.topic)}" onchange="updateIssueTopic('${item.memberId}', ${item.issueIdx}, this.value)" />
+            <div style="display:flex;align-items:center;gap:6px;">
+              <select class="issue-tag-select" onchange="updateIssueTag('${item.memberId}', ${item.issueIdx}, this.value)">
+                ${['NPI 전환', 'PCN 검토', '승인 지연', '설비 셋업', '금형 증작', '신규 수주', '초과 달성', '양산 대기', 'SAP 전환'].map(tag => `
+                  <option value="${tag}" ${item.tag === tag ? 'selected' : ''}>${tag}</option>
+                `).join('')}
+              </select>
+              <button class="bullet-del-btn" title="이슈 삭제" onclick="deleteIssue('${item.memberId}', ${item.issueIdx})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="bullet-list">
+            ${(item.bullets || []).map((b, bIdx) => `
+              <div class="bullet-row">
+                <span class="bullet-dot">•</span>
+                <textarea class="bullet-textarea" onchange="updateIssueBullet('${item.memberId}', ${item.issueIdx}, ${bIdx}, this.value)">${escapeAttr(b)}</textarea>
+                <button class="bullet-del-btn" title="불릿 삭제" onclick="deleteIssueBullet('${item.memberId}', ${item.issueIdx}, ${bIdx})">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            `).join('')}
+          </div>
+          <button class="add-bullet-btn" onclick="addIssueBullet('${item.memberId}', ${item.issueIdx})">+ 불릿 내용 추가</button>
+        </div>
+      `).join('');
+    }
+
+    function updateIssueTopic(memId, issIdx, val) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.issues[issIdx]) return;
+      mem.issues[issIdx].topic = val;
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항 제목을 수정했습니다.`);
+    }
+
+    function updateIssueTag(memId, issIdx, val) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.issues[issIdx]) return;
+      mem.issues[issIdx].tag = val;
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 이슈 상태를 '${val}'(으)로 변경했습니다.`);
+    }
+
+    function updateIssueBullet(memId, issIdx, bIdx, val) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.issues[issIdx] || !mem.issues[issIdx].bullets) return;
+      mem.issues[issIdx].bullets[bIdx] = val;
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항 내용을 수정했습니다.`);
+    }
+
+    function addIssueBullet(memId, issIdx) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.issues[issIdx]) return;
+      if (!mem.issues[issIdx].bullets) mem.issues[issIdx].bullets = [];
+      mem.issues[issIdx].bullets.push('새로운 특이사항 세부 내용을 입력하세요.');
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 불릿 항목을 추가했습니다.`);
+      renderIssuesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+    }
+
+    function deleteIssueBullet(memId, issIdx, bIdx) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.issues[issIdx]) return;
+      mem.issues[issIdx].bullets.splice(bIdx, 1);
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 불릿 항목을 삭제했습니다.`);
+      renderIssuesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+    }
+
+    function addNewIssue() {
+      const mem = LIVE_DB.members.find(x => x.id === (ACTIVE_MEMBER_ID === 'ALL' ? 'kwt' : ACTIVE_MEMBER_ID));
+      if (!mem) return;
+
+      const title = prompt('새 특이사항 프로젝트/고객사명을 입력하세요:', '신규 프로젝트 특이사항');
+      if (!title) return;
+
+      if (!mem.issues) mem.issues = [];
+      mem.issues.push({
+        id: 'iss_' + Date.now(),
+        topic: title,
+        tag: '신규 수주',
+        bullets: ['첫 번째 세부 이슈 내용을 입력하세요.']
+      });
+
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 새 특이사항을 등록했습니다.`);
+      renderIssuesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+    }
+
+    function deleteIssue(memId, issIdx) {
+      if (!confirm('이 특이사항 카드를 삭제하시겠습니까?')) return;
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem) return;
+      mem.issues.splice(issIdx, 1);
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항 카드를 삭제했습니다.`);
+      renderIssuesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+    }
+
+    // --- (C) 샘플 패널 렌더링 & 인라인 수정 ---
+    function renderSamplesPanel(isAll, member) {
+      const tbody = document.getElementById('panelSamplesTbody');
+      let samplesList = [];
+
+      if (isAll) {
+        LIVE_DB.members.forEach(mem => {
+          (mem.samples || []).forEach((s, idx) => {
+            samplesList.push({ ...s, memberId: mem.id, memberName: mem.name, sampleIdx: idx });
+          });
+        });
+      } else if (member) {
+        samplesList = (member.samples || []).map((s, idx) => ({ ...s, memberId: member.id, memberName: member.name, sampleIdx: idx }));
+      }
+
+      if (samplesList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-dim);">등록된 샘플이 없습니다. [+ 샘플 추가] 버튼을 눌러보세요.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = samplesList.map(item => `
+        <tr>
+          <td>
+            <button class="status-toggle-btn ${item.status.toLowerCase()}" onclick="toggleSampleStatus('${item.memberId}', ${item.sampleIdx})">
+              ${item.status}
+            </button>
+          </td>
+          <td>
+            <input type="text" class="table-inline-input" style="font-weight:700;" value="${escapeAttr(item.customer)}" onchange="updateSampleField('${item.memberId}', ${item.sampleIdx}, 'customer', this.value)" />
+            <div style="font-size:10px;color:var(--text-dim);padding-left:4px;">${item.memberName}</div>
+          </td>
+          <td>
+            <input type="text" class="table-inline-input" style="color:var(--primary-light);font-family:monospace;" value="${escapeAttr(item.pn)}" onchange="updateSampleField('${item.memberId}', ${item.sampleIdx}, 'pn', this.value)" />
+            <div style="font-size:10px;color:var(--text-dim);padding-left:4px;">${item.item || 'TRAY'}</div>
+          </td>
+          <td style="width:50px;">
+            <input type="number" class="table-inline-input" style="text-align:right;" value="${item.qty}" onchange="updateSampleField('${item.memberId}', ${item.sampleIdx}, 'qty', parseInt(this.value,10)||0)" />
+          </td>
+          <td>
+            <input type="text" class="table-inline-input" value="${escapeAttr(item.note || '')}" placeholder="진행 메모 입력..." onchange="updateSampleField('${item.memberId}', ${item.sampleIdx}, 'note', this.value)" />
+          </td>
+          <td style="width:30px;">
+            <button class="bullet-del-btn" title="샘플 삭제" onclick="deleteSample('${item.memberId}', ${item.sampleIdx})">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleSampleStatus(memId, smpIdx) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.samples[smpIdx]) return;
+      const cur = mem.samples[smpIdx].status;
+      mem.samples[smpIdx].status = (cur === 'OPEN') ? 'CLOSE' : 'OPEN';
+
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 샘플 상태를 '${mem.samples[smpIdx].status}'(으)로 전환했습니다.`);
+      renderSamplesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+      recalculateTeamKpi();
+    }
+
+    function updateSampleField(memId, smpIdx, field, val) {
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem || !mem.samples[smpIdx]) return;
+      mem.samples[smpIdx][field] = val;
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 샘플 정보를 수정했습니다.`);
+    }
+
+    function addNewSample() {
+      const mem = LIVE_DB.members.find(x => x.id === (ACTIVE_MEMBER_ID === 'ALL' ? 'kwt' : ACTIVE_MEMBER_ID));
+      if (!mem) return;
+
+      const pn = prompt('추가할 샘플의 품번(P/N)을 입력하세요:', 'KS-8818');
+      if (!pn) return;
+      const cust = prompt('고객사명을 입력하세요:', '고객사명');
+      if (!cust) return;
+
+      if (!mem.samples) mem.samples = [];
+      mem.samples.unshift({
+        id: 'smp_' + Date.now(),
+        customer: cust,
+        pn: pn,
+        item: 'TRAY',
+        qty: 50,
+        status: 'OPEN',
+        date: new Date().toISOString().slice(0, 10),
+        note: '신규 접수'
+      });
+
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 새 샘플 '${pn}'을 등록했습니다.`);
+      renderSamplesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+      recalculateTeamKpi();
+    }
+
+    function deleteSample(memId, smpIdx) {
+      if (!confirm('이 샘플 행을 삭제하시겠습니까?')) return;
+      const mem = LIVE_DB.members.find(x => x.id === memId);
+      if (!mem) return;
+      mem.samples.splice(smpIdx, 1);
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 샘플을 삭제했습니다.`);
+      renderSamplesPanel(ACTIVE_MEMBER_ID === 'ALL', mem);
+      recalculateTeamKpi();
+    }
+
+    // --- 전체 팀 KPI 재계산 ---
+    function recalculateTeamKpi() {
+      let totalExpected = 0;
+      let totalCurrent = 0;
+      let totalOpenSamples = 0;
+
+      LIVE_DB.members.forEach(mem => {
+        (mem.sales || []).forEach(s => {
+          totalExpected += (s.expected || 0);
+          totalCurrent += (s.current || 0);
+        });
+        (mem.samples || []).forEach(sm => {
+          if (sm.status === 'OPEN') totalOpenSamples++;
+        });
+      });
+
+      const target = LIVE_DB.kpi.target || 2404602;
+      const rate = Math.round((totalExpected / target) * 1000) / 10;
+
+      document.getElementById('kpiExpectedVal').textContent = `$${Math.round(totalExpected).toLocaleString()}`;
+      document.getElementById('kpiProgressBar').style.width = `${Math.min(100, rate)}%`;
+      document.getElementById('kpiRateText').textContent = `${rate}%`;
+      document.getElementById('kpiCurrentAddVal').textContent = `$${(totalCurrent / 1000).toFixed(1)}K + $${((totalExpected - totalCurrent) / 1000).toFixed(1)}K`;
+      document.getElementById('kpiSampleStats').innerHTML = `${totalOpenSamples}건 <span style="font-size:13px;color:var(--text-dim);">진행중</span>`;
+      document.getElementById('kpiLastEditInfo').textContent = `최근 수정: ${LIVE_DB.last_updated_by || CURRENT_USER_NAME} (${LIVE_DB.last_updated_at || '방금 전'})`;
+    }
+
+    // --- 5. 실시간 동기화 및 자동 저장 엔진 ---
+    function triggerAutoSave(msg) {
+      LIVE_DB.last_updated_at = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      LIVE_DB.last_updated_by = CURRENT_USER_NAME;
+
+      // 1) 즉시 로컬 스토리지 캐시
+      localStorage.setItem('kostat_weekly_report_live_cache', JSON.stringify(LIVE_DB));
+
+      const statusEl = document.getElementById('syncStatusText');
+      statusEl.textContent = '클라우드 저장 중...';
+
+      if (DEBOUNCE_TIMER) clearTimeout(DEBOUNCE_TIMER);
+      DEBOUNCE_TIMER = setTimeout(async () => {
+        await pushToCloud();
+        statusEl.textContent = `실시간 동기화 됨 (${LIVE_DB.last_updated_at})`;
+        if (msg) showToast(msg);
+      }, 1200);
+    }
+
+    async function pushToCloud() {
+      try {
+        const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+        const OWNER = 'skywantae';
+        const REPO = 'skywantae.github.io';
+        const path = 'data/weekly_report_live.json';
+        const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`;
+
+        const getRes = await fetch(apiUrl, {
+          headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+        }).catch(() => null);
+
+        let sha = null;
+        if (getRes && getRes.ok) {
+          const info = await getRes.json();
+          sha = info.sha;
+        }
+
+        const contentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(LIVE_DB, null, 2))));
+        await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: `chore: live update weekly report by ${CURRENT_USER_NAME}`,
+            content: contentB64,
+            sha: sha,
+            branch: 'main'
+          })
+        }).catch(() => null);
+      } catch (e) {
+        console.warn('Cloud sync background error:', e);
+      }
+    }
+
+    async function forceSyncRemote() {
+      const statusEl = document.getElementById('syncStatusText');
+      statusEl.textContent = '원격 데이터 동기화 중...';
+
+      try {
+        const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+        const apiUrl = `https://api.github.com/repos/skywantae/skywantae.github.io/contents/data/weekly_report_live.json?t=${Date.now()}`;
+        const res = await fetch(apiUrl, {
+          headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+
+        if (res.ok) {
+          const j = await res.json();
+          if (j.content) {
+            const decoded = decodeURIComponent(escape(atob(j.content.replace(/\n/g, ''))));
+            const parsed = JSON.parse(decoded);
+            if (parsed && parsed.members) {
+              LIVE_DB = parsed;
+              localStorage.setItem('kostat_weekly_report_live_cache', JSON.stringify(LIVE_DB));
+              renderMemberView();
+              statusEl.textContent = `실시간 동기화 됨 (${LIVE_DB.last_updated_at || '방금'})` ;
+              showToast(`최신 원격 데이터 동기화 완료 (${LIVE_DB.last_updated_by || '동기화'}님 수정본)`);
+              return;
+            }
+          }
+        }
+      } catch (e) {}
+
+      statusEl.textContent = '로컬 데이터 동기화 됨';
+      showToast('로컬 데이터가 동기화되었습니다.');
+    }
+
+    // 4초 주기 백그라운드 폴링 (원격 변경 감지 시 자동 갱신)
+    setInterval(async () => {
+      try {
+        const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+        const apiUrl = `https://api.github.com/repos/skywantae/skywantae.github.io/contents/data/weekly_report_live.json?t=${Date.now()}`;
+        const res = await fetch(apiUrl, {
+          headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (res.ok) {
+          const j = await res.json();
+          if (j.content) {
+            const decoded = decodeURIComponent(escape(atob(j.content.replace(/\n/g, ''))));
+            const parsed = JSON.parse(decoded);
+            if (parsed && parsed.last_updated_at && parsed.last_updated_at !== LIVE_DB.last_updated_at) {
+              if (parsed.last_updated_by !== CURRENT_USER_NAME) {
+                showToast(`${parsed.last_updated_by}님이 방금 실시간 데이터를 갱신했습니다.`);
+              }
+              LIVE_DB = parsed;
+              localStorage.setItem('kostat_weekly_report_live_cache', JSON.stringify(LIVE_DB));
+              renderMemberView();
+            }
+          }
+        }
+      } catch (e) {}
+    }, 4000);
+
+    // 토스트 헬퍼
+    function showToast(msg) {
+      const container = document.getElementById('toastContainer');
+      const div = document.createElement('div');
+      div.className = 'toast-msg';
+      div.textContent = msg;
+      container.appendChild(div);
+      setTimeout(() => {
+        div.style.opacity = '0';
+        div.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => div.remove(), 300);
+      }, 3000);
+    }
+
+    function escapeAttr(str) {
+      return String(str || '').replace(/"/g, '&quot;');
+    }
+
+    // 초기 실행
+    window.addEventListener('DOMContentLoaded', () => {
+      const selectEl = document.getElementById('currentUserSelect');
+      if (selectEl && CURRENT_USER_NAME) {
+        selectEl.value = CURRENT_USER_NAME;
+        const map = {
+          '한준희 책임': 'hjh',
+          '김샘물 선임': 'ksm',
+          '이가진 선임': 'lgj',
+          '이상철 선임': 'lsc',
+          '김완태 사원': 'kwt'
+        };
+        if (map[CURRENT_USER_NAME]) {
+          ACTIVE_MEMBER_ID = map[CURRENT_USER_NAME];
+          document.querySelectorAll('.member-tab-btn').forEach(b => b.classList.remove('active'));
+          const btn = document.getElementById('tabMember_' + ACTIVE_MEMBER_ID);
+          if (btn) btn.classList.add('active');
+        }
+      }
+      renderMemberView();
+    });
+  </script>
+</body>
+</html>
