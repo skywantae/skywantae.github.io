@@ -1315,6 +1315,10 @@ function applyAppLanguage(lang) {
     const ghd = [t.th_gimpo_partno, t.th_gimpo_temp, t.th_gimpo_spec, t.th_gimpo_customer, t.th_gimpo_remark, t.th_gimpo_prod, t.th_gimpo_mat, t.th_gimpo_total];
     gimpoThs.forEach((th, idx) => { if (ghd[idx]) th.textContent = ghd[idx]; });
   }
+  const thMatDirect = document.getElementById('thGimpoMat');
+  if (thMatDirect) thMatDirect.textContent = t.th_gimpo_mat;
+  const thProdDirect = document.getElementById('thGimpoProd');
+  if (thProdDirect) thProdDirect.textContent = t.th_gimpo_prod;
   // Gimpo 결과 카운트 갱신 (렌더 후 자동 반영되므로 renderGimpoStock 재호출)
   if (typeof renderGimpoStock === 'function' && _gimpoStockData) renderGimpoStock();
 
@@ -7477,6 +7481,13 @@ function renderGimpoStock() {
 
   const lang = AppState.currentLang || 'ko';
   const t = APP_I18N[lang] || APP_I18N.ko;
+
+  // 헤더 언어 무조건 동기화 (Warehouse / 자재부, Production / 생산부)
+  const thMat = document.getElementById('thGimpoMat') || document.querySelector('#gimpoStockTable thead th:nth-child(7)');
+  if (thMat && t.th_gimpo_mat) thMat.textContent = t.th_gimpo_mat;
+  const thProd = document.getElementById('thGimpoProd') || document.querySelector('#gimpoStockTable thead th:nth-child(6)');
+  if (thProd && t.th_gimpo_prod) thProd.textContent = t.th_gimpo_prod;
+
   const items = _gimpoFilteredItems;
   const count = document.getElementById('gimpoResultCount');
   if (count) count.textContent = t.gimpo_result_count + ': ' + items.length + ' ' + t.gimpo_unit;
@@ -7519,7 +7530,12 @@ function renderGimpoStock() {
 
 function filterGimpoStock() {
   if (!_gimpoStockData) return;
-  const q = (document.getElementById('gimpoSearchInput').value || '').trim().toLowerCase();
+  const qInput = document.getElementById('gimpoSearchInput');
+  const q = (qInput ? qInput.value : '').trim().toLowerCase();
+  const clearBtn = document.getElementById('btnGimpoSearchClear');
+  if (clearBtn) {
+    clearBtn.style.display = q ? 'inline-flex' : 'none';
+  }
   if (!q) {
     _gimpoFilteredItems = _gimpoStockData.items;
   } else {
@@ -7532,6 +7548,23 @@ function filterGimpoStock() {
   renderGimpoStock();
 }
 window.filterGimpoStock = filterGimpoStock;
+
+function clearGimpoSearch() {
+  const qInput = document.getElementById('gimpoSearchInput');
+  const clearBtn = document.getElementById('btnGimpoSearchClear');
+  if (qInput) {
+    qInput.value = '';
+    qInput.focus();
+  }
+  if (clearBtn) {
+    clearBtn.style.display = 'none';
+  }
+  if (_gimpoStockData) {
+    _gimpoFilteredItems = _gimpoStockData.items;
+    renderGimpoStock();
+  }
+}
+window.clearGimpoSearch = clearGimpoSearch;
 
 function showGimpoAccessGuide() {
   const p = document.getElementById('gimpoAccessGuidePanel');

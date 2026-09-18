@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.168" />
+  <link rel="stylesheet" href="app.css?v=1.0.169" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -613,9 +613,21 @@
               </div>
             </div>
 
-            <!-- 검색 바 -->
-            <div style="margin-bottom:10px;">
-              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="filterGimpoStock()" />
+            <!-- 검색 바 (고대비 가시성 개선) -->
+            <div class="gimpo-search-wrapper">
+              <div style="padding:0 10px 0 12px; display:flex; align-items:center; color:#60a5fa; flex-shrink:0;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." oninput="filterGimpoStock()" />
+              <button id="btnGimpoSearchClear" onclick="clearGimpoSearch()" style="display:none; background:transparent; border:none; color:#94a3b8; padding:8px 12px; cursor:pointer; align-items:center; justify-content:center;" title="검색어 초기화">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
             </div>
 
             <!-- 결과 카운트 -->
@@ -631,8 +643,8 @@
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">규격</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">거래처</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">특이사항</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">생산부</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">자재부</th>
+                    <th id="thGimpoProd" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">생산부</th>
+                    <th id="thGimpoMat" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">자재부</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">합계</th>
                   </tr>
                 </thead>
@@ -863,7 +875,7 @@
         <div class="setting-item">
           <label id="lblSettingVer">앱 버전 정보:</label>
           <div class="version-box">
-            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.168</strong></span>
+            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.169</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -1404,22 +1416,22 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.168"></script>
-  <script src="data/shipplan_data.js?v=1.0.168"></script>
-  <script src="data/quotations_data.js?v=1.0.168"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.168"></script>
-  <script src="data/drawings_data.js?v=1.0.168"></script>
-  <script src="data/knowledge_data.js?v=1.0.168"></script>
-  <script src="data/faq_db.js?v=1.0.168"></script>
-  <script src="data/feedback_board.js?v=1.0.168"></script>
-  <script src="data/archive_data.js?v=1.0.168"></script>
-  <script src="data/gimpo_tray_stock_data.js?v=1.0.168"></script>
-  <script src="data/ph_daily_report_data.js?v=1.0.168"></script>
+  <script src="data/skyworks_data.js?v=1.0.169"></script>
+  <script src="data/shipplan_data.js?v=1.0.169"></script>
+  <script src="data/quotations_data.js?v=1.0.169"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.169"></script>
+  <script src="data/drawings_data.js?v=1.0.169"></script>
+  <script src="data/knowledge_data.js?v=1.0.169"></script>
+  <script src="data/faq_db.js?v=1.0.169"></script>
+  <script src="data/feedback_board.js?v=1.0.169"></script>
+  <script src="data/archive_data.js?v=1.0.169"></script>
+  <script src="data/gimpo_tray_stock_data.js?v=1.0.169"></script>
+  <script src="data/ph_daily_report_data.js?v=1.0.169"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.168"></script>
-  <script src="exceljs.min.js?v=1.0.168"></script>
-  <script src="updater.js?v=1.0.168"></script>
-  <script src="app.js?v=1.0.168"></script>
+  <script src="xlsx.full.min.js?v=1.0.169"></script>
+  <script src="exceljs.min.js?v=1.0.169"></script>
+  <script src="updater.js?v=1.0.169"></script>
+  <script src="app.js?v=1.0.169"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
