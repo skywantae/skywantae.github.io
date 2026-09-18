@@ -1404,6 +1404,124 @@
       max-width: 160px;
     }
     
+
+    /* 빨간색 표시 Drop-Down 스타일 (image.png 규격) */
+    .select-dropdown-red {
+      background: var(--bg-card-sub);
+      border: 1.5px solid #ef4444 !important;
+      color: #fca5a5 !important;
+      font-weight: 700;
+      font-size: 11.5px;
+      border-radius: 4px;
+      padding: 3px 6px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .select-dropdown-red:hover, .select-dropdown-red:focus {
+      border-color: #f87171 !important;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+    }
+    .select-dropdown-red option {
+      background: #1e293b;
+      color: #ffffff;
+    }
+
+    /* 내용등록 버튼 (노란색 강조) */
+    .btn-submit-yellow {
+      background: #eab308 !important;
+      color: #0f172a !important;
+      font-weight: 800 !important;
+      font-size: 12px !important;
+      border: 1px solid #ca8a04 !important;
+      border-radius: 4px;
+      padding: 4px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 5px rgba(234, 179, 8, 0.3);
+    }
+    .btn-submit-yellow:hover {
+      background: #facc15 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(234, 179, 8, 0.45);
+    }
+
+    /* 영업사항 탭 네비게이션 */
+    .biz-subtab-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+    .biz-subtab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .biz-subtab-btn:hover {
+      background: var(--bg-card-hover);
+      color: #fff;
+    }
+    .biz-subtab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* 영업 테이블 공통 */
+    .biz-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-card-sub);
+    }
+    .biz-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    .biz-table th {
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text-dim);
+      font-weight: 700;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+      white-space: nowrap;
+    }
+    .biz-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    .biz-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .biz-table input[type="text"] {
+      width: 100%;
+      background: var(--bg-base);
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 11.5px;
+      padding: 4px 6px;
+      outline: none;
+    }
+    .biz-table input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+    
   </style>
 </head>
 <body>
@@ -1414,13 +1532,16 @@
       <div class="title-group">
         <h1 class="app-title">주간보고서</h1>
 
-        <!-- 기간 선택기: 2026년 주차별 일정표 (53주차 마스터 연동) -->
-        <div class="period-nav-group">
-          <select class="period-month-select" id="weekScheduleSelect" onchange="changeWeeklySchedule(this.value)" title="2026년 주차 선택 (Copy of Dorp down (002).xlsx 기준)" style="max-width:240px; font-weight:700;">
-            <!-- 53주차 동적 렌더링 -->
+        <!-- 1. Report 생산 주기 & Report 주차 (image.png 규격) -->
+        <div class="period-nav-group" style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:11.5px; color:var(--text-muted); font-weight:700;">1. Report 생산 주기: 일주일</span>
+          <span style="color:var(--border-light);">|</span>
+          <span style="font-size:11.5px; color:#ef4444; font-weight:700;">Report 주차:</span>
+          <select class="select-dropdown-red" id="weekScheduleSelect" onchange="changeWeeklySchedule(this.value)" title="2026년 주차 선택 (Drop-Down)" style="max-width:230px;">
+            <!-- 54주차 동적 렌더링 -->
           </select>
           <div class="week-pills-container" id="weekPillsContainer">
-            <!-- 동적 주차 뱃지 버튼 -->
+            <!-- 퀵 주차 버튼 -->
           </div>
         </div>
 
@@ -1541,16 +1662,16 @@
       <p class="member-accounts-sub" id="memberAccountsHeader">담당 국가: 미국 (USA) | 주요 사이트: Skyworks (US), Renesas (US), Broadcom (US)</p>
     </div>
 
-    <!-- 3. 실시간 편집 3단 그리드 (주차별 예상 매출 핵심 우선 배치) -->
-    <div class="columns-grid">
+    <!-- 2. 매출 및 3. 영업사항 종합 워크스페이스 (image.png 규격) -->
+    <div class="columns-grid" style="grid-template-columns: 1.1fr 1.9fr; gap: 16px;">
 
-      <!-- (A) 관할 사이트 9월 예상 매출 -->
+      <!-- ================= 2. 매출 (국가 Drop-Down 선택 및 수치 관리) ================= -->
       <div class="column-card sales-featured-card">
         <div class="column-header">
           <div class="column-title" style="display:flex; align-items:center; gap:8px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <span id="salesColumnTitle" style="font-weight:700; color:#1d4ed8;">관할 사이트 예상 매출</span>
-            <span class="sales-featured-badge">주간 핵심</span>
+            <span style="font-weight:800; color:#3b82f6;">2. 매출</span>
+            <span style="font-size:11px; color:var(--text-dim);">(국가별 목표 및 달성액)</span>
           </div>
           <div class="sales-card-header-actions">
             <span class="column-count" id="salesSiteCount">1개 사이트</span>
@@ -1558,64 +1679,105 @@
           </div>
         </div>
 
-        <div id="panelSalesContainer" style="flex:1; overflow-y:auto; max-height:550px;">
+        <div id="panelSalesContainer" style="flex:1; overflow-y:auto; max-height:560px;">
           <!-- 동적 렌더링 -->
         </div>
 
-        <button class="btn-add-section" id="btnAddSiteBtn" onclick="addNewSite()">+ 사이트 추가</button>
+        <button class="btn-add-section" id="btnAddSiteBtn" onclick="addNewSite()">+ 매출 항목 추가</button>
       </div>
 
-      <!-- (B) 주간 특이사항 및 프로젝트 이슈 -->
-      <div class="column-card">
-        <div class="column-header">
-          <div class="column-title">
+      <!-- ================= 3. 영업사항 (1.프로젝트, 2.품질이슈, 3.영업현황보고) ================= -->
+      <div class="column-card" style="display:flex; flex-direction:column;">
+        <div class="column-header" style="margin-bottom:8px;">
+          <div class="column-title" style="display:flex; align-items:center; gap:8px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            주간 특이사항 및 프로젝트 이슈
+            <span style="font-weight:800; color:#fff;">3. 영업사항</span>
           </div>
-          <span class="column-count" id="issuesCount">3건</span>
         </div>
 
-        <div id="panelIssuesContainer" style="flex:1; overflow-y:auto; max-height:550px;">
-          <!-- 동적 렌더링 -->
+        <!-- 영업사항 서브탭: 1) 프로젝트 / 2) Quality Issue / 3) 영업현황보고 -->
+        <div class="biz-subtab-nav">
+          <button class="biz-subtab-btn active" id="btnSubtabProject" onclick="switchBizSubtab('project', this)">1) 프로젝트</button>
+          <button class="biz-subtab-btn" id="btnSubtabQuality" onclick="switchBizSubtab('quality', this)">2) Quality Issue</button>
+          <button class="biz-subtab-btn" id="btnSubtabReport" onclick="switchBizSubtab('report', this)">3) 영업현황보고</button>
         </div>
 
-        <button class="btn-add-section" id="btnAddIssueBtn" onclick="addNewIssue()">+ 특이사항 추가</button>
-      </div>
-
-      <!-- (C) 진행 중 샘플 및 승인 현황 -->
-      <div class="column-card">
-        <div class="column-header">
-          <div class="column-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-            진행 중 샘플 및 승인 현황
+        <!-- 3-1. 프로젝트 패널 -->
+        <div id="bizPanelProject" style="flex:1; display:flex; flex-direction:column; overflow-y:auto; max-height:510px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">진행 중인 프로젝트 및 금형 개발 현황</span>
+            <button class="btn-action-xs primary" onclick="openAddProjectModal()">+ 프로젝트 등록</button>
           </div>
-          <span class="column-count" id="samplesCount">4건</span>
+          <div class="biz-table-wrap">
+            <table class="biz-table">
+              <thead>
+                <tr>
+                  <th style="color:#ef4444;">고객사</th>
+                  <th style="color:#ef4444;">아이템</th>
+                  <th>Kostat PN</th>
+                  <th style="color:#ef4444;">진행 Type</th>
+                  <th>PO NO</th>
+                  <th>예상 출하일정</th>
+                  <th style="text-align:center;">관리</th>
+                </tr>
+              </thead>
+              <tbody id="projectTableTbody">
+                <!-- 동적 렌더링 -->
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="sample-table-wrapper" style="flex:1; overflow-y:auto; max-height:550px;">
-          <table class="sample-table">
-            <thead>
-              <tr>
-                <th>상태</th>
-                <th>고객사</th>
-                <th>품번 / 품명</th>
-                <th style="text-align:right;">수량</th>
-                <th>진행 메모</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="panelSamplesTbody">
-              <!-- 동적 렌더링 -->
-            </tbody>
-          </table>
+        <!-- 3-2. Quality Issue 패널 -->
+        <div id="bizPanelQuality" style="flex:1; display:none; flex-direction:column; overflow-y:auto; max-height:510px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">고객사 품질 불량 현황 및 조치 코멘트</span>
+            <button class="btn-action-xs primary" onclick="openAddQualityModal()">+ Quality Issue 등록</button>
+          </div>
+          <div class="biz-table-wrap">
+            <table class="biz-table">
+              <thead>
+                <tr>
+                  <th style="color:#ef4444;">고객사</th>
+                  <th style="color:#ef4444;">아이템</th>
+                  <th>Kostat PN</th>
+                  <th style="color:#ef4444;">불량유형</th>
+                  <th>코멘트사항</th>
+                  <th style="text-align:center;">관리</th>
+                </tr>
+              </thead>
+              <tbody id="qualityTableTbody">
+                <!-- 동적 렌더링 -->
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <button class="btn-add-section" id="btnAddSampleBtn" onclick="addNewSample()">+ 새 샘플 등록</button>
+        <!-- 3-3. 영업현황보고 패널 -->
+        <div id="bizPanelReport" style="flex:1; display:none; flex-direction:column; overflow-y:auto; max-height:510px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:var(--bg-card-sub); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color); flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:11.5px; color:#ef4444; font-weight:700;">고객사:</span>
+              <select id="salesReportCustSelect" class="select-dropdown-red" onchange="filterIssuesByCustomer(this.value)">
+                <!-- 127개 고객사 동적 렌더링 -->
+              </select>
+            </div>
+            <!-- 노란색 강조 [내용등록] 버튼 -->
+            <button class="btn-submit-yellow" onclick="openAddIssueModal()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              내용등록
+            </button>
+          </div>
+          <div id="panelIssuesContainer" style="flex:1; overflow-y:auto;">
+            <!-- 동적 렌더링 -->
+          </div>
+        </div>
+
       </div>
 
     </div>
 
-    <!-- 4. 매출 추세 & 성장률 다각도 분석 그래프 대시보드 (하단 배치) -->
+        <!-- 4. 매출 추세 & 성장률 다각도 분석 그래프 대시보드 (하단 배치) -->
     <div class="analytics-section" style="margin-top:20px;">
       <div class="analytics-header">
         <div class="analytics-title">
@@ -1745,6 +1907,133 @@
   <!-- 인라인 스크립트: 실시간 데이터베이스, 차트 및 내보내기 엔진 -->
   
   <!-- 고객사별 영업현황보고 (주간 특이사항 및 프로젝트 이슈) 등록 모달 -->
+  
+  <!-- 프로젝트 등록 모달 (image.png 규격) -->
+  <div class="modal-overlay" id="addProjectModal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box modal-md" style="max-width:540px;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border-color); padding:14px 20px;">
+        <div class="modal-title" style="font-size:15px; font-weight:700; color:#ffffff;">신규 프로젝트 (금형/NPI) 등록</div>
+        <button class="modal-close-btn" onclick="closeAddProjectModal()" title="닫기">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">고객사 (Customer) *</label>
+            <select id="modalPrjCustomer" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
+              <!-- 127개사 -->
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">아이템 (Item) *</label>
+            <select id="modalPrjItem" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
+              <!-- 9개 품목 -->
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Kostat PN *</label>
+            <input type="text" id="modalPrjPn" placeholder="예: KS-880220" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">진행 Type (Tool Type) *</label>
+            <select id="modalPrjToolType" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
+              <option value="Close">Close</option>
+              <option value="Open">Open</option>
+              <option value="Amortization">Amortization</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">PO NO</label>
+            <input type="text" id="modalPrjPoNo" placeholder="예: SKY000000111" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">예상 출하일정</label>
+            <input type="text" id="modalPrjShipDate" placeholder="예: 09월 15일" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">담당 팀원</label>
+          <select id="modalPrjMember" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;">
+            <option value="hjh">한준희 책임 (미국)</option>
+            <option value="ksm">김샘물 선임 (말레이시아)</option>
+            <option value="lgj">이가진 선임 (대만)</option>
+            <option value="lsc">이상철 선임 (싱가포르 &amp; 태국)</option>
+            <option value="kwt">김완태 사원 (일본 &amp; 필리핀)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:12px 20px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid var(--border-color); background:var(--bg-card-sub);">
+        <button class="btn-modal-cancel" onclick="closeAddProjectModal()">취소</button>
+        <button class="btn-action primary" onclick="submitAddProjectModal()">등록 및 저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quality Issue 등록 모달 (image.png 규격) -->
+  <div class="modal-overlay" id="addQualityModal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box modal-md" style="max-width:540px;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border-color); padding:14px 20px;">
+        <div class="modal-title" style="font-size:15px; font-weight:700; color:#ffffff;">Quality Issue (품질 불량) 등록</div>
+        <button class="modal-close-btn" onclick="closeAddQualityModal()" title="닫기">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">고객사 (Customer) *</label>
+            <select id="modalQualCustomer" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
+              <!-- 127개사 -->
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">아이템 (Item) *</label>
+            <select id="modalQualItem" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
+              <!-- 9개 품목 -->
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Kostat PN *</label>
+            <input type="text" id="modalQualPn" placeholder="예: KS-880220" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">불량유형 *</label>
+            <select id="modalQualDefectType" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
+              <!-- 불량유형 목록 -->
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">코멘트사항 (불량상황에 대한 설명 및 조치사항) *</label>
+          <textarea id="modalQualComment" rows="3" placeholder="불량 발생 경위 및 고객사 대응 조치 상황을 입력하세요..." style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none; resize:vertical; font-family:inherit;"></textarea>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">담당 팀원</label>
+          <select id="modalQualMember" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;">
+            <option value="hjh">한준희 책임 (미국)</option>
+            <option value="ksm">김샘물 선임 (말레이시아)</option>
+            <option value="lgj">이가진 선임 (대만)</option>
+            <option value="lsc">이상철 선임 (싱가포르 &amp; 태국)</option>
+            <option value="kwt">김완태 사원 (일본 &amp; 필리핀)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:12px 20px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid var(--border-color); background:var(--bg-card-sub);">
+        <button class="btn-modal-cancel" onclick="closeAddQualityModal()">취소</button>
+        <button class="btn-action primary" onclick="submitAddQualityModal()">등록 및 저장</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="addIssueModal" onclick="handleModalOverlayClick(event)">
     <div class="modal-box modal-md" style="max-width:560px;">
       <div class="modal-header" style="border-bottom:1px solid var(--border-color); padding:14px 20px;">
@@ -1901,8 +2190,8 @@
         (m.sales || []).forEach(s => {
           if (!s.weekly_forecasts) s.weekly_forecasts = {};
           const curWKey = 'W' + (CURRENT_WEEK_NUM || 38);
-          const tgt = s.target || 100000;
-          const cur = s.current || 0;
+          const tgt = s.target || 300000;
+          const cur = s.current || 270000;
           const add = s.additional || Math.max(0, tgt - cur);
           const exp = s.expected || (cur + add);
           if (!s.weekly_forecasts[curWKey]) {
@@ -1914,39 +2203,68 @@
               note: s.note || ''
             };
           }
-        });
-
-        // 2. 특이사항 고객사 매핑 보완 (고객사 128개사 마스터 기준)
-        (m.issues || []).forEach(iss => {
-          if (!iss.customer) {
-            const t = (iss.topic || '').toUpperCase();
-            if (t.includes('SKYWORKS')) iss.customer = 'SKYWORKS';
-            else if (t.includes('BROADCOM') || t.includes('INARI')) iss.customer = 'BROADCOM';
-            else if (t.includes('INFINEON')) iss.customer = 'INFINEON';
-            else if (t.includes('UNISEM')) iss.customer = 'UNISEM';
-            else if (t.includes('AMKOR')) iss.customer = 'AMKOR';
-            else if (t.includes('SPIL')) iss.customer = 'SPIL';
-            else if (t.includes('KYEC')) iss.customer = 'KYEC';
-            else if (t.includes('UTAC')) iss.customer = 'UTAC';
-            else if (t.includes('HANWHA')) iss.customer = 'HANWHA (TH)';
-            else if (t.includes('SONY')) iss.customer = 'SONY';
-            else if (t.includes('RENESAS')) iss.customer = 'RENESAS';
-            else if (t.includes('ASE')) iss.customer = 'ASE';
-            else {
-              const defCusts = {
-                'hjh': 'SKYWORKS',
-                'ksm': 'BROADCOM',
-                'lgj': 'AMKOR',
-                'lsc': 'SKYWORKS',
-                'kwt': 'AMKOR'
-              };
-              iss.customer = defCusts[m.id] || '고객사 협의';
-            }
+          if (!s.country) {
+            s.country = (m.id === 'hjh' ? 'US' : m.id === 'ksm' ? 'MY' : m.id === 'lgj' ? 'TW' : m.id === 'lsc' ? 'SG' : 'PH');
           }
         });
+
+        // 2. 프로젝트 기본 데이터 보완 (image.png 규격: 고객사, 아이템, Kostat PN, 진행 Type, PO NO, 예상 출하일정)
+        if (!m.projects || m.projects.length === 0) {
+          const defCust = (m.id === 'hjh' ? 'SKYWORKS' : m.id === 'ksm' ? 'BROADCOM' : m.id === 'lgj' ? 'AMKOR' : m.id === 'lsc' ? 'SKYWORKS' : 'SONY');
+          m.projects = [
+            {
+              id: 'prj_' + m.id + '_1',
+              customer: defCust,
+              item: 'IC Tray',
+              pn: 'KS-880220',
+              tool_type: 'Close',
+              po_no: 'SKY000000111',
+              ship_date: '09월 15일',
+              status: 'Close'
+            }
+          ];
+        }
+
+        // 3. Quality Issue 기본 데이터 보완 (image.png 규격: 고객사, 아이템, Kostat PN, 불량유형, 코멘트사항)
+        if (!m.quality_issues || m.quality_issues.length === 0) {
+          const defCust = (m.id === 'hjh' ? 'SKYWORKS' : m.id === 'ksm' ? 'INFINEON' : m.id === 'lgj' ? 'SPIL' : m.id === 'lsc' ? 'UTAC' : 'AMKOR');
+          m.quality_issues = [
+            {
+              id: 'qual_' + m.id + '_1',
+              customer: defCust,
+              item: 'IC Tray',
+              pn: 'KS-880220',
+              defect_type: 'Close',
+              comment: '불량상황에 대한 설명 및 현지 대응 경과'
+            }
+          ];
+        }
+
+        // 4. 영업현황보고 기본 데이터 보완 (image.png 규격: 3M Filter 등 계층형 불릿)
+        if (!m.issues || m.issues.length === 0) {
+          const defCust = (m.id === 'hjh' ? 'SKYWORKS' : m.id === 'ksm' ? 'BROADCOM' : m.id === 'lgj' ? 'AMKOR' : m.id === 'lsc' ? 'SKYWORKS' : 'SONY');
+          m.issues = [
+            {
+              id: 'iss_' + m.id + '_1',
+              customer: defCust,
+              item: 'IC Tray',
+              topic: '3M Filter Project 유지 관련 Promotion 진행',
+              tag: '진행중',
+              bullets: [
+                '- 3M Filter Project 유지 관련 Promotion 진행',
+                ': 3M Filter SG 이전관련 Project 유지 작업 진행',
+                '> Skyworks SG, Skyworks Irvine에 3M 관련 독립적 진행 요청',
+                '>> 해영, Skyworks MX를 통한 당사 진행 Tool 사용 지속 압박',
+                '당사, MX뿐만 아니라 W/Wide Project Line Contact 진행',
+                '> Skyworks SG, Cost Saving 관련 MY 업체 추천 확인',
+                '>> 해영, Skyworks MX를 통해 MY 업체관련 구체적인 정보 파악 중'
+              ]
+            }
+          ];
+        }
       });
     }
-    ensureWeeklyForecasts(LIVE_DB);
+        ensureWeeklyForecasts(LIVE_DB);
 
     // 접속자 프로필 로컬 복원
     try {
@@ -1965,261 +2283,85 @@
     // 2-1. 2026년 53개 주차 마스터 및 고객사 마스터 초기화 //
     // ==================================================== //
 
+// ==================================================== //
+    // 2-1. Dorp down.xlsx 마스터 데이터 초기화 엔진        //
+    // ==================================================== //
+
+    let ACTIVE_BIZ_SUBTAB = 'project';
+
     function initWeeklyMasterData() {
-      // 1. 주차 선택 드롭다운 채우기
+      // 1. 주차 드롭다운 채우기 (54주차)
       const weekSelect = document.getElementById('weekScheduleSelect');
       if (weekSelect && typeof MASTER_WEEKS_2026 !== 'undefined') {
         let optHtml = '';
         let currentQuarter = '';
         
         MASTER_WEEKS_2026.forEach(w => {
-          if (w.quarter !== currentQuarter) {
+          if (w.quarter && w.quarter !== currentQuarter) {
             if (currentQuarter !== '') optHtml += '</optgroup>';
             currentQuarter = w.quarter;
             optHtml += `<optgroup label="${w.quarter}">`;
           }
-          const isCurrent = (w.week_num === 38);
+          const isCurrent = (w.week_num === (CURRENT_WEEK_NUM || 38));
           const selAttr = isCurrent ? 'selected' : '';
-          const curLabel = isCurrent ? ' [현재 주차]' : '';
+          const curLabel = (w.week_num === 38) ? ' [현재]' : '';
           optHtml += `<option value="${w.week_num}" ${selAttr}>${w.week} (${w.start.substring(5)} ~ ${w.end.substring(5)})${curLabel}</option>`;
         });
         if (currentQuarter !== '') optHtml += '</optgroup>';
         weekSelect.innerHTML = optHtml;
       }
 
-      // 2. 모달 고객사 드롭다운 채우기 (128개사)
-      const custSelect = document.getElementById('modalIssueCustomer');
-      if (custSelect && typeof MASTER_CUSTOMERS !== 'undefined') {
-        let custHtml = '<option value="">-- 고객사 선택 (128개사) --</option>';
-        MASTER_CUSTOMERS.forEach(c => {
-          custHtml += `<option value="${c}">${c}</option>`;
-        });
-        custHtml += '<option value="__DIRECT__">+ 직접 입력</option>';
-        custSelect.innerHTML = custHtml;
+      // 2. 고객사 드롭다운들 채우기 (127개사)
+      const custSelects = ['modalPrjCustomer', 'modalQualCustomer', 'modalIssueCustomer', 'salesReportCustSelect'];
+      custSelects.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && typeof MASTER_CUSTOMERS !== 'undefined') {
+          let h = (id === 'salesReportCustSelect') 
+            ? '<option value="ALL">전체 고객사 종합</option>' 
+            : '<option value="">-- 고객사 선택 (127개사) --</option>';
+          MASTER_CUSTOMERS.forEach(c => {
+            h += `<option value="${c}">${c}</option>`;
+          });
+          if (id === 'modalIssueCustomer') h += '<option value="__DIRECT__">+ 직접 입력</option>';
+          el.innerHTML = h;
+        }
+      });
+
+      // 3. 아이템 드롭다운들 채우기 (9개)
+      const itemSelects = ['modalPrjItem', 'modalQualItem', 'modalIssueItem'];
+      itemSelects.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && typeof MASTER_ITEMS !== 'undefined') {
+          let h = '<option value="">-- 아이템 선택 --</option>';
+          MASTER_ITEMS.forEach(it => {
+            h += `<option value="${it}">${it}</option>`;
+          });
+          el.innerHTML = h;
+        }
+      });
+
+      // 4. 금형진행 Type 드롭다운 채우기 (3개)
+      const ttSelect = document.getElementById('modalPrjToolType');
+      if (ttSelect && typeof MASTER_TOOL_TYPES !== 'undefined') {
+        ttSelect.innerHTML = MASTER_TOOL_TYPES.map(tt => `<option value="${tt}">${tt}</option>`).join('');
       }
 
-      // 3. 모달 아이템 드롭다운 채우기 (9개)
-      const itemSelect = document.getElementById('modalIssueItem');
-      if (itemSelect && typeof MASTER_ITEMS !== 'undefined') {
-        let itemHtml = '<option value="">-- 관련 품목 선택 --</option>';
-        MASTER_ITEMS.forEach(it => {
-          itemHtml += `<option value="${it}">${it}</option>`;
-        });
-        itemSelect.innerHTML = itemHtml;
+      // 5. 불량유형 드롭다운 채우기
+      const dtSelect = document.getElementById('modalQualDefectType');
+      if (dtSelect && typeof MASTER_DEFECT_TYPES !== 'undefined') {
+        dtSelect.innerHTML = MASTER_DEFECT_TYPES.map(dt => `<option value="${dt}">${dt}</option>`).join('');
       }
 
       renderPeriodWeekButtons();
     }
 
-    function changeWeeklySchedule(weekNumVal) {
-      CURRENT_WEEK_NUM = parseInt(weekNumVal) || 38;
-      SELECTED_WEEK = 'W' + CURRENT_WEEK_NUM;
-      renderPeriodWeekButtons();
-      renderLockStatus();
-      renderMemberView();
-    }
-
-    function renderPeriodWeekButtons() {
-      const container = document.getElementById('weekPillsContainer');
-      if (!container || typeof MASTER_WEEKS_2026 === 'undefined') return;
-
-      // 현재 주차 기준 전후 4개 주차 pill 버튼 노출
-      const baseNum = CURRENT_WEEK_NUM || 38;
-      const startNum = Math.max(1, baseNum - 2);
-      const endNum = Math.min(53, startNum + 3);
-      const displayWeeks = [];
-
-      for (let n = startNum; n <= endNum; n++) {
-        const wkObj = MASTER_WEEKS_2026.find(x => x.week_num === n);
-        if (wkObj) displayWeeks.push(wkObj);
-      }
-
-      container.innerHTML = displayWeeks.map(w => {
-        const isSel = (CURRENT_WEEK_NUM === w.week_num);
-        const isSysCurrent = (w.week_num === 38);
-        return `
-          <button class="week-pill-btn ${isSel ? 'active' : ''} ${isSysCurrent ? 'current-marker' : ''}"
-                  onclick="changeWeeklySchedule(${w.week_num})"
-                  title="${w.start} ~ ${w.end}${isSysCurrent ? ' (현재 주차)' : ''}">
-            ${w.week_num}주차${isSysCurrent ? '*' : ''}
-          </button>
-        `;
-      }).join('');
-    }
-
-    function isCurrentActivePeriod() {
-      return (CURRENT_WEEK_NUM >= 37 && CURRENT_WEEK_NUM <= 39);
-    }
-
-    function isPeriodEditable() {
-      return isCurrentActivePeriod() || IS_ADMIN_UNLOCKED;
-    }
-
-    function changePeriodWeek(weekKey) {
-      const num = parseInt(weekKey.replace(/[^0-9]/g, '')) || 38;
-      changeWeeklySchedule(num);
-    }
-
-        function openAdminAuthModal() {
-      const modal = document.getElementById('adminAuthModal');
-      const input = document.getElementById('adminAuthPassword');
-      const alertEl = document.getElementById('adminAuthAlert');
-      if (alertEl) alertEl.style.display = 'none';
-      if (input) input.value = '';
-      if (modal) modal.classList.add('active');
-      setTimeout(() => { if (input) input.focus(); }, 100);
-    }
-
-    function closeAdminAuthModal() {
-      const modal = document.getElementById('adminAuthModal');
-      if (modal) modal.classList.remove('active');
-    }
-
-    function submitAdminAuth() {
-      const input = document.getElementById('adminAuthPassword');
-      const alertEl = document.getElementById('adminAuthAlert');
-      const val = input ? input.value.trim() : '';
-
-      if (val === '8805') {
-        IS_ADMIN_UNLOCKED = true;
-        closeAdminAuthModal();
-        renderLockStatus();
-        renderMemberView();
-        showToast('관리자 인증 완료 (8805): 과거 데이터 편집 권한이 승인되었습니다.');
-      } else {
-        if (alertEl) {
-          alertEl.textContent = '비밀번호가 일치하지 않습니다. (관리자 문의: 8805)';
-          alertEl.style.display = 'block';
-        }
-        if (input) {
-          input.classList.add('input-error-shake');
-          setTimeout(() => input.classList.remove('input-error-shake'), 400);
-        }
-      }
-    }
-
-    function relockAdmin() {
-      IS_ADMIN_UNLOCKED = false;
-      renderLockStatus();
-      renderMemberView();
-      showToast('관리자 편집 모드가 종료되고 다시 안전하게 잠금 처리되었습니다.');
-    }
-
-    function notifyLocked() {
-      if (!isPeriodEditable()) {
-        showToast('과거 데이터는 읽기 전용입니다. 수정을 원하시면 상단 [관리자 잠금 해제]를 진행하십시오.');
-        openAdminAuthModal();
-        return true;
-      }
-      return false;
-    }
-
-    // ==================================================== //
-    // 3. 변경 이력 추적 및 롤백 엔진 (Audit Trail & Rollback) //
-    // ==================================================== //
-
-    function recordRevision(actionType, summary) {
-      if (!LIVE_DB.revisions) LIVE_DB.revisions = [];
-      const cleanSnapshot = {
-        members: JSON.parse(JSON.stringify(LIVE_DB.members)),
-        kpi: JSON.parse(JSON.stringify(LIVE_DB.kpi))
-      };
-      const rev = {
-        id: 'rev_' + Date.now(),
-        timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
-        user: CURRENT_USER_NAME,
-        action: actionType,
-        summary: summary,
-        snapshot: JSON.stringify(cleanSnapshot)
-      };
-      LIVE_DB.revisions.unshift(rev);
-      if (LIVE_DB.revisions.length > 30) {
-        LIVE_DB.revisions = LIVE_DB.revisions.slice(0, 30);
-      }
-      updateRevCountBadge();
-    }
-
-    function updateRevCountBadge() {
-      const badge = document.getElementById('revCountBadge');
-      if (badge && LIVE_DB.revisions) {
-        badge.textContent = LIVE_DB.revisions.length;
-      }
-    }
-
-    function openRevisionModal() {
-      renderRevisionList();
-      const modal = document.getElementById('revisionModal');
-      if (modal) modal.classList.add('active');
-    }
-
-    function closeRevisionModal() {
-      const modal = document.getElementById('revisionModal');
-      if (modal) modal.classList.remove('active');
-    }
-
-    function renderRevisionList() {
-      const container = document.getElementById('revisionTimelineList');
-      if (!container) return;
-      const list = LIVE_DB.revisions || [];
-
-      if (list.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;">아직 기록된 변경 이력이 없습니다.</div>';
-        return;
-      }
-
-      container.innerHTML = list.map(rev => {
-        const isRollback = rev.action.includes('롤백');
-        return `
-          <div class="revision-card">
-            <div style="flex:1;">
-              <div class="rev-meta-row">
-                <span class="rev-action-badge ${isRollback ? 'rollback' : ''}">${rev.action}</span>
-                <span class="rev-author">${rev.user}</span>
-                <span class="rev-time">${rev.timestamp}</span>
-              </div>
-              <div class="rev-summary">${rev.summary}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function executeRollback(revId) {
-      alert('롤백 기능은 비활성화되었습니다. 변경 이력 조회만 가능합니다.');
-    }
-
-    // ==================================================== //
-    // 4. 작성자 변경 & 탭 선택                                //
-    // ==================================================== //
-
-    function changeCurrentUser(name) {
-      CURRENT_USER_NAME = name;
-      try { localStorage.setItem('kostat_my_profile', name); } catch(e) {}
-      showToast(`작성자 프로필이 '${name}'(으)로 설정되었습니다.`);
-      const map = {
-        '한준희 책임': 'hjh',
-        '김샘물 선임': 'ksm',
-        '이가진 선임': 'lgj',
-        '이상철 선임': 'lsc',
-        '김완태 사원': 'kwt'
-      };
-      if (map[name]) {
-        const btn = document.getElementById('tabMember_' + map[name]);
-        if (btn) selectMember(map[name], btn);
-      }
-    }
 
     function selectMember(memberId, btnEl) {
       ACTIVE_MEMBER_ID = memberId;
       document.querySelectorAll('.member-tab-btn').forEach(b => b.classList.remove('active'));
       if (btnEl) btnEl.classList.add('active');
-
       renderMemberView();
     }
-
-    // ==================================================== //
-    // 5. 화면 렌더링 메인 루프 (주차별 매출 & 과거 아카이브 연동) //
-    // ==================================================== //
 
     function getActiveDataset() {
       if (SELECTED_MONTH !== '2026-09' && LIVE_DB.history_archives && LIVE_DB.history_archives[SELECTED_MONTH]) {
@@ -2242,64 +2384,49 @@
       const accEl = document.getElementById('memberAccountsHeader');
 
       if (isAll) {
-        nameEl.textContent = `${SELECTED_MONTH} 해외영업팀 전체 종합`;
-        countryEl.textContent = '전 세계 5개국 통합';
-        accEl.textContent = '미국(한준희), 말레이시아(김샘물), 대만(이가진), 싱가포르/태국(이상철), 일본/필리핀(김완태) 전 지역 통합 브리핑';
+        nameEl.textContent = `2026년 해외영업부 전체 종합`;
+        countryEl.textContent = '전체 5개 권역 총괄';
+        accEl.textContent = '미국(한준희), 말레이시아(김샘물), 대만(이가진), 싱가포르/태국(이상철), 일본/필리핀(김완태) 전 권역 통합 현황';
       } else if (m) {
         nameEl.textContent = m.name;
         countryEl.textContent = `${m.regions} 담당`;
-        accEl.textContent = `담당 국가: ${m.regions} | 주요 사이트: ${m.accounts}`;
+        accEl.textContent = `관할 국가: ${m.regions} | 주요 고객사/사이트: ${m.accounts}`;
       }
 
-      // 제목 컬럼 주차 반영
-      const colTitle = document.getElementById('salesColumnTitle');
-      if (colTitle) {
-        colTitle.textContent = `${SELECTED_MONTH.slice(5)}월 ${SELECTED_WEEK.replace('W', '')}주차 예상 매출`;
-      }
-
-      // 패널 렌더링
+      // 섹션 렌더링 호출
       renderSalesPanel(isAll, m, currentData);
+      renderProjectTable(isAll, m, currentData);
+      renderQualityTable(isAll, m, currentData);
       renderIssuesPanel(isAll, m, currentData);
-      renderSamplesPanel(isAll, m, currentData);
 
-      // 팀 KPI 전체 재계산
+      // 팀 전체 KPI 및 차트 동기화
       recalculateTeamKpi();
-
-      // 그래프 렌더링
       renderAnalyticsChart();
-
-      // 변경 이력 뱃지 갱신
       updateRevCountBadge();
     }
 
-    // --- (A) 매출 패널 렌더링 (단일 주차 및 주차별 히스토리 추이) ---
-    function toggleSalesHistoryView() {
-      SALES_VIEW_MODE = (SALES_VIEW_MODE === 'current') ? 'history' : 'current';
-      const btn = document.getElementById('btnToggleSalesView');
-      if (btn) {
-        btn.textContent = (SALES_VIEW_MODE === 'history') ? '주차별 편집 뷰' : '주차별 추이 보기';
-      }
-      renderMemberView();
+        function switchBizSubtab(subtab, btnEl) {
+      ACTIVE_BIZ_SUBTAB = subtab;
+      document.querySelectorAll('.biz-subtab-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      const pPrj = document.getElementById('bizPanelProject');
+      const pQual = document.getElementById('bizPanelQuality');
+      const pRep = document.getElementById('bizPanelReport');
+
+      if (pPrj) pPrj.style.display = (subtab === 'project') ? 'flex' : 'none';
+      if (pQual) pQual.style.display = (subtab === 'quality') ? 'flex' : 'none';
+      if (pRep) pRep.style.display = (subtab === 'report') ? 'flex' : 'none';
     }
 
-    function getSiteForecast(item, weekNum) {
-      const keyW = 'W' + weekNum;
-      if (item.weekly_forecasts && item.weekly_forecasts[keyW]) {
-        return item.weekly_forecasts[keyW];
-      }
-      if (item.weekly_forecasts && item.weekly_forecasts['W3']) {
-        return item.weekly_forecasts['W3'];
-      }
-      if (item.weekly_forecasts && item.weekly_forecasts['W4']) {
-        return item.weekly_forecasts['W4'];
-      }
-      return {
-        target: item.target || 0,
-        current: item.current || 0,
-        additional: item.additional || 0,
-        expected: item.expected || 0,
-        note: item.note || ''
-      };
+    // --- (A) 2. 매출 패널 렌더링 (국가 Drop-Down 탑재) ---
+
+    function getCountryOptionsHtml(selectedCode) {
+      if (typeof MASTER_COUNTRIES === 'undefined') return '';
+      return MASTER_COUNTRIES.map(c => {
+        const isSel = (c.code === selectedCode || c.name === selectedCode);
+        return `<option value="${c.code}" ${isSel ? 'selected' : ''}>${c.code} (${c.name})</option>`;
+      }).join('');
     }
 
     function renderSalesPanel(isAll, member, dataContext) {
@@ -2325,7 +2452,7 @@
         return;
       }
 
-      // (모드 1) 주차별 변동 추이 비교 테이블 뷰 (Copy of Dorp down 53주차 기준)
+      // (모드 1) 주차별 변동 추이 비교 뷰
       if (SALES_VIEW_MODE === 'history') {
         const curW = CURRENT_WEEK_NUM || 38;
         const compareWeeks = [Math.max(1, curW - 3), Math.max(1, curW - 2), Math.max(1, curW - 1), curW];
@@ -2335,7 +2462,7 @@
             <table class="sales-history-table">
               <thead>
                 <tr>
-                  <th>고객사 / 사이트</th>
+                  <th>국가 / 사이트</th>
                   <th>목표</th>
                   ${compareWeeks.map(wn => `<th class="${wn===curW?'history-week-val current-col':''}">${wn}주차</th>`).join('')}
                   <th>달성률</th>
@@ -2353,6 +2480,7 @@
           tableHtml += `
             <tr>
               <td>
+                <span style="font-weight:800; color:#ef4444;">[${escapeAttr(item.country || 'US')}]</span>
                 <strong>${escapeAttr(item.site)}</strong><br>
                 <span style="font-size:10px;color:var(--text-dim);">${escapeAttr(item.memberCountry)} (${escapeAttr(item.memberName)})</span>
               </td>
@@ -2371,7 +2499,7 @@
         return;
       }
 
-      // (모드 2) 단일 주차 편집 및 조회 카드 뷰
+      // (모드 2) 단일 주차 편집 뷰 (image.png 규격: 국가 Drop-Down 탑재)
       container.innerHTML = sitesList.map(item => {
         const wf = getSiteForecast(item, CURRENT_WEEK_NUM);
         const cur = parseFloat(wf.current) || 0;
@@ -2380,15 +2508,21 @@
         const tgt = parseFloat(wf.target || item.target) || 0;
         const rate = tgt > 0 ? Math.round((exp / tgt) * 100) : 0;
         const isAchieved = rate >= 100;
+        const currentCountry = item.country || (item.memberId === 'hjh' ? 'US' : item.memberId === 'ksm' ? 'MY' : item.memberId === 'lgj' ? 'TW' : item.memberId === 'lsc' ? 'SG' : 'PH');
 
         return `
           <div class="sales-site-card">
             <div class="sales-card-top">
-              <div>
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <!-- 국가 Drop-Down (빨간색 테두리) -->
+                <div style="display:inline-flex; align-items:center; gap:4px;">
+                  <span style="font-size:11px; color:#ef4444; font-weight:700;">국가:</span>
+                  <select class="select-dropdown-red" onchange="updateSiteCountry('${item.memberId}', ${item.siteIdx}, this.value)">
+                    ${getCountryOptionsHtml(currentCountry)}
+                  </select>
+                </div>
                 <span class="sales-site-title">${escapeAttr(item.site)}</span>
-                <span style="font-size:11px;color:var(--primary-light);margin-left:6px;">[${escapeAttr(item.memberCountry)}]</span>
-                <span style="font-size:10px;color:var(--text-dim);margin-left:4px;">(${escapeAttr(item.memberName)})</span>
-                <span style="font-size:10px;color:var(--accent-light);margin-left:4px;font-weight:700;">[${CURRENT_WEEK_NUM}주차]</span>
+                <span style="font-size:10px;color:var(--text-dim);">(${escapeAttr(item.memberName)})</span>
               </div>
               ${editable ? `
                 <button class="bullet-del-btn" title="사이트 삭제" onclick="deleteSite('${item.memberId}', ${item.siteIdx})">
@@ -2399,21 +2533,21 @@
 
             <div class="sales-input-grid">
               <div class="input-group-sm">
-                <label>당월 목표 ($)</label>
+                <label>9월목표금액 ($)</label>
                 <input type="number" class="input-sm ${!editable ? 'input-disabled-locked' : ''}"
                        value="${Math.round(tgt)}"
                        ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                        oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'target', this.value)" />
               </div>
               <div class="input-group-sm">
-                <label>확정 매출 ($)</label>
+                <label>현재까지 달성금액 ($)</label>
                 <input type="number" class="input-sm ${!editable ? 'input-disabled-locked' : ''}"
                        value="${Math.round(cur)}"
                        ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                        oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'current', this.value)" />
               </div>
               <div class="input-group-sm">
-                <label>추가 예상 ($)</label>
+                <label>추가 예상액 ($)</label>
                 <input type="number" class="input-sm ${!editable ? 'input-disabled-locked' : ''}"
                        value="${Math.round(add)}"
                        ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
@@ -2423,19 +2557,19 @@
 
             <div class="sales-calc-row">
               <div>
-                <span class="sales-calc-label">마감 예상 합계:</span>
+                <span class="sales-calc-label">예상달성 금액:</span>
                 <span class="sales-calc-val" id="siteExp_${item.memberId}_${item.siteIdx}">$${Math.round(exp).toLocaleString()}</span>
               </div>
               <div>
                 <span class="sales-rate-badge ${isAchieved ? 'achieved' : 'shortfall'}" id="siteRate_${item.memberId}_${item.siteIdx}">
-                  달성률: ${rate}% (${isAchieved ? '초과달성' : '미달'})
+                  달성율: ${rate}% (${isAchieved ? '목표 초과' : '진행중'})
                 </span>
               </div>
             </div>
 
             <div style="margin-top:8px;">
               <input type="text" class="sales-note-input ${!editable ? 'input-disabled-locked' : ''}"
-                     placeholder="주차별 주요 동향 및 수주 근거 메모..."
+                     placeholder="비고 및 수주 주요 진행 메모..."
                      value="${escapeAttr(wf.note || item.note || '')}"
                      ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                      oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'note', this.value)" />
@@ -2445,119 +2579,325 @@
       }).join('');
     }
 
-    function updateSalesField(memId, siteIdx, field, val) {
+    function updateSiteCountry(memId, siteIdx, countryVal) {
       if (notifyLocked()) return;
       const currentData = getActiveDataset();
       const mem = currentData.members.find(x => x.id === memId);
       if (!mem || !mem.sales || !mem.sales[siteIdx]) return;
-      const site = mem.sales[siteIdx];
-
-      if (!site.weekly_forecasts) site.weekly_forecasts = {};
-      const keyW = 'W' + (CURRENT_WEEK_NUM || 38);
-      if (!site.weekly_forecasts[keyW]) {
-        site.weekly_forecasts[keyW] = {
-          target: site.target || 0,
-          current: site.current || 0,
-          additional: site.additional || 0,
-          expected: site.expected || 0,
-          note: site.note || ''
-        };
-      }
-      const wf = site.weekly_forecasts[keyW];
-
-      if (field === 'note') {
-        wf.note = val;
-        site.note = val;
-      } else {
-        const num = parseFloat(val) || 0;
-        wf[field] = num;
-        site[field] = num;
-        wf.expected = (parseFloat(wf.current) || 0) + (parseFloat(wf.additional) || 0);
-        site.expected = wf.expected;
-
-        // 즉각 UI 계산 갱신
-        const expEl = document.getElementById(`siteExp_${memId}_${siteIdx}`);
-        const rateEl = document.getElementById(`siteRate_${memId}_${siteIdx}`);
-        if (expEl) expEl.textContent = `$${Math.round(wf.expected).toLocaleString()}`;
-        if (rateEl) {
-          const tgt = (wf.target || site.target) || 0;
-          const rate = tgt > 0 ? Math.round((wf.expected / tgt) * 100) : 0;
-          const isAchieved = rate >= 100;
-          rateEl.className = `sales-rate-badge ${isAchieved ? 'achieved' : 'shortfall'}`;
-          rateEl.textContent = `달성률: ${rate}% (${isAchieved ? '초과달성' : '미달'})`;
-        }
-      }
-
-      recalculateTeamKpi();
-      renderAnalyticsChart();
-
-      clearTimeout(DEBOUNCE_TIMER);
-      DEBOUNCE_TIMER = setTimeout(() => {
-        recordRevision('매출 수정', `${CURRENT_USER_NAME}님이 [${site.site}] ${CURRENT_WEEK_NUM}주차 ${field} 수정`);
-        triggerAutoSave(`${CURRENT_USER_NAME}님이 [${site.site}] 매출 수치를 수정했습니다.`);
-      }, 600);
+      mem.sales[siteIdx].country = countryVal;
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 [${mem.sales[siteIdx].site}] 국가를 ${countryVal}로 변경했습니다.`);
     }
 
-    function addNewSite() {
-      if (notifyLocked()) return;
-      const currentData = getActiveDataset();
-      const targetMemId = (ACTIVE_MEMBER_ID === 'ALL') ? 'hjh' : ACTIVE_MEMBER_ID;
-      const mem = currentData.members.find(x => x.id === targetMemId);
-      if (!mem) return;
-      if (!mem.sales) mem.sales = [];
-      const siteName = prompt('추가할 사이트명을 입력하세요:', `${mem.regions} 신규 고객사`);
-      if (!siteName) return;
+    // ==================================================== //
+    // 3. 영업사항: 1) 프로젝트 & 2) Quality Issue 엔진     //
+    // ==================================================== //
 
-      const newSite = {
-        site: siteName,
-        target: 100000,
-        current: 0,
-        additional: 100000,
-        expected: 100000,
-        note: `${SELECTED_WEEK} 신규 사이트 등록`,
-        weekly_forecasts: {
-          'W1': { target: 100000, current: 0, additional: 100000, expected: 100000, note: '신규 등록' },
-          'W2': { target: 100000, current: 0, additional: 100000, expected: 100000, note: '신규 등록' },
-          'W3': { target: 100000, current: 0, additional: 100000, expected: 100000, note: '신규 등록' },
-          'W4': { target: 100000, current: 0, additional: 100000, expected: 100000, note: '신규 등록' }
-        }
-      };
-
-      mem.sales.push(newSite);
-      recordRevision('사이트 추가', `${CURRENT_USER_NAME}님이 신규 사이트 '${siteName}'을(를) 추가했습니다.`);
-      renderMemberView();
-      triggerAutoSave(`${CURRENT_USER_NAME}님이 사이트 '${siteName}'을(를) 추가했습니다.`);
+    function getCustomerOptionsHtml(selectedCust) {
+      if (typeof MASTER_CUSTOMERS === 'undefined') return '';
+      return MASTER_CUSTOMERS.map(c => {
+        const isSel = (c === selectedCust);
+        return `<option value="${c}" ${isSel ? 'selected' : ''}>${c}</option>`;
+      }).join('');
     }
 
-    function deleteSite(memId, siteIdx) {
-      if (notifyLocked()) return;
-      const currentData = getActiveDataset();
-      const mem = currentData.members.find(x => x.id === memId);
-      if (!mem || !mem.sales || !mem.sales[siteIdx]) return;
-      const siteName = mem.sales[siteIdx].site;
+    function getItemOptionsHtml(selectedItem) {
+      if (typeof MASTER_ITEMS === 'undefined') return '';
+      return MASTER_ITEMS.map(it => {
+        const isSel = (it === selectedItem);
+        return `<option value="${it}" ${isSel ? 'selected' : ''}>${it}</option>`;
+      }).join('');
+    }
 
-      if (!confirm(`해당 사이트 매출 항목 [${siteName}]을(를) 삭제하시겠습니까?
-(삭제된 내역은 상단 [변경 이력 / 롤백]에서 언제든지 복원할 수 있습니다.)`)) {
+    function getToolTypeOptionsHtml(selectedTt) {
+      if (typeof MASTER_TOOL_TYPES === 'undefined') return '';
+      return MASTER_TOOL_TYPES.map(tt => {
+        const isSel = (tt === selectedTt);
+        return `<option value="${tt}" ${isSel ? 'selected' : ''}>${tt}</option>`;
+      }).join('');
+    }
+
+    function getDefectTypeOptionsHtml(selectedDt) {
+      if (typeof MASTER_DEFECT_TYPES === 'undefined') return '';
+      return MASTER_DEFECT_TYPES.map(dt => {
+        const isSel = (dt === selectedDt);
+        return `<option value="${dt}" ${isSel ? 'selected' : ''}>${dt}</option>`;
+      }).join('');
+    }
+
+    // --- 3-1. 프로젝트 렌더링 ---
+    function renderProjectTable(isAll, member, dataContext) {
+      const tbody = document.getElementById('projectTableTbody');
+      if (!tbody) return;
+      const editable = isPeriodEditable();
+      let prjList = [];
+
+      if (isAll) {
+        (dataContext.members || []).forEach(mem => {
+          (mem.projects || []).forEach((p, idx) => {
+            prjList.push({ ...p, memberId: mem.id, memberName: mem.name, prjIdx: idx });
+          });
+        });
+      } else if (member) {
+        prjList = (member.projects || []).map((p, idx) => ({ ...p, memberId: member.id, memberName: member.name, prjIdx: idx }));
+      }
+
+      if (prjList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
         return;
       }
 
-      recordRevision('사이트 삭제', `${CURRENT_USER_NAME}님이 사이트 '${siteName}' 항목을 삭제했습니다.`);
-      mem.sales.splice(siteIdx, 1);
-      renderMemberView();
-      triggerAutoSave(`${CURRENT_USER_NAME}님이 사이트 '${siteName}' 항목을 삭제했습니다.`);
+      tbody.innerHTML = prjList.map(p => `
+        <tr>
+          <td>
+            <select class="select-dropdown-red" style="max-width:110px;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'customer', this.value)">
+              ${getCustomerOptionsHtml(p.customer)}
+            </select>
+          </td>
+          <td>
+            <select class="select-dropdown-red" style="max-width:95px;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'item', this.value)">
+              ${getItemOptionsHtml(p.item)}
+            </select>
+          </td>
+          <td>
+            <input type="text" value="${escapeAttr(p.pn || '')}" placeholder="KS-XXXXXX" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'pn', this.value)" />
+          </td>
+          <td>
+            <select class="select-dropdown-red" style="max-width:85px;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'tool_type', this.value)">
+              ${getToolTypeOptionsHtml(p.tool_type || 'Close')}
+            </select>
+          </td>
+          <td>
+            <input type="text" value="${escapeAttr(p.po_no || '')}" placeholder="PO 번호" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'po_no', this.value)" />
+          </td>
+          <td>
+            <input type="text" value="${escapeAttr(p.ship_date || '')}" placeholder="09월 15일" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'ship_date', this.value)" />
+          </td>
+          <td style="text-align:center;">
+            ${editable ? `
+              <button class="bullet-del-btn" title="프로젝트 삭제" onclick="deleteProject('${p.memberId}', ${p.prjIdx})">&times;</button>
+            ` : ''}
+          </td>
+        </tr>
+      `).join('');
     }
 
+    function updateProjectField(memId, prjIdx, field, val) {
+      if (notifyLocked()) return;
+      const currentData = getActiveDataset();
+      const mem = currentData.members.find(x => x.id === memId);
+      if (!mem || !mem.projects || !mem.projects[prjIdx]) return;
+      mem.projects[prjIdx][field] = val;
 
-    // --- (B) 특이사항 패널 렌더링 & 고객사 마스터 연동 등록 ---
-
-    function filterIssuesByCustomer(cust) {
-      ISSUE_CUSTOMER_FILTER = cust;
-      renderMemberView();
+      clearTimeout(DEBOUNCE_TIMER);
+      DEBOUNCE_TIMER = setTimeout(() => {
+        triggerAutoSave(`${CURRENT_USER_NAME}님이 [${mem.projects[prjIdx].customer}] 프로젝트 정보를 수정했습니다.`);
+      }, 600);
     }
 
+    function deleteProject(memId, prjIdx) {
+      if (notifyLocked()) return;
+      if (!confirm('해당 프로젝트를 삭제하시겠습니까?')) return;
+      const currentData = getActiveDataset();
+      const mem = currentData.members.find(x => x.id === memId);
+      if (!mem || !mem.projects) return;
+      mem.projects.splice(prjIdx, 1);
+      renderMemberView();
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 프로젝트 항목을 삭제했습니다.`);
+    }
+
+    // 프로젝트 등록 모달
+    function openAddProjectModal() {
+      if (notifyLocked()) return;
+      const modal = document.getElementById('addProjectModal');
+      const cust = document.getElementById('modalPrjCustomer');
+      const item = document.getElementById('modalPrjItem');
+      const pn = document.getElementById('modalPrjPn');
+      const tt = document.getElementById('modalPrjToolType');
+      const po = document.getElementById('modalPrjPoNo');
+      const ship = document.getElementById('modalPrjShipDate');
+      const mem = document.getElementById('modalPrjMember');
+
+      if (cust) cust.value = 'SKYWORKS';
+      if (item) item.value = 'IC Tray';
+      if (pn) pn.value = 'KS-880220';
+      if (tt) tt.value = 'Close';
+      if (po) po.value = 'SKY000000111';
+      if (ship) ship.value = '09월 15일';
+      if (mem) mem.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'hjh' : ACTIVE_MEMBER_ID;
+
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAddProjectModal() {
+      const modal = document.getElementById('addProjectModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function submitAddProjectModal() {
+      const cust = document.getElementById('modalPrjCustomer').value || 'SKYWORKS';
+      const item = document.getElementById('modalPrjItem').value || 'IC Tray';
+      const pn = document.getElementById('modalPrjPn').value.trim() || 'KS-880220';
+      const tt = document.getElementById('modalPrjToolType').value || 'Close';
+      const po = document.getElementById('modalPrjPoNo').value.trim() || '';
+      const ship = document.getElementById('modalPrjShipDate').value.trim() || '';
+      const targetMemId = document.getElementById('modalPrjMember').value || 'hjh';
+
+      const currentData = getActiveDataset();
+      const mem = currentData.members.find(x => x.id === targetMemId);
+      if (!mem) return;
+      if (!mem.projects) mem.projects = [];
+
+      mem.projects.push({
+        id: 'prj_' + Date.now(),
+        customer: cust,
+        item: item,
+        pn: pn,
+        tool_type: tt,
+        po_no: po,
+        ship_date: ship,
+        status: tt
+      });
+
+      closeAddProjectModal();
+      renderMemberView();
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 [${cust}] 신규 프로젝트를 등록했습니다.`);
+    }
+
+    // --- 3-2. Quality Issue 렌더링 ---
+    function renderQualityTable(isAll, member, dataContext) {
+      const tbody = document.getElementById('qualityTableTbody');
+      if (!tbody) return;
+      const editable = isPeriodEditable();
+      let qualList = [];
+
+      if (isAll) {
+        (dataContext.members || []).forEach(mem => {
+          (mem.quality_issues || []).forEach((q, idx) => {
+            qualList.push({ ...q, memberId: mem.id, memberName: mem.name, qualIdx: idx });
+          });
+        });
+      } else if (member) {
+        qualList = (member.quality_issues || []).map((q, idx) => ({ ...q, memberId: member.id, memberName: member.name, qualIdx: idx }));
+      }
+
+      if (qualList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 Quality Issue가 없습니다. 우측 상단 '+ Quality Issue 등록'을 클릭하세요.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = qualList.map(q => `
+        <tr>
+          <td>
+            <select class="select-dropdown-red" style="max-width:110px;" onchange="updateQualityField('${q.memberId}', ${q.qualIdx}, 'customer', this.value)">
+              ${getCustomerOptionsHtml(q.customer)}
+            </select>
+          </td>
+          <td>
+            <select class="select-dropdown-red" style="max-width:95px;" onchange="updateQualityField('${q.memberId}', ${q.qualIdx}, 'item', this.value)">
+              ${getItemOptionsHtml(q.item)}
+            </select>
+          </td>
+          <td>
+            <input type="text" value="${escapeAttr(q.pn || '')}" placeholder="KS-XXXXXX" oninput="updateQualityField('${q.memberId}', ${q.qualIdx}, 'pn', this.value)" />
+          </td>
+          <td>
+            <select class="select-dropdown-red" style="max-width:95px;" onchange="updateQualityField('${q.memberId}', ${q.qualIdx}, 'defect_type', this.value)">
+              ${getDefectTypeOptionsHtml(q.defect_type || 'Close')}
+            </select>
+          </td>
+          <td>
+            <input type="text" value="${escapeAttr(q.comment || '')}" placeholder="불량상황 및 조치 코멘트..." oninput="updateQualityField('${q.memberId}', ${q.qualIdx}, 'comment', this.value)" />
+          </td>
+          <td style="text-align:center;">
+            ${editable ? `
+              <button class="bullet-del-btn" title="품질 이슈 삭제" onclick="deleteQuality('${q.memberId}', ${q.qualIdx})">&times;</button>
+            ` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateQualityField(memId, qualIdx, field, val) {
+      if (notifyLocked()) return;
+      const currentData = getActiveDataset();
+      const mem = currentData.members.find(x => x.id === memId);
+      if (!mem || !mem.quality_issues || !mem.quality_issues[qualIdx]) return;
+      mem.quality_issues[qualIdx][field] = val;
+
+      clearTimeout(DEBOUNCE_TIMER);
+      DEBOUNCE_TIMER = setTimeout(() => {
+        triggerAutoSave(`${CURRENT_USER_NAME}님이 [${mem.quality_issues[qualIdx].customer}] 품질 이슈를 수정했습니다.`);
+      }, 600);
+    }
+
+    function deleteQuality(memId, qualIdx) {
+      if (notifyLocked()) return;
+      if (!confirm('해당 Quality Issue를 삭제하시겠습니까?')) return;
+      const currentData = getActiveDataset();
+      const mem = currentData.members.find(x => x.id === memId);
+      if (!mem || !mem.quality_issues) return;
+      mem.quality_issues.splice(qualIdx, 1);
+      renderMemberView();
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 Quality Issue를 삭제했습니다.`);
+    }
+
+    // Quality Issue 등록 모달
+    function openAddQualityModal() {
+      if (notifyLocked()) return;
+      const modal = document.getElementById('addQualityModal');
+      const cust = document.getElementById('modalQualCustomer');
+      const item = document.getElementById('modalQualItem');
+      const pn = document.getElementById('modalQualPn');
+      const dt = document.getElementById('modalQualDefectType');
+      const com = document.getElementById('modalQualComment');
+      const mem = document.getElementById('modalQualMember');
+
+      if (cust) cust.value = 'SKYWORKS';
+      if (item) item.value = 'IC Tray';
+      if (pn) pn.value = 'KS-880220';
+      if (dt) dt.value = 'Close';
+      if (com) com.value = '불량상황에 대한 설명 및 조치 대책';
+      if (mem) mem.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'hjh' : ACTIVE_MEMBER_ID;
+
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAddQualityModal() {
+      const modal = document.getElementById('addQualityModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function submitAddQualityModal() {
+      const cust = document.getElementById('modalQualCustomer').value || 'SKYWORKS';
+      const item = document.getElementById('modalQualItem').value || 'IC Tray';
+      const pn = document.getElementById('modalQualPn').value.trim() || 'KS-880220';
+      const dt = document.getElementById('modalQualDefectType').value || 'Close';
+      const com = document.getElementById('modalQualComment').value.trim() || '불량상황 설명';
+      const targetMemId = document.getElementById('modalQualMember').value || 'hjh';
+
+      const currentData = getActiveDataset();
+      const mem = currentData.members.find(x => x.id === targetMemId);
+      if (!mem) return;
+      if (!mem.quality_issues) mem.quality_issues = [];
+
+      mem.quality_issues.push({
+        id: 'qual_' + Date.now(),
+        customer: cust,
+        item: item,
+        pn: pn,
+        defect_type: dt,
+        comment: com
+      });
+
+      closeAddQualityModal();
+      renderMemberView();
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 [${cust}] Quality Issue를 등록했습니다.`);
+    }
+
+    // --- 3-3. 영업현황보고 렌더링 & [내용등록] 버튼 ---
     function renderIssuesPanel(isAll, member, dataContext) {
       const container = document.getElementById('panelIssuesContainer');
-      const countEl = document.getElementById('issuesCount');
+      if (!container) return;
       const editable = isPeriodEditable();
       let issuesList = [];
 
@@ -2571,99 +2911,91 @@
         issuesList = (member.issues || []).map(iss => ({ ...iss, memberId: member.id, memberName: member.name }));
       }
 
-      // 고유 고객사 목록 추출 (필터 드롭다운용)
-      const uniqueCusts = Array.from(new Set(issuesList.map(i => i.customer).filter(Boolean))).sort();
-
       // 고객사 필터 적용
       let filteredIssues = issuesList;
       if (ISSUE_CUSTOMER_FILTER && ISSUE_CUSTOMER_FILTER !== 'ALL') {
         filteredIssues = issuesList.filter(i => (i.customer === ISSUE_CUSTOMER_FILTER));
       }
 
-      if (countEl) countEl.textContent = `${filteredIssues.length}건`;
-
-      // 상단 고객사 필터 바
-      let filterBarHtml = `
-        <div class="issue-filter-bar">
-          <span style="font-size:11px; color:var(--text-muted); font-weight:600;">고객사별 필터:</span>
-          <select class="issue-filter-select" onchange="filterIssuesByCustomer(this.value)">
-            <option value="ALL" ${ISSUE_CUSTOMER_FILTER==='ALL'?'selected':''}>전체 고객사 (${issuesList.length}건)</option>
-            ${uniqueCusts.map(c => `<option value="${escapeAttr(c)}" ${ISSUE_CUSTOMER_FILTER===c?'selected':''}>${escapeAttr(c)}</option>`).join('')}
-          </select>
-        </div>
-      `;
-
       if (filteredIssues.length === 0) {
-        container.innerHTML = filterBarHtml + `<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;">선택된 고객사의 특이사항이 없습니다.</div>`;
+        container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;">등록된 영업현황보고가 없습니다. 상단 노란색 [내용등록] 버튼을 눌러 추가하세요.</div>`;
         return;
       }
 
-      container.innerHTML = filterBarHtml + filteredIssues.map(iss => {
+      container.innerHTML = filteredIssues.map(iss => {
         const custDisplay = iss.customer || '고객사 협의';
         return `
-          <div class="issue-item-card">
+          <div class="issue-item-card" style="border-left: 3px solid #eab308;">
             <div class="issue-header-row">
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                <span class="issue-customer-badge">${escapeAttr(custDisplay)}</span>
+                <span class="issue-customer-badge" style="border-color:#ef4444; color:#fca5a5;">${escapeAttr(custDisplay)}</span>
                 <span class="issue-tag-badge">${escapeAttr(iss.tag || '진행중')}</span>
                 ${iss.item ? `<span class="issue-item-badge">${escapeAttr(iss.item)}</span>` : ''}
               </div>
               ${editable ? `
-                <button class="bullet-del-btn" title="특이사항 전체 삭제" onclick="deleteIssue('${iss.memberId}', '${iss.id}')">&times;</button>
+                <button class="bullet-del-btn" title="영업현황 삭제" onclick="deleteIssue('${iss.memberId}', '${iss.id}')">&times;</button>
               ` : ''}
             </div>
 
             <div style="margin-top:6px; margin-bottom:8px;">
               <input type="text" class="issue-topic-input ${!editable ? 'input-disabled-locked' : ''}"
                      value="${escapeAttr(iss.topic)}"
+                     style="font-weight:800; font-size:13px;"
                      ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                      oninput="updateIssueTopic('${iss.memberId}', '${iss.id}', this.value)" />
             </div>
 
             <ul class="bullet-list">
-              ${(iss.bullets || []).map((b, bIdx) => `
-                <li class="bullet-item">
-                  <span class="bullet-dot">•</span>
-                  <textarea class="bullet-input ${!editable ? 'input-disabled-locked' : ''}"
-                            rows="1"
-                            ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
-                            oninput="updateIssueBullet('${iss.memberId}', '${iss.id}', ${bIdx}, this.value)">${escapeAttr(b)}</textarea>
-                  ${editable ? `
-                    <button class="bullet-del-btn" title="항목 삭제" onclick="deleteIssueBullet('${iss.memberId}', '${iss.id}', ${bIdx})">-</button>
-                  ` : ''}
-                </li>
-              `).join('')}
+              ${(iss.bullets || []).map((b, bIdx) => {
+                const isSub = b.startsWith('>') || b.startsWith('>>') || b.startsWith(':');
+                const indentPx = b.startsWith('>>') ? 24 : b.startsWith('>') ? 14 : 0;
+                return `
+                  <li class="bullet-item" style="padding-left:${indentPx}px;">
+                    <span class="bullet-dot" style="color:#eab308;">${b.startsWith('>>') ? '››' : b.startsWith('>') ? '›' : '•'}</span>
+                    <textarea class="bullet-input ${!editable ? 'input-disabled-locked' : ''}"
+                              rows="1"
+                              ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
+                              oninput="updateIssueBullet('${iss.memberId}', '${iss.id}', ${bIdx}, this.value)">${escapeAttr(b)}</textarea>
+                    ${editable ? `
+                      <button class="bullet-del-btn" title="항목 삭제" onclick="deleteIssueBullet('${iss.memberId}', '${iss.id}', ${bIdx})">-</button>
+                    ` : ''}
+                  </li>
+                `;
+              }).join('')}
             </ul>
             ${editable ? `
-              <button class="add-bullet-btn" onclick="addIssueBullet('${iss.memberId}', '${iss.id}')">+ 세부 항목 추가</button>
+              <button class="add-bullet-btn" onclick="addIssueBullet('${iss.memberId}', '${iss.id}')">+ 세부 불릿 추가</button>
             ` : ''}
           </div>
         `;
       }).join('');
     }
 
-    // --- 신규 영업현황보고 등록 모달 컨트롤 ---
-
+    // 영업현황보고 등록 모달 열기 (상단 [내용등록] 버튼 클릭 시)
     function openAddIssueModal() {
       if (notifyLocked()) return;
       const modal = document.getElementById('addIssueModal');
       if (!modal) return;
 
-      // 모달 입력창 초기화
       const custSelect = document.getElementById('modalIssueCustomer');
-      const custDirect = document.getElementById('modalIssueCustomerDirect');
+      const custFilter = document.getElementById('salesReportCustSelect');
       const itemSelect = document.getElementById('modalIssueItem');
       const statusSelect = document.getElementById('modalIssueStatus');
       const topicInput = document.getElementById('modalIssueTopic');
       const bulletsInput = document.getElementById('modalIssueBullets');
       const memberSelect = document.getElementById('modalIssueMember');
 
-      if (custSelect) custSelect.value = '';
-      if (custDirect) { custDirect.value = ''; custDirect.style.display = 'none'; }
-      if (itemSelect) itemSelect.value = '';
+      // 상단 필터에서 선택된 고객사가 있으면 자동 선택
+      const selCust = (custFilter && custFilter.value !== 'ALL') ? custFilter.value : 'SKYWORKS';
+      if (custSelect) custSelect.value = selCust;
+      if (itemSelect) itemSelect.value = 'IC Tray';
       if (statusSelect) statusSelect.value = '진행중';
-      if (topicInput) topicInput.value = '';
-      if (bulletsInput) bulletsInput.value = '';
+      if (topicInput) topicInput.value = '3M Filter Project 유지 관련 Promotion 진행';
+      
+      // image.png의 실제 예시 텍스트 제공
+      if (bulletsInput) {
+        bulletsInput.value = `- 3M Filter Project 유지 관련 Promotion 진행\n: 3M Filter SG 이전관련 Project 유지 작업 진행\n> Skyworks SG, Skyworks Irvine에 3M 관련 독립적 진행 요청\n>> 해영, Skyworks MX를 통한 당사 진행 Tool 사용 지속 압박\n당사, MX뿐만 아니라 W/Wide Project Line Contact 진행\n> Skyworks SG, Cost Saving 관련 MY 업체 추천 확인\n>> 해영, Skyworks MX를 통해 MY 업체관련 구체적인 정보 파악 중`;
+      }
       if (memberSelect) {
         memberSelect.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'hjh' : ACTIVE_MEMBER_ID;
       }
@@ -2671,81 +3003,7 @@
       modal.classList.add('active');
     }
 
-    function closeAddIssueModal() {
-      const modal = document.getElementById('addIssueModal');
-      if (modal) modal.classList.remove('active');
-    }
-
-    function handleModalCustomerChange(val) {
-      const custDirect = document.getElementById('modalIssueCustomerDirect');
-      if (custDirect) {
-        custDirect.style.display = (val === '__DIRECT__') ? 'block' : 'none';
-        if (val === '__DIRECT__') custDirect.focus();
-      }
-    }
-
-    function submitAddIssueModal() {
-      const custSelect = document.getElementById('modalIssueCustomer');
-      const custDirect = document.getElementById('modalIssueCustomerDirect');
-      const itemSelect = document.getElementById('modalIssueItem');
-      const statusSelect = document.getElementById('modalIssueStatus');
-      const topicInput = document.getElementById('modalIssueTopic');
-      const bulletsInput = document.getElementById('modalIssueBullets');
-      const memberSelect = document.getElementById('modalIssueMember');
-
-      let customer = custSelect ? custSelect.value : '';
-      if (customer === '__DIRECT__') {
-        customer = custDirect ? custDirect.value.trim() : '';
-      }
-      if (!customer) {
-        alert('고객사를 선택하거나 직접 입력해 주십시오.');
-        if (custSelect) custSelect.focus();
-        return;
-      }
-
-      const topic = topicInput ? topicInput.value.trim() : '';
-      if (!topic) {
-        alert('영업현황 보고 주제 또는 프로젝트명을 입력해 주십시오.');
-        if (topicInput) topicInput.focus();
-        return;
-      }
-
-      const status = statusSelect ? statusSelect.value : '진행중';
-      const item = itemSelect ? itemSelect.value : '';
-      const targetMemId = memberSelect ? memberSelect.value : 'hjh';
-
-      const bulletLines = (bulletsInput ? bulletsInput.value : '')
-        .split('\n')
-        .map(s => s.replace(/^[•\-\*\s]+/, '').trim())
-        .filter(Boolean);
-
-      if (bulletLines.length === 0) {
-        bulletLines.push('세부 진행 내역 및 주간 현황 확인');
-      }
-
-      const currentData = getActiveDataset();
-      const mem = currentData.members.find(x => x.id === targetMemId);
-      if (!mem) return;
-      if (!mem.issues) mem.issues = [];
-
-      const newIssue = {
-        id: 'iss_' + targetMemId + '_' + Date.now(),
-        customer: customer,
-        item: item,
-        topic: topic,
-        tag: status,
-        bullets: bulletLines
-      };
-
-      mem.issues.push(newIssue);
-      recordRevision('영업현황 등록', `${CURRENT_USER_NAME}님이 [${customer}] 특이사항 '${topic}' 등록`);
-      closeAddIssueModal();
-      renderMemberView();
-      triggerAutoSave(`${CURRENT_USER_NAME}님이 [${customer}] 영업현황보고를 등록했습니다.`);
-    }
-
-    // 기존 버튼 연동
-    function addNewIssue() {
+        function addNewIssue() {
       openAddIssueModal();
     }
 
@@ -3197,7 +3455,10 @@
         const currentData = getActiveDataset();
         const memSales = (currentData.members || []).map(m => {
           const exp = (m.sales || []).reduce((acc, s) => acc + (parseFloat(s.expected) || 0), 0);
-          return { name: m.short_name || m.name.split(' ')[0], amount: exp, regions: m.regions };
+          const fullName = (typeof OFFICIAL_MEMBER_NAMES !== 'undefined' && OFFICIAL_MEMBER_NAMES[m.id]) 
+            ? OFFICIAL_MEMBER_NAMES[m.id] 
+            : (m.short_name && m.short_name.length >= 2 ? m.short_name : (m.name ? m.name.split(' ')[0] : '담당자'));
+          return { name: fullName, amount: exp, regions: m.regions };
         });
         const total = memSales.reduce((acc, x) => acc + x.amount, 0) || 1;
 
@@ -3211,16 +3472,17 @@
           </div>
         `;
         svgWrapper.innerHTML = `
-          <svg viewBox="0 0 500 130" style="width:100%; height:130px;">
+          <svg viewBox="0 0 500 145" style="width:100%; height:145px;">
             ${memSales.map((m, i) => {
-              const x = 30 + i * 90;
+              const x = 32 + i * 92;
               const h = (m.amount / total) * 160;
-              const y = 95 - Math.min(h, 80);
+              const barH = Math.max(14, Math.min(h, 75));
+              const y = 95 - barH;
               const pct = Math.round((m.amount / total) * 100);
               return `
-                <rect x="${x}" y="${y}" width="42" height="${Math.min(h, 80)}" rx="3" fill="#0284c7" />
-                <text x="${x + 21}" y="${y - 6}" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">${pct}%</text>
-                <text x="${x + 21}" y="112" fill="#cbd5e1" font-size="10" text-anchor="middle">${m.name}</text>
+                <rect x="${x}" y="${y}" width="44" height="${barH}" rx="4" fill="#0284c7" />
+                <text x="${x + 22}" y="${y - 8}" fill="#38bdf8" font-size="11" font-weight="800" text-anchor="middle">${pct}%</text>
+                <text x="${x + 22}" y="118" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">${m.name}</text>
               `;
             }).join('')}
             <line x1="20" y1="96" x2="480" y2="96" stroke="#475569" stroke-width="1" />
@@ -3264,6 +3526,9 @@
         closeExportModal();
         closeRevisionModal();
         closeAdminAuthModal();
+        closeAddProjectModal();
+        closeAddQualityModal();
+        closeAddIssueModal();
       }
     });
 
