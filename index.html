@@ -35,6 +35,7 @@
     </div>
     
     <div class="header-right">
+      <button class="icon-btn" id="btnToggleLang" onclick="toggleAppLanguage()" title="Language Switch (한국어 / English)" style="width:auto; min-width:38px; height:34px; padding:0 8px; font-size:11.5px; font-weight:700; border-radius:6px; color:var(--primary-light); background:var(--bg-card-sub); border:1px solid var(--border-accent); display:inline-flex; align-items:center; justify-content:center; cursor:pointer;">EN</button>
       <button class="icon-btn" id="btnRefresh" title="새로고침">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
       </button>
@@ -472,16 +473,12 @@
           <button class="lab-main-tab-btn active" id="btnLabTabTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">업무 자동화 도구</button>
           <button class="lab-main-tab-btn" id="btnLabTabGimpo" onclick="switchLabSubTab('labSubGimpo', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">김포공장 Tray 재고</button>
           <button class="lab-main-tab-btn" id="btnLabTabPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">필리핀 지사 리포트 & 프로젝트</button>
+          <button class="lab-main-tab-btn" id="btnLabTabWeekly" onclick="switchLabSubTab('labSubWeekly', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">해외영업부 주간보고서</button>
         </div>
 
-        <!-- ===== 서브탭 1: 업무 자동화 도구 (기존 SSPC + 주간보고서 분리 정리) ===== -->
+        <!-- ===== 서브탭 1: 업무 자동화 도구 (SSPC 매출 자료 변환기) ===== -->
         <div class="lab-sub-panel" id="labSubTools">
           <div style="padding:14px 16px 8px;">
-            <!-- 내부 기능 탭 스위처 -->
-            <div style="display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:10px; flex-wrap:wrap;">
-              <button class="lab-tool-sub-btn active" id="btnToolSspc" onclick="switchLabToolView('toolViewSspc', this)" style="padding:7px 14px; font-size:12px; font-weight:700; border-radius:6px; border:1px solid var(--primary); background:var(--bg-card-sub); color:var(--primary); cursor:pointer;">SSPC 매출 자료 변환기 (강도균 수석님)</button>
-              <button class="lab-tool-sub-btn" id="btnToolWeekly" onclick="switchLabToolView('toolViewWeekly', this)" style="padding:7px 14px; font-size:12px; font-weight:600; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-secondary); cursor:pointer;">해외영업부 주간보고서 실시간 협업</button>
-            </div>
 
             <!-- 도구 1: SSPC 매출 자료 변환기 -->
             <div id="toolViewSspc">
@@ -580,36 +577,6 @@
               </div>
             </div>
 
-            <!-- 도구 2: 해외영업부 주간보고서 실시간 협업 워크스페이스 -->
-            <div id="toolViewWeekly" style="display:none;">
-              <div class="lab-container" style="padding:0;">
-                <div class="lab-card" id="weeklyReportLabCard" style="border-color: #3b82f6; margin-bottom:0;">
-                  <div class="lab-card-header">
-                    <div class="lab-card-title-box">
-                      <span class="lab-badge primary" style="background:#2563eb; color:#ffffff;">실시간 협업 LIVE</span>
-                      <h4>해외영업부 주간보고서 실시간 협업 워크스페이스</h4>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                      <span class="lab-sub-badge" style="background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.3);">제1안 브리핑형</span>
-                      <a href="weekly_report_prototype.html" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
-                        전체화면 새 창 열기
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                      </a>
-                    </div>
-                  </div>
-                  <div class="lab-card-body" style="padding:12px;">
-                    <p class="lab-desc" style="margin-bottom:12px;">
-                      파일(PPT/Excel) 업로드 없이, 모든 팀원이 온라인에서 <strong>매출 실적 및 예상치, 샘플 진행 현황, 특이사항</strong>을 직접 실시간으로 편집하고 자동 동기화하는 클라우드 협업 시스템입니다. (수정 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
-                    </p>
-                    
-                    <!-- 워크스페이스 임베드 컨테이너 -->
-                    <div style="width:100%; height:780px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                      <iframe src="weekly_report_prototype.html" style="width:100%; height:100%; border:none;" title="해외영업부 주간보고서 실시간 워크스페이스"></iframe>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -793,6 +760,38 @@
             </div>
           </div>
         </div>
+
+        <!-- ===== 서브탭 4: 해외영업부 주간보고서 실시간 협업 워크스페이스 ===== -->
+        <div class="lab-sub-panel" id="labSubWeekly" style="display:none;">
+          <div style="padding:14px 16px;">
+            <div class="lab-container" style="padding:0;">
+              <div class="lab-card" id="weeklyReportLabCard" style="border-color: #3b82f6; margin-bottom:0;">
+                <div class="lab-card-header">
+                  <div class="lab-card-title-box">
+                    <span class="lab-badge primary" style="background:#2563eb; color:#ffffff;">실시간 협업 LIVE</span>
+                    <h4>해외영업부 주간보고서 실시간 협업 워크스페이스</h4>
+                  </div>
+                  <div style="display:flex; gap:8px; align-items:center;">
+                    <a href="weekly_report_prototype.html" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+                      전체화면 새 창 열기
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                  </div>
+                </div>
+                <div class="lab-card-body" style="padding:12px;">
+                  <p class="lab-desc" style="margin-bottom:12px;">
+                    파일(PPT/Excel) 별도 업로드 없이, 모든 팀원이 온라인에서 <strong>매출 실적 및 주차별 예상치, 샘플 진행 현황, 특이사항</strong>을 직접 실시간으로 편집하고 자동 동기화하는 엔터프라이즈 주간보고서 시스템입니다. (수정 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
+                  </p>
+                  
+                  <!-- 워크스페이스 임베드 컨테이너 -->
+                  <div style="width:100%; height:840px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
+                    <iframe src="weekly_report_prototype.html" style="width:100%; height:100%; border:none;" title="해외영업부 주간보고서 실시간 워크스페이스"></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -842,23 +841,33 @@
         <button class="close-btn" id="btnCloseSettingsModal">&times;</button>
       </div>
       <div class="modal-body">
+        <!-- 언어 설정 섹션 -->
+        <div class="setting-item" id="settingItemLanguage">
+          <label id="lblSettingLang">언어 설정 (Language):</label>
+          <div style="display:flex; gap:8px; margin-top:6px;">
+            <button type="button" class="action-btn-sm" id="btnLangKo" onclick="setAppLanguage('ko')" style="flex:1; padding:8px 12px; font-size:12.5px; font-weight:700; border-radius:6px; cursor:pointer;">한국어 (Korean)</button>
+            <button type="button" class="action-btn-sm secondary" id="btnLangEn" onclick="setAppLanguage('en')" style="flex:1; padding:8px 12px; font-size:12.5px; font-weight:700; border-radius:6px; cursor:pointer;">English</button>
+          </div>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:5px; line-height:1.4;" id="lblSettingLangDesc">모바일 웹앱의 모든 메뉴, 검색 필터, 탭 헤더가 선택한 언어로 즉시 전환됩니다.</div>
+        </div>
+
         <div class="setting-item">
-          <label>동작 환경 (오프라인 지원):</label>
-          <div style="background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;font-size:12px;color:#cbd5e1;line-height:1.6;">
+          <label id="lblSettingEnv">동작 환경 (오프라인 지원):</label>
+          <div id="boxSettingEnv" style="background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;font-size:12px;color:#cbd5e1;line-height:1.6;">
             • <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>
             • <strong>탑재 데이터</strong>: Skyworks PO 7,300+건, 출하 계획 58,000+건, 견적서 20,000+건, 사내 FAQ 내장.
           </div>
         </div>
         <div class="setting-item">
-          <label>앱 버전 정보:</label>
+          <label id="lblSettingVer">앱 버전 정보:</label>
           <div class="version-box">
-            <span>현재 버전: <strong id="currentAppVersion">v1.0.167</strong></span>
+            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.167</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
         </div>
         <div class="setting-item">
-          <label>관리자 전용 메뉴:</label>
+          <label id="lblSettingAdmin">관리자 전용 메뉴:</label>
           <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
             <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%;">관리자 출하 DB 업데이트</button>
             <button class="action-btn-sm primary" id="btnSettingsOpenFaqManager" style="width:100%; background:#6366f1; border-color:#6366f1;">사내 FAQ 지식베이스 관리</button>

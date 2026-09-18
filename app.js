@@ -70,7 +70,8 @@ const AppState = {
   lastSyncTime: null,
   activeTab: 'shipplan',
   dataDate: '2026년 9월 15일',
-  currentQuotNo: null
+  currentQuotNo: null,
+  currentLang: 'ko'
 };
 
 // 전역 관리자 상태 객체 (출하 DB 및 게시판 관리자 공통 사용)
@@ -810,8 +811,473 @@ function updateStatus(isOnline, text) {
   }
 }
 
+// =====================================================
+// 다국어 지원 엔진 (Internationalization / i18n)
+// =====================================================
+const APP_I18N = {
+  ko: {
+    lang_badge: 'EN',
+    lang_title: '영문 버전으로 전환 (Switch to English)',
+    nav_chat: 'AI 챗봇',
+    nav_viewer: 'ERP 데이터 뷰어',
+    chat_placeholder: '사내 규정 및 업무 지식 질문 입력... (예: EXW 조건, 위탁재고)',
+    
+    // Viewer Tabs
+    tab_shipplan: '출하 계획',
+    tab_quotations: '견적서',
+    tab_contract: '계약검토서',
+    tab_drawings: '도면 관리',
+    tab_skyworks: 'Skyworks',
+    tab_feedback: '기능 요청',
+    tab_faq: '사내 FAQ',
+    tab_archive: '자료실',
+    tab_lab: '실험실',
+
+    // Card Titles & Subtitles
+    shipplan_title: '출하 계획 현황',
+    shipplan_sub: '사내 ERP 출하 마스터 데이터 실시간 조회',
+    quotations_title: '견적서 관리 현황',
+    quotations_sub: '견적 번호 및 고객사 검색',
+    contract_title: '계약검토서 관리 현황',
+    contract_sub: '프로젝트 및 계약 검토 이력',
+    drawings_title: '연구소 도면 관리',
+    drawings_sub: 'Tray / Carrier Tape 승인 도면',
+    skyworks_title: 'Skyworks 수주 현황',
+    skyworks_sub: 'Skyworks 전용 실시간 오더 현황',
+    feedback_title: '기능 요청 게시판',
+    feedback_sub: '모바일 웹앱 개선 의견 및 버그 제보',
+    faq_title: '사내 규정 & FAQ 지식베이스',
+    faq_sub: '무역조건, ERP 프로세스, 사내규정 가이드',
+    archive_title: '사내 공용 자료실',
+    archive_sub: '견적서, 계약서, 발주서, 제품자료 등 사내 문서 통합 다운로드',
+    lab_title: '실험실 (Lab)',
+    lab_sub: '사내 업무 자동화 및 글로벌 지사 현황',
+
+    // Lab Sub-Tabs
+    lab_tab_tools: '업무 자동화 도구',
+    lab_tab_gimpo: '김포공장 Tray 재고',
+    lab_tab_ph: '필리핀 지사 리포트 & 프로젝트',
+    lab_tab_weekly: '해외영업부 주간보고서',
+
+    // Search Placeholders
+    ship_holder_cust: '고객사명 입력...',
+    ship_holder_part: '부품/도면번호 입력...',
+    ship_holder_inv: 'Invoice No 입력...',
+    quot_holder: '견적 번호(Q...), 고객사, 작성자 검색...',
+    contract_holder: '프로젝트명, 고객사, 품목 검색...',
+    drawing_holder: 'KS 번호, 도면명, 고객사 검색...',
+    skyworks_holder: 'PO No, Part No 검색...',
+    feedback_holder: '요청 제목, 작성자, 내용 검색...',
+    faq_holder: '규정 키워드 검색 (예: EXW, 위탁재고, 출하)...',
+    archive_holder: '문서명, 분류, 등록자, 파일명 검색...',
+
+    // Buttons
+    btn_search: '조회',
+    btn_reload: '새로고침',
+    btn_reset: '필터 초기화',
+    btn_download_excel: '엑셀 다운로드',
+    btn_update_db: 'DB 업데이트',
+    btn_new_feedback: '새 기능 요청 등록',
+    btn_archive_reg: '자료 등록',
+    btn_open_full: '전체화면 새 창 열기',
+    btn_close: '닫기',
+    btn_verify: '인증',
+    btn_copy_summary: '요약 복사',
+    btn_check_update: '업데이트 확인',
+
+    // Settings Modal
+    settings_title: '시스템 정보 & 업데이트',
+    settings_lang_label: '언어 설정 (Language):',
+    settings_lang_desc: '모바일 웹앱의 모든 메뉴, 검색 필터, 탭 헤더가 선택한 언어로 즉시 전환됩니다.',
+    settings_env_label: '동작 환경 (오프라인 지원):',
+    settings_env_desc: '• <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>• <strong>탑재 데이터</strong>: Skyworks PO 7,300+건, 출하 계획 58,000+건, 견적서 20,000+건, 사내 FAQ 내장.',
+    settings_ver_label: '앱 버전 정보:',
+    settings_cur_ver_prefix: '현재 버전:',
+    settings_admin_label: '관리자 전용 메뉴:',
+    settings_admin_ship: '관리자 출하 DB 업데이트',
+    settings_admin_faq: '사내 FAQ 지식베이스 관리',
+
+    // Table Headers (Ship Plan)
+    th_ship_date: '출고일',
+    th_loading_date: '선적일',
+    th_customer: '고객사',
+    th_po_no: 'PO번호',
+    th_part_no: '부품번호',
+    th_qty: '수량',
+    th_remain: '잔여',
+    th_invoice_no: 'Invoice No',
+
+    // Table Headers (Quotations)
+    th_quot_no: '견적번호',
+    th_quot_date: '견적일자',
+    th_manager: '담당자',
+    th_item_count: '품목수',
+    th_total_amount: '총금액',
+    th_remarks: '비고',
+
+    // Table Headers (Contract Reviews)
+    th_num: '번호',
+    th_review_date: '검토일자',
+    th_proj_name: '프로젝트명',
+    th_item_name: '품목명',
+    th_status: '승인상태',
+
+    // Table Headers (Drawings)
+    th_ks_no: 'KS 번호',
+    th_drawing_name: '도면명',
+    th_category: '구분',
+    th_rev_date: '개정일자',
+    th_download: '다운로드',
+
+    // Table Headers (Skyworks)
+    th_line: '라인',
+    th_item_code: '품목코드',
+    th_description: '품명',
+    th_due_date: '납기일자',
+    th_ship_status: '출하상태'
+  },
+  en: {
+    lang_badge: 'KO',
+    lang_title: '한국어 버전으로 전환 (Switch to Korean)',
+    nav_chat: 'AI Chatbot',
+    nav_viewer: 'ERP Viewer',
+    chat_placeholder: 'Ask company regulations & business knowledge... (e.g. EXW, Consignment)',
+
+    // Viewer Tabs
+    tab_shipplan: 'Ship Plan',
+    tab_quotations: 'Quotations',
+    tab_contract: 'Contract Review',
+    tab_drawings: 'Drawings',
+    tab_skyworks: 'Skyworks',
+    tab_feedback: 'Feature Requests',
+    tab_faq: 'Regulations & FAQ',
+    tab_archive: 'Archive',
+    tab_lab: 'Lab',
+
+    // Card Titles & Subtitles
+    shipplan_title: 'Shipment Plan Status',
+    shipplan_sub: 'Enterprise ERP Shipment Master Data Real-time View',
+    quotations_title: 'Quotation Management',
+    quotations_sub: 'Search Quotations by Number & Customer',
+    contract_title: 'Contract Review Management',
+    contract_sub: 'Project & Contract Review History',
+    drawings_title: 'R&D Drawing Management',
+    drawings_sub: 'Tray / Carrier Tape Approved Drawings',
+    skyworks_title: 'Skyworks PO Status',
+    skyworks_sub: 'Skyworks Dedicated Real-time Order Status',
+    feedback_title: 'Feature Request Board',
+    feedback_sub: 'Web App Feedback & Feature Requests',
+    faq_title: 'Regulations & FAQ Knowledge Base',
+    faq_sub: 'Incoterms, ERP Process & Company Regulations Guide',
+    archive_title: 'Enterprise Shared Archive',
+    archive_sub: 'Integrated Document Downloads (Quotes, Contracts, POs, Drawings)',
+    lab_title: 'Lab (R&D)',
+    lab_sub: 'Enterprise Automation & Global Branch Reports',
+
+    // Lab Sub-Tabs
+    lab_tab_tools: 'Automation Tools',
+    lab_tab_gimpo: 'Gimpo Tray Stock',
+    lab_tab_ph: 'PH Branch Report & Projects',
+    lab_tab_weekly: 'Overseas Sales Weekly Report',
+
+    // Search Placeholders
+    ship_holder_cust: 'Search Customer...',
+    ship_holder_part: 'Search Part / Drawing No...',
+    ship_holder_inv: 'Search Invoice No...',
+    quot_holder: 'Search Quote No(Q...), Customer, Author...',
+    contract_holder: 'Search Project, Customer, Item...',
+    drawing_holder: 'Search KS No, Drawing Name, Customer...',
+    skyworks_holder: 'Search PO No, Part No...',
+    feedback_holder: 'Search Title, Author, Content...',
+    faq_holder: 'Search regulations (e.g. EXW, Consignment, Shipment)...',
+    archive_holder: 'Search Document, Category, Author, File...',
+
+    // Buttons
+    btn_search: 'Search',
+    btn_reload: 'Reload',
+    btn_reset: 'Reset Filters',
+    btn_download_excel: 'Download Excel',
+    btn_update_db: 'Update DB',
+    btn_new_feedback: 'Submit Request',
+    btn_archive_reg: 'Upload Doc',
+    btn_open_full: 'Open Full Window',
+    btn_close: 'Close',
+    btn_verify: 'Verify',
+    btn_copy_summary: 'Copy Summary',
+    btn_check_update: 'Check for Updates',
+
+    // Settings Modal
+    settings_title: 'System Info & Updates',
+    settings_lang_label: 'Language Settings:',
+    settings_lang_desc: 'All navigation menus, search filters, and table headers will immediately switch to the selected language.',
+    settings_env_label: 'Operating Environment (Offline Support):',
+    settings_env_desc: '• <strong>Standalone Mode</strong>: Operates fully offline on mobile without internal Wi-Fi or PC connection.<br>• <strong>Embedded Data</strong>: Skyworks PO 7,300+, Shipment Plans 58,000+, Quotes 20,000+, Built-in Regulations FAQ.',
+    settings_ver_label: 'App Version Info:',
+    settings_cur_ver_prefix: 'Current Version:',
+    settings_admin_label: 'Admin Menu:',
+    settings_admin_ship: 'Admin Shipment DB Update',
+    settings_admin_faq: 'FAQ Knowledge Base Management',
+
+    // Table Headers (Ship Plan)
+    th_ship_date: 'Ship Date',
+    th_loading_date: 'Loading Date',
+    th_customer: 'Customer',
+    th_po_no: 'PO No',
+    th_part_no: 'Part No',
+    th_qty: 'Qty',
+    th_remain: 'Remain',
+    th_invoice_no: 'Invoice No',
+
+    // Table Headers (Quotations)
+    th_quot_no: 'Quote No',
+    th_quot_date: 'Quote Date',
+    th_manager: 'Manager',
+    th_item_count: 'Items',
+    th_total_amount: 'Total Amount',
+    th_remarks: 'Remarks',
+
+    // Table Headers (Contract Reviews)
+    th_num: 'No',
+    th_review_date: 'Review Date',
+    th_proj_name: 'Project Name',
+    th_item_name: 'Item Name',
+    th_status: 'Approval Status',
+
+    // Table Headers (Drawings)
+    th_ks_no: 'KS No',
+    th_drawing_name: 'Drawing Name',
+    th_category: 'Category',
+    th_rev_date: 'Rev Date',
+    th_download: 'Download',
+
+    // Table Headers (Skyworks)
+    th_line: 'Line',
+    th_item_code: 'Part No',
+    th_description: 'Description',
+    th_due_date: 'Due Date',
+    th_ship_status: 'Status'
+  }
+};
+
+function initAppLanguage() {
+  const savedLang = localStorage.getItem('kostat_app_lang') || 'ko';
+  setAppLanguage(savedLang, false);
+}
+
+function setAppLanguage(lang, notify = true) {
+  if (lang !== 'ko' && lang !== 'en') lang = 'ko';
+  AppState.currentLang = lang;
+  try {
+    localStorage.setItem('kostat_app_lang', lang);
+  } catch (_) {}
+
+  applyAppLanguage(lang);
+
+  if (notify) {
+    showToast(lang === 'en' ? 'Language switched to English.' : '한국어 버전으로 전환되었습니다.');
+  }
+}
+window.setAppLanguage = setAppLanguage;
+
+function toggleAppLanguage() {
+  const nextLang = (AppState.currentLang === 'en') ? 'ko' : 'en';
+  setAppLanguage(nextLang, true);
+}
+window.toggleAppLanguage = toggleAppLanguage;
+
+function applyAppLanguage(lang) {
+  const t = APP_I18N[lang] || APP_I18N.ko;
+  document.documentElement.lang = lang;
+
+  // 1. 헤더 토글 버튼
+  const btnToggleLang = document.getElementById('btnToggleLang');
+  if (btnToggleLang) {
+    btnToggleLang.textContent = t.lang_badge;
+    btnToggleLang.title = t.lang_title;
+  }
+
+  // 2. 설정 모달 버튼 상태
+  const btnLangKo = document.getElementById('btnLangKo');
+  const btnLangEn = document.getElementById('btnLangEn');
+  if (btnLangKo && btnLangEn) {
+    if (lang === 'ko') {
+      btnLangKo.className = 'action-btn-sm primary';
+      btnLangKo.style.background = '#2563eb';
+      btnLangKo.style.color = '#ffffff';
+      btnLangKo.style.borderColor = '#2563eb';
+      btnLangEn.className = 'action-btn-sm secondary';
+      btnLangEn.style.background = 'var(--bg-card-sub)';
+      btnLangEn.style.color = 'var(--text-secondary)';
+      btnLangEn.style.borderColor = 'var(--border-color)';
+    } else {
+      btnLangEn.className = 'action-btn-sm primary';
+      btnLangEn.style.background = '#2563eb';
+      btnLangEn.style.color = '#ffffff';
+      btnLangEn.style.borderColor = '#2563eb';
+      btnLangKo.className = 'action-btn-sm secondary';
+      btnLangKo.style.background = 'var(--bg-card-sub)';
+      btnLangKo.style.color = 'var(--text-secondary)';
+      btnLangKo.style.borderColor = 'var(--border-color)';
+    }
+  }
+
+  // 3. 설정 모달 텍스트
+  const lblSettingLang = document.getElementById('lblSettingLang');
+  if (lblSettingLang) lblSettingLang.textContent = t.settings_lang_label;
+  const lblSettingLangDesc = document.getElementById('lblSettingLangDesc');
+  if (lblSettingLangDesc) lblSettingLangDesc.textContent = t.settings_lang_desc;
+  const lblSettingEnv = document.getElementById('lblSettingEnv');
+  if (lblSettingEnv) lblSettingEnv.textContent = t.settings_env_label;
+  const boxSettingEnv = document.getElementById('boxSettingEnv');
+  if (boxSettingEnv) boxSettingEnv.innerHTML = t.settings_env_desc;
+  const lblSettingVer = document.getElementById('lblSettingVer');
+  if (lblSettingVer) lblSettingVer.textContent = t.settings_ver_label;
+  const lblCurrentVerPrefix = document.getElementById('lblCurrentVerPrefix');
+  if (lblCurrentVerPrefix) lblCurrentVerPrefix.textContent = t.settings_cur_ver_prefix;
+  const btnCheckAppUpdate = document.getElementById('btnCheckAppUpdate');
+  if (btnCheckAppUpdate) btnCheckAppUpdate.textContent = t.btn_check_update;
+  const lblSettingAdmin = document.getElementById('lblSettingAdmin');
+  if (lblSettingAdmin) lblSettingAdmin.textContent = t.settings_admin_label;
+  const btnSettingsOpenAdminDb = document.getElementById('btnSettingsOpenAdminDb');
+  if (btnSettingsOpenAdminDb) btnSettingsOpenAdminDb.textContent = t.settings_admin_ship;
+  const btnSettingsOpenFaqManager = document.getElementById('btnSettingsOpenFaqManager');
+  if (btnSettingsOpenFaqManager) btnSettingsOpenFaqManager.textContent = t.settings_admin_faq;
+  const btnCloseSettings = document.getElementById('btnCloseSettings');
+  if (btnCloseSettings) btnCloseSettings.textContent = t.btn_close;
+
+  // 4. 모바일 하단/상단 네비게이션
+  const btnNavChatText = document.querySelector('#btnNavChat .nav-text');
+  if (btnNavChatText) btnNavChatText.textContent = t.nav_chat;
+  const mobileViewerNavText = document.getElementById('mobileViewerNavText');
+  if (mobileViewerNavText) mobileViewerNavText.textContent = t.nav_viewer;
+
+  // 5. 뷰어 상단 탭 버튼
+  const tabMap = {
+    viewShipPlan: t.tab_shipplan,
+    viewQuotations: t.tab_quotations,
+    viewContractReviews: t.tab_contract,
+    viewDrawings: t.tab_drawings,
+    viewSkyworks: t.tab_skyworks,
+    viewFeedback: t.tab_feedback,
+    viewFaq: t.tab_faq,
+    viewArchive: t.tab_archive,
+    viewLab: t.tab_lab
+  };
+  document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
+    const target = btn.getAttribute('data-target');
+    if (tabMap[target]) btn.textContent = tabMap[target];
+  });
+
+  // 6. 실험실 서브탭 버튼
+  const btnLabTabTools = document.getElementById('btnLabTabTools');
+  if (btnLabTabTools) btnLabTabTools.textContent = t.lab_tab_tools;
+  const btnLabTabGimpo = document.getElementById('btnLabTabGimpo');
+  if (btnLabTabGimpo) btnLabTabGimpo.textContent = t.lab_tab_gimpo;
+  const btnLabTabPH = document.getElementById('btnLabTabPH');
+  if (btnLabTabPH) btnLabTabPH.textContent = t.lab_tab_ph;
+  const btnLabTabWeekly = document.getElementById('btnLabTabWeekly');
+  if (btnLabTabWeekly) btnLabTabWeekly.textContent = t.lab_tab_weekly;
+
+  // 7. 검색 플레이스홀더
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) chatInput.placeholder = t.chat_placeholder;
+  const shipPlanCustomerInput = document.getElementById('shipPlanCustomerInput');
+  if (shipPlanCustomerInput) shipPlanCustomerInput.placeholder = t.ship_holder_cust;
+  const shipPlanPartInput = document.getElementById('shipPlanPartInput');
+  if (shipPlanPartInput) shipPlanPartInput.placeholder = t.ship_holder_part;
+  const shipPlanInvoiceInput = document.getElementById('shipPlanInvoiceInput');
+  if (shipPlanInvoiceInput) shipPlanInvoiceInput.placeholder = t.ship_holder_inv;
+  const quotSearchInput = document.getElementById('quotSearchInput');
+  if (quotSearchInput) quotSearchInput.placeholder = t.quot_holder;
+  const contractSearchInput = document.getElementById('contractSearchInput');
+  if (contractSearchInput) contractSearchInput.placeholder = t.contract_holder;
+  const drawingSearchInput = document.getElementById('drawingSearchInput');
+  if (drawingSearchInput) drawingSearchInput.placeholder = t.drawing_holder;
+  const skyworksSearchInput = document.getElementById('skyworksSearchInput');
+  if (skyworksSearchInput) skyworksSearchInput.placeholder = t.skyworks_holder;
+  const faqSearchInput = document.getElementById('faqSearchInput');
+  if (faqSearchInput) faqSearchInput.placeholder = t.faq_holder;
+  const archiveSearchInput = document.getElementById('archiveSearchInput');
+  if (archiveSearchInput) archiveSearchInput.placeholder = t.archive_holder;
+
+  // 8. 카드 타이틀 & 설명
+  const cardTitleMap = [
+    { selector: '#viewShipPlan .viewer-title-group h3', title: t.shipplan_title, subSel: '#viewShipPlan .viewer-tools span', sub: t.shipplan_sub },
+    { selector: '#viewQuotations .viewer-title-group h3', title: t.quotations_title, subSel: '#viewQuotations .viewer-tools span', sub: t.quotations_sub },
+    { selector: '#viewContractReviews .viewer-title-group h3', title: t.contract_title, subSel: '#viewContractReviews .viewer-tools span', sub: t.contract_sub },
+    { selector: '#viewDrawings .viewer-title-group h3', title: t.drawings_title, subSel: '#viewDrawings .viewer-tools span', sub: t.drawings_sub },
+    { selector: '#viewSkyworks .viewer-title-group h3', title: t.skyworks_title, subSel: '#viewSkyworks .viewer-tools span', sub: t.skyworks_sub },
+    { selector: '#viewFeedback .viewer-title-group h3', title: t.feedback_title, subSel: '#viewFeedback .viewer-tools span', sub: t.feedback_sub },
+    { selector: '#viewFaq .viewer-title-group h3', title: t.faq_title, subSel: '#viewFaq .viewer-tools span', sub: t.faq_sub },
+    { selector: '#viewArchive .viewer-title-group h3', title: t.archive_title, subSel: '#viewArchive .viewer-tools span', sub: t.archive_sub },
+    { selector: '#viewLab .viewer-title-group h3', title: t.lab_title, subSel: '#viewLab .viewer-tools span', sub: t.lab_sub }
+  ];
+  cardTitleMap.forEach(item => {
+    const h3El = document.querySelector(item.selector);
+    if (h3El) h3El.textContent = item.title;
+    if (item.subSel) {
+      const subEl = document.querySelector(item.subSel);
+      if (subEl) subEl.textContent = item.sub;
+    }
+  });
+
+  // 9. 주요 버튼 라벨
+  const btnSearchShipPlan = document.getElementById('btnSearchShipPlan');
+  if (btnSearchShipPlan) btnSearchShipPlan.textContent = t.btn_search;
+  const btnReloadShipPlan = document.getElementById('btnReloadShipPlan');
+  if (btnReloadShipPlan) btnReloadShipPlan.textContent = t.btn_reload;
+  const btnOpenAdminDbModal = document.getElementById('btnOpenAdminDbModal');
+  if (btnOpenAdminDbModal) btnOpenAdminDbModal.textContent = t.btn_update_db;
+  const btnDownloadShipPlanExcel = document.getElementById('btnDownloadShipPlanExcel');
+  if (btnDownloadShipPlanExcel) btnDownloadShipPlanExcel.textContent = t.btn_download_excel;
+  const btnOpenNewFeedback = document.getElementById('btnOpenNewFeedback');
+  if (btnOpenNewFeedback) btnOpenNewFeedback.textContent = t.btn_new_feedback;
+  const btnOpenArchiveRegister = document.getElementById('btnOpenArchiveRegister');
+  if (btnOpenArchiveRegister) btnOpenArchiveRegister.textContent = t.btn_archive_reg;
+
+  // 10. 테이블 헤더 열 제목 (Table Headers)
+  const shipThs = document.querySelectorAll('#shipPlanTable thead th');
+  if (shipThs && shipThs.length >= 8) {
+    const headers = [t.th_ship_date, t.th_loading_date, t.th_customer, t.th_po_no, t.th_part_no, t.th_qty, t.th_remain, t.th_invoice_no];
+    shipThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
+  }
+
+  const quotThs = document.querySelectorAll('#quotationsTable thead th');
+  if (quotThs && quotThs.length >= 7) {
+    const headers = [t.th_quot_no, t.th_quot_date, t.th_customer, t.th_manager, t.th_item_count, t.th_total_amount, t.th_remarks];
+    quotThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
+  }
+
+  const contractThs = document.querySelectorAll('#contractReviewsTable thead th');
+  if (contractThs && contractThs.length >= 6) {
+    const headers = [t.th_num, t.th_review_date, t.th_customer, t.th_proj_name, t.th_item_name, t.th_status];
+    contractThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
+  }
+
+  const drawingThs = document.querySelectorAll('#drawingsTable thead th');
+  if (drawingThs && drawingThs.length >= 6) {
+    const headers = [t.th_ks_no, t.th_drawing_name, t.th_customer, t.th_category, t.th_rev_date, t.th_download];
+    drawingThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
+  }
+
+  const skyworksThs = document.querySelectorAll('#skyworksTable thead th');
+  if (skyworksThs && skyworksThs.length >= 7) {
+    const headers = [t.th_po_no, t.th_line, t.th_item_code, t.th_description, t.th_qty, t.th_due_date, t.th_ship_status];
+    skyworksThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
+  }
+
+  // 11. 주간보고서 iframe에 언어 전달
+  const weeklyIframe = document.querySelector('#labSubWeekly iframe');
+  if (weeklyIframe && weeklyIframe.contentWindow) {
+    try {
+      weeklyIframe.contentWindow.postMessage({ type: 'SET_LANGUAGE', lang: lang }, '*');
+    } catch (_) {}
+  }
+}
+
 // --- UI 이벤트 바인딩 ---
 function initUI() {
+  initAppLanguage();
   initFeedbackBoardEvents();
   initFaqEvents();
   initLabEvents();
@@ -6858,9 +7324,11 @@ function switchLabSubTab(tabId, btn) {
   }
   const badge = document.getElementById('labStatusBadge');
   if (badge) {
-    if (tabId === 'labSubTools') badge.textContent = '업무 자동화 도구';
-    else if (tabId === 'labSubGimpo') badge.textContent = '김포공장 Tray 재고';
-    else if (tabId === 'labSubPH') badge.textContent = '필리핀 지사 리포트';
+    const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
+    if (tabId === 'labSubTools') badge.textContent = t.lab_tab_tools;
+    else if (tabId === 'labSubGimpo') badge.textContent = t.lab_tab_gimpo;
+    else if (tabId === 'labSubPH') badge.textContent = t.lab_tab_ph;
+    else if (tabId === 'labSubWeekly') badge.textContent = t.lab_tab_weekly;
   }
 }
 window.switchLabSubTab = switchLabSubTab;

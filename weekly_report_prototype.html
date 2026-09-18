@@ -1385,10 +1385,15 @@
           <span id="syncStatusText">실시간 동기화 됨</span>
         </div>
 
-        <!-- 변경 이력 및 롤백 버튼 -->
-        <button class="btn-action rev-btn" onclick="openRevisionModal()" title="수정 내역 조회 및 롤백">
+        <!-- 언어 전환 버튼 -->
+        <button class="btn-action lang-btn" id="btnReportLang" onclick="toggleReportLanguage()" title="Language Switch (KO/EN)" style="font-weight:700; min-width:38px; justify-content:center;">
+          EN
+        </button>
+
+        <!-- 변경 이력 조회 버튼 -->
+        <button class="btn-action rev-btn" onclick="openRevisionModal()" title="수정 내역 및 변경 이력 조회">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
-          변경 이력 / 롤백
+          변경 이력
           <span class="rev-count-badge" id="revCountBadge">0</span>
         </button>
 
@@ -1438,9 +1443,12 @@
 
     <!-- 1. 팀 전체 실시간 집계 KPI 리본 -->
     <div class="kpi-summary-bar">
-      <div class="kpi-card">
-        <div class="kpi-label" id="kpiTargetLabel">9월 해외영업 경영목표</div>
-        <div class="kpi-val" id="kpiTargetVal">$2,404,602</div>
+      <div class="kpi-card highlight">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="kpi-label" id="kpiTargetLabel">9월 해외영업 경영목표</div>
+          <button class="btn-action-xs" onclick="editManagementTarget()" style="font-size:11px; padding:2px 8px; border-radius:4px; border:1px solid var(--border-accent); background:var(--bg-card-sub); color:var(--primary-light); cursor:pointer; font-weight:600;" title="경영목표 금액 직접 변경">수정</button>
+        </div>
+        <div class="kpi-val" id="kpiTargetVal" onclick="editManagementTarget()" style="cursor:pointer;" title="클릭하여 경영목표 수정">$2,404,602</div>
         <div class="kpi-subtext" id="kpiTargetSubtext">전년 동월(2025-09): $2,180,000</div>
       </div>
       <div class="kpi-card accent">
@@ -1607,11 +1615,11 @@
   <div class="modal-overlay" id="revisionModal" onclick="handleModalOverlayClick(event)">
     <div class="modal-box modal-lg">
       <div class="modal-header">
-        <div class="modal-title">데이터 변경 이력 및 시점별 롤백 (Audit Trail)</div>
+        <div class="modal-title">데이터 변경 이력 (Audit Trail)</div>
         <button class="modal-close-btn" onclick="closeRevisionModal()" title="닫기">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc">모든 수정, 등록, 삭제 내역이 안전하게 보존됩니다. 복원을 원하시는 시점의 [롤백] 버튼을 누르면 해당 시점 상태로 즉시 되돌립니다.</p>
+        <p class="modal-desc">모든 수정, 등록, 삭제 내역이 안전하게 보존되며 타임스탬프와 작업자별로 변경 이력을 투명하게 조회할 수 있습니다.</p>
         <div class="revision-timeline-list" id="revisionTimelineList">
           <!-- 동적 렌더링 -->
         </div>
@@ -1685,7 +1693,8 @@
       localStorage.removeItem('kostat_weekly_report_live_cache_v3');
       localStorage.removeItem('kostat_weekly_report_live_cache_v4');
       localStorage.removeItem('kostat_weekly_report_live_cache_v5');
-      const cachedLocal = localStorage.getItem('kostat_weekly_report_live_cache_v6');
+      localStorage.removeItem('kostat_weekly_report_live_cache_v6');
+      const cachedLocal = localStorage.getItem('kostat_weekly_report_live_cache_v7');
       if (cachedLocal) {
         const parsed = JSON.parse(cachedLocal);
         if (parsed && parsed.members) {
@@ -1939,45 +1948,13 @@
               </div>
               <div class="rev-summary">${rev.summary}</div>
             </div>
-            <button class="btn-rollback-action" onclick="executeRollback('${rev.id}')">이 시점으로 롤백</button>
           </div>
         `;
       }).join('');
     }
 
     function executeRollback(revId) {
-      const rev = (LIVE_DB.revisions || []).find(r => r.id === revId);
-      if (!rev || !rev.snapshot) return;
-
-      if (!confirm(`[${rev.timestamp}] (${rev.user} 작업) 상태로 데이터를 롤백하시겠습니까?
-
-* 현재 상태는 새로운 롤백 이력에 자동 백업됩니다.`)) {
-        return;
-      }
-
-      // 1. 롤백 전 현재 상태 백업
-      recordRevision('롤백 전 백업', `롤백 실행 직전 시점 (${rev.timestamp} 복원 직전)`);
-
-      // 2. 스냅샷 복원
-      try {
-        const restored = JSON.parse(rev.snapshot);
-        LIVE_DB.members = restored.members;
-        LIVE_DB.kpi = restored.kpi;
-      } catch(e) {
-        alert('스냅샷 파싱 실패');
-        return;
-      }
-
-      applyOfficialRegions(LIVE_DB);
-      ensureWeeklyForecasts(LIVE_DB);
-
-      // 3. 복원 완료 기록
-      recordRevision('롤백 복원 완료', `[${rev.timestamp} - ${rev.user}] 시점으로 데이터 롤백 복원 완료`);
-
-      closeRevisionModal();
-      renderMemberView();
-      triggerAutoSave(`데이터가 [${rev.timestamp} - ${rev.user}] 시점으로 롤백 복원되었습니다.`);
-      showToast(`성공적으로 [${rev.timestamp}] 상태로 롤백되었습니다.`);
+      alert('롤백 기능은 비활성화되었습니다. 변경 이력 조회만 가능합니다.');
     }
 
     // ==================================================== //
@@ -2592,9 +2569,85 @@
     // 6. 팀 KPI 및 차트 동적 갱신 엔진                         //
     // ==================================================== //
 
+    function editManagementTarget() {
+      const currentData = getActiveDataset();
+      const currentTarget = (currentData.kpi && currentData.kpi.target) ? currentData.kpi.target : 2404602;
+      const inputVal = prompt(`[${SELECTED_MONTH}] 해외영업 경영목표 금액을 입력하세요 (USD):
+* 현재 목표: $${Math.round(currentTarget).toLocaleString()}`, Math.round(currentTarget));
+      if (inputVal === null) return;
+      const cleanNum = parseFloat(String(inputVal).replace(/[^0-9.]/g, ''));
+      if (isNaN(cleanNum) || cleanNum <= 0) {
+        alert('올바른 목표 금액(숫자)을 입력해 주십시오.');
+        return;
+      }
+      
+      if (!currentData.kpi) currentData.kpi = {};
+      currentData.kpi.target = cleanNum;
+      if (LIVE_DB.kpi) LIVE_DB.kpi.target = cleanNum;
+      
+      recalculateTeamKpi();
+      recordRevision('경영목표 수정', `${SELECTED_MONTH} 경영목표를 $${Math.round(cleanNum).toLocaleString()}로 변경`);
+      triggerAutoSave(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 수정되었습니다.`);
+      showToast(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 반영되었습니다.`);
+    }
+    window.editManagementTarget = editManagementTarget;
+
+    // ==================================================== //
+    // 3.5 다국어(한국어/영어) 지원 엔진 및 KPI 자동 재계산     //
+    // ==================================================== //
+    let REPORT_LANG = localStorage.getItem('kostat_app_lang') || 'ko';
+
+    function setReportLanguage(lang) {
+      if (lang !== 'ko' && lang !== 'en') lang = 'ko';
+      REPORT_LANG = lang;
+      const btn = document.getElementById('btnReportLang');
+      if (btn) btn.textContent = (lang === 'en') ? 'KO' : 'EN';
+      
+      const titleEl = document.querySelector('.header-title-row h1');
+      if (titleEl) titleEl.textContent = (lang === 'en') ? 'Overseas Sales Weekly Report Live Workspace' : '해외영업부 주간보고서 실시간 협업 시스템';
+      const subEl = document.querySelector('.header-title-row .app-subtitle');
+      if (subEl) subEl.textContent = (lang === 'en') ? 'Real-Time Sales & Sample Collaboration' : '실시간 매출 집계 및 주차별 예상치 협업 시스템';
+
+      const btnRev = document.querySelector('.btn-action.rev-btn');
+      if (btnRev) {
+        const badge = document.getElementById('revCountBadge');
+        btnRev.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg> ${lang === 'en' ? 'Audit Trail' : '변경 이력'} <span class="rev-count-badge" id="revCountBadge">${badge ? badge.textContent : '0'}</span>`;
+      }
+      const btnExp = document.querySelector('.btn-action.export-unified');
+      if (btnExp) {
+        btnExp.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ${lang === 'en' ? 'Export Report' : '보고서 내보내기'}`;
+      }
+      const btnSync = document.querySelector('.btn-action.primary');
+      if (btnSync) {
+        btnSync.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg> ${lang === 'en' ? 'Sync Now' : '지금 동기화'}`;
+      }
+
+      const allTab = document.querySelector('#tabMemberALL span');
+      if (allTab) allTab.textContent = (lang === 'en') ? 'Executive Summary' : '전체 팀 종합';
+
+      const kpiSub = document.getElementById('kpiTargetSubtext');
+      if (kpiSub) kpiSub.textContent = (lang === 'en') ? 'Previous Year (2025-09): $2,180,000' : '전년 동월(2025-09): $2,180,000';
+
+      recalculateTeamKpi();
+    }
+    window.setReportLanguage = setReportLanguage;
+
+    function toggleReportLanguage() {
+      const nextLang = (REPORT_LANG === 'en') ? 'ko' : 'en';
+      setReportLanguage(nextLang);
+      try { localStorage.setItem('kostat_app_lang', nextLang); } catch (_) {}
+    }
+    window.toggleReportLanguage = toggleReportLanguage;
+
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'SET_LANGUAGE') {
+        setReportLanguage(e.data.lang);
+      }
+    });
+
     function recalculateTeamKpi() {
       const currentData = getActiveDataset();
-      let totalTarget = 0;
+      let totalTargetSum = 0;
       let totalCurrent = 0;
       let totalAdditional = 0;
       let totalExpected = 0;
@@ -2603,7 +2656,7 @@
       (currentData.members || []).forEach(m => {
         (m.sales || []).forEach(s => {
           const wf = (s.weekly_forecasts && s.weekly_forecasts[SELECTED_WEEK]) ? s.weekly_forecasts[SELECTED_WEEK] : s;
-          totalTarget += (parseFloat(wf.target || s.target) || 0);
+          totalTargetSum += (parseFloat(wf.target || s.target) || 0);
           const c = (parseFloat(wf.current) || 0);
           const a = (parseFloat(wf.additional) || 0);
           totalCurrent += c;
@@ -2616,19 +2669,39 @@
         });
       });
 
+      // 공식 경영목표 (C18 2,404,602 또는 사용자 수정치) 우선 적용
+      const totalTarget = (currentData.kpi && currentData.kpi.target) ? currentData.kpi.target : (totalTargetSum || 2404602);
+      if (!currentData.kpi) currentData.kpi = {};
+      currentData.kpi.target = totalTarget;
+
       const rate = totalTarget > 0 ? ((totalExpected / totalTarget) * 100).toFixed(1) : 0;
       const progressRate = totalTarget > 0 ? ((totalCurrent / totalTarget) * 100).toFixed(1) : 0;
       const diff = totalExpected - totalTarget;
 
-      document.getElementById('kpiTargetLabel').textContent = `${SELECTED_MONTH.slice(5)}월 경영목표`;
-      document.getElementById('kpiTargetVal').textContent = `$${Math.round(totalTarget).toLocaleString()}`;
-      document.getElementById('kpiExpectedLabel').textContent = `${SELECTED_WEEK} 마감 예상 실적`;
-      document.getElementById('kpiExpectedVal').textContent = `$${Math.round(totalExpected).toLocaleString()}`;
-      document.getElementById('kpiExpectedSubtext').textContent = `목표 대비 ${diff >= 0 ? '+$' + Math.round(diff).toLocaleString() : '-$' + Math.round(Math.abs(diff)).toLocaleString()} (${rate}% 달성 예상)`;
-      document.getElementById('kpiCurrentLabel').textContent = `현재 확정 매출 + 추가 예상 (${SELECTED_WEEK})`;
-      document.getElementById('kpiCurrentVal').textContent = `$${Math.round(totalCurrent).toLocaleString()} + $${Math.round(totalAdditional).toLocaleString()}`;
-      document.getElementById('kpiCurrentSubtext').textContent = `현재 진도율: ${progressRate}% (${SELECTED_WEEK} 주차)`;
-      document.getElementById('kpiSamplesVal').innerHTML = `${totalOpenSamples}건 <span style="font-size:12px;color:var(--text-muted);">(OPEN)</span>`;
+      const targetLabel = document.getElementById('kpiTargetLabel');
+      if (targetLabel) targetLabel.textContent = (REPORT_LANG === 'en') ? `${SELECTED_MONTH.slice(5)} Overseas Sales Target` : `${SELECTED_MONTH.slice(5)}월 해외영업 경영목표`;
+      const targetVal = document.getElementById('kpiTargetVal');
+      if (targetVal) targetVal.textContent = `$${Math.round(totalTarget).toLocaleString()}`;
+      const expLabel = document.getElementById('kpiExpectedLabel');
+      if (expLabel) expLabel.textContent = (REPORT_LANG === 'en') ? `${SELECTED_WEEK} Forecast Month-End` : `${SELECTED_WEEK} 마감 예상 실적`;
+      const expVal = document.getElementById('kpiExpectedVal');
+      if (expVal) expVal.textContent = `$${Math.round(totalExpected).toLocaleString()}`;
+      const expSub = document.getElementById('kpiExpectedSubtext');
+      if (expSub) {
+        if (REPORT_LANG === 'en') {
+          expSub.textContent = `Target Diff: ${diff >= 0 ? '+$' + Math.round(diff).toLocaleString() : '-$' + Math.round(Math.abs(diff)).toLocaleString()} (${rate}% achievement)`;
+        } else {
+          expSub.textContent = `목표 대비 ${diff >= 0 ? '+$' + Math.round(diff).toLocaleString() : '-$' + Math.round(Math.abs(diff)).toLocaleString()} (${rate}% 달성 예상)`;
+        }
+      }
+      const curLabel = document.getElementById('kpiCurrentLabel');
+      if (curLabel) curLabel.textContent = (REPORT_LANG === 'en') ? `Confirmed + Pipeline (${SELECTED_WEEK})` : `현재 확정 매출 + 추가 예상 (${SELECTED_WEEK})`;
+      const curVal = document.getElementById('kpiCurrentVal');
+      if (curVal) curVal.textContent = `$${Math.round(totalCurrent).toLocaleString()} + $${Math.round(totalAdditional).toLocaleString()}`;
+      const curSub = document.getElementById('kpiCurrentSubtext');
+      if (curSub) curSub.textContent = (REPORT_LANG === 'en') ? `Progress Rate: ${progressRate}% (${SELECTED_WEEK})` : `현재 진도율: ${progressRate}% (${SELECTED_WEEK} 주차)`;
+      const smpVal = document.getElementById('kpiSamplesVal');
+      if (smpVal) smpVal.innerHTML = `${totalOpenSamples}${REPORT_LANG === 'en' ? ' items' : '건'} <span style="font-size:12px;color:var(--text-muted);">(OPEN)</span>`;
     }
 
     function switchChartMode(mode, btnEl) {
@@ -3041,7 +3114,7 @@
         ensureWeeklyForecasts(LIVE_DB);
 
         try {
-          localStorage.setItem('kostat_weekly_report_live_cache_v6', JSON.stringify(LIVE_DB));
+          localStorage.setItem('kostat_weekly_report_live_cache_v7', JSON.stringify(LIVE_DB));
         } catch (e) {}
 
         try {
@@ -3089,7 +3162,7 @@
           LIVE_DB = remoteJson;
           applyOfficialRegions(LIVE_DB);
           ensureWeeklyForecasts(LIVE_DB);
-          localStorage.setItem('kostat_weekly_report_live_cache_v6', JSON.stringify(LIVE_DB));
+          localStorage.setItem('kostat_weekly_report_live_cache_v7', JSON.stringify(LIVE_DB));
           renderMemberView();
           showToast('원격 최신 데이터와 동기화되었습니다.');
         }
@@ -3112,7 +3185,7 @@
             LIVE_DB = parsed;
             applyOfficialRegions(LIVE_DB);
             ensureWeeklyForecasts(LIVE_DB);
-            localStorage.setItem('kostat_weekly_report_live_cache_v6', JSON.stringify(LIVE_DB));
+            localStorage.setItem('kostat_weekly_report_live_cache_v7', JSON.stringify(LIVE_DB));
             renderMemberView();
           }
         }
