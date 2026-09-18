@@ -615,7 +615,7 @@
 
             <!-- 검색 바 -->
             <div style="margin-bottom:10px;">
-              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처 검색..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="filterGimpoStock()" />
+              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="filterGimpoStock()" />
             </div>
 
             <!-- 결과 카운트 -->
@@ -623,19 +623,21 @@
 
             <!-- 재고 데이터 테이블 -->
             <div style="border-radius:10px; border:1px solid var(--border-color); overflow:hidden; max-height:calc(100vh - 240px); min-height:450px; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-              <table class="modern-table" style="font-size:11px; width:100%;">
+              <table id="gimpoStockTable" class="modern-table" style="font-size:11px; width:100%;">
                 <thead>
                   <tr>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">Temp</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">규격</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">거래처</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">특이사항</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">생산부</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">자재부</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">합계</th>
                   </tr>
                 </thead>
                 <tbody id="gimpoStockTbody">
-                  <tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                  <tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
                 </tbody>
               </table>
             </div>

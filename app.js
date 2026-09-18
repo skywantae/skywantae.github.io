@@ -859,6 +859,23 @@ const APP_I18N = {
     lab_tab_ph: '필리핀 지사 리포트 & 프로젝트',
     lab_tab_weekly: '해외영업부 주간보고서',
 
+    // Gimpo Tray Stock
+    gimpo_title: '김포공장 Tray 재고 현황',
+    gimpo_as_of: '기준',
+    gimpo_access_guide: '외부 접속 계정 안내',
+    gimpo_manual_upload: '엑셀 수동 업로드',
+    gimpo_search_holder: 'PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색...',
+    gimpo_result_count: '검색 결과',
+    gimpo_unit: '건',
+    th_gimpo_partno: 'PART NO',
+    th_gimpo_temp: 'Temp',
+    th_gimpo_spec: '규격',
+    th_gimpo_customer: '거래처',
+    th_gimpo_remark: '특이사항',
+    th_gimpo_prod: '생산부',
+    th_gimpo_mat: '자재부',
+    th_gimpo_total: '합계',
+
     // Search Placeholders
     ship_holder_cust: '고객사명 입력...',
     ship_holder_part: '부품/도면번호 입력...',
@@ -979,6 +996,23 @@ const APP_I18N = {
     lab_tab_gimpo: 'Gimpo Tray Stock',
     lab_tab_ph: 'PH Branch Report & Projects',
     lab_tab_weekly: 'Overseas Sales Weekly Report',
+
+    // Gimpo Tray Stock
+    gimpo_title: 'Gimpo Factory Tray Stock',
+    gimpo_as_of: 'As of',
+    gimpo_access_guide: 'External Access Guide',
+    gimpo_manual_upload: 'Manual Excel Upload',
+    gimpo_search_holder: 'Search PART NO, Code, Spec, Customer, Temp, Remark...',
+    gimpo_result_count: 'Results',
+    gimpo_unit: 'items',
+    th_gimpo_partno: 'PART NO',
+    th_gimpo_temp: 'Temp',
+    th_gimpo_spec: 'Spec',
+    th_gimpo_customer: 'Customer',
+    th_gimpo_remark: 'Remark',
+    th_gimpo_prod: 'Production',
+    th_gimpo_mat: 'Material',
+    th_gimpo_total: 'Total',
 
     // Search Placeholders
     ship_holder_cust: 'Search Customer...',
@@ -1266,7 +1300,25 @@ function applyAppLanguage(lang) {
     skyworksThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
   }
 
-  // 11. 주간보고서 iframe에 언어 전달
+  // 11. 김포공장 Tray 재고 현황 i18n
+  const gimpoTitleEl = document.querySelector('#labSubGimpo h4');
+  if (gimpoTitleEl) gimpoTitleEl.textContent = t.gimpo_title;
+  const btnGimpoGuide = document.querySelector('#labSubGimpo button[onclick*="showGimpoAccessGuide"]');
+  if (btnGimpoGuide) btnGimpoGuide.textContent = t.gimpo_access_guide;
+  const btnGimpoUpload = document.querySelector('#labSubGimpo button[onclick*="gimpoStockFileInput"]');
+  if (btnGimpoUpload) btnGimpoUpload.textContent = t.gimpo_manual_upload;
+  const gimpoSearchInput = document.getElementById('gimpoSearchInput');
+  if (gimpoSearchInput) gimpoSearchInput.placeholder = t.gimpo_search_holder;
+  // Gimpo 테이블 헤더
+  const gimpoThs = document.querySelectorAll('#gimpoStockTable thead th');
+  if (gimpoThs && gimpoThs.length >= 8) {
+    const ghd = [t.th_gimpo_partno, t.th_gimpo_temp, t.th_gimpo_spec, t.th_gimpo_customer, t.th_gimpo_remark, t.th_gimpo_prod, t.th_gimpo_mat, t.th_gimpo_total];
+    gimpoThs.forEach((th, idx) => { if (ghd[idx]) th.textContent = ghd[idx]; });
+  }
+  // Gimpo 결과 카운트 갱신 (렌더 후 자동 반영되므로 renderGimpoStock 재호출)
+  if (typeof renderGimpoStock === 'function' && _gimpoStockData) renderGimpoStock();
+
+  // 12. 주간보고서 iframe에 언어 전달
   const weeklyIframe = document.querySelector('#labSubWeekly iframe');
   if (weeklyIframe && weeklyIframe.contentWindow) {
     try {
@@ -7396,14 +7448,18 @@ let _gimpoFilteredItems = [];
 function initGimpoStock() {
   _gimpoStockData = window.KOSTAT_GIMPO_TRAY_STOCK || null;
   if (!_gimpoStockData || !_gimpoStockData.items) {
-    document.getElementById('gimpoAsOfDate').textContent = '데이터 없음';
+    const asOfEl = document.getElementById('gimpoAsOfDate');
+    if (asOfEl) {
+      const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
+      asOfEl.textContent = t.gimpo_as_of + ': N/A';
+    }
     return;
   }
-  const s = _gimpoStockData.summary;
   const asOfEl = document.getElementById('gimpoAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = '기준: ' + _gimpoStockData.as_of_date + ' ' + (_gimpoStockData.as_of_time || '') +
-      ' / 출처: ' + (_gimpoStockData.source_file || '');
+    const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
+    asOfEl.textContent = t.gimpo_as_of + ': ' + _gimpoStockData.as_of_date + ' ' + (_gimpoStockData.as_of_time || '') +
+      ' / ' + (_gimpoStockData.source_file || '');
   }
 
   _gimpoFilteredItems = _gimpoStockData.items;
@@ -7419,33 +7475,44 @@ function renderGimpoStock() {
   const tbody = document.getElementById('gimpoStockTbody');
   if (!tbody) return;
 
+  const lang = AppState.currentLang || 'ko';
+  const t = APP_I18N[lang] || APP_I18N.ko;
   const items = _gimpoFilteredItems;
   const count = document.getElementById('gimpoResultCount');
-  if (count) count.textContent = '검색 결과: ' + items.length + '건';
+  if (count) count.textContent = t.gimpo_result_count + ': ' + items.length + ' ' + t.gimpo_unit;
 
   if (items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과 없음</td></tr>';
+    const noMsg = lang === 'en' ? 'No results found' : '검색 결과 없음';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-dim);">' + noMsg + '</td></tr>';
     return;
   }
 
-  // 성능 최적화: 최초 100개만 렌더, 스크롤 시 추가
+  // 성능 최적화: 최대 200건 렌더
   const displayItems = items.slice(0, 200);
   let html = '';
   for (const item of displayItems) {
     const ptClass = item.pt > 0 ? 'color:var(--success)' : 'color:var(--text-dim)';
     const mtClass = item.mt > 0 ? 'color:var(--warning)' : 'color:var(--text-dim)';
     const ttClass = 'color:var(--primary); font-weight:700';
+    const tempVal = item.t ? escapeHtml(item.t) : '-';
+    const remarkVal = item.r ? escapeHtml(item.r) : '';
+    const remarkStyle = item.r ? 'font-size:10px;color:var(--accent);font-weight:600;' : 'font-size:10px;color:var(--text-dim);';
     html += '<tr style="border-bottom:1px solid var(--border-color);">' +
-      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.p) + '</td>' +
-      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.s || '') + '">' + escapeHtml(item.s || item.t || '') + '</td>' +
-      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c) + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + tempVal + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.s || '') + '">' + escapeHtml(item.s || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;' + remarkStyle + 'max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.r || '') + '">' + remarkVal + '</td>' +
       '<td style="padding:6px;text-align:right;font-size:11px;' + ptClass + ';">' + formatNum(item.pt) + '</td>' +
       '<td style="padding:6px;text-align:right;font-size:11px;' + mtClass + ';">' + formatNum(item.mt) + '</td>' +
       '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + ';">' + formatNum(item.tt) + '</td>' +
       '</tr>';
   }
   if (items.length > 200) {
-    html += '<tr><td colspan="6" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+    const moreMsg = lang === 'en'
+      ? `+ ${items.length - 200} more (narrow your search)`
+      : `외 ${items.length - 200}건 (검색어를 좁혀주세요)`;
+    html += '<tr><td colspan="8" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">' + moreMsg + '</td></tr>';
   }
   tbody.innerHTML = html;
 }

@@ -13,7 +13,7 @@ window.KOSTAT_ARCHIVE_DATA = [
     "tags": [
       "AI"
     ],
-    "download_count": 5,
+    "download_count": 6,
     "is_pinned": false,
     "created_at": "2026-09-16T06:06:21.749Z",
     "attachments": [],
