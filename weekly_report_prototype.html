@@ -1630,6 +1630,32 @@
     </div>
   </div>
 
+  <!-- 경영목표 수정 모달 -->
+  <div class="modal-overlay" id="editTargetModal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <div class="modal-title">해외영업 경영목표 수정</div>
+        <button class="modal-close-btn" onclick="closeEditTargetModal()" title="닫기">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          수정된 목표 금액은 즉시 저장되며, 클라우드에 자동 동기화되어 모든 팀원 화면에 실시간 반영됩니다.
+        </p>
+        <div style="margin-top:12px;">
+          <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:6px; font-weight:600;">경영목표 금액 (USD)</label>
+          <div style="position:relative; display:flex; align-items:center;">
+            <span style="position:absolute; left:12px; font-size:16px; font-weight:700; color:var(--primary-light);">$</span>
+            <input type="text" id="inputTargetAmount" style="width:100%; padding:10px 12px 10px 28px; background:var(--bg-card-sub); border:1px solid var(--border-accent); border-radius:6px; color:#ffffff; font-size:18px; font-weight:700; outline:none;" placeholder="2,404,602" onkeydown="if(event.key==='Enter') confirmEditTarget()" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeEditTargetModal()">취소</button>
+        <button class="btn-action primary" onclick="confirmEditTarget()" style="font-weight:700;">저장 및 실시간 동기화</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 관리자 비밀번호(8805) 인증 모달 -->
   <div class="modal-overlay" id="adminAuthModal" onclick="handleModalOverlayClick(event)">
     <div class="modal-box modal-sm">
@@ -2573,25 +2599,54 @@
     function editManagementTarget() {
       const currentData = getActiveDataset();
       const currentTarget = (currentData.kpi && currentData.kpi.target) ? currentData.kpi.target : 2404602;
-      const promptMsg = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en')
-        ? `[${SELECTED_MONTH}] Enter Overseas Sales Management Target (USD):\n* Current Target: $${Math.round(currentTarget).toLocaleString()}`
-        : `[${SELECTED_MONTH}] 해외영업 경영목표 금액을 입력하세요 (USD):\n* 현재 목표: $${Math.round(currentTarget).toLocaleString()}`;
+      const modal = document.getElementById('editTargetModal');
+      const input = document.getElementById('inputTargetAmount');
+      if (modal && input) {
+        input.value = Math.round(currentTarget).toLocaleString();
+        modal.classList.add('active');
+        setTimeout(() => {
+          input.focus();
+          input.select();
+        }, 100);
+      } else {
+        const inputVal = prompt('경영목표 금액을 입력하세요 (USD):', Math.round(currentTarget));
+        if (inputVal !== null) {
+          applyNewManagementTarget(inputVal);
+        }
+      }
+    }
+    window.editManagementTarget = editManagementTarget;
 
-      const inputVal = prompt(promptMsg, Math.round(currentTarget));
-      if (inputVal === null) return;
-      const cleanNum = parseFloat(String(inputVal).replace(/[^0-9.]/g, ''));
+    function closeEditTargetModal() {
+      const modal = document.getElementById('editTargetModal');
+      if (modal) modal.classList.remove('active');
+    }
+    window.closeEditTargetModal = closeEditTargetModal;
+
+    function confirmEditTarget() {
+      const input = document.getElementById('inputTargetAmount');
+      if (!input) return;
+      const val = input.value;
+      applyNewManagementTarget(val);
+      closeEditTargetModal();
+    }
+    window.confirmEditTarget = confirmEditTarget;
+
+    function applyNewManagementTarget(val) {
+      const cleanNum = parseFloat(String(val).replace(/[^0-9.]/g, ''));
       if (isNaN(cleanNum) || cleanNum <= 0) {
         alert((typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Please enter a valid amount (numbers only).' : '올바른 목표 금액(숫자)을 입력해 주십시오.');
         return;
       }
-      
+
+      const currentData = getActiveDataset();
       if (!currentData.kpi) currentData.kpi = {};
       currentData.kpi.target = cleanNum;
       if (LIVE_DB.kpi) LIVE_DB.kpi.target = cleanNum;
-      
+
       LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
       LIVE_DB.last_updated_by = CURRENT_USER_NAME;
-      
+
       try {
         localStorage.setItem('kostat_weekly_report_live_cache_v8', JSON.stringify(LIVE_DB));
       } catch (e) {}
@@ -2601,11 +2656,11 @@
 
       const revMsg = `${SELECTED_MONTH} 경영목표를 $${Math.round(cleanNum).toLocaleString()}로 변경`;
       recordRevision('경영목표 수정', revMsg);
-      
-      triggerAutoSave(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 수정 및 동기화되었습니다.`);
+
+      triggerAutoSave(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 수정 및 클라우드 동기화되었습니다.`);
       showToast(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 반영되었습니다.`);
     }
-    window.editManagementTarget = editManagementTarget;
+    window.applyNewManagementTarget = applyNewManagementTarget;
 
     // ==================================================== //
     // 3.5 다국어(한국어/영어) 지원 엔진 및 KPI 자동 재계산     //
