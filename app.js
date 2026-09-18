@@ -1011,7 +1011,7 @@ const APP_I18N = {
     th_gimpo_customer: 'Customer',
     th_gimpo_remark: 'Remark',
     th_gimpo_prod: 'Production',
-    th_gimpo_mat: 'Material',
+    th_gimpo_mat: 'Warehouse',
     th_gimpo_total: 'Total',
 
     // Search Placeholders
