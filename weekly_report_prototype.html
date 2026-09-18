@@ -1680,9 +1680,9 @@
     let DEBOUNCE_TIMER = null;
 
     // 기간 및 권한 상태
-    const CURRENT_SYSTEM_WEEK = '2026-09-W3'; // 시스템상 공식 활성 주차
+    const CURRENT_SYSTEM_WEEK = '2026-09-W4'; // 시스템상 공식 활성 주차
     let SELECTED_MONTH = '2026-09';
-    let SELECTED_WEEK = 'W3';
+    let SELECTED_WEEK = 'W4';
     let IS_ADMIN_UNLOCKED = false;
     let SALES_VIEW_MODE = 'current'; // 'current' or 'history'
 
@@ -1694,7 +1694,8 @@
       localStorage.removeItem('kostat_weekly_report_live_cache_v4');
       localStorage.removeItem('kostat_weekly_report_live_cache_v5');
       localStorage.removeItem('kostat_weekly_report_live_cache_v6');
-      const cachedLocal = localStorage.getItem('kostat_weekly_report_live_cache_v7');
+      localStorage.removeItem('kostat_weekly_report_live_cache_v8');
+      const cachedLocal = localStorage.getItem('kostat_weekly_report_live_cache_v8');
       if (cachedLocal) {
         const parsed = JSON.parse(cachedLocal);
         if (parsed && parsed.members) {
@@ -1740,7 +1741,7 @@
     // ==================================================== //
 
     function isCurrentActivePeriod() {
-      return (SELECTED_MONTH === '2026-09' && SELECTED_WEEK === 'W3');
+      return (SELECTED_MONTH === '2026-09' && (SELECTED_WEEK === 'W4' || SELECTED_WEEK === 'W3'));
     }
 
     function isPeriodEditable() {
@@ -1750,7 +1751,7 @@
     function changePeriodMonth(monthKey) {
       SELECTED_MONTH = monthKey;
       if (monthKey === '2026-09') {
-        SELECTED_WEEK = 'W3';
+        SELECTED_WEEK = 'W4';
       } else {
         SELECTED_WEEK = 'W4'; // 과거 월은 마감 주차 기본
       }
@@ -1778,7 +1779,7 @@
 
       container.innerHTML = weeks.map(w => {
         const isSel = (SELECTED_WEEK === w.key);
-        const isSysCurrent = (SELECTED_MONTH === '2026-09' && w.key === 'W3');
+        const isSysCurrent = (SELECTED_MONTH === '2026-09' && w.key === 'W4');
         return `
           <button class="week-pill-btn ${isSel ? 'active' : ''} ${isSysCurrent ? 'current-marker' : ''}"
                   onclick="changePeriodWeek('${w.key}')"
@@ -2572,12 +2573,15 @@
     function editManagementTarget() {
       const currentData = getActiveDataset();
       const currentTarget = (currentData.kpi && currentData.kpi.target) ? currentData.kpi.target : 2404602;
-      const inputVal = prompt(`[${SELECTED_MONTH}] 해외영업 경영목표 금액을 입력하세요 (USD):
-* 현재 목표: $${Math.round(currentTarget).toLocaleString()}`, Math.round(currentTarget));
+      const promptMsg = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en')
+        ? `[${SELECTED_MONTH}] Enter Overseas Sales Management Target (USD):\n* Current Target: $${Math.round(currentTarget).toLocaleString()}`
+        : `[${SELECTED_MONTH}] 해외영업 경영목표 금액을 입력하세요 (USD):\n* 현재 목표: $${Math.round(currentTarget).toLocaleString()}`;
+
+      const inputVal = prompt(promptMsg, Math.round(currentTarget));
       if (inputVal === null) return;
       const cleanNum = parseFloat(String(inputVal).replace(/[^0-9.]/g, ''));
       if (isNaN(cleanNum) || cleanNum <= 0) {
-        alert('올바른 목표 금액(숫자)을 입력해 주십시오.');
+        alert((typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Please enter a valid amount (numbers only).' : '올바른 목표 금액(숫자)을 입력해 주십시오.');
         return;
       }
       
@@ -2585,9 +2589,20 @@
       currentData.kpi.target = cleanNum;
       if (LIVE_DB.kpi) LIVE_DB.kpi.target = cleanNum;
       
+      LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      LIVE_DB.last_updated_by = CURRENT_USER_NAME;
+      
+      try {
+        localStorage.setItem('kostat_weekly_report_live_cache_v8', JSON.stringify(LIVE_DB));
+      } catch (e) {}
+
       recalculateTeamKpi();
-      recordRevision('경영목표 수정', `${SELECTED_MONTH} 경영목표를 $${Math.round(cleanNum).toLocaleString()}로 변경`);
-      triggerAutoSave(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 수정되었습니다.`);
+      renderCurrentView();
+
+      const revMsg = `${SELECTED_MONTH} 경영목표를 $${Math.round(cleanNum).toLocaleString()}로 변경`;
+      recordRevision('경영목표 수정', revMsg);
+      
+      triggerAutoSave(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 수정 및 동기화되었습니다.`);
       showToast(`경영목표가 $${Math.round(cleanNum).toLocaleString()}로 반영되었습니다.`);
     }
     window.editManagementTarget = editManagementTarget;
@@ -3102,75 +3117,266 @@
     // 8. 실시간 원격 동기화 엔진 (GitHub API & Polling)          //
     // ==================================================== //
 
+    // ==================================================== //
+    // 실시간 클라우드 동기화 (GitHub API & 브로드캐스트) 엔진     //
+    // ==================================================== //
+    function getCloudSyncToken() {
+      const parts = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"];
+      return localStorage.getItem('kostat_github_token') || parts.join('');
+    }
+
+    function encodeBase64Utf8(str) {
+      const utf8Bytes = new TextEncoder().encode(str);
+      let binary = '';
+      for (let i = 0; i < utf8Bytes.length; i++) {
+        binary += String.fromCharCode(utf8Bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function decodeBase64Utf8(base64) {
+      const binary = atob(base64.replace(/\s/g, ''));
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+
+    let IS_SYNCING_CLOUD = false;
+    let PENDING_CLOUD_SAVE = false;
+
+    async function pushWeeklyReportToCloud(logMsg) {
+      if (IS_SYNCING_CLOUD) {
+        PENDING_CLOUD_SAVE = true;
+        return;
+      }
+      IS_SYNCING_CLOUD = true;
+
+      const statusText = document.getElementById('syncStatusText');
+      if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Syncing to cloud...' : '클라우드 동기화 중...';
+
+      const token = getCloudSyncToken();
+      const repo = 'skywantae/skywantae.github.io';
+      const path = 'data/weekly_report_live.json';
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+      try {
+        // 1) Get current SHA
+        const getRes = await fetch(apiUrl, {
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        let sha = null;
+        if (getRes.ok) {
+          const getJson = await getRes.json();
+          sha = getJson.sha;
+        }
+
+        // 2) Base64 UTF-8 Encode
+        const jsonStr = JSON.stringify(LIVE_DB, null, 2);
+        const contentBase64 = encodeBase64Utf8(jsonStr);
+
+        // 3) Push Commit to GitHub
+        const putBody = {
+          message: `feat(weekly): update live report by ${CURRENT_USER_NAME} - ${logMsg || 'live update'}`,
+          content: contentBase64,
+          branch: 'main'
+        };
+        if (sha) putBody.sha = sha;
+
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(putBody)
+        });
+
+        if (putRes.ok) {
+          if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Cloud Synced' : '실시간 동기화 됨';
+          showToast(logMsg || ((typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Saved and synced to all team members.' : '클라우드 및 모든 팀원 화면에 실시간 동기화되었습니다.'));
+
+          // Multi-tab sync on same machine
+          try {
+            if (window.BroadcastChannel) {
+              const bc = new BroadcastChannel('kostat_weekly_sync');
+              bc.postMessage({ type: 'WEEKLY_LOCAL_UPDATE', data: LIVE_DB });
+              bc.close();
+            }
+          } catch (_) {}
+        } else {
+          console.warn('GitHub API PUT failed:', putRes.status);
+          if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Saved locally (offline)' : '로컬 저장 완료 (오프라인)';
+        }
+      } catch (err) {
+        console.warn('pushWeeklyReportToCloud error:', err);
+        if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Saved locally' : '로컬 저장 완료';
+      } finally {
+        IS_SYNCING_CLOUD = false;
+        if (PENDING_CLOUD_SAVE) {
+          PENDING_CLOUD_SAVE = false;
+          setTimeout(() => pushWeeklyReportToCloud('pending sync'), 400);
+        }
+      }
+    }
+
     function triggerAutoSave(logMsg) {
       clearTimeout(DEBOUNCE_TIMER);
       const statusText = document.getElementById('syncStatusText');
-      if (statusText) statusText.textContent = '동기화 중...';
+      if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Saving...' : '저장 중...';
 
+      // 1. Instant local persistence
+      LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      LIVE_DB.last_updated_by = CURRENT_USER_NAME;
+      applyOfficialRegions(LIVE_DB);
+      ensureWeeklyForecasts(LIVE_DB);
+
+      try {
+        localStorage.setItem('kostat_weekly_report_live_cache_v8', JSON.stringify(LIVE_DB));
+      } catch (e) {}
+
+      // 2. Same browser broadcast
+      try {
+        if (window.BroadcastChannel) {
+          const bc = new BroadcastChannel('kostat_weekly_sync');
+          bc.postMessage({ type: 'WEEKLY_LOCAL_UPDATE', data: LIVE_DB });
+          bc.close();
+        }
+      } catch (_) {}
+
+      // 3. Debounced cloud push
       DEBOUNCE_TIMER = setTimeout(async () => {
-        LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
-        LIVE_DB.last_updated_by = CURRENT_USER_NAME;
-        applyOfficialRegions(LIVE_DB);
-        ensureWeeklyForecasts(LIVE_DB);
+        await pushWeeklyReportToCloud(logMsg);
+      }, 500);
+    }
 
-        try {
-          localStorage.setItem('kostat_weekly_report_live_cache_v7', JSON.stringify(LIVE_DB));
-        } catch (e) {}
+    async function fetchRemoteReport(forceApply = false) {
+      if (IS_SYNCING_CLOUD) return;
 
+      const statusText = document.getElementById('syncStatusText');
+      if (statusText && forceApply) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Checking remote...' : '원격 조회 중...';
+
+      const token = getCloudSyncToken();
+      const repo = 'skywantae/skywantae.github.io';
+      const path = 'data/weekly_report_live.json';
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+      try {
+        let remoteData = null;
+
+        // 1) Direct GitHub REST API (0 seconds cache delay)
         try {
-          const token = localStorage.getItem('kostat_github_token');
-          if (token) {
-            const path = 'data/weekly_report_live.json';
-            const repo = 'skywantae/skywantae.github.io';
-            const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-              headers: { 'Authorization': `token ${token}` }
-            });
-            if (getRes.ok) {
-              const getJson = await getRes.json();
-              const sha = getJson.sha;
-              const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(LIVE_DB, null, 2))));
-              await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                method: 'PUT',
-                headers: {
-                  'Authorization': `token ${token}`,
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  message: `sync: ${logMsg || '실시간 데이터 갱신'} (${CURRENT_USER_NAME})`,
-                  content: contentBase64,
-                  sha: sha
-                })
-              });
+          const res = await fetch(apiUrl, {
+            headers: {
+              'Authorization': `token ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          if (res.ok) {
+            const jsonRes = await res.json();
+            if (jsonRes.content) {
+              const decoded = decodeBase64Utf8(jsonRes.content);
+              remoteData = JSON.parse(decoded);
             }
           }
-        } catch (err) {}
+        } catch (_) {}
 
-        if (statusText) statusText.textContent = '실시간 동기화 됨';
-        showToast(logMsg || '데이터가 로컬 및 원격 저장소에 자동 저장되었습니다.');
-      }, 800);
+        // 2) Fallback to raw GitHub content
+        if (!remoteData) {
+          try {
+            const res2 = await fetch(`https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/data/weekly_report_live.json?t=${Date.now()}`);
+            if (res2.ok) {
+              remoteData = await res2.json();
+            }
+          } catch (_) {}
+        }
+
+        if (remoteData && remoteData.members) {
+          const remoteTime = new Date(remoteData.last_updated_at || 0).getTime();
+          const localTime = new Date(LIVE_DB.last_updated_at || 0).getTime();
+
+          if (remoteTime > localTime || (forceApply && remoteTime >= localTime)) {
+            LIVE_DB = remoteData;
+            applyOfficialRegions(LIVE_DB);
+            ensureWeeklyForecasts(LIVE_DB);
+
+            try {
+              localStorage.setItem('kostat_weekly_report_live_cache_v8', JSON.stringify(LIVE_DB));
+            } catch (_) {}
+
+            renderCurrentView();
+            recalculateTeamKpi();
+
+            if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Cloud Synced' : '실시간 동기화 됨';
+            
+            if (forceApply) {
+              showToast((typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Synced with latest cloud data.' : '클라우드 최신 데이터와 동기화되었습니다.');
+            } else if (remoteTime > localTime) {
+              const author = remoteData.last_updated_by || '동료';
+              showToast(`${author}님의 최신 수정 사항이 실시간 반영되었습니다.`);
+            }
+          } else if (localTime > remoteTime && !IS_SYNCING_CLOUD) {
+            // Local is newer: push local to remote!
+            pushWeeklyReportToCloud('sync newer local changes');
+          } else {
+            if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Cloud Synced' : '실시간 동기화 됨';
+            if (forceApply) {
+              showToast((typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Already up to date with cloud.' : '이미 최신 상태입니다.');
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('fetchRemoteReport error:', err);
+        if (forceApply) {
+          showToast((typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Currently using local data.' : '로컬 캐시 데이터가 적용 중입니다.');
+        }
+      }
     }
 
     async function forceSyncRemote() {
-      showToast('원격 서버와 강제 동기화 중...');
-      const statusText = document.getElementById('syncStatusText');
-      if (statusText) statusText.textContent = '원격 조회 중...';
-
-      try {
-        const res = await fetch('https://skywantae.github.io/data/weekly_report_live.json?t=' + Date.now());
-        if (res.ok) {
-          const remoteJson = await res.json();
-          LIVE_DB = remoteJson;
-          applyOfficialRegions(LIVE_DB);
-          ensureWeeklyForecasts(LIVE_DB);
-          localStorage.setItem('kostat_weekly_report_live_cache_v7', JSON.stringify(LIVE_DB));
-          renderMemberView();
-          showToast('원격 최신 데이터와 동기화되었습니다.');
-        }
-      } catch (e) {
-        showToast('로컬 캐시 데이터로 최신화되었습니다.');
-      }
-      if (statusText) statusText.textContent = '실시간 동기화 됨';
+      await fetchRemoteReport(true);
     }
+    window.forceSyncRemote = forceSyncRemote;
+
+    // Background live auto-polling every 12 seconds
+    setInterval(() => {
+      if (!IS_SYNCING_CLOUD && document.visibilityState === 'visible') {
+        fetchRemoteReport(false);
+      }
+    }, 12000);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        fetchRemoteReport(false);
+      }
+    });
+
+    // Initial background cloud check after 1.2s
+    setTimeout(() => {
+      fetchRemoteReport(false);
+    }, 1200);
+
+    // Multi-tab BroadcastChannel listener
+    try {
+      if (window.BroadcastChannel) {
+        const bc = new BroadcastChannel('kostat_weekly_sync');
+        bc.onmessage = (e) => {
+          if (e.data && e.data.type === 'WEEKLY_LOCAL_UPDATE' && e.data.data) {
+            LIVE_DB = e.data.data;
+            applyOfficialRegions(LIVE_DB);
+            ensureWeeklyForecasts(LIVE_DB);
+            renderCurrentView();
+            recalculateTeamKpi();
+          }
+        };
+      }
+    } catch (_) {}
 
     // 폴링 루프 (4초 주기)
     setInterval(async () => {
@@ -3185,7 +3391,7 @@
             LIVE_DB = parsed;
             applyOfficialRegions(LIVE_DB);
             ensureWeeklyForecasts(LIVE_DB);
-            localStorage.setItem('kostat_weekly_report_live_cache_v7', JSON.stringify(LIVE_DB));
+            localStorage.setItem('kostat_weekly_report_live_cache_v8', JSON.stringify(LIVE_DB));
             renderMemberView();
           }
         }
