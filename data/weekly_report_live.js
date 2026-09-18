@@ -1,13 +1,13 @@
 window.KOSTAT_WEEKLY_REPORT_LIVE = {
   "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서",
   "week_label": "9월 4주차 (0921-0925)",
-  "last_updated_at": "2026-09-17 19:38:49",
-  "last_updated_by": "김샘물 책임 / 김완태 선임",
+  "last_updated_at": "2026-09-18 01:06:50",
+  "last_updated_by": "김완태 사원",
   "kpi": {
-    "target": 2404602,
-    "current": 937933.0,
-    "additional": 925562.0,
-    "expected": 1863495.0,
+    "target": 1900000,
+    "current": 937933,
+    "additional": 925562,
+    "expected": 1863495,
     "rate": 77.5
   },
   "trends": {
@@ -15,7 +15,7 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
       {
         "year": "2022",
         "amount": 18200000,
-        "growth": 0.0
+        "growth": 0
       },
       {
         "year": "2023",
@@ -35,20 +35,20 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
       {
         "year": "2026 (예상)",
         "amount": 29600000,
-        "growth": 9.0
+        "growth": 9
       }
     ],
     "yoy": {
       "last_year_month": "2025년 9월",
       "last_year_actual": 2802301,
       "this_year_target": 2404602,
-      "this_year_expected": 1863495.0,
+      "this_year_expected": 1863495,
       "yoy_growth_rate": -14.2
     },
     "mom": {
       "prev_month": "2026년 8월",
       "prev_month_actual": 1692000,
-      "this_month_expected": 1863495.0,
+      "this_month_expected": 1863495,
       "mom_growth_rate": 10.1,
       "weekly_progress": [
         {
@@ -59,7 +59,7 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
         {
           "week": "2주차",
           "actual": 540000,
-          "cum_rate": 29.0
+          "cum_rate": 29
         },
         {
           "week": "3주차",
@@ -68,7 +68,7 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
         },
         {
           "week": "4주차 (현재)",
-          "actual": 937933.0,
+          "actual": 937933,
           "cum_rate": 50.3
         }
       ]
@@ -1087,8 +1087,8 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
       "week_label": "9월 3주차 (0914-0918)",
       "kpi": {
         "target": 2404602,
-        "current": 788600.0,
-        "expected": 1836000.0,
+        "current": 788600,
+        "expected": 1836000,
         "rate": 76.4
       },
       "members": [
@@ -1109,31 +1109,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "NPI 34종 완료 후 미국 양산 공급",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 450000.0,
+                  "target": 450000,
                   "current": 61680,
                   "additional": 388320,
-                  "expected": 450000.0,
+                  "expected": 450000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 450000.0,
+                  "target": 450000,
                   "current": 115650,
                   "additional": 334350,
-                  "expected": 450000.0,
+                  "expected": 450000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 450000.0,
-                  "current": 154200.0,
-                  "additional": 295800.0,
-                  "expected": 450000.0,
+                  "target": 450000,
+                  "current": 154200,
+                  "additional": 295800,
+                  "expected": 450000,
                   "note": "NPI 34종 완료 후 미국 양산 공급"
                 },
                 "W4": {
-                  "target": 450000.0,
-                  "current": 154200.0,
-                  "additional": 295800.0,
-                  "expected": 450000.0,
+                  "target": 450000,
+                  "current": 154200,
+                  "additional": 295800,
+                  "expected": 450000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1227,31 +1227,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "LPAO 단가 .6 협의 완료",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 420000.0,
+                  "target": 420000,
                   "current": 35360,
                   "additional": 384640,
-                  "expected": 420000.0,
+                  "expected": 420000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 420000.0,
+                  "target": 420000,
                   "current": 66300,
                   "additional": 353700,
-                  "expected": 420000.0,
+                  "expected": 420000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 420000.0,
-                  "current": 88400.0,
-                  "additional": 331600.0,
-                  "expected": 420000.0,
+                  "target": 420000,
+                  "current": 88400,
+                  "additional": 331600,
+                  "expected": 420000,
                   "note": "LPAO 단가 .6 협의 완료"
                 },
                 "W4": {
-                  "target": 420000.0,
-                  "current": 88400.0,
-                  "additional": 331600.0,
-                  "expected": 420000.0,
+                  "target": 420000,
+                  "current": 88400,
+                  "additional": 331600,
+                  "expected": 420000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1265,31 +1265,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "신규 SAP 전환 후 정상화",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 180000.0,
+                  "target": 180000,
                   "current": 21160,
                   "additional": 158840,
-                  "expected": 180000.0,
+                  "expected": 180000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 180000.0,
+                  "target": 180000,
                   "current": 39675,
                   "additional": 140325,
-                  "expected": 180000.0,
+                  "expected": 180000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 180000.0,
-                  "current": 52900.0,
-                  "additional": 127100.0,
-                  "expected": 180000.0,
+                  "target": 180000,
+                  "current": 52900,
+                  "additional": 127100,
+                  "expected": 180000,
                   "note": "신규 SAP 전환 후 정상화"
                 },
                 "W4": {
-                  "target": 180000.0,
-                  "current": 52900.0,
-                  "additional": 127100.0,
-                  "expected": 180000.0,
+                  "target": 180000,
+                  "current": 52900,
+                  "additional": 127100,
+                  "expected": 180000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1303,31 +1303,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "C/T 신규 테이프 승인",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 150000.0,
+                  "target": 150000,
                   "current": 16480,
                   "additional": 133520,
-                  "expected": 150000.0,
+                  "expected": 150000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 150000.0,
+                  "target": 150000,
                   "current": 30900,
                   "additional": 119100,
-                  "expected": 150000.0,
+                  "expected": 150000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 150000.0,
-                  "current": 41200.0,
-                  "additional": 88800.0,
-                  "expected": 130000.0,
+                  "target": 150000,
+                  "current": 41200,
+                  "additional": 88800,
+                  "expected": 130000,
                   "note": "C/T 신규 테이프 승인"
                 },
                 "W4": {
-                  "target": 150000.0,
-                  "current": 41200.0,
-                  "additional": 88800.0,
-                  "expected": 130000.0,
+                  "target": 150000,
+                  "current": 41200,
+                  "additional": 88800,
+                  "expected": 130000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1412,31 +1412,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "9/21 TnR 단가 인상 PO 반영",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 550000.0,
+                  "target": 550000,
                   "current": 78000,
                   "additional": 472000,
-                  "expected": 550000.0,
+                  "expected": 550000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 550000.0,
+                  "target": 550000,
                   "current": 146250,
                   "additional": 403750,
-                  "expected": 550000.0,
+                  "expected": 550000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 550000.0,
-                  "current": 195000.0,
-                  "additional": 355000.0,
-                  "expected": 550000.0,
+                  "target": 550000,
+                  "current": 195000,
+                  "additional": 355000,
+                  "expected": 550000,
                   "note": "9/21 TnR 단가 인상 PO 반영"
                 },
                 "W4": {
-                  "target": 550000.0,
-                  "current": 195000.0,
-                  "additional": 355000.0,
-                  "expected": 550000.0,
+                  "target": 550000,
+                  "current": 195000,
+                  "additional": 355000,
+                  "expected": 550000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1450,31 +1450,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "정기 오더 및 C/T 300M 규격 승인",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 150000.0,
+                  "target": 150000,
                   "current": 21200,
                   "additional": 128800,
-                  "expected": 150000.0,
+                  "expected": 150000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 150000.0,
+                  "target": 150000,
                   "current": 39750,
                   "additional": 110250,
-                  "expected": 150000.0,
+                  "expected": 150000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 150000.0,
-                  "current": 53000.0,
-                  "additional": 97000.0,
-                  "expected": 150000.0,
+                  "target": 150000,
+                  "current": 53000,
+                  "additional": 97000,
+                  "expected": 150000,
                   "note": "정기 오더 및 C/T 300M 규격 승인"
                 },
                 "W4": {
-                  "target": 150000.0,
-                  "current": 53000.0,
-                  "additional": 97000.0,
-                  "expected": 150000.0,
+                  "target": 150000,
+                  "current": 53000,
+                  "additional": 97000,
+                  "expected": 150000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1551,31 +1551,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "싱가포르 법인 필터 공정 NPI 연계",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 200000.0,
+                  "target": 200000,
                   "current": 30000,
                   "additional": 170000,
-                  "expected": 200000.0,
+                  "expected": 200000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 200000.0,
+                  "target": 200000,
                   "current": 56250,
                   "additional": 143750,
-                  "expected": 200000.0,
+                  "expected": 200000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 200000.0,
-                  "current": 75000.0,
-                  "additional": 125000.0,
-                  "expected": 200000.0,
+                  "target": 200000,
+                  "current": 75000,
+                  "additional": 125000,
+                  "expected": 200000,
                   "note": "싱가포르 법인 필터 공정 NPI 연계"
                 },
                 "W4": {
-                  "target": 200000.0,
-                  "current": 75000.0,
-                  "additional": 125000.0,
-                  "expected": 200000.0,
+                  "target": 200000,
+                  "current": 75000,
+                  "additional": 125000,
+                  "expected": 200000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1589,31 +1589,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "신규 Tray 금형 3벌 양산 오더 진행",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 120000.0,
+                  "target": 120000,
                   "current": 14400,
                   "additional": 105600,
-                  "expected": 120000.0,
+                  "expected": 120000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 120000.0,
+                  "target": 120000,
                   "current": 27000,
                   "additional": 93000,
-                  "expected": 120000.0,
+                  "expected": 120000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 120000.0,
-                  "current": 36000.0,
-                  "additional": 84000.0,
-                  "expected": 120000.0,
+                  "target": 120000,
+                  "current": 36000,
+                  "additional": 84000,
+                  "expected": 120000,
                   "note": "신규 Tray 금형 3벌 양산 오더 진행"
                 },
                 "W4": {
-                  "target": 120000.0,
-                  "current": 36000.0,
-                  "additional": 84000.0,
-                  "expected": 120000.0,
+                  "target": 120000,
+                  "current": 36000,
+                  "additional": 84000,
+                  "expected": 120000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1697,31 +1697,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "ATP, SSPC 주간 납품 목표 달성 순항",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 280000.0,
+                  "target": 280000,
                   "current": 45920,
                   "additional": 234080,
-                  "expected": 280000.0,
+                  "expected": 280000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 280000.0,
+                  "target": 280000,
                   "current": 86100,
                   "additional": 193900,
-                  "expected": 280000.0,
+                  "expected": 280000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 280000.0,
-                  "current": 114800.0,
-                  "additional": 165200.0,
-                  "expected": 280000.0,
+                  "target": 280000,
+                  "current": 114800,
+                  "additional": 165200,
+                  "expected": 280000,
                   "note": "ATP, SSPC 주간 납품 목표 달성 순항"
                 },
                 "W4": {
-                  "target": 280000.0,
-                  "current": 114800.0,
-                  "additional": 165200.0,
-                  "expected": 280000.0,
+                  "target": 280000,
+                  "current": 114800,
+                  "additional": 165200,
+                  "expected": 280000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
@@ -1735,31 +1735,31 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가",
               "weekly_forecasts": {
                 "W1": {
-                  "target": 120000.0,
+                  "target": 120000,
                   "current": 15400,
                   "additional": 104600,
-                  "expected": 120000.0,
+                  "expected": 120000,
                   "note": "1주차 초기 예상치"
                 },
                 "W2": {
-                  "target": 120000.0,
+                  "target": 120000,
                   "current": 28875,
                   "additional": 91125,
-                  "expected": 120000.0,
+                  "expected": 120000,
                   "note": "2주차 실적 집계 및 고객사 PO 협의"
                 },
                 "W3": {
-                  "target": 120000.0,
-                  "current": 38500.0,
-                  "additional": 71500.0,
-                  "expected": 110000.0,
+                  "target": 120000,
+                  "current": 38500,
+                  "additional": 71500,
+                  "expected": 110000,
                   "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가"
                 },
                 "W4": {
-                  "target": 120000.0,
-                  "current": 38500.0,
-                  "additional": 71500.0,
-                  "expected": 110000.0,
+                  "target": 120000,
+                  "current": 38500,
+                  "additional": 71500,
+                  "expected": 110000,
                   "note": "4주차 마감 목표 달성 전망"
                 }
               }
