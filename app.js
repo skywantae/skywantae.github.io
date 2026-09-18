@@ -7579,8 +7579,46 @@ function setupGimpoFileUpload() {
 let _phData = null;
 let _phRagSearchTimer = null;
 
+function openPhPhotoModal(imgSrc, title, caption) {
+  const modal = document.getElementById('phPhotoModal');
+  const img = document.getElementById('phPhotoModalImg');
+  const titleEl = document.getElementById('phPhotoModalTitle');
+  const captionEl = document.getElementById('phPhotoModalCaption');
+  const dl = document.getElementById('phPhotoModalDownload');
+  if (!modal || !img) return;
+
+  img.src = imgSrc;
+  if (titleEl) titleEl.textContent = title || '첨부 사진 확인';
+  if (captionEl) captionEl.textContent = caption || '';
+  if (dl) {
+    dl.href = imgSrc;
+    const parts = imgSrc.split('/');
+    dl.download = parts[parts.length - 1] || 'ph_photo.png';
+  }
+  modal.style.display = 'flex';
+}
+window.openPhPhotoModal = openPhPhotoModal;
+
+function closePhPhotoModal() {
+  const modal = document.getElementById('phPhotoModal');
+  if (modal) modal.style.display = 'none';
+  const img = document.getElementById('phPhotoModalImg');
+  if (img) img.src = '';
+}
+window.closePhPhotoModal = closePhPhotoModal;
+
 function initPhDailyReport() {
-  _phData = window.KOSTAT_PH_DAILY_REPORT || null;
+  const localCustom = localStorage.getItem('kostat_ph_daily_report_custom');
+  if (localCustom) {
+    try {
+      _phData = JSON.parse(localCustom);
+    } catch (e) {
+      _phData = window.KOSTAT_PH_DAILY_REPORT || null;
+    }
+  } else {
+    _phData = window.KOSTAT_PH_DAILY_REPORT || null;
+  }
+
   if (!_phData) {
     const info = document.getElementById('phReportInfo');
     if (info) info.textContent = '데이터 없음';
@@ -7589,11 +7627,16 @@ function initPhDailyReport() {
   const s = _phData.summary || {};
   const info = document.getElementById('phReportInfo');
   if (info) {
-    info.textContent =
+    let sourceHtml =
       '출처: ' + (_phData.source_file || '') +
       ' / 일일보고: ' + formatNum(s.daily_report_count) + '건' +
       ' / 고객사: ' + formatNum(s.customer_count) + '개' +
-      ' / 프로젝트: ' + formatNum(s.total_projects) + '건';
+      ' / 프로젝트: ' + formatNum(s.total_projects) + '건' +
+      (s.images_attached_count ? ' / 사진: ' + formatNum(s.images_attached_count) + '장' : '');
+    if (localCustom) {
+      sourceHtml += ' <button onclick="resetPhDailyReportToDefault()" class="action-btn-sm" style="font-size:10px; padding:1px 6px; margin-left:6px; cursor:pointer; color:var(--text-muted); background:transparent; border:1px solid var(--border-color); border-radius:4px;">기본 데이터로 초기화</button>';
+    }
+    info.innerHTML = sourceHtml;
   }
 
   populatePhCustomerFilter();
@@ -7602,6 +7645,14 @@ function initPhDailyReport() {
   renderPhDaily();
   renderPhVisits();
 }
+
+function resetPhDailyReportToDefault() {
+  localStorage.removeItem('kostat_ph_daily_report_custom');
+  _phData = window.KOSTAT_PH_DAILY_REPORT || null;
+  initPhDailyReport();
+  showToast('기본 번들 데이터로 초기화되었습니다.', 'info');
+}
+window.resetPhDailyReportToDefault = resetPhDailyReportToDefault;
 
 function onPhRagSearchInput() {
   if (_phRagSearchTimer) clearTimeout(_phRagSearchTimer);
@@ -7813,6 +7864,17 @@ function renderPhRagResults() {
       html += '<div style="font-size:10px; color:var(--text-dim); margin-bottom:6px;">시작일: ' + (p.start || '-') + ' / 목표일: ' + (p.target || '-') + '</div>';
     }
 
+    // 첨부 사진 표시
+    if (p.images && p.images.length > 0) {
+      html += '<div style="margin-top:6px; padding:6px 10px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); border-radius:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">';
+      html += '<span style="font-size:10px; font-weight:700; color:#2563eb;">관련 사진 (' + p.images.length + '장):</span>';
+      for (let im of p.images) {
+        html += '<img src="' + im + '" onclick="openPhPhotoModal(\'' + im + '\', \'' + escapeHtml((p.customer||'') + ' ' + (p.topic||'') + ' 프로젝트 사진') + '\', \'' + escapeHtml(p.summary_ko||'') + '\')" style="height:40px; width:58px; object-fit:cover; border-radius:4px; border:1px solid var(--border-color); cursor:pointer;" alt="사진" title="클릭하여 크게보기" />';
+      }
+      html += '<button onclick="openPhPhotoModal(\'' + p.images[0] + '\', \'' + escapeHtml((p.customer||'') + ' ' + (p.topic||'') + ' 사진') + '\', \'' + escapeHtml(p.summary_ko||'') + '\')" class="action-btn-sm primary" style="font-size:9.5px; padding:2px 6px; cursor:pointer;">사진 크게보기</button>';
+      html += '</div>';
+    }
+
     // 영문 원문 접기/펼치기 토글
     html += '<div style="margin-top:6px; border-top:1px dashed var(--border-color); padding-top:6px; display:flex; justify-content:space-between; align-items:center;">';
     html += '<span style="font-size:10px; color:var(--text-dim);">필리핀 지사 영문 원문</span>';
@@ -7851,6 +7913,15 @@ function renderPhRagResults() {
       }
       if (e.pending_ko || e.pending) {
         html += '<div style="font-size:10px; color:var(--warning); margin-top:2px;">[후속조치] ' + escapeHtml(e.pending_ko || e.pending) + '</div>';
+      }
+      if (e.images && e.images.length > 0) {
+        html += '<div style="margin-top:6px; padding:6px 10px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); border-radius:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">';
+        html += '<span style="font-size:10px; font-weight:700; color:#2563eb;">현장 사진 (' + e.images.length + '장):</span>';
+        for (let im of e.images) {
+          html += '<img src="' + im + '" onclick="openPhPhotoModal(\'' + im + '\', \'' + escapeHtml((dr.date||'') + ' ' + (e.customer||'') + ' 현장 사진') + '\', \'' + escapeHtml((dr.date||'') + ' ' + (e.summary_ko||'')) + '\')" style="height:40px; width:58px; object-fit:cover; border-radius:4px; border:1px solid var(--border-color); cursor:pointer;" alt="사진" title="클릭하여 크게보기" />';
+        }
+        html += '<button onclick="openPhPhotoModal(\'' + e.images[0] + '\', \'' + escapeHtml((dr.date||'') + ' ' + (e.customer||'') + ' 현장 사진') + '\', \'' + escapeHtml((dr.date||'') + ' ' + (e.summary_ko||'')) + '\')" class="action-btn-sm primary" style="font-size:9.5px; padding:2px 6px; cursor:pointer;">사진 크게보기</button>';
+        html += '</div>';
       }
       html += '<div style="text-align:right; margin-top:4px;">';
       html += '<button onclick="togglePhRaw(\'' + eRawId + '\')" style="background:none; border:none; color:var(--text-dim); font-size:10px; cursor:pointer;">[영문 원문]</button>';
@@ -7942,6 +8013,16 @@ function renderPhProjects() {
       html += '<div style="font-size:10px; color:var(--text-dim); margin-top:4px;">시작: ' + (p.start || '-') + ' / 목표: ' + (p.target || '-') + '</div>';
     }
 
+    if (p.images && p.images.length > 0) {
+      html += '<div style="margin-top:8px; padding:6px 10px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); border-radius:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">';
+      html += '<span style="font-size:10.5px; font-weight:700; color:#2563eb;">관련 도면/사진 (' + p.images.length + '장):</span>';
+      for (let im of p.images) {
+        html += '<img src="' + im + '" onclick="openPhPhotoModal(\'' + im + '\', \'' + escapeHtml((p._customer||'') + ' ' + (p.topic||'') + ' 첨부 사진') + '\', \'' + escapeHtml(p.summary_ko||'') + '\')" style="height:44px; width:64px; object-fit:cover; border-radius:4px; border:1px solid var(--border-color); cursor:pointer;" alt="사진" title="클릭하여 크게보기" />';
+      }
+      html += '<button onclick="openPhPhotoModal(\'' + p.images[0] + '\', \'' + escapeHtml((p._customer||'') + ' ' + (p.topic||'') + ' 사진') + '\', \'' + escapeHtml(p.summary_ko||'') + '\')" class="action-btn-sm primary" style="font-size:10px; padding:3px 8px; cursor:pointer;">사진 크게보기</button>';
+      html += '</div>';
+    }
+
     html += '<div style="margin-top:6px; border-top:1px dashed var(--border-color); padding-top:4px; text-align:right;">';
     html += '<button onclick="togglePhRaw(\'' + rawId + '\')" style="background:none; border:none; color:var(--text-dim); font-size:10px; cursor:pointer;">[영문 원문 접기/펼치기]</button>';
     html += '</div>';
@@ -8008,6 +8089,15 @@ function renderPhDaily() {
       }
       if (entry.remark) {
         html += '<div style="font-size:10px; color:var(--text-dim); margin-top:2px;">[비고] ' + escapeHtml(entry.remark) + '</div>';
+      }
+      if (entry.images && entry.images.length > 0) {
+        html += '<div style="margin-top:8px; padding:8px 10px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.22); border-radius:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">';
+        html += '<span style="font-size:10.5px; font-weight:700; color:#2563eb;">현장 검증 사진 (' + entry.images.length + '장):</span>';
+        for (let im of entry.images) {
+          html += '<img src="' + im + '" onclick="openPhPhotoModal(\'' + im + '\', \'' + escapeHtml((report.date||'') + ' ' + (entry.customer||'') + ' 현장 사진') + '\', \'' + escapeHtml((report.date||'') + ' ' + (entry.summary_ko||'')) + '\')" style="height:48px; width:70px; object-fit:cover; border-radius:4px; border:1px solid var(--border-color); cursor:pointer;" alt="사진" title="클릭하여 크게보기" />';
+        }
+        html += '<button onclick="openPhPhotoModal(\'' + entry.images[0] + '\', \'' + escapeHtml((report.date||'') + ' ' + (entry.customer||'') + ' 현장 사진') + '\', \'' + escapeHtml((report.date||'') + ' ' + (entry.summary_ko||'')) + '\')" class="action-btn-sm primary" style="font-size:10px; padding:3px 8px; cursor:pointer;">사진 크게보기</button>';
+        html += '</div>';
       }
       html += '<div style="text-align:right; margin-top:4px;">';
       html += '<button onclick="togglePhRaw(\'' + eRawId + '\')" style="background:none; border:none; color:var(--text-dim); font-size:10px; cursor:pointer;">[영문 원문]</button>';
@@ -8153,10 +8243,46 @@ function setupPhFileUpload() {
           }
         }
 
+        // 출처 파일명 및 통계 갱신
+        _phData.source_file = file.name;
+        _phData.last_updated = new Date().toISOString();
+        let totalProjectsCount = 0;
+        for (const [c, p] of Object.entries(_phData.projects || {})) {
+          totalProjectsCount += p.length;
+        }
+        _phData.summary = {
+          daily_report_count: _phData.daily_reports.length,
+          customer_count: Object.keys(_phData.projects).length,
+          total_projects: totalProjectsCount,
+          visit_week_count: (_phData.visits || []).length
+        };
+
+        // 로컬스토리지에 즉각 영구 저장 (새로고침 시에도 100% 반영 유지)
+        try {
+          localStorage.setItem('kostat_ph_daily_report_custom', JSON.stringify(_phData));
+        } catch (storageErr) {
+          console.warn('LocalStorage 저장 경고:', storageErr);
+        }
+
+        // 헤더 출처 텍스트 즉각 갱신
+        const info = document.getElementById('phReportInfo');
+        if (info) {
+          info.innerHTML =
+            '출처: ' + _phData.source_file + ' (사용자 업로드)' +
+            ' / 일일보고: ' + formatNum(_phData.summary.daily_report_count) + '건' +
+            ' / 고객사: ' + formatNum(_phData.summary.customer_count) + '개' +
+            ' / 프로젝트: ' + formatNum(_phData.summary.total_projects) + '건' +
+            ' <button onclick="resetPhDailyReportToDefault()" class="action-btn-sm" style="font-size:10px; padding:1px 6px; margin-left:6px; cursor:pointer; color:var(--text-muted); background:transparent; border:1px solid var(--border-color); border-radius:4px;">기본 데이터로 초기화</button>';
+        }
+
+        populatePhCustomerFilter();
+        renderPhRagResults();
+        renderPhProjects();
+        renderPhDaily();
+        renderPhVisits();
+
         if (dailyCount > 0 || projCount > 0) {
-          renderPhDaily();
-          renderPhProjects();
-          showToast(file.name + ' 업데이트: Daily ' + dailyCount + '건, 프로젝트 ' + projCount + '건', 'success');
+          showToast(file.name + ' 업데이트 완료: Daily ' + dailyCount + '건, 프로젝트 ' + projCount + '건 (새로고침 시에도 유지됩니다)', 'success');
         } else {
           showToast('업데이트할 데이터가 없습니다.', 'warning');
         }
