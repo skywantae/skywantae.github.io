@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KOSTAT ERP - 해외영업부 주간보고서 실시간 협업 시스템 (Live Workspace)</title>
+  <title>KOSTAT ERP - 주간보고서</title>
   <style>
     :root {
       --bg-base: #0a0e17;
@@ -1355,6 +1355,55 @@
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+
+    /* 고객사 뱃지 및 상태 태그 (고객사 마스터 128개사 연동) */
+    .issue-customer-badge {
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(59, 130, 246, 0.18);
+      border: 1px solid rgba(59, 130, 246, 0.45);
+      color: #60a5fa;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+
+    .issue-item-badge {
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      padding: 1px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* 특이사항 고객사 필터 바 */
+    .issue-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .issue-filter-select {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-light);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      max-width: 160px;
+    }
+    
   </style>
 </head>
 <body>
@@ -1363,15 +1412,12 @@
   <header class="app-header">
     <div class="header-top">
       <div class="title-group">
-        <span class="app-badge">실시간 협업</span>
-        <h1 class="app-title">해외영업부 주간보고서</h1>
+        <h1 class="app-title">주간보고서</h1>
 
-        <!-- 기간 선택기: 월 / 주차 선택 -->
+        <!-- 기간 선택기: 2026년 주차별 일정표 (53주차 마스터 연동) -->
         <div class="period-nav-group">
-          <select class="period-month-select" id="periodMonthSelect" onchange="changePeriodMonth(this.value)">
-            <option value="2026-09" selected>2026년 9월 (당월)</option>
-            <option value="2026-08">2026년 8월 (전월 마감 기록)</option>
-            <option value="2026-07">2026년 7월 (과거 마감 기록)</option>
+          <select class="period-month-select" id="weekScheduleSelect" onchange="changeWeeklySchedule(this.value)" title="2026년 주차 선택 (Copy of Dorp down (002).xlsx 기준)" style="max-width:240px; font-weight:700;">
+            <!-- 53주차 동적 렌더링 -->
           </select>
           <div class="week-pills-container" id="weekPillsContainer">
             <!-- 동적 주차 뱃지 버튼 -->
@@ -1697,6 +1743,88 @@
   </div>
 
   <!-- 인라인 스크립트: 실시간 데이터베이스, 차트 및 내보내기 엔진 -->
+  
+  <!-- 고객사별 영업현황보고 (주간 특이사항 및 프로젝트 이슈) 등록 모달 -->
+  <div class="modal-overlay" id="addIssueModal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box modal-md" style="max-width:560px;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border-color); padding:14px 20px;">
+        <div class="modal-title" style="font-size:15px; font-weight:700; color:#ffffff;">영업현황보고 (주간 특이사항 & 프로젝트 이슈) 등록</div>
+        <button class="modal-close-btn" onclick="closeAddIssueModal()" title="닫기">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;">
+        <p class="modal-desc" style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+          고객사 마스터(128개사)를 기준으로 주간 주요 진행 사항 및 프로젝트 이슈를 등록합니다.
+        </p>
+
+        <!-- 1. 고객사 및 관련 품목 선택 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--primary-light); margin-bottom:4px;">고객사 (Customer) *</label>
+            <select id="modalIssueCustomer" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; font-weight:700; outline:none;" onchange="handleModalCustomerChange(this.value)">
+              <!-- 128개 고객사 옵션 동적 채움 -->
+            </select>
+            <input type="text" id="modalIssueCustomerDirect" placeholder="고객사명 직접 입력" style="display:none; width:100%; margin-top:6px; padding:6px 10px; background:var(--bg-base); border:1px solid var(--primary); border-radius:4px; color:#ffffff; font-size:12px; outline:none;" />
+          </div>
+
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">관련 품목 (Item)</label>
+            <select id="modalIssueItem" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;">
+              <!-- 9개 아이템 옵션 -->
+            </select>
+          </div>
+        </div>
+
+        <!-- 2. 진행 상태 및 담당자 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">진행 상태 (Status)</label>
+            <select id="modalIssueStatus" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;">
+              <option value="진행중" selected>진행중</option>
+              <option value="NPI 전환">NPI 전환</option>
+              <option value="금형 개발">금형 개발</option>
+              <option value="샘플 평가">샘플 평가</option>
+              <option value="단가 협상">단가 협상</option>
+              <option value="양산 승인">양산 승인</option>
+              <option value="정기 납품">정기 납품</option>
+              <option value="PCN 검토">PCN 검토</option>
+              <option value="설비 셋업">설비 셋업</option>
+              <option value="완료">완료</option>
+              <option value="일정 지연">일정 지연</option>
+              <option value="긴급">긴급</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">보고 담당자</label>
+            <select id="modalIssueMember" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;">
+              <option value="hjh">한준희 책임 (미국)</option>
+              <option value="ksm">김샘물 선임 (말레이시아)</option>
+              <option value="lgj">이가진 선임 (대만)</option>
+              <option value="lsc">이상철 선임 (싱가포르 &amp; 태국)</option>
+              <option value="kwt">김완태 사원 (일본 &amp; 필리핀)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. 보고 주제 / 프로젝트명 -->
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">영업현황 보고 주제 / 프로젝트명 *</label>
+          <input type="text" id="modalIssueTopic" placeholder="예: 차세대 C/T Hybrid Tray NPI 금형 제작 및 고객 품질 승인" style="width:100%; padding:9px 12px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:13px; font-weight:600; outline:none;" />
+        </div>
+
+        <!-- 4. 세부 진행 내역 / 특이사항 -->
+        <div>
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">세부 진행 내역 (줄바꿈 시 각 항목 구분)</label>
+          <textarea id="modalIssueBullets" rows="4" placeholder="• 1차 FAI 샘플 고객 평가 완료 및 양산 사양 협의&#10;• 차주 1차 양산 50,000ea PO 접수 예정&#10;• 납기 및 단가 협상 진행 중" style="width:100%; padding:9px 12px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none; resize:vertical; font-family:inherit;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:12px 20px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid var(--border-color); background:var(--bg-card-sub);">
+        <button class="btn-modal-cancel" onclick="closeAddIssueModal()" style="padding:7px 14px; font-size:12.5px;">취소</button>
+        <button class="btn-action primary" onclick="submitAddIssueModal()" style="padding:7px 18px; font-size:12.5px; font-weight:700;">등록 및 실시간 저장</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // 공식 담당 국가 및 고객사 규격 강제 매핑 테이블
     const OFFICIAL_REGIONS = {
@@ -1718,6 +1846,20 @@
     }
 
     // 1. 초기 데이터 및 상태
+    
+    // 2026년 53개 주차 마스터 데이터 (Copy of Dorp down (002).xlsx 기준)
+    const MASTER_WEEKS_2026 = [{"quarter": "1분기", "week": "1주차", "week_num": 1, "start": "2025-12-29", "end": "2026-01-04", "note": ""}, {"quarter": "1분기", "week": "2주차", "week_num": 2, "start": "2026-01-05", "end": "2026-01-11", "note": ""}, {"quarter": "1분기", "week": "3주차", "week_num": 3, "start": "2026-01-12", "end": "2026-01-18", "note": ""}, {"quarter": "1분기", "week": "4주차", "week_num": 4, "start": "2026-01-19", "end": "2026-01-25", "note": ""}, {"quarter": "1분기", "week": "5주차", "week_num": 5, "start": "2026-01-26", "end": "2026-02-01", "note": ""}, {"quarter": "1분기", "week": "6주차", "week_num": 6, "start": "2026-02-02", "end": "2026-02-08", "note": ""}, {"quarter": "1분기", "week": "7주차", "week_num": 7, "start": "2026-02-09", "end": "2026-02-15", "note": ""}, {"quarter": "1분기", "week": "8주차", "week_num": 8, "start": "2026-02-16", "end": "2026-02-22", "note": ""}, {"quarter": "1분기", "week": "9주차", "week_num": 9, "start": "2026-02-23", "end": "2026-03-01", "note": ""}, {"quarter": "1분기", "week": "10주차", "week_num": 10, "start": "2026-03-02", "end": "2026-03-08", "note": ""}, {"quarter": "1분기", "week": "11주차", "week_num": 11, "start": "2026-03-09", "end": "2026-03-15", "note": ""}, {"quarter": "1분기", "week": "12주차", "week_num": 12, "start": "2026-03-16", "end": "2026-03-22", "note": ""}, {"quarter": "1분기", "week": "13주차", "week_num": 13, "start": "2026-03-23", "end": "2026-03-29", "note": ""}, {"quarter": "2분기", "week": "14주차", "week_num": 14, "start": "2026-03-30", "end": "2026-04-05", "note": ""}, {"quarter": "2분기", "week": "15주차", "week_num": 15, "start": "2026-04-06", "end": "2026-04-12", "note": ""}, {"quarter": "2분기", "week": "16주차", "week_num": 16, "start": "2026-04-13", "end": "2026-04-19", "note": ""}, {"quarter": "2분기", "week": "17주차", "week_num": 17, "start": "2026-04-20", "end": "2026-04-26", "note": ""}, {"quarter": "2분기", "week": "18주차", "week_num": 18, "start": "2026-04-27", "end": "2026-05-03", "note": ""}, {"quarter": "2분기", "week": "19주차", "week_num": 19, "start": "2026-05-04", "end": "2026-05-10", "note": ""}, {"quarter": "2분기", "week": "20주차", "week_num": 20, "start": "2026-05-11", "end": "2026-05-17", "note": ""}, {"quarter": "2분기", "week": "21주차", "week_num": 21, "start": "2026-05-18", "end": "2026-05-24", "note": ""}, {"quarter": "2분기", "week": "22주차", "week_num": 22, "start": "2026-05-25", "end": "2026-05-31", "note": ""}, {"quarter": "2분기", "week": "23주차", "week_num": 23, "start": "2026-06-01", "end": "2026-06-07", "note": ""}, {"quarter": "2분기", "week": "24주차", "week_num": 24, "start": "2026-06-08", "end": "2026-06-14", "note": ""}, {"quarter": "2분기", "week": "25주차", "week_num": 25, "start": "2026-06-15", "end": "2026-06-21", "note": ""}, {"quarter": "2분기", "week": "26주차", "week_num": 26, "start": "2026-06-22", "end": "2026-06-28", "note": ""}, {"quarter": "3분기", "week": "27주차", "week_num": 27, "start": "2026-06-29", "end": "2026-07-05", "note": ""}, {"quarter": "3분기", "week": "28주차", "week_num": 28, "start": "2026-07-06", "end": "2026-07-12", "note": ""}, {"quarter": "3분기", "week": "29주차", "week_num": 29, "start": "2026-07-13", "end": "2026-07-19", "note": ""}, {"quarter": "3분기", "week": "30주차", "week_num": 30, "start": "2026-07-20", "end": "2026-07-26", "note": ""}, {"quarter": "3분기", "week": "31주차", "week_num": 31, "start": "2026-07-27", "end": "2026-08-02", "note": ""}, {"quarter": "3분기", "week": "32주차", "week_num": 32, "start": "2026-08-03", "end": "2026-08-09", "note": ""}, {"quarter": "3분기", "week": "33주차", "week_num": 33, "start": "2026-08-10", "end": "2026-08-16", "note": ""}, {"quarter": "3분기", "week": "34주차", "week_num": 34, "start": "2026-08-17", "end": "2026-08-23", "note": ""}, {"quarter": "3분기", "week": "35주차", "week_num": 35, "start": "2026-08-24", "end": "2026-08-30", "note": ""}, {"quarter": "3분기", "week": "36주차", "week_num": 36, "start": "2026-08-31", "end": "2026-09-06", "note": ""}, {"quarter": "3분기", "week": "37주차", "week_num": 37, "start": "2026-09-07", "end": "2026-09-13", "note": ""}, {"quarter": "3분기", "week": "38주차", "week_num": 38, "start": "2026-09-14", "end": "2026-09-20", "note": ""}, {"quarter": "3분기", "week": "39주차", "week_num": 39, "start": "2026-09-21", "end": "2026-09-27", "note": ""}, {"quarter": "4분기", "week": "40주차", "week_num": 40, "start": "2026-09-28", "end": "2026-10-04", "note": ""}, {"quarter": "4분기", "week": "41주차", "week_num": 41, "start": "2026-10-05", "end": "2026-10-11", "note": ""}, {"quarter": "4분기", "week": "42주차", "week_num": 42, "start": "2026-10-12", "end": "2026-10-18", "note": ""}, {"quarter": "4분기", "week": "43주차", "week_num": 43, "start": "2026-10-19", "end": "2026-10-25", "note": ""}, {"quarter": "4분기", "week": "44주차", "week_num": 44, "start": "2026-10-26", "end": "2026-11-01", "note": ""}, {"quarter": "4분기", "week": "45주차", "week_num": 45, "start": "2026-11-02", "end": "2026-11-08", "note": ""}, {"quarter": "4분기", "week": "46주차", "week_num": 46, "start": "2026-11-09", "end": "2026-11-15", "note": ""}, {"quarter": "4분기", "week": "47주차", "week_num": 47, "start": "2026-11-16", "end": "2026-11-22", "note": ""}, {"quarter": "4분기", "week": "48주차", "week_num": 48, "start": "2026-11-23", "end": "2026-11-29", "note": ""}, {"quarter": "4분기", "week": "49주차", "week_num": 49, "start": "2026-11-30", "end": "2026-12-06", "note": ""}, {"quarter": "4분기", "week": "50주차", "week_num": 50, "start": "2026-12-07", "end": "2026-12-13", "note": ""}, {"quarter": "4분기", "week": "51주차", "week_num": 51, "start": "2026-12-14", "end": "2026-12-20", "note": ""}, {"quarter": "4분기", "week": "52주차", "week_num": 52, "start": "2026-12-21", "end": "2026-12-27", "note": ""}, {"quarter": "4분기", "week": "53주차", "week_num": 53, "start": "2026-12-28", "end": "2027-01-03", "note": ""}];
+    
+    // 128개 고객사 마스터 목록 (Dorp down.xlsx 기준)
+    const MASTER_CUSTOMERS = ["A2", "ADI", "AMKOR", "AMPERE", "ANTISTAT", "APPLIED", "ARDENTEC", "ARROW", "ASE", "ATEC", "ATEP", "AVALANCHE", "AVNET", "BROADCOM", "BTV (GER)", "CARSEM", "CIRTEK", "CODICO", "CREATION-CANADA", "DREAMTECH", "ECO TECH", "EDDYFI", "EGIDE-FR", "ELEMBIO", "ETA-TH", "ETRON", "FLEXTRONICS", "FLIP", "FOXCONN", "FRONTGRADE", "FUYU", "GLOBAL Fountries", "GREATEK", "HAHN", "HANA MICRO", "HANA MICRON", "HANWHA NXMD", "HANYANG DIGITECH", "HONEYWELL", "HWAKAI", "IBEREL", "ILLUMINA", "INARI", "INFINEON", "INTEGRA TECH", "INTEL", "KAMOGAWA", "KEYSIGHT", "KINSUS", "KOSTAT(SUZHOU)", "KREISLER", "KYEC", "MACOM", "MARVELL", "MASIMO", "MAX", "MAXIM", "MEGACHIPS", "MERCURY CORP", "MICROCHIP", "MICRON", "MICRON", "MICROSEMI", "MOBILEYE", "MTE", "NAN YA", "NAVITAS", "NOVATEL(HEXAGON)", "NXP", "OMNI", "ONSEMI", "OSE-TW", "OSRAM", "OX3", "PANTHER", "PHICOM", "PRESTO", "PROWORKS", "PSG", "PTI-TW", "QORVO", "QSI", "QUALCOMM", "REMARKETS", "RENESAS", "RLS", "ROHM", "SENCIO", "SEOUL VINA", "SIGURD", "SKYWORKS", "SPACE X", "SPIL", "SPM", "SSPC", "ST MICRO", "STATS", "SUN-WA", "SURFACE", "SUZHOU KOSTAT", "SVI", "SYNERGIE", "SYNTRONIC", "TAITON", "TDK-MICRONAS", "TELEDYNE", "TERAPOWER", "TI", "TOMOE", "TONGHSING", "TRASNA", "TSMC", "TWILIGHT TECH.", "UNISEM", "USI", "UTAC", "VALLEN", "VALUEPLUS", "VISHAY", "VLSIP", "VVDN", "WESCO", "WISTRON", "WORKZ(DUBAI)", "XILINX", "XVIEW ASIA", "ZILIA", "Others"];
+    
+    // 9개 주요 품목 마스터
+    const MASTER_ITEMS = ["IC Tray", "PS Carrier", "PC Carrier", "PC Hybrid", "Cover", "Reel", "Band", "Compound", "TF Tray"];
+
+    // 현재 활성 주차 번호 (기본: 38주차, 2026-09-14 ~ 2026-09-20)
+    let CURRENT_WEEK_NUM = 38;
+    let ISSUE_CUSTOMER_FILTER = 'ALL';
+    
     let LIVE_DB = {"title": "2026년 9월 3주차 (0914-0918) 해외영업부 주간보고서", "week_label": "9월 3주차 (0914-0918)", "last_updated_at": "2026-09-17 12:25:00", "last_updated_by": "한준희 책임", "kpi": {"target": 2404602, "current": 788600.0, "expected": 1836000.0, "rate": 76.4}, "trends": {"annual": [{"year": "2022", "amount": 18200000, "growth": 0.0}, {"year": "2023", "amount": 21450000, "growth": 17.9}, {"year": "2024", "amount": 24800000, "growth": 15.6}, {"year": "2025", "amount": 27150000, "growth": 9.5}, {"year": "2026 (예상)", "amount": 29600000, "growth": 9.0}], "yoy": {"last_year_month": "2025년 9월", "last_year_actual": 2180000, "this_year_target": 2404602, "this_year_expected": 2500000, "yoy_growth_rate": 14.7}, "mom": {"prev_month": "2026년 8월", "prev_month_actual": 1692000, "this_month_expected": 1836000, "mom_growth_rate": 8.5, "weekly_progress": [{"week": "1주차", "actual": 310000, "cum_rate": 16.9}, {"week": "2주차", "actual": 540000, "cum_rate": 29.4}, {"week": "3주차 (현재)", "actual": 788600, "cum_rate": 43.0}, {"week": "4주차 (마감예상)", "actual": 1836000, "cum_rate": 100.0}]}}, "members": [{"id": "hjh", "name": "한준희 책임", "role": "책임", "short_name": "한준희", "regions": "미국 (USA)", "accounts": "Skyworks (US), Renesas (US), Broadcom (US)", "sales": [{"site": "Skyworks (미국 US) - NPI C/T Hybrid", "target": 450000, "current": 154200, "additional": 295800, "expected": 450000, "note": "NPI 34종 완료 후 미국 양산 공급", "weekly_forecasts": {"W1": {"target": 450000.0, "current": 61680, "additional": 388320, "expected": 450000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 450000.0, "current": 115650, "additional": 334350, "expected": 450000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 450000.0, "current": 154200.0, "additional": 295800.0, "expected": 450000.0, "note": "NPI 34종 완료 후 미국 양산 공급"}, "W4": {"target": 450000.0, "current": 154200.0, "additional": 295800.0, "expected": 450000.0, "note": "4주차 마감 목표 달성 전망"}}}], "issues": [{"id": "iss_hjh_1", "topic": "Skyworks US C/T Hybrid PC NPI Project", "tag": "NPI 전환", "bullets": ["추가 Filter Conversion 43종 중 34모델 NPI 진행 완료, 미국 공장 상황 검토", "WLCSP Project: 9종 진행 중 (2종 FAI 샘플 평가 중)"]}, {"id": "iss_hjh_2", "topic": "2DID 신규 설비 글로벌 셋업 및 공장 배치", "tag": "설비 셋업", "bullets": ["필리핀 공장 2대 셋업 완료, 한국 공장 3대 도입 완료 (총 7대 가동)", "12월 초 2대 추가 이동 계획 수립"]}, {"id": "iss_hjh_3", "topic": "미국 고객사 차세대 고내열 REEL 개발 완료", "tag": "양산 대기", "bullets": ["REEL 개발 완료에 따라 Hybrid PC 추가 접수 예정 (32종 Filter PJT 접수 완료)"]}], "samples": [{"id": "smp_hjh_1", "customer": "Skyworks US", "pn": "KS-0804-1661-PC", "item": "C/T Hybrid", "qty": 2, "status": "CLOSE", "date": "2026-09-08", "note": "고객 승인 대기"}, {"id": "smp_hjh_2", "customer": "Skyworks US", "pn": "KS-0804-1662-PC", "item": "C/T Hybrid", "qty": 2, "status": "OPEN", "date": "2026-09-08", "note": "고객 승인 대기"}, {"id": "smp_hjh_3", "customer": "Skyworks US", "pn": "KS-1208-1895", "item": "C/T Reel", "qty": 10, "status": "OPEN", "date": "2026-09-02", "note": "샘플 출하 완료"}, {"id": "smp_hjh_4", "customer": "Skyworks US", "pn": "KS-0804-1680-PC", "item": "C/T 2DID", "qty": 2, "status": "OPEN", "date": "2026-09-09", "note": "라인 평가 중"}]}, {"id": "ksm", "name": "김샘물 선임", "role": "선임", "short_name": "김샘물", "regions": "말레이시아 (Malaysia)", "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)", "sales": [{"site": "Broadcom / Inari (말레이시아 Penang)", "target": 420000, "current": 88400, "additional": 331600, "expected": 420000, "note": "LPAO 단가 .6 협의 완료", "weekly_forecasts": {"W1": {"target": 420000.0, "current": 35360, "additional": 384640, "expected": 420000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 420000.0, "current": 66300, "additional": 353700, "expected": 420000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 420000.0, "current": 88400.0, "additional": 331600.0, "expected": 420000.0, "note": "LPAO 단가 .6 협의 완료"}, "W4": {"target": 420000.0, "current": 88400.0, "additional": 331600.0, "expected": 420000.0, "note": "4주차 마감 목표 달성 전망"}}}, {"site": "Infineon (말레이시아 Melaka/Kulim)", "target": 180000, "current": 52900, "additional": 127100, "expected": 180000, "note": "신규 SAP 전환 후 정상화", "weekly_forecasts": {"W1": {"target": 180000.0, "current": 21160, "additional": 158840, "expected": 180000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 180000.0, "current": 39675, "additional": 140325, "expected": 180000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 180000.0, "current": 52900.0, "additional": 127100.0, "expected": 180000.0, "note": "신규 SAP 전환 후 정상화"}, "W4": {"target": 180000.0, "current": 52900.0, "additional": 127100.0, "expected": 180000.0, "note": "4주차 마감 목표 달성 전망"}}}, {"site": "Unisem / ASE (말레이시아)", "target": 150000, "current": 41200, "additional": 88800, "expected": 130000, "note": "C/T 신규 테이프 승인", "weekly_forecasts": {"W1": {"target": 150000.0, "current": 16480, "additional": 133520, "expected": 150000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 150000.0, "current": 30900, "additional": 119100, "expected": 150000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 150000.0, "current": 41200.0, "additional": 88800.0, "expected": 130000.0, "note": "C/T 신규 테이프 승인"}, "W4": {"target": 150000.0, "current": 41200.0, "additional": 88800.0, "expected": 130000.0, "note": "4주차 마감 목표 달성 전망"}}}], "issues": [{"id": "iss_ksm_1", "topic": "Broadcom / Inari MY Buy-Off 및 금형 증작 대응", "tag": "금형 증작", "bullets": ["KS-881490-2 금형 증작 완료 및 베트남 이전 완료 (단가 .6 조정)", "Inari MY 측에서 LPAO 품목 Particle test 요청에 따른 공정 검증"]}, {"id": "iss_ksm_2", "topic": "Infineon 말레이시아 신규 SAP 체제 전환 및 원재료 수급", "tag": "SAP 전환", "bullets": ["기존 재고 소진 후 new PO/PN 적용 체제로 전환 완료", "Denka PS Sheet 수급 불균형에 따른 대체 원재료 검토 병행"]}, {"id": "iss_ksm_3", "topic": "Unisem 말레이시아 C/T 신규 테이프 승인", "tag": "샘플 평가", "bullets": ["KS-1612-692 C/T 515K 발송분 현지 품질 승인 대기", "10월부터 말레이시아 라인 정기 발주 전환 협의"]}], "samples": [{"id": "smp_ksm_1", "customer": "Broadcom (Inari)", "pn": "KS-871382-2", "item": "TRAY MPPO", "qty": 50, "status": "OPEN", "date": "2026-08-24", "note": "9월말 QUAL 제출 예정"}, {"id": "smp_ksm_2", "customer": "UNISEM MY", "pn": "KS-1612-692", "item": "C/T", "qty": 515, "status": "OPEN", "date": "2026-09-05", "note": "고객 승인 대기"}, {"id": "smp_ksm_3", "customer": "ASE-MY", "pn": "PBCK13724", "item": "REEL", "qty": 20, "status": "CLOSE", "date": "2026-08-15", "note": "승인 완료"}]}, {"id": "lgj", "name": "이가진 선임", "role": "선임", "short_name": "이가진", "regions": "대만 (Taiwan)", "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd", "sales": [{"site": "Amkor / SPIL (대만 Hsinchu/Taichung)", "target": 550000, "current": 195000, "additional": 355000, "expected": 550000, "note": "9/21 TnR 단가 인상 PO 반영", "weekly_forecasts": {"W1": {"target": 550000.0, "current": 78000, "additional": 472000, "expected": 550000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 550000.0, "current": 146250, "additional": 403750, "expected": 550000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 550000.0, "current": 195000.0, "additional": 355000.0, "expected": 550000.0, "note": "9/21 TnR 단가 인상 PO 반영"}, "W4": {"target": 550000.0, "current": 195000.0, "additional": 355000.0, "expected": 550000.0, "note": "4주차 마감 목표 달성 전망"}}}, {"site": "KYEC / Sigurd (대만)", "target": 150000, "current": 53000, "additional": 97000, "expected": 150000, "note": "정기 오더 및 C/T 300M 규격 승인", "weekly_forecasts": {"W1": {"target": 150000.0, "current": 21200, "additional": 128800, "expected": 150000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 150000.0, "current": 39750, "additional": 110250, "expected": 150000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 150000.0, "current": 53000.0, "additional": 97000.0, "expected": 150000.0, "note": "정기 오더 및 C/T 300M 규격 승인"}, "W4": {"target": 150000.0, "current": 53000.0, "additional": 97000.0, "expected": 150000.0, "note": "4주차 마감 목표 달성 전망"}}}], "issues": [{"id": "iss_lgj_1", "topic": "대만 ASECL / SPIL PCN 이슈 및 TnR 단가 인상", "tag": "PCN 검토", "bullets": ["SPIL GIS 측의 ASECL 압박으로 PCN 진행 중단 및 샘플 규격(Warpage OOS) 재점검", "9/21부터 SPIL, ASE 대상 TnR 제품군 단가 인상 PO 적용"]}, {"id": "iss_lgj_2", "topic": "Amkor TW 신규 MPPO LP 트레이 금형 제작", "tag": "금형 개발", "bullets": ["Amkor TW: KS-890280 (MPPO LP) 신규 트레이 금형 제작 진행", "SPIL TW: C/T 300M 규격(KS-2416-786, KS-2420-188, KS-2412-664) 신규 승인 진행", "KYEC / Sigurd: KS-871587, KS-880546 정기 오더 관리"]}], "samples": [{"id": "smp_lgj_1", "customer": "Amkor TW", "pn": "KS-890280", "item": "TRAY MPPO LP", "qty": 50, "status": "OPEN", "date": "2026-09-10", "note": "샘플 제출 완료"}, {"id": "smp_lgj_2", "customer": "SPIL TW", "pn": "KS-2416-786", "item": "C/T 300M", "qty": 10, "status": "OPEN", "date": "2026-09-05", "note": "고객 승인 대기"}, {"id": "smp_lgj_3", "customer": "KYEC", "pn": "KS-871587", "item": "TRAY 125/150", "qty": 50, "status": "OPEN", "date": "2026-09-04", "note": "진행중"}]}, {"id": "lsc", "name": "이상철 선임", "role": "선임", "short_name": "이상철", "regions": "싱가포르 & 태국 (Singapore & Thailand)", "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)", "sales": [{"site": "Skyworks (싱가포르 SG)", "target": 200000, "current": 75000, "additional": 125000, "expected": 200000, "note": "싱가포르 법인 필터 공정 NPI 연계", "weekly_forecasts": {"W1": {"target": 200000.0, "current": 30000, "additional": 170000, "expected": 200000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 200000.0, "current": 56250, "additional": 143750, "expected": 200000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 200000.0, "current": 75000.0, "additional": 125000.0, "expected": 200000.0, "note": "싱가포르 법인 필터 공정 NPI 연계"}, "W4": {"target": 200000.0, "current": 75000.0, "additional": 125000.0, "expected": 200000.0, "note": "4주차 마감 목표 달성 전망"}}}, {"site": "UTAC / Hanwha NxMD (태국)", "target": 120000, "current": 36000, "additional": 84000, "expected": 120000, "note": "신규 Tray 금형 3벌 양산 오더 진행", "weekly_forecasts": {"W1": {"target": 120000.0, "current": 14400, "additional": 105600, "expected": 120000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 120000.0, "current": 27000, "additional": 93000, "expected": 120000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 120000.0, "current": 36000.0, "additional": 84000.0, "expected": 120000.0, "note": "신규 Tray 금형 3벌 양산 오더 진행"}, "W4": {"target": 120000.0, "current": 36000.0, "additional": 84000.0, "expected": 120000.0, "note": "4주차 마감 목표 달성 전망"}}}], "issues": [{"id": "iss_lsc_1", "topic": "싱가포르 Skyworks SG 필터 공정 NPI 검토", "tag": "NPI 전환", "bullets": ["싱가포르 라인 신규 필터 전환 수주 협의 및 일정 조율", "현지 C/T 테이프 릴 샘플 공급 및 테스트 진행"]}, {"id": "iss_lsc_2", "topic": "태국 Hanwha NxMD 신규 금형 3벌 제작 완료", "tag": "금형 제작", "bullets": ["신규 Tray 금형 3벌 혜주에서 제작 완료 (KS-871649, KS-871650, KS-871651)", "내부 Test용 월 1K 사용 예상에 따른 추가 양산 협의"]}, {"id": "iss_lsc_3", "topic": "태국 UTAC-TH 정기 납기 관리 및 단가 협상", "tag": "정기 납품", "bullets": ["UTAC-TH 정기 Tray 납품 건 품질 승인 후 차기 오더 확보"]}], "samples": [{"id": "smp_lsc_1", "customer": "Skyworks SG", "pn": "KS-0804-1690-SG", "item": "C/T Hybrid", "qty": 5, "status": "OPEN", "date": "2026-09-12", "note": "SG 현지 평가 중"}, {"id": "smp_lsc_2", "customer": "UTAC-TH", "pn": "KS-870752", "item": "TRAY", "qty": 50, "status": "OPEN", "date": "2026-09-05", "note": "승인 대기"}, {"id": "smp_lsc_3", "customer": "Hanwha NxMD", "pn": "KS-871649", "item": "TRAY NxMD", "qty": 20, "status": "CLOSE", "date": "2026-09-01", "note": "금형 제작 완료"}]}, {"id": "kwt", "name": "김완태 사원", "role": "사원", "short_name": "김완태", "regions": "일본 & 필리핀 (Japan & Philippines)", "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)", "sales": [{"site": "Amkor / ATP / SSPC (필리핀 Clark/Laguna)", "target": 280000, "current": 114800, "additional": 165200, "expected": 280000, "note": "ATP, SSPC 주간 납품 목표 달성 순항", "weekly_forecasts": {"W1": {"target": 280000.0, "current": 45920, "additional": 234080, "expected": 280000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 280000.0, "current": 86100, "additional": 193900, "expected": 280000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 280000.0, "current": 114800.0, "additional": 165200.0, "expected": 280000.0, "note": "ATP, SSPC 주간 납품 목표 달성 순항"}, "W4": {"target": 280000.0, "current": 114800.0, "additional": 165200.0, "expected": 280000.0, "note": "4주차 마감 목표 달성 전망"}}}, {"site": "일본 고객사 (Sony, Renesas, Kaga 등)", "target": 120000, "current": 38500, "additional": 71500, "expected": 110000, "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가", "weekly_forecasts": {"W1": {"target": 120000.0, "current": 15400, "additional": 104600, "expected": 120000.0, "note": "1주차 초기 예상치"}, "W2": {"target": 120000.0, "current": 28875, "additional": 91125, "expected": 120000.0, "note": "2주차 실적 집계 및 고객사 PO 협의"}, "W3": {"target": 120000.0, "current": 38500.0, "additional": 71500.0, "expected": 110000.0, "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가"}, "W4": {"target": 120000.0, "current": 38500.0, "additional": 71500.0, "expected": 110000.0, "note": "4주차 마감 목표 달성 전망"}}}], "issues": [{"id": "iss_kwt_1", "topic": "필리핀 법인 신규 2DID 설비 셋업 및 이전", "tag": "설비 셋업", "bullets": ["필리핀 법인 2DID 신규 설비 2대 가동 안정화", "12월 초 한국 2대 추가 필리핀 이동 계획 확정"]}, {"id": "iss_kwt_2", "topic": "필리핀 Amkor/ATP 대상 KS-870849 신규 IC Tray 도면 배포", "tag": "도면 배포", "bullets": ["KS-870849(00) 최신 도면 배포 및 금형 제작 품질 승인 완료", "고객사 FAI 샘플 평가 및 양산 오더 준비"]}, {"id": "iss_kwt_3", "topic": "일본 고객사 친환경 ESD 신소재 Tray 제안", "tag": "신규 제안", "bullets": ["소니 및 르네사스 재팬 대상 리사이클 원료 배합 트레이 기술 자료 송부", "10월 1차 평가용 시제품 제작 협의"]}], "samples": [{"id": "smp_kwt_1", "customer": "Amkor PH", "pn": "KS-870849", "item": "IC TRAY", "qty": 50, "status": "OPEN", "date": "2026-09-15", "note": "도면 배포 및 FAI 샘플 준비"}, {"id": "smp_kwt_2", "customer": "ATP PH", "pn": "KS-870632", "item": "TRAY", "qty": 100, "status": "CLOSE", "date": "2026-09-10", "note": "양산 승인 완료"}, {"id": "smp_kwt_3", "customer": "Sony JP", "pn": "KS-880921-ECO", "item": "ESD TRAY", "qty": 30, "status": "OPEN", "date": "2026-09-14", "note": "신소재 시제품 평가"}]}], "current_system_week": "2026-09-W3", "active_period": {"month": "2026-09", "week": "W3"}, "history_archives": {"2026-08": {"title": "2026년 8월 해외영업부 월간보고서 (마감 실적)", "month_label": "2026년 8월 마감", "kpi": {"target": 2050000, "current": 1692000, "expected": 1692000, "rate": 82.5}, "members": [{"id": "hjh", "name": "한준희 책임", "role": "책임", "regions": "미국 (USA)", "accounts": "Skyworks (US), Renesas (US), Broadcom (US)", "sales": [{"site": "Skyworks US - Hybrid PC", "target": 400000, "current": 380000, "additional": 0, "expected": 380000, "note": "8월 최종 마감 공급 완료"}], "issues": [{"id": "iss_hjh_aug_1", "topic": "미국 사이트 C/T Hybrid NPI 초기 승인 통과", "tag": "완료", "bullets": ["1단계 모델 20종 승인 완료 후 선적 진행"]}], "samples": [{"id": "smp_hjh_aug_1", "customer": "Skyworks US", "pn": "KS-0804-1650", "item": "C/T Hybrid", "qty": 5, "status": "CLOSE", "date": "2026-08-15", "note": "승인 완료"}]}, {"id": "ksm", "name": "김샘물 선임", "role": "선임", "regions": "말레이시아 (Malaysia)", "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)", "sales": [{"site": "Broadcom / Inari MY", "target": 390000, "current": 375000, "additional": 0, "expected": 375000, "note": "LPAO 테이프 공급 완료"}, {"site": "Infineon MY", "target": 170000, "current": 142000, "additional": 0, "expected": 142000, "note": "SAP 전환 전 최종 선적"}], "issues": [{"id": "iss_ksm_aug_1", "topic": "Inari 금형 이전 1차 협의", "tag": "완료", "bullets": ["금형 이관 일정 수립 및 고객사 확인 완료"]}], "samples": []}, {"id": "lgj", "name": "이가진 선임", "role": "선임", "regions": "대만 (Taiwan)", "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd", "sales": [{"site": "Amkor Taiwan", "target": 260000, "current": 248000, "additional": 0, "expected": 248000, "note": "WLCSP Tray 공급"}, {"site": "SPIL Taiwan", "target": 150000, "current": 125000, "additional": 0, "expected": 125000, "note": "BGA Tray 납품 완료"}], "issues": [{"id": "iss_lgj_aug_1", "topic": "SPIL 8월 정기 납품 완료", "tag": "완료", "bullets": ["품질 이슈 없이 전량 인수 완료"]}], "samples": []}, {"id": "lsc", "name": "이상철 선임", "role": "선임", "regions": "싱가포르 & 태국 (Singapore & Thailand)", "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)", "sales": [{"site": "Skyworks SG", "target": 210000, "current": 186000, "additional": 0, "expected": 186000, "note": "싱가포르 직수출 마감"}, {"site": "UTAC TH", "target": 180000, "current": 148000, "additional": 0, "expected": 148000, "note": "태국 공장 납품"}], "issues": [], "samples": []}, {"id": "kwt", "name": "김완태 사원", "role": "사원", "regions": "일본 & 필리핀 (Japan & Philippines)", "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)", "sales": [{"site": "Amkor PH", "target": 110000, "current": 88000, "additional": 0, "expected": 88000, "note": "필리핀 8월 마감 실적"}], "issues": [], "samples": []}]}, "2026-07": {"title": "2026년 7월 해외영업부 월간보고서 (마감 실적)", "month_label": "2026년 7월 마감", "kpi": {"target": 1900000, "current": 1580000, "expected": 1580000, "rate": 83.2}, "members": [{"id": "hjh", "name": "한준희 책임", "role": "책임", "regions": "미국 (USA)", "accounts": "Skyworks (US), Renesas (US), Broadcom (US)", "sales": [{"site": "Skyworks US - Hybrid PC", "target": 380000, "current": 350000, "additional": 0, "expected": 350000, "note": "7월 공급 완료"}], "issues": [], "samples": []}, {"id": "ksm", "name": "김샘물 선임", "role": "선임", "regions": "말레이시아 (Malaysia)", "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)", "sales": [{"site": "Broadcom / Inari MY", "target": 360000, "current": 340000, "additional": 0, "expected": 340000, "note": "7월 공급 완료"}], "issues": [], "samples": []}, {"id": "lgj", "name": "이가진 선임", "role": "선임", "regions": "대만 (Taiwan)", "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd", "sales": [{"site": "Amkor Taiwan", "target": 250000, "current": 230000, "additional": 0, "expected": 230000, "note": "7월 마감"}], "issues": [], "samples": []}, {"id": "lsc", "name": "이상철 선임", "role": "선임", "regions": "싱가포르 & 태국 (Singapore & Thailand)", "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)", "sales": [{"site": "Skyworks SG", "target": 200000, "current": 175000, "additional": 0, "expected": 175000, "note": "7월 마감"}], "issues": [], "samples": []}, {"id": "kwt", "name": "김완태 사원", "role": "사원", "regions": "일본 & 필리핀 (Japan & Philippines)", "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)", "sales": [{"site": "Amkor PH", "target": 100000, "current": 82000, "additional": 0, "expected": 82000, "note": "7월 마감"}], "issues": [], "samples": []}]}}, "revisions": [{"id": "rev_20260917_115500", "timestamp": "2026-09-17 11:55:00", "user": "한준희 책임", "action": "매출 갱신", "summary": "한준희 책임: 9월 3주차 Skyworks US 매출 실적 $154,200 및 마감예상 $450,000 집계", "snapshot": "{\"members\": [{\"id\": \"hjh\", \"name\": \"한준희 책임\", \"role\": \"책임\", \"short_name\": \"한준희\", \"regions\": \"미국 (USA)\", \"accounts\": \"Skyworks (US), Renesas (US), Broadcom (US)\", \"sales\": [{\"site\": \"Skyworks (미국 US) - NPI C/T Hybrid\", \"target\": 450000, \"current\": 154200, \"additional\": 295800, \"expected\": 450000, \"note\": \"NPI 34종 완료 후 미국 양산 공급\", \"weekly_forecasts\": {\"W1\": {\"target\": 450000.0, \"current\": 61680, \"additional\": 388320, \"expected\": 450000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 450000.0, \"current\": 115650, \"additional\": 334350, \"expected\": 450000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 450000.0, \"current\": 154200.0, \"additional\": 295800.0, \"expected\": 450000.0, \"note\": \"NPI 34종 완료 후 미국 양산 공급\"}, \"W4\": {\"target\": 450000.0, \"current\": 154200.0, \"additional\": 295800.0, \"expected\": 450000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_hjh_1\", \"topic\": \"Skyworks US C/T Hybrid PC NPI Project\", \"tag\": \"NPI 전환\", \"bullets\": [\"추가 Filter Conversion 43종 중 34모델 NPI 진행 완료, 미국 공장 상황 검토\", \"WLCSP Project: 9종 진행 중 (2종 FAI 샘플 평가 중)\"]}, {\"id\": \"iss_hjh_2\", \"topic\": \"2DID 신규 설비 글로벌 셋업 및 공장 배치\", \"tag\": \"설비 셋업\", \"bullets\": [\"필리핀 공장 2대 셋업 완료, 한국 공장 3대 도입 완료 (총 7대 가동)\", \"12월 초 2대 추가 이동 계획 수립\"]}, {\"id\": \"iss_hjh_3\", \"topic\": \"미국 고객사 차세대 고내열 REEL 개발 완료\", \"tag\": \"양산 대기\", \"bullets\": [\"REEL 개발 완료에 따라 Hybrid PC 추가 접수 예정 (32종 Filter PJT 접수 완료)\"]}], \"samples\": [{\"id\": \"smp_hjh_1\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1661-PC\", \"item\": \"C/T Hybrid\", \"qty\": 2, \"status\": \"CLOSE\", \"date\": \"2026-09-08\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_hjh_2\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1662-PC\", \"item\": \"C/T Hybrid\", \"qty\": 2, \"status\": \"OPEN\", \"date\": \"2026-09-08\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_hjh_3\", \"customer\": \"Skyworks US\", \"pn\": \"KS-1208-1895\", \"item\": \"C/T Reel\", \"qty\": 10, \"status\": \"OPEN\", \"date\": \"2026-09-02\", \"note\": \"샘플 출하 완료\"}, {\"id\": \"smp_hjh_4\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1680-PC\", \"item\": \"C/T 2DID\", \"qty\": 2, \"status\": \"OPEN\", \"date\": \"2026-09-09\", \"note\": \"라인 평가 중\"}]}, {\"id\": \"ksm\", \"name\": \"김샘물 선임\", \"role\": \"선임\", \"short_name\": \"김샘물\", \"regions\": \"말레이시아 (Malaysia)\", \"accounts\": \"Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)\", \"sales\": [{\"site\": \"Broadcom / Inari (말레이시아 Penang)\", \"target\": 420000, \"current\": 88400, \"additional\": 331600, \"expected\": 420000, \"note\": \"LPAO 단가 .6 협의 완료\", \"weekly_forecasts\": {\"W1\": {\"target\": 420000.0, \"current\": 35360, \"additional\": 384640, \"expected\": 420000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 420000.0, \"current\": 66300, \"additional\": 353700, \"expected\": 420000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 420000.0, \"current\": 88400.0, \"additional\": 331600.0, \"expected\": 420000.0, \"note\": \"LPAO 단가 .6 협의 완료\"}, \"W4\": {\"target\": 420000.0, \"current\": 88400.0, \"additional\": 331600.0, \"expected\": 420000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"Infineon (말레이시아 Melaka/Kulim)\", \"target\": 180000, \"current\": 52900, \"additional\": 127100, \"expected\": 180000, \"note\": \"신규 SAP 전환 후 정상화\", \"weekly_forecasts\": {\"W1\": {\"target\": 180000.0, \"current\": 21160, \"additional\": 158840, \"expected\": 180000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 180000.0, \"current\": 39675, \"additional\": 140325, \"expected\": 180000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 180000.0, \"current\": 52900.0, \"additional\": 127100.0, \"expected\": 180000.0, \"note\": \"신규 SAP 전환 후 정상화\"}, \"W4\": {\"target\": 180000.0, \"current\": 52900.0, \"additional\": 127100.0, \"expected\": 180000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"Unisem / ASE (말레이시아)\", \"target\": 150000, \"current\": 41200, \"additional\": 88800, \"expected\": 130000, \"note\": \"C/T 신규 테이프 승인\", \"weekly_forecasts\": {\"W1\": {\"target\": 150000.0, \"current\": 16480, \"additional\": 133520, \"expected\": 150000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 150000.0, \"current\": 30900, \"additional\": 119100, \"expected\": 150000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 150000.0, \"current\": 41200.0, \"additional\": 88800.0, \"expected\": 130000.0, \"note\": \"C/T 신규 테이프 승인\"}, \"W4\": {\"target\": 150000.0, \"current\": 41200.0, \"additional\": 88800.0, \"expected\": 130000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_ksm_1\", \"topic\": \"Broadcom / Inari MY Buy-Off 및 금형 증작 대응\", \"tag\": \"금형 증작\", \"bullets\": [\"KS-881490-2 금형 증작 완료 및 베트남 이전 완료 (단가 .6 조정)\", \"Inari MY 측에서 LPAO 품목 Particle test 요청에 따른 공정 검증\"]}, {\"id\": \"iss_ksm_2\", \"topic\": \"Infineon 말레이시아 신규 SAP 체제 전환 및 원재료 수급\", \"tag\": \"SAP 전환\", \"bullets\": [\"기존 재고 소진 후 new PO/PN 적용 체제로 전환 완료\", \"Denka PS Sheet 수급 불균형에 따른 대체 원재료 검토 병행\"]}, {\"id\": \"iss_ksm_3\", \"topic\": \"Unisem 말레이시아 C/T 신규 테이프 승인\", \"tag\": \"샘플 평가\", \"bullets\": [\"KS-1612-692 C/T 515K 발송분 현지 품질 승인 대기\", \"10월부터 말레이시아 라인 정기 발주 전환 협의\"]}], \"samples\": [{\"id\": \"smp_ksm_1\", \"customer\": \"Broadcom (Inari)\", \"pn\": \"KS-871382-2\", \"item\": \"TRAY MPPO\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-08-24\", \"note\": \"9월말 QUAL 제출 예정\"}, {\"id\": \"smp_ksm_2\", \"customer\": \"UNISEM MY\", \"pn\": \"KS-1612-692\", \"item\": \"C/T\", \"qty\": 515, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_ksm_3\", \"customer\": \"ASE-MY\", \"pn\": \"PBCK13724\", \"item\": \"REEL\", \"qty\": 20, \"status\": \"CLOSE\", \"date\": \"2026-08-15\", \"note\": \"승인 완료\"}]}, {\"id\": \"lgj\", \"name\": \"이가진 선임\", \"role\": \"선임\", \"short_name\": \"이가진\", \"regions\": \"대만 (Taiwan)\", \"accounts\": \"Amkor (TW), SPIL (TW), KYEC, Sigurd\", \"sales\": [{\"site\": \"Amkor / SPIL (대만 Hsinchu/Taichung)\", \"target\": 550000, \"current\": 195000, \"additional\": 355000, \"expected\": 550000, \"note\": \"9/21 TnR 단가 인상 PO 반영\", \"weekly_forecasts\": {\"W1\": {\"target\": 550000.0, \"current\": 78000, \"additional\": 472000, \"expected\": 550000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 550000.0, \"current\": 146250, \"additional\": 403750, \"expected\": 550000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 550000.0, \"current\": 195000.0, \"additional\": 355000.0, \"expected\": 550000.0, \"note\": \"9/21 TnR 단가 인상 PO 반영\"}, \"W4\": {\"target\": 550000.0, \"current\": 195000.0, \"additional\": 355000.0, \"expected\": 550000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"KYEC / Sigurd (대만)\", \"target\": 150000, \"current\": 53000, \"additional\": 97000, \"expected\": 150000, \"note\": \"정기 오더 및 C/T 300M 규격 승인\", \"weekly_forecasts\": {\"W1\": {\"target\": 150000.0, \"current\": 21200, \"additional\": 128800, \"expected\": 150000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 150000.0, \"current\": 39750, \"additional\": 110250, \"expected\": 150000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 150000.0, \"current\": 53000.0, \"additional\": 97000.0, \"expected\": 150000.0, \"note\": \"정기 오더 및 C/T 300M 규격 승인\"}, \"W4\": {\"target\": 150000.0, \"current\": 53000.0, \"additional\": 97000.0, \"expected\": 150000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_lgj_1\", \"topic\": \"대만 ASECL / SPIL PCN 이슈 및 TnR 단가 인상\", \"tag\": \"PCN 검토\", \"bullets\": [\"SPIL GIS 측의 ASECL 압박으로 PCN 진행 중단 및 샘플 규격(Warpage OOS) 재점검\", \"9/21부터 SPIL, ASE 대상 TnR 제품군 단가 인상 PO 적용\"]}, {\"id\": \"iss_lgj_2\", \"topic\": \"Amkor TW 신규 MPPO LP 트레이 금형 제작\", \"tag\": \"금형 개발\", \"bullets\": [\"Amkor TW: KS-890280 (MPPO LP) 신규 트레이 금형 제작 진행\", \"SPIL TW: C/T 300M 규격(KS-2416-786, KS-2420-188, KS-2412-664) 신규 승인 진행\", \"KYEC / Sigurd: KS-871587, KS-880546 정기 오더 관리\"]}], \"samples\": [{\"id\": \"smp_lgj_1\", \"customer\": \"Amkor TW\", \"pn\": \"KS-890280\", \"item\": \"TRAY MPPO LP\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-10\", \"note\": \"샘플 제출 완료\"}, {\"id\": \"smp_lgj_2\", \"customer\": \"SPIL TW\", \"pn\": \"KS-2416-786\", \"item\": \"C/T 300M\", \"qty\": 10, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_lgj_3\", \"customer\": \"KYEC\", \"pn\": \"KS-871587\", \"item\": \"TRAY 125/150\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-04\", \"note\": \"진행중\"}]}, {\"id\": \"lsc\", \"name\": \"이상철 선임\", \"role\": \"선임\", \"short_name\": \"이상철\", \"regions\": \"싱가포르 & 태국 (Singapore & Thailand)\", \"accounts\": \"Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)\", \"sales\": [{\"site\": \"Skyworks (싱가포르 SG)\", \"target\": 200000, \"current\": 75000, \"additional\": 125000, \"expected\": 200000, \"note\": \"싱가포르 법인 필터 공정 NPI 연계\", \"weekly_forecasts\": {\"W1\": {\"target\": 200000.0, \"current\": 30000, \"additional\": 170000, \"expected\": 200000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 200000.0, \"current\": 56250, \"additional\": 143750, \"expected\": 200000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 200000.0, \"current\": 75000.0, \"additional\": 125000.0, \"expected\": 200000.0, \"note\": \"싱가포르 법인 필터 공정 NPI 연계\"}, \"W4\": {\"target\": 200000.0, \"current\": 75000.0, \"additional\": 125000.0, \"expected\": 200000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"UTAC / Hanwha NxMD (태국)\", \"target\": 120000, \"current\": 36000, \"additional\": 84000, \"expected\": 120000, \"note\": \"신규 Tray 금형 3벌 양산 오더 진행\", \"weekly_forecasts\": {\"W1\": {\"target\": 120000.0, \"current\": 14400, \"additional\": 105600, \"expected\": 120000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 120000.0, \"current\": 27000, \"additional\": 93000, \"expected\": 120000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 120000.0, \"current\": 36000.0, \"additional\": 84000.0, \"expected\": 120000.0, \"note\": \"신규 Tray 금형 3벌 양산 오더 진행\"}, \"W4\": {\"target\": 120000.0, \"current\": 36000.0, \"additional\": 84000.0, \"expected\": 120000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_lsc_1\", \"topic\": \"싱가포르 Skyworks SG 필터 공정 NPI 검토\", \"tag\": \"NPI 전환\", \"bullets\": [\"싱가포르 라인 신규 필터 전환 수주 협의 및 일정 조율\", \"현지 C/T 테이프 릴 샘플 공급 및 테스트 진행\"]}, {\"id\": \"iss_lsc_2\", \"topic\": \"태국 Hanwha NxMD 신규 금형 3벌 제작 완료\", \"tag\": \"금형 제작\", \"bullets\": [\"신규 Tray 금형 3벌 혜주에서 제작 완료 (KS-871649, KS-871650, KS-871651)\", \"내부 Test용 월 1K 사용 예상에 따른 추가 양산 협의\"]}, {\"id\": \"iss_lsc_3\", \"topic\": \"태국 UTAC-TH 정기 납기 관리 및 단가 협상\", \"tag\": \"정기 납품\", \"bullets\": [\"UTAC-TH 정기 Tray 납품 건 품질 승인 후 차기 오더 확보\"]}], \"samples\": [{\"id\": \"smp_lsc_1\", \"customer\": \"Skyworks SG\", \"pn\": \"KS-0804-1690-SG\", \"item\": \"C/T Hybrid\", \"qty\": 5, \"status\": \"OPEN\", \"date\": \"2026-09-12\", \"note\": \"SG 현지 평가 중\"}, {\"id\": \"smp_lsc_2\", \"customer\": \"UTAC-TH\", \"pn\": \"KS-870752\", \"item\": \"TRAY\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"승인 대기\"}, {\"id\": \"smp_lsc_3\", \"customer\": \"Hanwha NxMD\", \"pn\": \"KS-871649\", \"item\": \"TRAY NxMD\", \"qty\": 20, \"status\": \"CLOSE\", \"date\": \"2026-09-01\", \"note\": \"금형 제작 완료\"}]}, {\"id\": \"kwt\", \"name\": \"김완태 사원\", \"role\": \"사원\", \"short_name\": \"김완태\", \"regions\": \"일본 & 필리핀 (Japan & Philippines)\", \"accounts\": \"Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)\", \"sales\": [{\"site\": \"Amkor / ATP / SSPC (필리핀 Clark/Laguna)\", \"target\": 280000, \"current\": 114800, \"additional\": 165200, \"expected\": 280000, \"note\": \"ATP, SSPC 주간 납품 목표 달성 순항\", \"weekly_forecasts\": {\"W1\": {\"target\": 280000.0, \"current\": 45920, \"additional\": 234080, \"expected\": 280000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 280000.0, \"current\": 86100, \"additional\": 193900, \"expected\": 280000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 280000.0, \"current\": 114800.0, \"additional\": 165200.0, \"expected\": 280000.0, \"note\": \"ATP, SSPC 주간 납품 목표 달성 순항\"}, \"W4\": {\"target\": 280000.0, \"current\": 114800.0, \"additional\": 165200.0, \"expected\": 280000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"일본 고객사 (Sony, Renesas, Kaga 등)\", \"target\": 120000, \"current\": 38500, \"additional\": 71500, \"expected\": 110000, \"note\": \"친환경 ESD 신소재 Tray 제안 및 샘플 평가\", \"weekly_forecasts\": {\"W1\": {\"target\": 120000.0, \"current\": 15400, \"additional\": 104600, \"expected\": 120000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 120000.0, \"current\": 28875, \"additional\": 91125, \"expected\": 120000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 120000.0, \"current\": 38500.0, \"additional\": 71500.0, \"expected\": 110000.0, \"note\": \"친환경 ESD 신소재 Tray 제안 및 샘플 평가\"}, \"W4\": {\"target\": 120000.0, \"current\": 38500.0, \"additional\": 71500.0, \"expected\": 110000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_kwt_1\", \"topic\": \"필리핀 법인 신규 2DID 설비 셋업 및 이전\", \"tag\": \"설비 셋업\", \"bullets\": [\"필리핀 법인 2DID 신규 설비 2대 가동 안정화\", \"12월 초 한국 2대 추가 필리핀 이동 계획 확정\"]}, {\"id\": \"iss_kwt_2\", \"topic\": \"필리핀 Amkor/ATP 대상 KS-870849 신규 IC Tray 도면 배포\", \"tag\": \"도면 배포\", \"bullets\": [\"KS-870849(00) 최신 도면 배포 및 금형 제작 품질 승인 완료\", \"고객사 FAI 샘플 평가 및 양산 오더 준비\"]}, {\"id\": \"iss_kwt_3\", \"topic\": \"일본 고객사 친환경 ESD 신소재 Tray 제안\", \"tag\": \"신규 제안\", \"bullets\": [\"소니 및 르네사스 재팬 대상 리사이클 원료 배합 트레이 기술 자료 송부\", \"10월 1차 평가용 시제품 제작 협의\"]}], \"samples\": [{\"id\": \"smp_kwt_1\", \"customer\": \"Amkor PH\", \"pn\": \"KS-870849\", \"item\": \"IC TRAY\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-15\", \"note\": \"도면 배포 및 FAI 샘플 준비\"}, {\"id\": \"smp_kwt_2\", \"customer\": \"ATP PH\", \"pn\": \"KS-870632\", \"item\": \"TRAY\", \"qty\": 100, \"status\": \"CLOSE\", \"date\": \"2026-09-10\", \"note\": \"양산 승인 완료\"}, {\"id\": \"smp_kwt_3\", \"customer\": \"Sony JP\", \"pn\": \"KS-880921-ECO\", \"item\": \"ESD TRAY\", \"qty\": 30, \"status\": \"OPEN\", \"date\": \"2026-09-14\", \"note\": \"신소재 시제품 평가\"}]}], \"kpi\": {\"target\": 2404602, \"current\": 788600.0, \"expected\": 1836000.0, \"rate\": 76.4}}"}, {"id": "rev_20260917_104200", "timestamp": "2026-09-17 10:42:00", "user": "김샘물 선임", "action": "특이사항 등록", "summary": "김샘물 선임: Broadcom / Inari MY Buy-Off 및 금형 증작 대응 프로젝트 등록", "snapshot": "{\"members\": [{\"id\": \"hjh\", \"name\": \"한준희 책임\", \"role\": \"책임\", \"short_name\": \"한준희\", \"regions\": \"미국 (USA)\", \"accounts\": \"Skyworks (US), Renesas (US), Broadcom (US)\", \"sales\": [{\"site\": \"Skyworks (미국 US) - NPI C/T Hybrid\", \"target\": 450000, \"current\": 154200, \"additional\": 295800, \"expected\": 450000, \"note\": \"NPI 34종 완료 후 미국 양산 공급\", \"weekly_forecasts\": {\"W1\": {\"target\": 450000.0, \"current\": 61680, \"additional\": 388320, \"expected\": 450000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 450000.0, \"current\": 115650, \"additional\": 334350, \"expected\": 450000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 450000.0, \"current\": 154200.0, \"additional\": 295800.0, \"expected\": 450000.0, \"note\": \"NPI 34종 완료 후 미국 양산 공급\"}, \"W4\": {\"target\": 450000.0, \"current\": 154200.0, \"additional\": 295800.0, \"expected\": 450000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_hjh_1\", \"topic\": \"Skyworks US C/T Hybrid PC NPI Project\", \"tag\": \"NPI 전환\", \"bullets\": [\"추가 Filter Conversion 43종 중 34모델 NPI 진행 완료, 미국 공장 상황 검토\", \"WLCSP Project: 9종 진행 중 (2종 FAI 샘플 평가 중)\"]}, {\"id\": \"iss_hjh_2\", \"topic\": \"2DID 신규 설비 글로벌 셋업 및 공장 배치\", \"tag\": \"설비 셋업\", \"bullets\": [\"필리핀 공장 2대 셋업 완료, 한국 공장 3대 도입 완료 (총 7대 가동)\", \"12월 초 2대 추가 이동 계획 수립\"]}, {\"id\": \"iss_hjh_3\", \"topic\": \"미국 고객사 차세대 고내열 REEL 개발 완료\", \"tag\": \"양산 대기\", \"bullets\": [\"REEL 개발 완료에 따라 Hybrid PC 추가 접수 예정 (32종 Filter PJT 접수 완료)\"]}], \"samples\": [{\"id\": \"smp_hjh_1\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1661-PC\", \"item\": \"C/T Hybrid\", \"qty\": 2, \"status\": \"CLOSE\", \"date\": \"2026-09-08\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_hjh_2\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1662-PC\", \"item\": \"C/T Hybrid\", \"qty\": 2, \"status\": \"OPEN\", \"date\": \"2026-09-08\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_hjh_3\", \"customer\": \"Skyworks US\", \"pn\": \"KS-1208-1895\", \"item\": \"C/T Reel\", \"qty\": 10, \"status\": \"OPEN\", \"date\": \"2026-09-02\", \"note\": \"샘플 출하 완료\"}, {\"id\": \"smp_hjh_4\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1680-PC\", \"item\": \"C/T 2DID\", \"qty\": 2, \"status\": \"OPEN\", \"date\": \"2026-09-09\", \"note\": \"라인 평가 중\"}]}, {\"id\": \"ksm\", \"name\": \"김샘물 선임\", \"role\": \"선임\", \"short_name\": \"김샘물\", \"regions\": \"말레이시아 (Malaysia)\", \"accounts\": \"Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)\", \"sales\": [{\"site\": \"Broadcom / Inari (말레이시아 Penang)\", \"target\": 420000, \"current\": 88400, \"additional\": 331600, \"expected\": 420000, \"note\": \"LPAO 단가 .6 협의 완료\", \"weekly_forecasts\": {\"W1\": {\"target\": 420000.0, \"current\": 35360, \"additional\": 384640, \"expected\": 420000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 420000.0, \"current\": 66300, \"additional\": 353700, \"expected\": 420000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 420000.0, \"current\": 88400.0, \"additional\": 331600.0, \"expected\": 420000.0, \"note\": \"LPAO 단가 .6 협의 완료\"}, \"W4\": {\"target\": 420000.0, \"current\": 88400.0, \"additional\": 331600.0, \"expected\": 420000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"Infineon (말레이시아 Melaka/Kulim)\", \"target\": 180000, \"current\": 52900, \"additional\": 127100, \"expected\": 180000, \"note\": \"신규 SAP 전환 후 정상화\", \"weekly_forecasts\": {\"W1\": {\"target\": 180000.0, \"current\": 21160, \"additional\": 158840, \"expected\": 180000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 180000.0, \"current\": 39675, \"additional\": 140325, \"expected\": 180000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 180000.0, \"current\": 52900.0, \"additional\": 127100.0, \"expected\": 180000.0, \"note\": \"신규 SAP 전환 후 정상화\"}, \"W4\": {\"target\": 180000.0, \"current\": 52900.0, \"additional\": 127100.0, \"expected\": 180000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"Unisem / ASE (말레이시아)\", \"target\": 150000, \"current\": 41200, \"additional\": 88800, \"expected\": 130000, \"note\": \"C/T 신규 테이프 승인\", \"weekly_forecasts\": {\"W1\": {\"target\": 150000.0, \"current\": 16480, \"additional\": 133520, \"expected\": 150000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 150000.0, \"current\": 30900, \"additional\": 119100, \"expected\": 150000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 150000.0, \"current\": 41200.0, \"additional\": 88800.0, \"expected\": 130000.0, \"note\": \"C/T 신규 테이프 승인\"}, \"W4\": {\"target\": 150000.0, \"current\": 41200.0, \"additional\": 88800.0, \"expected\": 130000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_ksm_1\", \"topic\": \"Broadcom / Inari MY Buy-Off 및 금형 증작 대응\", \"tag\": \"금형 증작\", \"bullets\": [\"KS-881490-2 금형 증작 완료 및 베트남 이전 완료 (단가 .6 조정)\", \"Inari MY 측에서 LPAO 품목 Particle test 요청에 따른 공정 검증\"]}, {\"id\": \"iss_ksm_2\", \"topic\": \"Infineon 말레이시아 신규 SAP 체제 전환 및 원재료 수급\", \"tag\": \"SAP 전환\", \"bullets\": [\"기존 재고 소진 후 new PO/PN 적용 체제로 전환 완료\", \"Denka PS Sheet 수급 불균형에 따른 대체 원재료 검토 병행\"]}, {\"id\": \"iss_ksm_3\", \"topic\": \"Unisem 말레이시아 C/T 신규 테이프 승인\", \"tag\": \"샘플 평가\", \"bullets\": [\"KS-1612-692 C/T 515K 발송분 현지 품질 승인 대기\", \"10월부터 말레이시아 라인 정기 발주 전환 협의\"]}], \"samples\": [{\"id\": \"smp_ksm_1\", \"customer\": \"Broadcom (Inari)\", \"pn\": \"KS-871382-2\", \"item\": \"TRAY MPPO\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-08-24\", \"note\": \"9월말 QUAL 제출 예정\"}, {\"id\": \"smp_ksm_2\", \"customer\": \"UNISEM MY\", \"pn\": \"KS-1612-692\", \"item\": \"C/T\", \"qty\": 515, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_ksm_3\", \"customer\": \"ASE-MY\", \"pn\": \"PBCK13724\", \"item\": \"REEL\", \"qty\": 20, \"status\": \"CLOSE\", \"date\": \"2026-08-15\", \"note\": \"승인 완료\"}]}, {\"id\": \"lgj\", \"name\": \"이가진 선임\", \"role\": \"선임\", \"short_name\": \"이가진\", \"regions\": \"대만 (Taiwan)\", \"accounts\": \"Amkor (TW), SPIL (TW), KYEC, Sigurd\", \"sales\": [{\"site\": \"Amkor / SPIL (대만 Hsinchu/Taichung)\", \"target\": 550000, \"current\": 195000, \"additional\": 355000, \"expected\": 550000, \"note\": \"9/21 TnR 단가 인상 PO 반영\", \"weekly_forecasts\": {\"W1\": {\"target\": 550000.0, \"current\": 78000, \"additional\": 472000, \"expected\": 550000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 550000.0, \"current\": 146250, \"additional\": 403750, \"expected\": 550000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 550000.0, \"current\": 195000.0, \"additional\": 355000.0, \"expected\": 550000.0, \"note\": \"9/21 TnR 단가 인상 PO 반영\"}, \"W4\": {\"target\": 550000.0, \"current\": 195000.0, \"additional\": 355000.0, \"expected\": 550000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"KYEC / Sigurd (대만)\", \"target\": 150000, \"current\": 53000, \"additional\": 97000, \"expected\": 150000, \"note\": \"정기 오더 및 C/T 300M 규격 승인\", \"weekly_forecasts\": {\"W1\": {\"target\": 150000.0, \"current\": 21200, \"additional\": 128800, \"expected\": 150000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 150000.0, \"current\": 39750, \"additional\": 110250, \"expected\": 150000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 150000.0, \"current\": 53000.0, \"additional\": 97000.0, \"expected\": 150000.0, \"note\": \"정기 오더 및 C/T 300M 규격 승인\"}, \"W4\": {\"target\": 150000.0, \"current\": 53000.0, \"additional\": 97000.0, \"expected\": 150000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_lgj_1\", \"topic\": \"대만 ASECL / SPIL PCN 이슈 및 TnR 단가 인상\", \"tag\": \"PCN 검토\", \"bullets\": [\"SPIL GIS 측의 ASECL 압박으로 PCN 진행 중단 및 샘플 규격(Warpage OOS) 재점검\", \"9/21부터 SPIL, ASE 대상 TnR 제품군 단가 인상 PO 적용\"]}, {\"id\": \"iss_lgj_2\", \"topic\": \"Amkor TW 신규 MPPO LP 트레이 금형 제작\", \"tag\": \"금형 개발\", \"bullets\": [\"Amkor TW: KS-890280 (MPPO LP) 신규 트레이 금형 제작 진행\", \"SPIL TW: C/T 300M 규격(KS-2416-786, KS-2420-188, KS-2412-664) 신규 승인 진행\", \"KYEC / Sigurd: KS-871587, KS-880546 정기 오더 관리\"]}], \"samples\": [{\"id\": \"smp_lgj_1\", \"customer\": \"Amkor TW\", \"pn\": \"KS-890280\", \"item\": \"TRAY MPPO LP\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-10\", \"note\": \"샘플 제출 완료\"}, {\"id\": \"smp_lgj_2\", \"customer\": \"SPIL TW\", \"pn\": \"KS-2416-786\", \"item\": \"C/T 300M\", \"qty\": 10, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_lgj_3\", \"customer\": \"KYEC\", \"pn\": \"KS-871587\", \"item\": \"TRAY 125/150\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-04\", \"note\": \"진행중\"}]}, {\"id\": \"lsc\", \"name\": \"이상철 선임\", \"role\": \"선임\", \"short_name\": \"이상철\", \"regions\": \"싱가포르 & 태국 (Singapore & Thailand)\", \"accounts\": \"Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)\", \"sales\": [{\"site\": \"Skyworks (싱가포르 SG)\", \"target\": 200000, \"current\": 75000, \"additional\": 125000, \"expected\": 200000, \"note\": \"싱가포르 법인 필터 공정 NPI 연계\", \"weekly_forecasts\": {\"W1\": {\"target\": 200000.0, \"current\": 30000, \"additional\": 170000, \"expected\": 200000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 200000.0, \"current\": 56250, \"additional\": 143750, \"expected\": 200000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 200000.0, \"current\": 75000.0, \"additional\": 125000.0, \"expected\": 200000.0, \"note\": \"싱가포르 법인 필터 공정 NPI 연계\"}, \"W4\": {\"target\": 200000.0, \"current\": 75000.0, \"additional\": 125000.0, \"expected\": 200000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"UTAC / Hanwha NxMD (태국)\", \"target\": 120000, \"current\": 36000, \"additional\": 84000, \"expected\": 120000, \"note\": \"신규 Tray 금형 3벌 양산 오더 진행\", \"weekly_forecasts\": {\"W1\": {\"target\": 120000.0, \"current\": 14400, \"additional\": 105600, \"expected\": 120000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 120000.0, \"current\": 27000, \"additional\": 93000, \"expected\": 120000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 120000.0, \"current\": 36000.0, \"additional\": 84000.0, \"expected\": 120000.0, \"note\": \"신규 Tray 금형 3벌 양산 오더 진행\"}, \"W4\": {\"target\": 120000.0, \"current\": 36000.0, \"additional\": 84000.0, \"expected\": 120000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_lsc_1\", \"topic\": \"싱가포르 Skyworks SG 필터 공정 NPI 검토\", \"tag\": \"NPI 전환\", \"bullets\": [\"싱가포르 라인 신규 필터 전환 수주 협의 및 일정 조율\", \"현지 C/T 테이프 릴 샘플 공급 및 테스트 진행\"]}, {\"id\": \"iss_lsc_2\", \"topic\": \"태국 Hanwha NxMD 신규 금형 3벌 제작 완료\", \"tag\": \"금형 제작\", \"bullets\": [\"신규 Tray 금형 3벌 혜주에서 제작 완료 (KS-871649, KS-871650, KS-871651)\", \"내부 Test용 월 1K 사용 예상에 따른 추가 양산 협의\"]}, {\"id\": \"iss_lsc_3\", \"topic\": \"태국 UTAC-TH 정기 납기 관리 및 단가 협상\", \"tag\": \"정기 납품\", \"bullets\": [\"UTAC-TH 정기 Tray 납품 건 품질 승인 후 차기 오더 확보\"]}], \"samples\": [{\"id\": \"smp_lsc_1\", \"customer\": \"Skyworks SG\", \"pn\": \"KS-0804-1690-SG\", \"item\": \"C/T Hybrid\", \"qty\": 5, \"status\": \"OPEN\", \"date\": \"2026-09-12\", \"note\": \"SG 현지 평가 중\"}, {\"id\": \"smp_lsc_2\", \"customer\": \"UTAC-TH\", \"pn\": \"KS-870752\", \"item\": \"TRAY\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"승인 대기\"}, {\"id\": \"smp_lsc_3\", \"customer\": \"Hanwha NxMD\", \"pn\": \"KS-871649\", \"item\": \"TRAY NxMD\", \"qty\": 20, \"status\": \"CLOSE\", \"date\": \"2026-09-01\", \"note\": \"금형 제작 완료\"}]}, {\"id\": \"kwt\", \"name\": \"김완태 사원\", \"role\": \"사원\", \"short_name\": \"김완태\", \"regions\": \"일본 & 필리핀 (Japan & Philippines)\", \"accounts\": \"Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)\", \"sales\": [{\"site\": \"Amkor / ATP / SSPC (필리핀 Clark/Laguna)\", \"target\": 280000, \"current\": 114800, \"additional\": 165200, \"expected\": 280000, \"note\": \"ATP, SSPC 주간 납품 목표 달성 순항\", \"weekly_forecasts\": {\"W1\": {\"target\": 280000.0, \"current\": 45920, \"additional\": 234080, \"expected\": 280000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 280000.0, \"current\": 86100, \"additional\": 193900, \"expected\": 280000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 280000.0, \"current\": 114800.0, \"additional\": 165200.0, \"expected\": 280000.0, \"note\": \"ATP, SSPC 주간 납품 목표 달성 순항\"}, \"W4\": {\"target\": 280000.0, \"current\": 114800.0, \"additional\": 165200.0, \"expected\": 280000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"일본 고객사 (Sony, Renesas, Kaga 등)\", \"target\": 120000, \"current\": 38500, \"additional\": 71500, \"expected\": 110000, \"note\": \"친환경 ESD 신소재 Tray 제안 및 샘플 평가\", \"weekly_forecasts\": {\"W1\": {\"target\": 120000.0, \"current\": 15400, \"additional\": 104600, \"expected\": 120000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 120000.0, \"current\": 28875, \"additional\": 91125, \"expected\": 120000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 120000.0, \"current\": 38500.0, \"additional\": 71500.0, \"expected\": 110000.0, \"note\": \"친환경 ESD 신소재 Tray 제안 및 샘플 평가\"}, \"W4\": {\"target\": 120000.0, \"current\": 38500.0, \"additional\": 71500.0, \"expected\": 110000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_kwt_1\", \"topic\": \"필리핀 법인 신규 2DID 설비 셋업 및 이전\", \"tag\": \"설비 셋업\", \"bullets\": [\"필리핀 법인 2DID 신규 설비 2대 가동 안정화\", \"12월 초 한국 2대 추가 필리핀 이동 계획 확정\"]}, {\"id\": \"iss_kwt_2\", \"topic\": \"필리핀 Amkor/ATP 대상 KS-870849 신규 IC Tray 도면 배포\", \"tag\": \"도면 배포\", \"bullets\": [\"KS-870849(00) 최신 도면 배포 및 금형 제작 품질 승인 완료\", \"고객사 FAI 샘플 평가 및 양산 오더 준비\"]}, {\"id\": \"iss_kwt_3\", \"topic\": \"일본 고객사 친환경 ESD 신소재 Tray 제안\", \"tag\": \"신규 제안\", \"bullets\": [\"소니 및 르네사스 재팬 대상 리사이클 원료 배합 트레이 기술 자료 송부\", \"10월 1차 평가용 시제품 제작 협의\"]}], \"samples\": [{\"id\": \"smp_kwt_1\", \"customer\": \"Amkor PH\", \"pn\": \"KS-870849\", \"item\": \"IC TRAY\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-15\", \"note\": \"도면 배포 및 FAI 샘플 준비\"}, {\"id\": \"smp_kwt_2\", \"customer\": \"ATP PH\", \"pn\": \"KS-870632\", \"item\": \"TRAY\", \"qty\": 100, \"status\": \"CLOSE\", \"date\": \"2026-09-10\", \"note\": \"양산 승인 완료\"}, {\"id\": \"smp_kwt_3\", \"customer\": \"Sony JP\", \"pn\": \"KS-880921-ECO\", \"item\": \"ESD TRAY\", \"qty\": 30, \"status\": \"OPEN\", \"date\": \"2026-09-14\", \"note\": \"신소재 시제품 평가\"}]}], \"kpi\": {\"target\": 2404602, \"current\": 788600.0, \"expected\": 1836000.0, \"rate\": 76.4}}"}, {"id": "rev_20260917_091500", "timestamp": "2026-09-17 09:15:00", "user": "이상철 선임", "action": "샘플 갱신", "summary": "이상철 선임: UTAC TH 신규 테이프 샘플 발송 및 현지 평가 진행", "snapshot": "{\"members\": [{\"id\": \"hjh\", \"name\": \"한준희 책임\", \"role\": \"책임\", \"short_name\": \"한준희\", \"regions\": \"미국 (USA)\", \"accounts\": \"Skyworks (US), Renesas (US), Broadcom (US)\", \"sales\": [{\"site\": \"Skyworks (미국 US) - NPI C/T Hybrid\", \"target\": 450000, \"current\": 154200, \"additional\": 295800, \"expected\": 450000, \"note\": \"NPI 34종 완료 후 미국 양산 공급\", \"weekly_forecasts\": {\"W1\": {\"target\": 450000.0, \"current\": 61680, \"additional\": 388320, \"expected\": 450000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 450000.0, \"current\": 115650, \"additional\": 334350, \"expected\": 450000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 450000.0, \"current\": 154200.0, \"additional\": 295800.0, \"expected\": 450000.0, \"note\": \"NPI 34종 완료 후 미국 양산 공급\"}, \"W4\": {\"target\": 450000.0, \"current\": 154200.0, \"additional\": 295800.0, \"expected\": 450000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_hjh_1\", \"topic\": \"Skyworks US C/T Hybrid PC NPI Project\", \"tag\": \"NPI 전환\", \"bullets\": [\"추가 Filter Conversion 43종 중 34모델 NPI 진행 완료, 미국 공장 상황 검토\", \"WLCSP Project: 9종 진행 중 (2종 FAI 샘플 평가 중)\"]}, {\"id\": \"iss_hjh_2\", \"topic\": \"2DID 신규 설비 글로벌 셋업 및 공장 배치\", \"tag\": \"설비 셋업\", \"bullets\": [\"필리핀 공장 2대 셋업 완료, 한국 공장 3대 도입 완료 (총 7대 가동)\", \"12월 초 2대 추가 이동 계획 수립\"]}, {\"id\": \"iss_hjh_3\", \"topic\": \"미국 고객사 차세대 고내열 REEL 개발 완료\", \"tag\": \"양산 대기\", \"bullets\": [\"REEL 개발 완료에 따라 Hybrid PC 추가 접수 예정 (32종 Filter PJT 접수 완료)\"]}], \"samples\": [{\"id\": \"smp_hjh_1\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1661-PC\", \"item\": \"C/T Hybrid\", \"qty\": 2, \"status\": \"CLOSE\", \"date\": \"2026-09-08\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_hjh_2\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1662-PC\", \"item\": \"C/T Hybrid\", \"qty\": 2, \"status\": \"OPEN\", \"date\": \"2026-09-08\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_hjh_3\", \"customer\": \"Skyworks US\", \"pn\": \"KS-1208-1895\", \"item\": \"C/T Reel\", \"qty\": 10, \"status\": \"OPEN\", \"date\": \"2026-09-02\", \"note\": \"샘플 출하 완료\"}, {\"id\": \"smp_hjh_4\", \"customer\": \"Skyworks US\", \"pn\": \"KS-0804-1680-PC\", \"item\": \"C/T 2DID\", \"qty\": 2, \"status\": \"OPEN\", \"date\": \"2026-09-09\", \"note\": \"라인 평가 중\"}]}, {\"id\": \"ksm\", \"name\": \"김샘물 선임\", \"role\": \"선임\", \"short_name\": \"김샘물\", \"regions\": \"말레이시아 (Malaysia)\", \"accounts\": \"Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)\", \"sales\": [{\"site\": \"Broadcom / Inari (말레이시아 Penang)\", \"target\": 420000, \"current\": 88400, \"additional\": 331600, \"expected\": 420000, \"note\": \"LPAO 단가 .6 협의 완료\", \"weekly_forecasts\": {\"W1\": {\"target\": 420000.0, \"current\": 35360, \"additional\": 384640, \"expected\": 420000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 420000.0, \"current\": 66300, \"additional\": 353700, \"expected\": 420000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 420000.0, \"current\": 88400.0, \"additional\": 331600.0, \"expected\": 420000.0, \"note\": \"LPAO 단가 .6 협의 완료\"}, \"W4\": {\"target\": 420000.0, \"current\": 88400.0, \"additional\": 331600.0, \"expected\": 420000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"Infineon (말레이시아 Melaka/Kulim)\", \"target\": 180000, \"current\": 52900, \"additional\": 127100, \"expected\": 180000, \"note\": \"신규 SAP 전환 후 정상화\", \"weekly_forecasts\": {\"W1\": {\"target\": 180000.0, \"current\": 21160, \"additional\": 158840, \"expected\": 180000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 180000.0, \"current\": 39675, \"additional\": 140325, \"expected\": 180000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 180000.0, \"current\": 52900.0, \"additional\": 127100.0, \"expected\": 180000.0, \"note\": \"신규 SAP 전환 후 정상화\"}, \"W4\": {\"target\": 180000.0, \"current\": 52900.0, \"additional\": 127100.0, \"expected\": 180000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"Unisem / ASE (말레이시아)\", \"target\": 150000, \"current\": 41200, \"additional\": 88800, \"expected\": 130000, \"note\": \"C/T 신규 테이프 승인\", \"weekly_forecasts\": {\"W1\": {\"target\": 150000.0, \"current\": 16480, \"additional\": 133520, \"expected\": 150000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 150000.0, \"current\": 30900, \"additional\": 119100, \"expected\": 150000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 150000.0, \"current\": 41200.0, \"additional\": 88800.0, \"expected\": 130000.0, \"note\": \"C/T 신규 테이프 승인\"}, \"W4\": {\"target\": 150000.0, \"current\": 41200.0, \"additional\": 88800.0, \"expected\": 130000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_ksm_1\", \"topic\": \"Broadcom / Inari MY Buy-Off 및 금형 증작 대응\", \"tag\": \"금형 증작\", \"bullets\": [\"KS-881490-2 금형 증작 완료 및 베트남 이전 완료 (단가 .6 조정)\", \"Inari MY 측에서 LPAO 품목 Particle test 요청에 따른 공정 검증\"]}, {\"id\": \"iss_ksm_2\", \"topic\": \"Infineon 말레이시아 신규 SAP 체제 전환 및 원재료 수급\", \"tag\": \"SAP 전환\", \"bullets\": [\"기존 재고 소진 후 new PO/PN 적용 체제로 전환 완료\", \"Denka PS Sheet 수급 불균형에 따른 대체 원재료 검토 병행\"]}, {\"id\": \"iss_ksm_3\", \"topic\": \"Unisem 말레이시아 C/T 신규 테이프 승인\", \"tag\": \"샘플 평가\", \"bullets\": [\"KS-1612-692 C/T 515K 발송분 현지 품질 승인 대기\", \"10월부터 말레이시아 라인 정기 발주 전환 협의\"]}], \"samples\": [{\"id\": \"smp_ksm_1\", \"customer\": \"Broadcom (Inari)\", \"pn\": \"KS-871382-2\", \"item\": \"TRAY MPPO\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-08-24\", \"note\": \"9월말 QUAL 제출 예정\"}, {\"id\": \"smp_ksm_2\", \"customer\": \"UNISEM MY\", \"pn\": \"KS-1612-692\", \"item\": \"C/T\", \"qty\": 515, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_ksm_3\", \"customer\": \"ASE-MY\", \"pn\": \"PBCK13724\", \"item\": \"REEL\", \"qty\": 20, \"status\": \"CLOSE\", \"date\": \"2026-08-15\", \"note\": \"승인 완료\"}]}, {\"id\": \"lgj\", \"name\": \"이가진 선임\", \"role\": \"선임\", \"short_name\": \"이가진\", \"regions\": \"대만 (Taiwan)\", \"accounts\": \"Amkor (TW), SPIL (TW), KYEC, Sigurd\", \"sales\": [{\"site\": \"Amkor / SPIL (대만 Hsinchu/Taichung)\", \"target\": 550000, \"current\": 195000, \"additional\": 355000, \"expected\": 550000, \"note\": \"9/21 TnR 단가 인상 PO 반영\", \"weekly_forecasts\": {\"W1\": {\"target\": 550000.0, \"current\": 78000, \"additional\": 472000, \"expected\": 550000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 550000.0, \"current\": 146250, \"additional\": 403750, \"expected\": 550000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 550000.0, \"current\": 195000.0, \"additional\": 355000.0, \"expected\": 550000.0, \"note\": \"9/21 TnR 단가 인상 PO 반영\"}, \"W4\": {\"target\": 550000.0, \"current\": 195000.0, \"additional\": 355000.0, \"expected\": 550000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"KYEC / Sigurd (대만)\", \"target\": 150000, \"current\": 53000, \"additional\": 97000, \"expected\": 150000, \"note\": \"정기 오더 및 C/T 300M 규격 승인\", \"weekly_forecasts\": {\"W1\": {\"target\": 150000.0, \"current\": 21200, \"additional\": 128800, \"expected\": 150000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 150000.0, \"current\": 39750, \"additional\": 110250, \"expected\": 150000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 150000.0, \"current\": 53000.0, \"additional\": 97000.0, \"expected\": 150000.0, \"note\": \"정기 오더 및 C/T 300M 규격 승인\"}, \"W4\": {\"target\": 150000.0, \"current\": 53000.0, \"additional\": 97000.0, \"expected\": 150000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_lgj_1\", \"topic\": \"대만 ASECL / SPIL PCN 이슈 및 TnR 단가 인상\", \"tag\": \"PCN 검토\", \"bullets\": [\"SPIL GIS 측의 ASECL 압박으로 PCN 진행 중단 및 샘플 규격(Warpage OOS) 재점검\", \"9/21부터 SPIL, ASE 대상 TnR 제품군 단가 인상 PO 적용\"]}, {\"id\": \"iss_lgj_2\", \"topic\": \"Amkor TW 신규 MPPO LP 트레이 금형 제작\", \"tag\": \"금형 개발\", \"bullets\": [\"Amkor TW: KS-890280 (MPPO LP) 신규 트레이 금형 제작 진행\", \"SPIL TW: C/T 300M 규격(KS-2416-786, KS-2420-188, KS-2412-664) 신규 승인 진행\", \"KYEC / Sigurd: KS-871587, KS-880546 정기 오더 관리\"]}], \"samples\": [{\"id\": \"smp_lgj_1\", \"customer\": \"Amkor TW\", \"pn\": \"KS-890280\", \"item\": \"TRAY MPPO LP\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-10\", \"note\": \"샘플 제출 완료\"}, {\"id\": \"smp_lgj_2\", \"customer\": \"SPIL TW\", \"pn\": \"KS-2416-786\", \"item\": \"C/T 300M\", \"qty\": 10, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"고객 승인 대기\"}, {\"id\": \"smp_lgj_3\", \"customer\": \"KYEC\", \"pn\": \"KS-871587\", \"item\": \"TRAY 125/150\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-04\", \"note\": \"진행중\"}]}, {\"id\": \"lsc\", \"name\": \"이상철 선임\", \"role\": \"선임\", \"short_name\": \"이상철\", \"regions\": \"싱가포르 & 태국 (Singapore & Thailand)\", \"accounts\": \"Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)\", \"sales\": [{\"site\": \"Skyworks (싱가포르 SG)\", \"target\": 200000, \"current\": 75000, \"additional\": 125000, \"expected\": 200000, \"note\": \"싱가포르 법인 필터 공정 NPI 연계\", \"weekly_forecasts\": {\"W1\": {\"target\": 200000.0, \"current\": 30000, \"additional\": 170000, \"expected\": 200000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 200000.0, \"current\": 56250, \"additional\": 143750, \"expected\": 200000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 200000.0, \"current\": 75000.0, \"additional\": 125000.0, \"expected\": 200000.0, \"note\": \"싱가포르 법인 필터 공정 NPI 연계\"}, \"W4\": {\"target\": 200000.0, \"current\": 75000.0, \"additional\": 125000.0, \"expected\": 200000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"UTAC / Hanwha NxMD (태국)\", \"target\": 120000, \"current\": 36000, \"additional\": 84000, \"expected\": 120000, \"note\": \"신규 Tray 금형 3벌 양산 오더 진행\", \"weekly_forecasts\": {\"W1\": {\"target\": 120000.0, \"current\": 14400, \"additional\": 105600, \"expected\": 120000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 120000.0, \"current\": 27000, \"additional\": 93000, \"expected\": 120000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 120000.0, \"current\": 36000.0, \"additional\": 84000.0, \"expected\": 120000.0, \"note\": \"신규 Tray 금형 3벌 양산 오더 진행\"}, \"W4\": {\"target\": 120000.0, \"current\": 36000.0, \"additional\": 84000.0, \"expected\": 120000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_lsc_1\", \"topic\": \"싱가포르 Skyworks SG 필터 공정 NPI 검토\", \"tag\": \"NPI 전환\", \"bullets\": [\"싱가포르 라인 신규 필터 전환 수주 협의 및 일정 조율\", \"현지 C/T 테이프 릴 샘플 공급 및 테스트 진행\"]}, {\"id\": \"iss_lsc_2\", \"topic\": \"태국 Hanwha NxMD 신규 금형 3벌 제작 완료\", \"tag\": \"금형 제작\", \"bullets\": [\"신규 Tray 금형 3벌 혜주에서 제작 완료 (KS-871649, KS-871650, KS-871651)\", \"내부 Test용 월 1K 사용 예상에 따른 추가 양산 협의\"]}, {\"id\": \"iss_lsc_3\", \"topic\": \"태국 UTAC-TH 정기 납기 관리 및 단가 협상\", \"tag\": \"정기 납품\", \"bullets\": [\"UTAC-TH 정기 Tray 납품 건 품질 승인 후 차기 오더 확보\"]}], \"samples\": [{\"id\": \"smp_lsc_1\", \"customer\": \"Skyworks SG\", \"pn\": \"KS-0804-1690-SG\", \"item\": \"C/T Hybrid\", \"qty\": 5, \"status\": \"OPEN\", \"date\": \"2026-09-12\", \"note\": \"SG 현지 평가 중\"}, {\"id\": \"smp_lsc_2\", \"customer\": \"UTAC-TH\", \"pn\": \"KS-870752\", \"item\": \"TRAY\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-05\", \"note\": \"승인 대기\"}, {\"id\": \"smp_lsc_3\", \"customer\": \"Hanwha NxMD\", \"pn\": \"KS-871649\", \"item\": \"TRAY NxMD\", \"qty\": 20, \"status\": \"CLOSE\", \"date\": \"2026-09-01\", \"note\": \"금형 제작 완료\"}]}, {\"id\": \"kwt\", \"name\": \"김완태 사원\", \"role\": \"사원\", \"short_name\": \"김완태\", \"regions\": \"일본 & 필리핀 (Japan & Philippines)\", \"accounts\": \"Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)\", \"sales\": [{\"site\": \"Amkor / ATP / SSPC (필리핀 Clark/Laguna)\", \"target\": 280000, \"current\": 114800, \"additional\": 165200, \"expected\": 280000, \"note\": \"ATP, SSPC 주간 납품 목표 달성 순항\", \"weekly_forecasts\": {\"W1\": {\"target\": 280000.0, \"current\": 45920, \"additional\": 234080, \"expected\": 280000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 280000.0, \"current\": 86100, \"additional\": 193900, \"expected\": 280000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 280000.0, \"current\": 114800.0, \"additional\": 165200.0, \"expected\": 280000.0, \"note\": \"ATP, SSPC 주간 납품 목표 달성 순항\"}, \"W4\": {\"target\": 280000.0, \"current\": 114800.0, \"additional\": 165200.0, \"expected\": 280000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}, {\"site\": \"일본 고객사 (Sony, Renesas, Kaga 등)\", \"target\": 120000, \"current\": 38500, \"additional\": 71500, \"expected\": 110000, \"note\": \"친환경 ESD 신소재 Tray 제안 및 샘플 평가\", \"weekly_forecasts\": {\"W1\": {\"target\": 120000.0, \"current\": 15400, \"additional\": 104600, \"expected\": 120000.0, \"note\": \"1주차 초기 예상치\"}, \"W2\": {\"target\": 120000.0, \"current\": 28875, \"additional\": 91125, \"expected\": 120000.0, \"note\": \"2주차 실적 집계 및 고객사 PO 협의\"}, \"W3\": {\"target\": 120000.0, \"current\": 38500.0, \"additional\": 71500.0, \"expected\": 110000.0, \"note\": \"친환경 ESD 신소재 Tray 제안 및 샘플 평가\"}, \"W4\": {\"target\": 120000.0, \"current\": 38500.0, \"additional\": 71500.0, \"expected\": 110000.0, \"note\": \"4주차 마감 목표 달성 전망\"}}}], \"issues\": [{\"id\": \"iss_kwt_1\", \"topic\": \"필리핀 법인 신규 2DID 설비 셋업 및 이전\", \"tag\": \"설비 셋업\", \"bullets\": [\"필리핀 법인 2DID 신규 설비 2대 가동 안정화\", \"12월 초 한국 2대 추가 필리핀 이동 계획 확정\"]}, {\"id\": \"iss_kwt_2\", \"topic\": \"필리핀 Amkor/ATP 대상 KS-870849 신규 IC Tray 도면 배포\", \"tag\": \"도면 배포\", \"bullets\": [\"KS-870849(00) 최신 도면 배포 및 금형 제작 품질 승인 완료\", \"고객사 FAI 샘플 평가 및 양산 오더 준비\"]}, {\"id\": \"iss_kwt_3\", \"topic\": \"일본 고객사 친환경 ESD 신소재 Tray 제안\", \"tag\": \"신규 제안\", \"bullets\": [\"소니 및 르네사스 재팬 대상 리사이클 원료 배합 트레이 기술 자료 송부\", \"10월 1차 평가용 시제품 제작 협의\"]}], \"samples\": [{\"id\": \"smp_kwt_1\", \"customer\": \"Amkor PH\", \"pn\": \"KS-870849\", \"item\": \"IC TRAY\", \"qty\": 50, \"status\": \"OPEN\", \"date\": \"2026-09-15\", \"note\": \"도면 배포 및 FAI 샘플 준비\"}, {\"id\": \"smp_kwt_2\", \"customer\": \"ATP PH\", \"pn\": \"KS-870632\", \"item\": \"TRAY\", \"qty\": 100, \"status\": \"CLOSE\", \"date\": \"2026-09-10\", \"note\": \"양산 승인 완료\"}, {\"id\": \"smp_kwt_3\", \"customer\": \"Sony JP\", \"pn\": \"KS-880921-ECO\", \"item\": \"ESD TRAY\", \"qty\": 30, \"status\": \"OPEN\", \"date\": \"2026-09-14\", \"note\": \"신소재 시제품 평가\"}]}], \"kpi\": {\"target\": 2404602, \"current\": 788600.0, \"expected\": 1836000.0, \"rate\": 76.4}}"}]};
     let ACTIVE_MEMBER_ID = 'hjh'; // 1순위: 한준희 책임
     let CURRENT_USER_NAME = '한준희 책임';
@@ -1751,22 +1893,55 @@
 
     applyOfficialRegions(LIVE_DB);
 
-    // 주차별 예측 필드 누락 보완
+    // 주차별 예측 필드 및 고객사 매핑 누락 보완
     function ensureWeeklyForecasts(db) {
       if (!db || !db.members) return;
       db.members.forEach(m => {
+        // 1. 매출 주차별 예측 구조 보완
         (m.sales || []).forEach(s => {
-          if (!s.weekly_forecasts) {
-            const tgt = s.target || 100000;
-            const cur = s.current || 0;
-            const add = s.additional || (tgt - cur);
-            const exp = cur + add;
-            s.weekly_forecasts = {
-              'W1': { target: tgt, current: Math.round(cur * 0.4), additional: Math.round(tgt - cur * 0.4), expected: tgt, note: '1주차 초기 예상' },
-              'W2': { target: tgt, current: Math.round(cur * 0.75), additional: Math.round(tgt - cur * 0.75), expected: tgt, note: '2주차 실적 집계' },
-              'W3': { target: tgt, current: cur, additional: add, expected: exp, note: s.note || '3주차 보고' },
-              'W4': { target: tgt, current: cur, additional: add, expected: exp, note: '4주차 마감 전망' }
+          if (!s.weekly_forecasts) s.weekly_forecasts = {};
+          const curWKey = 'W' + (CURRENT_WEEK_NUM || 38);
+          const tgt = s.target || 100000;
+          const cur = s.current || 0;
+          const add = s.additional || Math.max(0, tgt - cur);
+          const exp = s.expected || (cur + add);
+          if (!s.weekly_forecasts[curWKey]) {
+            s.weekly_forecasts[curWKey] = {
+              target: tgt,
+              current: cur,
+              additional: add,
+              expected: exp,
+              note: s.note || ''
             };
+          }
+        });
+
+        // 2. 특이사항 고객사 매핑 보완 (고객사 128개사 마스터 기준)
+        (m.issues || []).forEach(iss => {
+          if (!iss.customer) {
+            const t = (iss.topic || '').toUpperCase();
+            if (t.includes('SKYWORKS')) iss.customer = 'SKYWORKS';
+            else if (t.includes('BROADCOM') || t.includes('INARI')) iss.customer = 'BROADCOM';
+            else if (t.includes('INFINEON')) iss.customer = 'INFINEON';
+            else if (t.includes('UNISEM')) iss.customer = 'UNISEM';
+            else if (t.includes('AMKOR')) iss.customer = 'AMKOR';
+            else if (t.includes('SPIL')) iss.customer = 'SPIL';
+            else if (t.includes('KYEC')) iss.customer = 'KYEC';
+            else if (t.includes('UTAC')) iss.customer = 'UTAC';
+            else if (t.includes('HANWHA')) iss.customer = 'HANWHA (TH)';
+            else if (t.includes('SONY')) iss.customer = 'SONY';
+            else if (t.includes('RENESAS')) iss.customer = 'RENESAS';
+            else if (t.includes('ASE')) iss.customer = 'ASE';
+            else {
+              const defCusts = {
+                'hjh': 'SKYWORKS',
+                'ksm': 'BROADCOM',
+                'lgj': 'AMKOR',
+                'lsc': 'SKYWORKS',
+                'kwt': 'AMKOR'
+              };
+              iss.customer = defCusts[m.id] || '고객사 협의';
+            }
           }
         });
       });
@@ -1785,28 +1960,60 @@
     // 2. 권한 및 기간 제어 엔진 (8805 보안 & 주차/월 선택)      //
     // ==================================================== //
 
-    function isCurrentActivePeriod() {
-      return (SELECTED_MONTH === '2026-09' && (SELECTED_WEEK === 'W4' || SELECTED_WEEK === 'W3'));
-    }
 
-    function isPeriodEditable() {
-      return isCurrentActivePeriod() || IS_ADMIN_UNLOCKED;
-    }
+    // ==================================================== //
+    // 2-1. 2026년 53개 주차 마스터 및 고객사 마스터 초기화 //
+    // ==================================================== //
 
-    function changePeriodMonth(monthKey) {
-      SELECTED_MONTH = monthKey;
-      if (monthKey === '2026-09') {
-        SELECTED_WEEK = 'W4';
-      } else {
-        SELECTED_WEEK = 'W4'; // 과거 월은 마감 주차 기본
+    function initWeeklyMasterData() {
+      // 1. 주차 선택 드롭다운 채우기
+      const weekSelect = document.getElementById('weekScheduleSelect');
+      if (weekSelect && typeof MASTER_WEEKS_2026 !== 'undefined') {
+        let optHtml = '';
+        let currentQuarter = '';
+        
+        MASTER_WEEKS_2026.forEach(w => {
+          if (w.quarter !== currentQuarter) {
+            if (currentQuarter !== '') optHtml += '</optgroup>';
+            currentQuarter = w.quarter;
+            optHtml += `<optgroup label="${w.quarter}">`;
+          }
+          const isCurrent = (w.week_num === 38);
+          const selAttr = isCurrent ? 'selected' : '';
+          const curLabel = isCurrent ? ' [현재 주차]' : '';
+          optHtml += `<option value="${w.week_num}" ${selAttr}>${w.week} (${w.start.substring(5)} ~ ${w.end.substring(5)})${curLabel}</option>`;
+        });
+        if (currentQuarter !== '') optHtml += '</optgroup>';
+        weekSelect.innerHTML = optHtml;
       }
+
+      // 2. 모달 고객사 드롭다운 채우기 (128개사)
+      const custSelect = document.getElementById('modalIssueCustomer');
+      if (custSelect && typeof MASTER_CUSTOMERS !== 'undefined') {
+        let custHtml = '<option value="">-- 고객사 선택 (128개사) --</option>';
+        MASTER_CUSTOMERS.forEach(c => {
+          custHtml += `<option value="${c}">${c}</option>`;
+        });
+        custHtml += '<option value="__DIRECT__">+ 직접 입력</option>';
+        custSelect.innerHTML = custHtml;
+      }
+
+      // 3. 모달 아이템 드롭다운 채우기 (9개)
+      const itemSelect = document.getElementById('modalIssueItem');
+      if (itemSelect && typeof MASTER_ITEMS !== 'undefined') {
+        let itemHtml = '<option value="">-- 관련 품목 선택 --</option>';
+        MASTER_ITEMS.forEach(it => {
+          itemHtml += `<option value="${it}">${it}</option>`;
+        });
+        itemSelect.innerHTML = itemHtml;
+      }
+
       renderPeriodWeekButtons();
-      renderLockStatus();
-      renderMemberView();
     }
 
-    function changePeriodWeek(weekKey) {
-      SELECTED_WEEK = weekKey;
+    function changeWeeklySchedule(weekNumVal) {
+      CURRENT_WEEK_NUM = parseInt(weekNumVal) || 38;
+      SELECTED_WEEK = 'W' + CURRENT_WEEK_NUM;
       renderPeriodWeekButtons();
       renderLockStatus();
       renderMemberView();
@@ -1814,68 +2021,46 @@
 
     function renderPeriodWeekButtons() {
       const container = document.getElementById('weekPillsContainer');
-      if (!container) return;
-      const weeks = [
-        { key: 'W1', label: '1주차' },
-        { key: 'W2', label: '2주차' },
-        { key: 'W3', label: '3주차' },
-        { key: 'W4', label: '4주차' }
-      ];
+      if (!container || typeof MASTER_WEEKS_2026 === 'undefined') return;
 
-      container.innerHTML = weeks.map(w => {
-        const isSel = (SELECTED_WEEK === w.key);
-        const isSysCurrent = (SELECTED_MONTH === '2026-09' && w.key === 'W4');
+      // 현재 주차 기준 전후 4개 주차 pill 버튼 노출
+      const baseNum = CURRENT_WEEK_NUM || 38;
+      const startNum = Math.max(1, baseNum - 2);
+      const endNum = Math.min(53, startNum + 3);
+      const displayWeeks = [];
+
+      for (let n = startNum; n <= endNum; n++) {
+        const wkObj = MASTER_WEEKS_2026.find(x => x.week_num === n);
+        if (wkObj) displayWeeks.push(wkObj);
+      }
+
+      container.innerHTML = displayWeeks.map(w => {
+        const isSel = (CURRENT_WEEK_NUM === w.week_num);
+        const isSysCurrent = (w.week_num === 38);
         return `
           <button class="week-pill-btn ${isSel ? 'active' : ''} ${isSysCurrent ? 'current-marker' : ''}"
-                  onclick="changePeriodWeek('${w.key}')"
-                  title="${isSysCurrent ? '현재 활성 주차' : ''}">
-            ${w.label}${isSysCurrent ? '*' : ''}
+                  onclick="changeWeeklySchedule(${w.week_num})"
+                  title="${w.start} ~ ${w.end}${isSysCurrent ? ' (현재 주차)' : ''}">
+            ${w.week_num}주차${isSysCurrent ? '*' : ''}
           </button>
         `;
       }).join('');
     }
 
-    function renderLockStatus() {
-      const pill = document.getElementById('lockStatusPill');
-      if (!pill) return;
-      const isCur = isCurrentActivePeriod();
-
-      if (isCur) {
-        pill.className = 'lock-status-pill current';
-        pill.innerHTML = `<span>현재 주차 (편집 가능)</span>`;
-      } else if (IS_ADMIN_UNLOCKED) {
-        pill.className = 'lock-status-pill admin';
-        pill.innerHTML = `
-          <span>관리자 편집 승인됨 (8805)</span>
-          <button class="btn-pill-action relock" onclick="relockAdmin()" title="잠금 모드로 복귀">다시 잠그기</button>
-        `;
-      } else {
-        pill.className = 'lock-status-pill locked';
-        pill.innerHTML = `
-          <span>과거 기록 (잠김)</span>
-          <button class="btn-pill-action unlock" onclick="openAdminAuthModal()" title="관리자 비밀번호 입력">관리자 잠금 해제</button>
-        `;
-      }
-
-      // 하단 추가 버튼 활성/비활성 제어
-      const addSiteBtn = document.getElementById('btnAddSiteBtn');
-      const addIssueBtn = document.getElementById('btnAddIssueBtn');
-      const addSampleBtn = document.getElementById('btnAddSampleBtn');
-      const editable = isPeriodEditable();
-
-      [addSiteBtn, addIssueBtn, addSampleBtn].forEach(btn => {
-        if (btn) {
-          if (editable) {
-            btn.classList.remove('input-disabled-locked');
-            btn.style.display = 'block';
-          } else {
-            btn.classList.add('input-disabled-locked');
-          }
-        }
-      });
+    function isCurrentActivePeriod() {
+      return (CURRENT_WEEK_NUM >= 37 && CURRENT_WEEK_NUM <= 39);
     }
 
-    function openAdminAuthModal() {
+    function isPeriodEditable() {
+      return isCurrentActivePeriod() || IS_ADMIN_UNLOCKED;
+    }
+
+    function changePeriodWeek(weekKey) {
+      const num = parseInt(weekKey.replace(/[^0-9]/g, '')) || 38;
+      changeWeeklySchedule(num);
+    }
+
+        function openAdminAuthModal() {
       const modal = document.getElementById('adminAuthModal');
       const input = document.getElementById('adminAuthPassword');
       const alertEl = document.getElementById('adminAuthAlert');
@@ -2097,6 +2282,26 @@
       renderMemberView();
     }
 
+    function getSiteForecast(item, weekNum) {
+      const keyW = 'W' + weekNum;
+      if (item.weekly_forecasts && item.weekly_forecasts[keyW]) {
+        return item.weekly_forecasts[keyW];
+      }
+      if (item.weekly_forecasts && item.weekly_forecasts['W3']) {
+        return item.weekly_forecasts['W3'];
+      }
+      if (item.weekly_forecasts && item.weekly_forecasts['W4']) {
+        return item.weekly_forecasts['W4'];
+      }
+      return {
+        target: item.target || 0,
+        current: item.current || 0,
+        additional: item.additional || 0,
+        expected: item.expected || 0,
+        note: item.note || ''
+      };
+    }
+
     function renderSalesPanel(isAll, member, dataContext) {
       const container = document.getElementById('panelSalesContainer');
       const countEl = document.getElementById('salesSiteCount');
@@ -2120,19 +2325,19 @@
         return;
       }
 
-      // (모드 1) 주차별 변동 추이 (히스토리) 비교 테이블 뷰
+      // (모드 1) 주차별 변동 추이 비교 테이블 뷰 (Copy of Dorp down 53주차 기준)
       if (SALES_VIEW_MODE === 'history') {
+        const curW = CURRENT_WEEK_NUM || 38;
+        const compareWeeks = [Math.max(1, curW - 3), Math.max(1, curW - 2), Math.max(1, curW - 1), curW];
+
         let tableHtml = `
           <div style="overflow-x:auto;">
             <table class="sales-history-table">
               <thead>
                 <tr>
                   <th>고객사 / 사이트</th>
-                  <th>당월목표</th>
-                  <th>1주차</th>
-                  <th>2주차</th>
-                  <th>3주차</th>
-                  <th>4주차</th>
+                  <th>목표</th>
+                  ${compareWeeks.map(wn => `<th class="${wn===curW?'history-week-val current-col':''}">${wn}주차</th>`).join('')}
                   <th>달성률</th>
                 </tr>
               </thead>
@@ -2140,25 +2345,22 @@
         `;
 
         sitesList.forEach(item => {
-          const wf = item.weekly_forecasts || {};
-          const w1Exp = wf.W1 ? wf.W1.expected : item.expected;
-          const w2Exp = wf.W2 ? wf.W2.expected : item.expected;
-          const w3Exp = wf.W3 ? wf.W3.expected : item.expected;
-          const w4Exp = wf.W4 ? wf.W4.expected : item.expected;
           const tgt = item.target || 1;
-          const finalRate = Math.round((w4Exp / tgt) * 100);
+          const forecasts = compareWeeks.map(wn => getSiteForecast(item, wn));
+          const latestExp = forecasts[forecasts.length - 1].expected || item.expected || 0;
+          const finalRate = Math.round((latestExp / tgt) * 100);
 
           tableHtml += `
             <tr>
               <td>
-                <strong>${item.site}</strong><br>
-                <span style="font-size:10px;color:var(--text-dim);">${item.memberCountry} (${item.memberName})</span>
+                <strong>${escapeAttr(item.site)}</strong><br>
+                <span style="font-size:10px;color:var(--text-dim);">${escapeAttr(item.memberCountry)} (${escapeAttr(item.memberName)})</span>
               </td>
-              <td>$${Math.round(item.target).toLocaleString()}</td>
-              <td class="history-week-val ${SELECTED_WEEK==='W1'?'current-col':''} ">$${Math.round(w1Exp).toLocaleString()}</td>
-              <td class="history-week-val ${SELECTED_WEEK==='W2'?'current-col':''} ">$${Math.round(w2Exp).toLocaleString()}</td>
-              <td class="history-week-val ${SELECTED_WEEK==='W3'?'current-col':''} ">$${Math.round(w3Exp).toLocaleString()}</td>
-              <td class="history-week-val ${SELECTED_WEEK==='W4'?'current-col':''} ">$${Math.round(w4Exp).toLocaleString()}</td>
+              <td>$${Math.round(tgt).toLocaleString()}</td>
+              ${forecasts.map((fc, i) => {
+                const isCurCol = (compareWeeks[i] === curW);
+                return `<td class="history-week-val ${isCurCol?'current-col':''}">$${Math.round(fc.expected || 0).toLocaleString()}</td>`;
+              }).join('')}
               <td><span class="badge-achv ${finalRate>=100?'pass':'warn'}">${finalRate}%</span></td>
             </tr>
           `;
@@ -2171,7 +2373,7 @@
 
       // (모드 2) 단일 주차 편집 및 조회 카드 뷰
       container.innerHTML = sitesList.map(item => {
-        const wf = (item.weekly_forecasts && item.weekly_forecasts[SELECTED_WEEK]) ? item.weekly_forecasts[SELECTED_WEEK] : item;
+        const wf = getSiteForecast(item, CURRENT_WEEK_NUM);
         const cur = parseFloat(wf.current) || 0;
         const add = parseFloat(wf.additional) || 0;
         const exp = cur + add;
@@ -2183,10 +2385,10 @@
           <div class="sales-site-card">
             <div class="sales-card-top">
               <div>
-                <span class="sales-site-title">${item.site}</span>
-                <span style="font-size:11px;color:var(--primary-light);margin-left:6px;">[${item.memberCountry}]</span>
-                <span style="font-size:10px;color:var(--text-dim);margin-left:4px;">(${item.memberName})</span>
-                <span style="font-size:10px;color:var(--accent-light);margin-left:4px;">[${SELECTED_WEEK} 주차]</span>
+                <span class="sales-site-title">${escapeAttr(item.site)}</span>
+                <span style="font-size:11px;color:var(--primary-light);margin-left:6px;">[${escapeAttr(item.memberCountry)}]</span>
+                <span style="font-size:10px;color:var(--text-dim);margin-left:4px;">(${escapeAttr(item.memberName)})</span>
+                <span style="font-size:10px;color:var(--accent-light);margin-left:4px;font-weight:700;">[${CURRENT_WEEK_NUM}주차]</span>
               </div>
               ${editable ? `
                 <button class="bullet-del-btn" title="사이트 삭제" onclick="deleteSite('${item.memberId}', ${item.siteIdx})">
@@ -2199,21 +2401,21 @@
               <div class="input-group-sm">
                 <label>당월 목표 ($)</label>
                 <input type="number" class="input-sm ${!editable ? 'input-disabled-locked' : ''}"
-                       value="${tgt}"
+                       value="${Math.round(tgt)}"
                        ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                        oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'target', this.value)" />
               </div>
               <div class="input-group-sm">
-                <label>${SELECTED_WEEK} 현재 매출 ($)</label>
+                <label>확정 매출 ($)</label>
                 <input type="number" class="input-sm ${!editable ? 'input-disabled-locked' : ''}"
-                       value="${cur}"
+                       value="${Math.round(cur)}"
                        ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                        oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'current', this.value)" />
               </div>
               <div class="input-group-sm">
                 <label>추가 예상 ($)</label>
                 <input type="number" class="input-sm ${!editable ? 'input-disabled-locked' : ''}"
-                       value="${add}"
+                       value="${Math.round(add)}"
                        ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                        oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'additional', this.value)" />
               </div>
@@ -2221,15 +2423,23 @@
 
             <div class="sales-calc-row">
               <div>
-                <span style="color:var(--text-dim);">${SELECTED_WEEK} 마감 예상:</span>
-                <strong class="calc-highlight">$${Math.round(exp).toLocaleString()}</strong>
+                <span class="sales-calc-label">마감 예상 합계:</span>
+                <span class="sales-calc-val" id="siteExp_${item.memberId}_${item.siteIdx}">$${Math.round(exp).toLocaleString()}</span>
               </div>
               <div>
-                <span style="color:var(--text-dim);margin-right:4px;">달성률:</span>
-                <span class="badge-achv ${isAchieved ? 'pass' : 'warn'}">${rate}% ${isAchieved ? '달성' : '진행중'}</span>
+                <span class="sales-rate-badge ${isAchieved ? 'achieved' : 'shortfall'}" id="siteRate_${item.memberId}_${item.siteIdx}">
+                  달성률: ${rate}% (${isAchieved ? '초과달성' : '미달'})
+                </span>
               </div>
             </div>
-            ${wf.note ? `<div style="font-size:10px;color:var(--text-dim);margin-top:6px;padding-left:2px;">비고: ${wf.note}</div>` : ''}
+
+            <div style="margin-top:8px;">
+              <input type="text" class="sales-note-input ${!editable ? 'input-disabled-locked' : ''}"
+                     placeholder="주차별 주요 동향 및 수주 근거 메모..."
+                     value="${escapeAttr(wf.note || item.note || '')}"
+                     ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
+                     oninput="updateSalesField('${item.memberId}', ${item.siteIdx}, 'note', this.value)" />
+            </div>
           </div>
         `;
       }).join('');
@@ -2239,21 +2449,43 @@
       if (notifyLocked()) return;
       const currentData = getActiveDataset();
       const mem = currentData.members.find(x => x.id === memId);
-      if (!mem || !mem.sales[siteIdx]) return;
-      const num = parseFloat(val) || 0;
+      if (!mem || !mem.sales || !mem.sales[siteIdx]) return;
+      const site = mem.sales[siteIdx];
 
-      // 주차별 예측 구조 갱신
-      if (!mem.sales[siteIdx].weekly_forecasts) ensureWeeklyForecasts(currentData);
-      const wf = mem.sales[siteIdx].weekly_forecasts[SELECTED_WEEK];
-      if (wf) {
-        wf[field] = num;
-        wf.expected = (parseFloat(wf.current) || 0) + (parseFloat(wf.additional) || 0);
+      if (!site.weekly_forecasts) site.weekly_forecasts = {};
+      const keyW = 'W' + (CURRENT_WEEK_NUM || 38);
+      if (!site.weekly_forecasts[keyW]) {
+        site.weekly_forecasts[keyW] = {
+          target: site.target || 0,
+          current: site.current || 0,
+          additional: site.additional || 0,
+          expected: site.expected || 0,
+          note: site.note || ''
+        };
       }
+      const wf = site.weekly_forecasts[keyW];
 
-      // 활성 주차인 경우 최상위 필드 동기화
-      if (SELECTED_WEEK === 'W3' && SELECTED_MONTH === '2026-09') {
-        mem.sales[siteIdx][field] = num;
-        mem.sales[siteIdx].expected = (parseFloat(mem.sales[siteIdx].current) || 0) + (parseFloat(mem.sales[siteIdx].additional) || 0);
+      if (field === 'note') {
+        wf.note = val;
+        site.note = val;
+      } else {
+        const num = parseFloat(val) || 0;
+        wf[field] = num;
+        site[field] = num;
+        wf.expected = (parseFloat(wf.current) || 0) + (parseFloat(wf.additional) || 0);
+        site.expected = wf.expected;
+
+        // 즉각 UI 계산 갱신
+        const expEl = document.getElementById(`siteExp_${memId}_${siteIdx}`);
+        const rateEl = document.getElementById(`siteRate_${memId}_${siteIdx}`);
+        if (expEl) expEl.textContent = `$${Math.round(wf.expected).toLocaleString()}`;
+        if (rateEl) {
+          const tgt = (wf.target || site.target) || 0;
+          const rate = tgt > 0 ? Math.round((wf.expected / tgt) * 100) : 0;
+          const isAchieved = rate >= 100;
+          rateEl.className = `sales-rate-badge ${isAchieved ? 'achieved' : 'shortfall'}`;
+          rateEl.textContent = `달성률: ${rate}% (${isAchieved ? '초과달성' : '미달'})`;
+        }
       }
 
       recalculateTeamKpi();
@@ -2261,9 +2493,9 @@
 
       clearTimeout(DEBOUNCE_TIMER);
       DEBOUNCE_TIMER = setTimeout(() => {
-        recordRevision('매출 수정', `${CURRENT_USER_NAME}님이 [${mem.sales[siteIdx].site}] ${SELECTED_WEEK}주차 매출을 수정했습니다.`);
-        triggerAutoSave(`${CURRENT_USER_NAME}님이 매출 수치를 수정했습니다.`);
-      }, 500);
+        recordRevision('매출 수정', `${CURRENT_USER_NAME}님이 [${site.site}] ${CURRENT_WEEK_NUM}주차 ${field} 수정`);
+        triggerAutoSave(`${CURRENT_USER_NAME}님이 [${site.site}] 매출 수치를 수정했습니다.`);
+      }, 600);
     }
 
     function addNewSite() {
@@ -2315,7 +2547,14 @@
       triggerAutoSave(`${CURRENT_USER_NAME}님이 사이트 '${siteName}' 항목을 삭제했습니다.`);
     }
 
-    // --- (B) 특이사항 패널 렌더링 & 인라인 수정 ---
+
+    // --- (B) 특이사항 패널 렌더링 & 고객사 마스터 연동 등록 ---
+
+    function filterIssuesByCustomer(cust) {
+      ISSUE_CUSTOMER_FILTER = cust;
+      renderMemberView();
+    }
+
     function renderIssuesPanel(isAll, member, dataContext) {
       const container = document.getElementById('panelIssuesContainer');
       const countEl = document.getElementById('issuesCount');
@@ -2332,25 +2571,53 @@
         issuesList = (member.issues || []).map(iss => ({ ...iss, memberId: member.id, memberName: member.name }));
       }
 
-      if (countEl) countEl.textContent = `${issuesList.length}건`;
+      // 고유 고객사 목록 추출 (필터 드롭다운용)
+      const uniqueCusts = Array.from(new Set(issuesList.map(i => i.customer).filter(Boolean))).sort();
 
-      if (issuesList.length === 0) {
-        container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;">등록된 특이사항이 없습니다.</div>`;
+      // 고객사 필터 적용
+      let filteredIssues = issuesList;
+      if (ISSUE_CUSTOMER_FILTER && ISSUE_CUSTOMER_FILTER !== 'ALL') {
+        filteredIssues = issuesList.filter(i => (i.customer === ISSUE_CUSTOMER_FILTER));
+      }
+
+      if (countEl) countEl.textContent = `${filteredIssues.length}건`;
+
+      // 상단 고객사 필터 바
+      let filterBarHtml = `
+        <div class="issue-filter-bar">
+          <span style="font-size:11px; color:var(--text-muted); font-weight:600;">고객사별 필터:</span>
+          <select class="issue-filter-select" onchange="filterIssuesByCustomer(this.value)">
+            <option value="ALL" ${ISSUE_CUSTOMER_FILTER==='ALL'?'selected':''}>전체 고객사 (${issuesList.length}건)</option>
+            ${uniqueCusts.map(c => `<option value="${escapeAttr(c)}" ${ISSUE_CUSTOMER_FILTER===c?'selected':''}>${escapeAttr(c)}</option>`).join('')}
+          </select>
+        </div>
+      `;
+
+      if (filteredIssues.length === 0) {
+        container.innerHTML = filterBarHtml + `<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;">선택된 고객사의 특이사항이 없습니다.</div>`;
         return;
       }
 
-      container.innerHTML = issuesList.map(iss => {
+      container.innerHTML = filterBarHtml + filteredIssues.map(iss => {
+        const custDisplay = iss.customer || '고객사 협의';
         return `
           <div class="issue-item-card">
             <div class="issue-header-row">
-              <span class="issue-tag-badge">${iss.tag || '이슈'}</span>
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <span class="issue-customer-badge">${escapeAttr(custDisplay)}</span>
+                <span class="issue-tag-badge">${escapeAttr(iss.tag || '진행중')}</span>
+                ${iss.item ? `<span class="issue-item-badge">${escapeAttr(iss.item)}</span>` : ''}
+              </div>
+              ${editable ? `
+                <button class="bullet-del-btn" title="특이사항 전체 삭제" onclick="deleteIssue('${iss.memberId}', '${iss.id}')">&times;</button>
+              ` : ''}
+            </div>
+
+            <div style="margin-top:6px; margin-bottom:8px;">
               <input type="text" class="issue-topic-input ${!editable ? 'input-disabled-locked' : ''}"
                      value="${escapeAttr(iss.topic)}"
                      ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
                      oninput="updateIssueTopic('${iss.memberId}', '${iss.id}', this.value)" />
-              ${editable ? `
-                <button class="bullet-del-btn" title="특이사항 전체 삭제" onclick="deleteIssue('${iss.memberId}', '${iss.id}')">&times;</button>
-              ` : ''}
             </div>
 
             <ul class="bullet-list">
@@ -2360,7 +2627,7 @@
                   <textarea class="bullet-input ${!editable ? 'input-disabled-locked' : ''}"
                             rows="1"
                             ${!editable ? 'readonly onclick="notifyLocked()"' : ''}
-                            oninput="updateIssueBullet('${iss.memberId}', '${iss.id}', ${bIdx}, this.value)">${b}</textarea>
+                            oninput="updateIssueBullet('${iss.memberId}', '${iss.id}', ${bIdx}, this.value)">${escapeAttr(b)}</textarea>
                   ${editable ? `
                     <button class="bullet-del-btn" title="항목 삭제" onclick="deleteIssueBullet('${iss.memberId}', '${iss.id}', ${bIdx})">-</button>
                   ` : ''}
@@ -2375,87 +2642,114 @@
       }).join('');
     }
 
-    function updateIssueTopic(memId, issId, val) {
+    // --- 신규 영업현황보고 등록 모달 컨트롤 ---
+
+    function openAddIssueModal() {
       if (notifyLocked()) return;
-      const mem = getActiveDataset().members.find(x => x.id === memId);
-      if (!mem) return;
-      const iss = (mem.issues || []).find(x => x.id === issId);
-      if (iss) {
-        iss.topic = val;
-        clearTimeout(DEBOUNCE_TIMER);
-        DEBOUNCE_TIMER = setTimeout(() => {
-          recordRevision('특이사항 수정', `${CURRENT_USER_NAME}님이 특이사항 제목 '${val}' 수정`);
-          triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항을 수정했습니다.`);
-        }, 600);
+      const modal = document.getElementById('addIssueModal');
+      if (!modal) return;
+
+      // 모달 입력창 초기화
+      const custSelect = document.getElementById('modalIssueCustomer');
+      const custDirect = document.getElementById('modalIssueCustomerDirect');
+      const itemSelect = document.getElementById('modalIssueItem');
+      const statusSelect = document.getElementById('modalIssueStatus');
+      const topicInput = document.getElementById('modalIssueTopic');
+      const bulletsInput = document.getElementById('modalIssueBullets');
+      const memberSelect = document.getElementById('modalIssueMember');
+
+      if (custSelect) custSelect.value = '';
+      if (custDirect) { custDirect.value = ''; custDirect.style.display = 'none'; }
+      if (itemSelect) itemSelect.value = '';
+      if (statusSelect) statusSelect.value = '진행중';
+      if (topicInput) topicInput.value = '';
+      if (bulletsInput) bulletsInput.value = '';
+      if (memberSelect) {
+        memberSelect.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'hjh' : ACTIVE_MEMBER_ID;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeAddIssueModal() {
+      const modal = document.getElementById('addIssueModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function handleModalCustomerChange(val) {
+      const custDirect = document.getElementById('modalIssueCustomerDirect');
+      if (custDirect) {
+        custDirect.style.display = (val === '__DIRECT__') ? 'block' : 'none';
+        if (val === '__DIRECT__') custDirect.focus();
       }
     }
 
-    function updateIssueBullet(memId, issId, bIdx, val) {
-      if (notifyLocked()) return;
-      const mem = getActiveDataset().members.find(x => x.id === memId);
-      if (!mem) return;
-      const iss = (mem.issues || []).find(x => x.id === issId);
-      if (iss && iss.bullets && iss.bullets[bIdx] !== undefined) {
-        iss.bullets[bIdx] = val;
-        clearTimeout(DEBOUNCE_TIMER);
-        DEBOUNCE_TIMER = setTimeout(() => {
-          recordRevision('특이사항 세부수정', `${CURRENT_USER_NAME}님이 세부 항목 수정`);
-          triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항 세부내용을 수정했습니다.`);
-        }, 600);
-      }
-    }
+    function submitAddIssueModal() {
+      const custSelect = document.getElementById('modalIssueCustomer');
+      const custDirect = document.getElementById('modalIssueCustomerDirect');
+      const itemSelect = document.getElementById('modalIssueItem');
+      const statusSelect = document.getElementById('modalIssueStatus');
+      const topicInput = document.getElementById('modalIssueTopic');
+      const bulletsInput = document.getElementById('modalIssueBullets');
+      const memberSelect = document.getElementById('modalIssueMember');
 
-    function addIssueBullet(memId, issId) {
-      if (notifyLocked()) return;
-      const mem = getActiveDataset().members.find(x => x.id === memId);
-      if (!mem) return;
-      const iss = (mem.issues || []).find(x => x.id === issId);
-      if (iss) {
-        if (!iss.bullets) iss.bullets = [];
-        iss.bullets.push('신규 진행 사항');
-        recordRevision('특이사항 항목추가', `${CURRENT_USER_NAME}님이 '${iss.topic}' 세부 항목 추가`);
-        renderMemberView();
-        triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항 항목을 추가했습니다.`);
+      let customer = custSelect ? custSelect.value : '';
+      if (customer === '__DIRECT__') {
+        customer = custDirect ? custDirect.value.trim() : '';
       }
-    }
-
-    function deleteIssueBullet(memId, issId, bIdx) {
-      if (notifyLocked()) return;
-      const mem = getActiveDataset().members.find(x => x.id === memId);
-      if (!mem) return;
-      const iss = (mem.issues || []).find(x => x.id === issId);
-      if (iss && iss.bullets) {
-        iss.bullets.splice(bIdx, 1);
-        recordRevision('특이사항 항목삭제', `${CURRENT_USER_NAME}님이 '${iss.topic}' 항목 내용 삭제`);
-        renderMemberView();
-        triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항 항목을 삭제했습니다.`);
+      if (!customer) {
+        alert('고객사를 선택하거나 직접 입력해 주십시오.');
+        if (custSelect) custSelect.focus();
+        return;
       }
-    }
 
-    function addNewIssue() {
-      if (notifyLocked()) return;
-      const targetMemId = (ACTIVE_MEMBER_ID === 'ALL') ? 'hjh' : ACTIVE_MEMBER_ID;
-      const mem = getActiveDataset().members.find(x => x.id === targetMemId);
+      const topic = topicInput ? topicInput.value.trim() : '';
+      if (!topic) {
+        alert('영업현황 보고 주제 또는 프로젝트명을 입력해 주십시오.');
+        if (topicInput) topicInput.focus();
+        return;
+      }
+
+      const status = statusSelect ? statusSelect.value : '진행중';
+      const item = itemSelect ? itemSelect.value : '';
+      const targetMemId = memberSelect ? memberSelect.value : 'hjh';
+
+      const bulletLines = (bulletsInput ? bulletsInput.value : '')
+        .split('\n')
+        .map(s => s.replace(/^[•\-\*\s]+/, '').trim())
+        .filter(Boolean);
+
+      if (bulletLines.length === 0) {
+        bulletLines.push('세부 진행 내역 및 주간 현황 확인');
+      }
+
+      const currentData = getActiveDataset();
+      const mem = currentData.members.find(x => x.id === targetMemId);
       if (!mem) return;
       if (!mem.issues) mem.issues = [];
 
-      const newTopic = prompt('추가할 특이사항 주제를 입력하세요:', '신규 프로젝트 진행 현황');
-      if (!newTopic) return;
-
-      const newIss = {
+      const newIssue = {
         id: 'iss_' + targetMemId + '_' + Date.now(),
-        topic: newTopic,
-        tag: '진행중',
-        bullets: ['프로젝트 목표 및 세부 일정 수립 완료']
+        customer: customer,
+        item: item,
+        topic: topic,
+        tag: status,
+        bullets: bulletLines
       };
 
-      mem.issues.push(newIss);
-      recordRevision('특이사항 추가', `${CURRENT_USER_NAME}님이 특이사항 '${newTopic}' 추가`);
+      mem.issues.push(newIssue);
+      recordRevision('영업현황 등록', `${CURRENT_USER_NAME}님이 [${customer}] 특이사항 '${topic}' 등록`);
+      closeAddIssueModal();
       renderMemberView();
-      triggerAutoSave(`${CURRENT_USER_NAME}님이 특이사항 '${newTopic}'을(를) 추가했습니다.`);
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 [${customer}] 영업현황보고를 등록했습니다.`);
     }
 
-    function deleteIssue(memId, issId) {
+    // 기존 버튼 연동
+    function addNewIssue() {
+      openAddIssueModal();
+    }
+
+        function deleteIssue(memId, issId) {
       if (notifyLocked()) return;
       const mem = getActiveDataset().members.find(x => x.id === memId);
       if (!mem || !mem.issues) return;
@@ -3515,6 +3809,7 @@
 
     // 초기 실행
     window.addEventListener('DOMContentLoaded', () => {
+      initWeeklyMasterData();
       const selectEl = document.getElementById('currentUserSelect');
       if (selectEl && CURRENT_USER_NAME) {
         selectEl.value = CURRENT_USER_NAME;

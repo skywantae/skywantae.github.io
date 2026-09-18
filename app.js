@@ -857,7 +857,7 @@ const APP_I18N = {
     lab_tab_tools: '업무 자동화 도구',
     lab_tab_gimpo: '김포공장 Tray 재고',
     lab_tab_ph: '필리핀 지사 리포트 & 프로젝트',
-    lab_tab_weekly: '해외영업부 주간보고서',
+    lab_tab_weekly: '주간보고서',
 
     // Gimpo Tray Stock
     gimpo_title: '김포공장 Tray 재고 현황',
@@ -995,7 +995,7 @@ const APP_I18N = {
     lab_tab_tools: 'Automation Tools',
     lab_tab_gimpo: 'Gimpo Tray Stock',
     lab_tab_ph: 'PH Branch Report & Projects',
-    lab_tab_weekly: 'Overseas Sales Weekly Report',
+    lab_tab_weekly: 'Weekly Report',
 
     // Gimpo Tray Stock
     gimpo_title: 'Gimpo Factory Tray Stock',

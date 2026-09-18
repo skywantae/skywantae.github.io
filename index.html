@@ -473,7 +473,7 @@
           <button class="lab-main-tab-btn active" id="btnLabTabTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">업무 자동화 도구</button>
           <button class="lab-main-tab-btn" id="btnLabTabGimpo" onclick="switchLabSubTab('labSubGimpo', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">김포공장 Tray 재고</button>
           <button class="lab-main-tab-btn" id="btnLabTabPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">필리핀 지사 리포트 & 프로젝트</button>
-          <button class="lab-main-tab-btn" id="btnLabTabWeekly" onclick="switchLabSubTab('labSubWeekly', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">해외영업부 주간보고서</button>
+          <button class="lab-main-tab-btn" id="btnLabTabWeekly" onclick="switchLabSubTab('labSubWeekly', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">주간보고서</button>
         </div>
 
         <!-- ===== 서브탭 1: 업무 자동화 도구 (SSPC 매출 자료 변환기) ===== -->
@@ -782,11 +782,10 @@
               <div class="lab-card" id="weeklyReportLabCard" style="border-color: #3b82f6; margin-bottom:0;">
                 <div class="lab-card-header">
                   <div class="lab-card-title-box">
-                    <span class="lab-badge primary" style="background:#2563eb; color:#ffffff;">실시간 협업 LIVE</span>
-                    <h4>해외영업부 주간보고서 실시간 협업 워크스페이스</h4>
+                    <h4>주간보고서</h4>
                   </div>
                   <div style="display:flex; gap:8px; align-items:center;">
-                    <a href="weekly_report_prototype.html" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+                    <a href="weekly_report_prototype.html?v=1.0.169_w38" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
                       전체화면 새 창 열기
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
@@ -794,12 +793,12 @@
                 </div>
                 <div class="lab-card-body" style="padding:12px;">
                   <p class="lab-desc" style="margin-bottom:12px;">
-                    파일(PPT/Excel) 별도 업로드 없이, 모든 팀원이 온라인에서 <strong>매출 실적 및 주차별 예상치, 샘플 진행 현황, 특이사항</strong>을 직접 실시간으로 편집하고 자동 동기화하는 엔터프라이즈 주간보고서 시스템입니다. (수정 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
+                    해외영업부 팀원별 매출 실적 및 주차별 예상치, 샘플 진행 현황, 주간 특이사항 및 프로젝트 이슈를 공유하고 관리하는 시스템입니다. (담당 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
                   </p>
                   
                   <!-- 워크스페이스 임베드 컨테이너 -->
                   <div style="width:100%; height:840px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                    <iframe src="weekly_report_prototype.html" style="width:100%; height:100%; border:none;" title="해외영업부 주간보고서 실시간 워크스페이스"></iframe>
+                    <iframe src="weekly_report_prototype.html?v=1.0.169_w38" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
                   </div>
                 </div>
               </div>
@@ -1427,6 +1426,7 @@
   <script src="data/archive_data.js?v=1.0.169"></script>
   <script src="data/gimpo_tray_stock_data.js?v=1.0.169"></script>
   <script src="data/ph_daily_report_data.js?v=1.0.169"></script>
+  <script src="data/weekly_master_meta.js?v=1.0.169"></script>
   
   <script src="xlsx.full.min.js?v=1.0.169"></script>
   <script src="exceljs.min.js?v=1.0.169"></script>
