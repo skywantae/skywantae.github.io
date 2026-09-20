@@ -3682,27 +3682,27 @@ html, body {
   margin-bottom: 12px;
   display: flex;
   align-items: center;
-  background: #141824;
-  border: 1.5px solid #3b82f6;
+  background: #1e293b;
+  border: 2px solid #3b82f6;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.18), inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(59, 130, 246, 0.3);
   transition: all 0.2s ease;
 }
 
 .gimpo-search-wrapper:hover {
   border-color: #60a5fa;
-  box-shadow: 0 3px 14px rgba(59, 130, 246, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 14px rgba(59, 130, 246, 0.35), inset 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .gimpo-search-wrapper:focus-within {
   border-color: #93c5fd;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.35);
-  background: #171c2a;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4), inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  background: #243048;
 }
 
 #gimpoSearchInput {
   flex: 1;
-  padding: 10px 8px 10px 0;
+  padding: 11px 10px 11px 0;
   border: none;
   background: transparent;
   color: #ffffff;
