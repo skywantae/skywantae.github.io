@@ -1,6 +1,6 @@
 {
   "source_file": "PH Weekly Report WW38 rev. 04.xlsx",
-  "extracted_at": "2026-09-20 19:08:12",
+  "extracted_at": "2026-09-20 19:21:30",
   "summary": {
     "daily_report_count": 400,
     "customer_count": 21,
@@ -6273,7 +6273,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-07-01: 총 18건 업무 보고 (KWE, ATP) - 주요안건: Vivere Hotel - airport pick up"
+      "day_summary_ko": "2026-07-01: 총 18건 업무 보고 (ATP, KWE) - 주요안건: Vivere Hotel - airport pick up"
     },
     {
       "date": "2026-06-30",
@@ -9762,7 +9762,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATP3, ATEC) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
+      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATEC, ATP3) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
     },
     {
       "date": "2026-05-13",
@@ -12266,7 +12266,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (ATP1, Olffice) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
+      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (Olffice, ATP1) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
     },
     {
       "date": "2026-04-07",
@@ -12706,7 +12706,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (Device Dynamics, SFA) - 주요안건: Attendees:"
+      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (SFA, Device Dynamics) - 주요안건: Attendees:"
     },
     {
       "date": "2026-03-26",
@@ -23377,7 +23377,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (TongHsing, KWE) - 주요안건: Kostat Tray KS-8603 Microchip"
+      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (KWE, TongHsing) - 주요안건: Kostat Tray KS-8603 Microchip"
     },
     {
       "date": "2025-11-12",
@@ -28733,7 +28733,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (TongHsing, KWE) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
+      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (KWE, TongHsing) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
     },
     {
       "date": "2025-09-15",
@@ -30928,7 +30928,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ATP4, ASE) - 주요안건: MLF 5x6"
+      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ASE, ATP4) - 주요안건: MLF 5x6"
     },
     {
       "date": "2025-08-19",
@@ -36956,7 +36956,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-18: 총 17건 업무 보고 (ATP1, KWE) - 주요안건: URGENT TRAY REJECT - 101318825 ATP"
+      "day_summary_ko": "2025-06-18: 총 17건 업무 보고 (KWE, ATP1) - 주요안건: URGENT TRAY REJECT - 101318825 ATP"
     },
     {
       "date": "2025-06-17",
@@ -38078,7 +38078,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-05: 총 23건 업무 보고 (Amertron, SFA) - 주요안건: CADFIT AND DRAWING FOR TRAY 101411434 AT"
+      "day_summary_ko": "2025-06-05: 총 23건 업무 보고 (SFA, Amertron) - 주요안건: CADFIT AND DRAWING FOR TRAY 101411434 AT"
     },
     {
       "date": "2025-06-04",
@@ -38768,7 +38768,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-29: 총 24건 업무 보고 (ATP, SFA) - 주요안건: TNR INQUIRY ATP"
+      "day_summary_ko": "2025-05-29: 총 24건 업무 보고 (SFA, ATP) - 주요안건: TNR INQUIRY ATP"
     },
     {
       "date": "2025-05-28",
@@ -40716,7 +40716,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-09: 총 14건 업무 보고 (ATP4, STMicro) - 주요안건: TNR RFQ TongHsing"
+      "day_summary_ko": "2025-05-09: 총 14건 업무 보고 (STMicro, ATP4) - 주요안건: TNR RFQ TongHsing"
     },
     {
       "date": "2025-05-08",
@@ -41678,7 +41678,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (TICL, STMicro) - 주요안건: REEL INQUIRY H:7&4 ATP"
+      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (STMicro, TICL) - 주요안건: REEL INQUIRY H:7&4 ATP"
     },
     {
       "date": "2025-04-28",
@@ -41794,7 +41794,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-28: 총 11건 업무 보고 (ATP4, TICL) - 주요안건: KAH7-093500 TS&DS sample shipment 250424"
+      "day_summary_ko": "2025-04-28: 총 11건 업무 보고 (TICL, ATP4) - 주요안건: KAH7-093500 TS&DS sample shipment 250424"
     },
     {
       "date": "2025-04-25",
@@ -44574,7 +44574,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-03-25: 총 8건 업무 보고 (TICL, SFA) - 주요안건: Move to Clark"
+      "day_summary_ko": "2025-03-25: 총 8건 업무 보고 (SFA, TICL) - 주요안건: Move to Clark"
     },
     {
       "date": "2025-03-20",
@@ -44786,7 +44786,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-03-19: 총 10건 업무 보고 (KWE, ATP) - 주요안건: For Supplier verification_PBIN Color KS-"
+      "day_summary_ko": "2025-03-19: 총 10건 업무 보고 (ATP, KWE) - 주요안건: For Supplier verification_PBIN Color KS-"
     },
     {
       "date": "2025-03-18",
@@ -48473,7 +48473,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-02-06: 총 10건 업무 보고 (Amertron, SFA) - 주요안건: Plastic blue reel"
+      "day_summary_ko": "2025-02-06: 총 10건 업무 보고 (SFA, Amertron) - 주요안건: Plastic blue reel"
     },
     {
       "date": "2025-02-05",
@@ -49517,7 +49517,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-21: 총 19건 업무 보고 (ATP4, SPI Semicon, ATEC) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-21: 총 19건 업무 보고 (ATEC, SPI Semicon, ATP4) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-20",
@@ -49593,7 +49593,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-20: 총 7건 업무 보고 (Kenner, Analog) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-20: 총 7건 업무 보고 (Analog, Kenner) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-16",
@@ -51504,13 +51504,13 @@
         "status": "Closed",
         "remark": "Other supplier with open tool.",
         "hq_comment": "",
-        "summary_ko": "[종결] 개방형 공구 점검 및 CADFit 시뮬레이션용.",
+        "summary_ko": "[종결] 개방형 공구 검사 및 CADFit 시뮬레이션용.",
         "bullets_ko": [
           "단가/견적: 제안된 디자인 및 견적 제출",
           "사양/금형: 오픈 금형가 없습니다.",
           "진행/이슈: 2/27 - 고객에게 후속 조치를 취함"
         ],
-        "progress_ko": "개방형 공구 점검 및 CADFit 시뮬레이션용.\n오픈 금형가 없습니다.\n제안된 디자인 및 견적 제출\n2/27 - 고객에게 후속 조치를 취함\n3/7 - 고객에게 후속 조치를 취했습니다.\n3/20 - 고객 후속 조치.\n4/10 - 후속 고객\n5/21 - 후속 고객",
+        "progress_ko": "개방형 공구 검사 및 CADFit 시뮬레이션용.\n오픈 금형가 없습니다.\n제안된 디자인 및 견적 제출\n2/27 - 고객에게 후속 조치를 취함\n3/7 - 고객에게 후속 조치를 취했습니다.\n3/20 - 고객 후속 조치.\n4/10 - 후속 고객\n5/21 - 후속 고객",
         "progress_en": "For open tool check and CADFit simulation.\nNo open tool.\nSubmitted proposed design and quotation\n2/27 - folowed up customer\n3/7 - followed up customer.\n3/20 - follow up customer.\n4/10 - follow up customer\n5/21 -follow up customer",
         "status_ko": "종결",
         "customer": "ATP"
@@ -52410,7 +52410,7 @@
           "단가/견적: 제출된 견적, CADFit 시뮬레이션.",
           "사양/금형: 오픈 금형를 가지고 있습니다."
         ],
-        "progress_ko": "오픈 금형를 가지고 있습니다.\n제출된 견적, CADFit 시뮬레이션.\n내부적으로 검토합니다.\n그들은 어떻게든 이 제품에 맞는 기존 csrrier tpae를 사용할 것입니다.",
+        "progress_ko": "오픈 금형를 가지고 있습니다.\n제출된 견적, CADFit 시뮬레이션.\n내부적으로 검토합니다.\n그들은 이 제품에 어느 정도 맞는 기존 csrrier tpae를 사용할 것입니다.",
         "progress_en": "Have open tool.\nSubmitted quotation, CADFit simulation.\nTo review it internaly.\nThey will use exisitng csrrier tpae that somehow fit this product.",
         "status_ko": "To use existing carrier tape",
         "customer": "TIPI"
@@ -52870,7 +52870,7 @@
           "주요내용: KS-881364 – PO 접수, 1500개",
           "주요내용: KS-881429 - PO 접수, 1500개"
         ],
-        "progress_ko": "미카 아순시온\nKS-881364 – PO 접수, 1500개\nKS-881429 - PO 접수, 1500개\nKS-871339 – Telford의 하위 콘에서 계속 자격을 취득하고 있습니다. 하위 콘인 Telford에서는 자격이 여전히 진행 중입니다. 이번 달 안에 커밋이 완료될 예정입니다.\nKS-87045 – 하위 콘인 Telford에서 인증을 진행 중입니다. 하위 콘인 Telford에서는 자격이 여전히 진행 중입니다. 이번 달 안에 커밋이 완료될 예정입니다.\n자격을 갖추면 PO가 즉시 발급됩니다.\nPO 접수됨",
+        "progress_ko": "미카 아순시온\nKS-881364 – PO 접수, 1500개\nKS-881429 - PO 접수, 1500개\nKS-871339 – Telford의 하위 콘에서 계속 자격을 취득하고 있습니다. 하위 콘인 Telford에서는 자격이 여전히 진행 중입니다. 이번 달 안에 커밋이 완료될 예정입니다.\nKS-87045 – Telford의 하위 콘에서 인증을 진행 중입니다. 하위 콘인 Telford에서는 자격이 여전히 진행 중입니다. 이번 달 안에 커밋이 완료될 예정입니다.\n자격을 갖추면 PO가 즉시 발급됩니다.\nPO 접수됨",
         "progress_en": "Mika Asuncion\nKS-881364 – PO received, 1500pcs\nKS-881429 - PO received, 1500 pcs\nKS-871339– On going qualification in their subcon, Telford. Qualification is still on going in their subcon Telford. Commit completion will be within this month.\nKS-87045– On going qualification in their subcon, Telford. Qualification is still on going in their subcon Telford. Commit completion will be within this month.\nOnce qualified, PO issuance will follow immediately\nPO received",
         "status_ko": "완료",
         "customer": "Analog"
@@ -52994,7 +52994,7 @@
           "사양/금형: 오픈 금형가 없습니다.",
           "진행/이슈: 새로운 금형(Tooling)을 진행할 것인지 확인했습니다."
         ],
-        "progress_ko": "RJ 파조\nPOD를 받았습니다.\n오픈툴 체크용\n오픈 금형가 없습니다.\n새로운 금형(Tooling)을 진행할 것인지 확인했습니다.\n11/21 - 고객에게 후속 조치를 취했습니다.\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 후속 고객\n4/10 - 후속 고객\n5/5 - 후속 고객\n5/19 - 이 프로젝트가 아직 진행 중인지, 새로운 금형(Tooling)을 진행하고 싶은지 고객에게 확인했습니다.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 후속 고객\n1/22 - 후속 고객",
+        "progress_ko": "RJ 파조\nPOD를 받았습니다.\n오픈툴 체크용\n오픈 금형가 없습니다.\n새로운 금형(Tooling)을 진행할 것인지 확인했습니다.\n11/21 - 고객에게 후속 조치를 취했습니다.\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 후속 고객\n4/10 - 후속 고객\n5/5 - 후속 고객\n5/19 - 이 프로젝트가 아직 진행 중인지, 새로운 금형(Tooling)을 진행하기 원하는지 고객에게 확인했습니다.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 후속 고객\n1/22 - 후속 고객",
         "progress_en": "RJ Pajo\nReceived POD.\nFor open tool check\nNo open tool.\nChecked if they wish to proceed with new tooling.\n11/21 - followed up customer.\n1/9 - followed up customer\n2/11 - followed up customer\n3/27 - followed up customer\n4/10 - followed up customer\n5/5 - follow up customer\n5/19 - checked with customer if this project is still open and if they wish to proceed with new tooling.\n6/9 - follow up customer.\n7/11 - follow up customer\n1/22 - follow up customer",
         "status_ko": "진행중",
         "customer": "Analog"
@@ -53095,9 +53095,9 @@
         "summary_ko": "[진행중] 샘플 및 견적요청 접수",
         "bullets_ko": [
           "단가/견적: 샘플 및 견적요청 접수",
-          "진행/이슈: 3/7 - 견적 및 샘플을 위해 본사에 후속 조치를 취했습니다."
+          "진행/이슈: 3/7 - 견적 접수되었습니다. 고객에게 제출되었습니다."
         ],
-        "progress_ko": "샘플 및 견적요청 접수\n본사에 문의했습니다.\n3/7 - 견적 및 샘플을 위해 본사에 후속 조치를 취했습니다.\n3/7 - 견적 접수되었습니다. 고객에게 제출되었습니다.\n3/10 - 샘플 상태에 대해 본사에 후속 조치를 취했습니다.\nks-871489 샘플은 3월 24일경에 배송예정입니다.\n3/27 - 샘플 배송 문서를 제출했습니다.\n5/5 - 샘플 적격성 상태에 대한 후속 조치.\n5/19 - 후속 평가 상태.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 고객에게 후속 조치를 취합니다.\n9/26 - 후속 고객.\n1/22 - 후속 고객",
+        "progress_ko": "샘플 및 견적요청 접수\n본사에 문의했습니다.\n3/7 - 견적 및 샘플을 위해 본사에 연락했습니다.\n3/7 - 견적 접수되었습니다. 고객에게 제출되었습니다.\n3/10 - 샘플 상태에 대해 본사에 후속 조치를 취했습니다.\nks-871489 샘플은 3월 24일경에 배송예정입니다.\n3/27 - 샘플 배송 문서를 제출했습니다.\n5/5 - 샘플 적격성 상태에 대한 후속 조치.\n5/19 - 후속 평가 상태.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 고객에게 후속 조치를 취합니다.\n9/26 - 후속 고객.\n1/22 - 후속 고객",
         "progress_en": "Received request for sample and quotation\nInquired with HQ.\n3/7 - followed up HQ for the quotation and sample.\n3/7 - received quotation. Submitted to customer.\n3/10 - followed up HQ on the status of the sample.\nSample for ks-871489 is tentatively be shipped around 03/24.\n3/27 - submitted shipping docs for the sample.\n5/5 - follow up sample qualificaiton status.\n5/19 - follow up evaluation status.\n6/9 - follow up customer.\n7/11 - follow up customer.\n9/26 - follow up customer.\n1/22 - follow up customer",
         "status_ko": "진행중",
         "customer": "Analog"
@@ -53385,7 +53385,7 @@
           "사양/금형: 오픈 금형가 없습니다.",
           "진행/이슈: 검토를 위해 야구장을 제출했습니다."
         ],
-        "progress_ko": "SOIC36L 375밀\n오픈 금형가 없습니다.\n검토를 위해 야구장을 제출했습니다.\n견적을 제출했습니다.\n휴무\n다른 트레이 공급업체는 보다 빠른 트레이 디자인 제안 및 샘플을 제공했습니다.",
+        "progress_ko": "SOIC36L 375밀\n오픈 금형가 없습니다.\n검토를 위해 야구장을 제출했습니다.\n견적을 제출했습니다.\n휴무\n다른 트레이 공급업체는 더 빠른 트레이 디자인 제안 및 샘플을 제공했습니다.",
         "progress_en": "SOIC36L 375 mils\nNo open tool.\nSubmitted ball park for review.\nSubmitted quotation.\nClosed\nOther tray vendor provided faster tray design proposal and sample.",
         "status_ko": "종결",
         "customer": "ONSEMI"
@@ -53441,12 +53441,12 @@
         "status": "Ongoing",
         "remark": "",
         "hq_comment": "",
-        "summary_ko": "[진행중] 6/17 - POD 제출 문의를 받고 CADFit을 요청했습니다.",
+        "summary_ko": "[진행중] 6/17 - 문의를 받고 POD를 제출하고 CADFit을 요청했습니다.",
         "bullets_ko": [
           "단가/견적: 6/18 - 제출된 견적",
-          "진행/이슈: 6/17 - POD 제출 문의를 받고 CADFit을 요청했습니다."
+          "진행/이슈: 6/17 - 문의를 받고 POD를 제출하고 CADFit을 요청했습니다."
         ],
-        "progress_ko": "6/17 - POD 제출 문의를 받고 CADFit을 요청했습니다.\n가. POD 대 KOSTAT 7.0MMX7.0MM 180'C KS-870160.\n비. POD 대 KOSTAT KS-870325\nKS-870160은 사용 가능하며 모든 기준을 통과했습니다.\n6/18 - 제출된 견적\n6/19 - 이것이 개방형 도구이며 도구 비용이 필요하지 않음을 고객에게 확인했습니다.\n6/23 - 후속 고객.\n7/11 - 고객에게 후속 조치를 취합니다.\n10/20 - 후속 고객\n1/23 - 후속 고객\n1/23 - 이미 최종 사용자/요청자에게 전달되었습니다. 견적이 더 이상 유효하지 않으므로 지금은 이 항목을 보관할 수 있습니다.",
+        "progress_ko": "6/17 - 문의를 받고 POD를 제출하고 CADFit을 요청했습니다.\n가. POD 대 KOSTAT 7.0MMX7.0MM 180'C KS-870160.\n비. POD 대 KOSTAT KS-870325\nKS-870160은 사용 가능하며 모든 기준을 통과했습니다.\n6/18 - 제출된 견적\n6/19 - 이것이 개방형 도구이며 도구 비용이 필요하지 않음을 고객에게 확인했습니다.\n6/23 - 후속 고객.\n7/11 - 고객에게 후속 조치를 취합니다.\n10/20 - 후속 고객\n1/23 - 후속 고객\n1/23 - 이미 최종 사용자/요청자에게 전달되었습니다. 견적이 더 이상 유효하지 않으므로 지금은 이 항목을 보관할 수 있습니다.",
         "progress_en": "6/17 - Received inquiry submitted POD and requested CADFit for\na. POD vs KOSTAT 7.0MMX7.0MM 180'C KS-870160.\nb. POD vs KOSTAT KS-870325\nKS-870160 is ok to use, passed all criteria.\n6/18 - submitted quote\n6/19 - confirmed to customer that this is an open tool and no tooling cost is required.\n6/23 - follow up customer.\n7/11 - follow up customer.\n10/20 - follow up customer\n1/23 - follow up customer\n1/23 - This has already been forwarded to the end user/requestor. As the quote is no longer valid, we may park this item for now.",
         "status_ko": "진행중",
         "customer": "ONSEMI"
@@ -53481,12 +53481,12 @@
         "status": "Closed",
         "remark": "Double unit not accepted",
         "hq_comment": "",
-        "summary_ko": "[종결] 8/7 - KS-870163에 대한 POD 제공의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00...",
+        "summary_ko": "[종결] 8/7 - KS-870163에 대한 제공 POD의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00...",
         "bullets_ko": [
-          "단가/견적: 8/7 - KS-870163에 대한 POD 제공의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(",
+          "단가/견적: 8/7 - KS-870163에 대한 제공 POD의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(",
           "진행/이슈: 10/20 - 후속 고객."
         ],
-        "progress_ko": "8/7 - KS-870163에 대한 POD 제공의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00)을 제안합니다. 더블유닛 빼고 모두 합격. 고객 리뷰를 위해.\n10/20 - 후속 고객.\n1/23 - 고객의 후속 조치.",
+        "progress_ko": "8/7 - KS-870163에 대한 제공 POD의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00)을 제안합니다. 더블유닛 빼고 모두 합격. 고객 리뷰를 위해.\n10/20 - 후속 고객.\n1/23 - 고객의 후속 조치.",
         "progress_en": "8/7 - received inquiry for CADFit simulation of the give POD against KS-870163. Failed lateral GAP and double unit. Offer KS-870283(00). All passed except double unit. For customer review.\n10/20 - follow up customer.\n1/23 - follow up direction of customer.",
         "status_ko": "종결",
         "customer": "ONSEMI"
@@ -53523,10 +53523,10 @@
         "hq_comment": "",
         "summary_ko": "[Done, 50pcs requirement is considered as sample only.] 12/16 - 문의접수",
         "bullets_ko": [
-          "단가/견적: 1/8 - 50개에 대해서만 견적 제출을 진행합니다.",
+          "단가/견적: 1/8 - 50개에 한해 견적 제출을 진행합니다.",
           "진행/이슈: 12/17 - CADFit 시뮬레이션 제출"
         ],
-        "progress_ko": "12/16 - 문의접수\n12/17 - CADFit 시뮬레이션 제출\n1/8 - 50개에 대해서만 견적 제출을 진행합니다.\n1/9 - 본사를 요청했습니다.\n1/20 - ZV 견적 제출\n1/22 - ZVPO 후속 조치.\n2/4 - 배송 주소, 수신인 및 전화번호를 받았습니다.",
+        "progress_ko": "12/16 - 문의접수\n12/17 - CADFit 시뮬레이션 제출\n1/8 - 50개에 한해 견적 제출을 진행합니다.\n1/9 - 본사를 요청했습니다.\n1/20 - ZV 견적 제출\n1/22 - ZVPO 후속 조치.\n2/4 - 배송 주소, 수신인 및 전화번호를 받았습니다.",
         "progress_en": "12/16 - received inquiry\n12/17 - submitted CADFit simulation\n1/8 - to proceed submittion of quote for 50pcs only.\n1/9 - requested HQ.\n1/20 - submitted ZV quote\n1/22 - follow up ZVPO.\n2/4 - received shipping address, attn to and tel number.",
         "status_ko": "Done, 50pcs requirement is considered as sample only.",
         "customer": "ONSEMI"
@@ -53632,7 +53632,7 @@
           "사양/금형: 7/1 - 제안된 디자인이 승인되었습니다. 수정된 견적과 부품 번호를 포함한 수정된 도면.",
           "진행/이슈: 6/17 - 와플팩이 아닌 배송트레이(블리스터 트레이)임을 확인해주세요"
         ],
-        "progress_ko": "5/27 - 와플팩 문의\n6/17 - 와플팩이 아닌 배송트레이(블리스터 트레이)임을 확인해주세요\n6/18 - 본사에 견적 및 제안된 디자인을 요청했습니다.\n7/1 - 제안된 디자인이 승인되었습니다. 수정된 견적과 부품 번호를 포함한 수정된 도면.\n7/2 - 제출된 수정 견적은 MOQ를 630개로 조정했습니다.\n7/3 - 150개 FOC 샘플을 제공하기로 합의했습니다. 가장 빠른 배송 일정을 확인하기 위해.\n7/4 - 프로젝트가 보류되었습니다. 고객이 방향을 바꾸었습니다. 트레이를 사용하는 대신 최종 고객이 BOM을 기준으로 위탁하는 와플 트레이를 사용하게 됩니다.\n이 프로젝트는 진행되지 않을 가능성이 높습니다.",
+        "progress_ko": "5/27 - 와플팩 문의\n6/17 - 와플팩이 아닌 배송트레이(블리스터 트레이)임을 확인해주세요\n6/18 - 본사에 견적 및 제안된 디자인을 요청했습니다.\n7/1 - 제안된 디자인이 승인되었습니다. 수정된 견적과 부품 번호를 포함한 수정된 도면.\n7/2 - 제출된 수정 견적은 MOQ를 630개로 조정했습니다.\n7/3 - 150개 FOC 샘플을 제공하기로 합의했습니다. 가장 빠른 배송 일정을 확인하기 위해.\n7/4 - 프로젝트가 보류되었습니다. 고객이 방향을 바꾸었습니다. 트레이를 사용하는 대신 최종 고객이 BOM을 기반으로 위탁하는 와플 트레이를 사용할 것입니다.\n이 프로젝트는 진행되지 않을 가능성이 높습니다.",
         "progress_en": "5/27 - inquiry on waffle pack\n6/17 - confimre dthat this is not waffle pack but shipping tray(Blister tray)\n6/18 - requested HQ for the quote and proposed design.\n7/1 - proposed design is approved. revised quotation and the revised drawing including the Part Number.\n7/2 - Submitted revised quotation adjusted the MOQ to 630pcs.\n7/3 - agreed to provide 150pcs FOC sample. For confirmation of the earliest delivery schedule.\n7/4 - Project put on hold. Customer has changed its direction. Instead of using tray, they will go with waffle trays, where their end customer will consign based on the BOM.\nThis project is most likely not going to push through.",
         "status_ko": "종결",
         "customer": "TongHsing"

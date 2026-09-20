@@ -8433,6 +8433,11 @@ function setupPhFileUpload() {
 // 필리핀 지사 Weekly Report (인벤토리 & 9월 매출 예측) 엔진
 // =====================================================
 
+function escapeAttr(s) {
+  if (typeof escapeHtml === 'function') return escapeHtml(s);
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 let _phWeeklyData = null;
 let _phWeeklyActiveTab = 'daily';
 
