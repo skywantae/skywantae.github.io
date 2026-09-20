@@ -8407,6 +8407,7 @@ function setupPhFileUpload() {
       if (panelName === 'lab') {
         if (!_gimpoStockData) initGimpoStock();
         if (!_phData) initPhDailyReport();
+        if (!_phWeeklyData) initPhWeeklyForecast();
       }
     };
   }
@@ -8418,6 +8419,7 @@ function setupPhFileUpload() {
     setTimeout(function() {
       if (window.KOSTAT_GIMPO_TRAY_STOCK) initGimpoStock();
       if (window.KOSTAT_PH_DAILY_REPORT) initPhDailyReport();
+      if (window.KOSTAT_PH_WEEKLY_FORECAST) initPhWeeklyForecast();
     }, 300);
   });
 })();
@@ -8425,3 +8427,334 @@ function setupPhFileUpload() {
 
 
 
+
+
+// =====================================================
+// 필리핀 지사 Weekly Report (인벤토리 & 9월 매출 예측) 엔진
+// =====================================================
+
+let _phWeeklyData = null;
+let _phWeeklyActiveTab = 'daily';
+
+function switchPhMainSubTab(mode, btnEl) {
+  _phWeeklyActiveTab = mode;
+  document.querySelectorAll('.ph-main-subtab-btn').forEach(btn => {
+    btn.classList.remove('active');
+    btn.style.background = 'var(--bg-card-sub)';
+    btn.style.color = 'var(--text-secondary)';
+    btn.style.borderColor = 'var(--border-color)';
+  });
+  if (btnEl) {
+    btnEl.classList.add('active');
+    btnEl.style.background = '#2563eb';
+    btnEl.style.color = '#fff';
+    btnEl.style.borderColor = '#2563eb';
+  }
+
+  const dailyCont = document.getElementById('phDailyContainer');
+  const weeklyCont = document.getElementById('phWeeklyContainer');
+
+  if (mode === 'daily') {
+    if (dailyCont) dailyCont.style.display = 'block';
+    if (weeklyCont) weeklyCont.style.display = 'none';
+  } else {
+    if (dailyCont) dailyCont.style.display = 'none';
+    if (weeklyCont) weeklyCont.style.display = 'block';
+    initPhWeeklyForecast();
+  }
+}
+window.switchPhMainSubTab = switchPhMainSubTab;
+
+function initPhWeeklyForecast() {
+  _phWeeklyData = window.KOSTAT_PH_WEEKLY_FORECAST || null;
+  if (!_phWeeklyData) {
+    console.warn('[PH Weekly] window.KOSTAT_PH_WEEKLY_FORECAST is not loaded yet.');
+    return;
+  }
+
+  const meta = _phWeeklyData.metadata || {};
+  const proj = _phWeeklyData.projection_models || {};
+  const inv = _phWeeklyData.sep_inventory_summary || {};
+
+  // 1. 상단 KPI 카드 값 채우기
+  const augFinalEl = document.getElementById('phWkAugFinalAmt');
+  if (augFinalEl) augFinalEl.textContent = '$' + Math.round(meta.aug_final_actual_amt || 325361).toLocaleString();
+
+  const sepMtdEl = document.getElementById('phWkSepMtdAmt');
+  if (sepMtdEl) sepMtdEl.textContent = '$' + Math.round(meta.sep_18th_mtd_amt || 227905).toLocaleString();
+
+  const mtdGrowthEl = document.getElementById('phWkMtdGrowth');
+  if (mtdGrowthEl) {
+    const growth = meta.mtd_yoy_growth_pct || 27.9;
+    mtdGrowthEl.textContent = `전월 동기(8/18) 대비 +${growth}% 증가`;
+  }
+
+  const consensus = proj.consensus || {};
+  const consensusEl = document.getElementById('phWkConsensusAmt');
+  if (consensusEl) consensusEl.textContent = '$' + Math.round(consensus.projected_median || 339656).toLocaleString();
+
+  const consensusGrowthEl = document.getElementById('phWkConsensusGrowth');
+  if (consensusGrowthEl) {
+    const gap = consensus.target_gap_vs_aug || 14295;
+    const pct = consensus.growth_vs_aug_pct || 4.4;
+    consensusGrowthEl.textContent = `8월 대비 +$${Math.round(gap).toLocaleString()} (+${pct}% 성장 전망)`;
+  }
+
+  const invBalEl = document.getElementById('phWkInventoryBalance');
+  if (invBalEl) invBalEl.textContent = '$' + Math.round(inv.total_kwe_balance_amt || 642508).toLocaleString();
+
+  const openPoEl = document.getElementById('phWkOpenPoTotal');
+  if (openPoEl) openPoEl.textContent = `고객사 Open PO: $${Math.round(inv.total_open_po_amt || 729435).toLocaleString()} (출하 버퍼 충분)`;
+
+  // 2. 4대 분석 모델 카드 렌더링
+  renderPhProjectionModels();
+
+  // 3. 실시간 인터랙티브 시뮬레이터 실행
+  runPhForecastSimulation();
+
+  // 4. 8월 vs 9월 누적 매출 추이 비교 SVG 차트 렌더링
+  renderPhWeeklyTrendChart();
+
+  // 5. 고객사별 실적 vs Forecast 비교 테이블
+  renderPhCustomerComparisonTable();
+
+  // 6. 주요 품목 상세 인벤토리 테이블
+  renderPhInventoryItemsTable();
+}
+window.initPhWeeklyForecast = initPhWeeklyForecast;
+
+function renderPhProjectionModels() {
+  const container = document.getElementById('phProjectionModelsGrid');
+  if (!container || !_phWeeklyData) return;
+
+  const proj = _phWeeklyData.projection_models || {};
+  const models = [
+    { key: 'model1_weekly_plan', tag: '출하 계획', border: '#2563eb', bg: 'rgba(37,99,235,0.06)' },
+    { key: 'model2_awu_demand', tag: '수요 소진', border: '#0284c7', bg: 'rgba(2,132,199,0.06)' },
+    { key: 'model3_daily_runrate', tag: '일일 런레이트', border: '#10b981', bg: 'rgba(16,185,129,0.06)' },
+    { key: 'model4_aug_ratio', tag: '진도율 상관', border: '#8b5cf6', bg: 'rgba(139,92,246,0.06)' }
+  ];
+
+  container.innerHTML = models.map(m => {
+    const data = proj[m.key];
+    if (!data) return '';
+    const isPlus = (data.growth_vs_aug >= 0);
+    return `
+      <div style="background:${m.bg}; border:1px solid ${m.border}; border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:12px; font-weight:800; color:var(--text-primary);">${data.name}</span>
+            <span style="font-size:10px; font-weight:700; color:${m.border}; background:var(--bg-card); padding:2px 6px; border-radius:4px; border:1px solid ${m.border};">${m.tag}</span>
+          </div>
+          <p style="font-size:11px; color:var(--text-secondary); line-height:1.4; margin:0 0 10px 0;">${data.desc}</p>
+        </div>
+        <div style="border-top:1px dashed var(--border-light); padding-top:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-size:11px; color:var(--text-dim);">9월 유추 예상총액:</span>
+            <span style="font-size:17px; font-weight:800; color:${m.border};">$${Math.round(data.projected_total).toLocaleString()}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px;">
+            <span style="color:var(--text-dim);">잔여 예상: +$${Math.round(data.additional_expected).toLocaleString()}</span>
+            <span style="font-weight:700; color:${isPlus ? '#22c55e' : '#ef4444'};">8월 대비 ${isPlus ? '+' : ''}${data.growth_vs_aug}%</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function runPhForecastSimulation() {
+  if (!_phWeeklyData) return;
+
+  const daysInput = document.getElementById('simDaysRange');
+  const rateInput = document.getElementById('simRateRange');
+  const planInput = document.getElementById('simPlanRange');
+
+  const days = daysInput ? parseInt(daysInput.value) : 7;
+  const rate = rateInput ? parseInt(rateInput.value) : 16280;
+  const planPct = planInput ? parseInt(planInput.value) : 100;
+
+  const daysVal = document.getElementById('simDaysVal');
+  if (daysVal) daysVal.textContent = days + '일';
+
+  const rateVal = document.getElementById('simRateVal');
+  if (rateVal) rateVal.textContent = '$' + rate.toLocaleString();
+
+  const planVal = document.getElementById('simPlanVal');
+  if (planVal) planVal.textContent = planPct + '%';
+
+  const meta = _phWeeklyData.metadata || {};
+  const currentMtd = meta.sep_18th_mtd_amt || 227905;
+  const augFinal = meta.aug_final_actual_amt || 325361;
+
+  // Simulation: MTD + (Plan 25 * planPct / 100) + (rate * remaining days beyond week 4)
+  const sep25Plan = (_phWeeklyData.sep_inventory_summary || {}).plan_sep25_amt || 100068;
+  const planPortion = sep25Plan * (planPct / 100.0);
+  const extraDays = Math.max(0, days - 5);
+  const extraPortion = extraDays * (rate * 0.7);
+
+  const simTotal = currentMtd + planPortion + extraPortion;
+  const gap = simTotal - augFinal;
+  const pct = augFinal > 0 ? (gap / augFinal) * 100 : 0;
+
+  const resultAmt = document.getElementById('simResultAmt');
+  if (resultAmt) resultAmt.textContent = '$' + Math.round(simTotal).toLocaleString();
+
+  const resultGrowth = document.getElementById('simResultGrowth');
+  if (resultGrowth) {
+    const isPlus = gap >= 0;
+    resultGrowth.innerHTML = `8월($${Math.round(augFinal).toLocaleString()}) 대비 <span style="color:${isPlus ? '#22c55e' : '#ef4444'}; font-weight:800;">${isPlus ? '+' : ''}$${Math.round(gap).toLocaleString()} (${isPlus ? '+' : ''}${pct.toFixed(1)}%)</span>`;
+  }
+}
+window.runPhForecastSimulation = runPhForecastSimulation;
+
+function renderPhWeeklyTrendChart() {
+  const container = document.getElementById('phWeeklyTrendSvgContainer');
+  if (!container || !_phWeeklyData) return;
+
+  const augByDate = (_phWeeklyData.aug_deliv_summary || {}).by_date || {};
+  const sepByDate = (_phWeeklyData.sep_deliv_summary || {}).by_date || {};
+
+  // Build cumulative arrays for 1st to 31st
+  let augCum = 0;
+  const augPoints = [];
+  for (let d = 1; d <= 31; d++) {
+    const dStr = `2026-08-${String(d).padStart(2, '0')}`;
+    if (augByDate[dStr]) augCum += augByDate[dStr].amt;
+    augPoints.push({ day: d, amt: augCum });
+  }
+
+  let sepCum = 0;
+  const sepPoints = [];
+  for (let d = 1; d <= 18; d++) {
+    const dStr = `2026-09-${String(d).padStart(2, '0')}`;
+    if (sepByDate[dStr]) sepCum += sepByDate[dStr].amt;
+    sepPoints.push({ day: d, amt: sepCum });
+  }
+
+  // Projection points from 19 to 30
+  const projTarget = (_phWeeklyData.projection_models || {}).consensus.projected_median || 339656;
+  const projPoints = [];
+  const startAmt = sepCum;
+  for (let d = 18; d <= 30; d++) {
+    const ratio = (d - 18) / 12.0;
+    const estAmt = startAmt + (projTarget - startAmt) * ratio;
+    projPoints.push({ day: d, amt: estAmt });
+  }
+
+  const maxVal = 400000;
+  const width = 600;
+  const height = 150;
+  const padL = 45;
+  const padR = 25;
+  const padT = 15;
+  const padB = 25;
+
+  const plotW = width - padL - padR;
+  const plotH = height - padT - padB;
+
+  const getX = d => padL + ((d - 1) / 30.0) * plotW;
+  const getY = v => padT + plotH - (Math.min(v, maxVal) / maxVal) * plotH;
+
+  const augPath = augPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${getX(p.day).toFixed(1)} ${getY(p.amt).toFixed(1)}`).join(' ');
+  const sepPath = sepPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${getX(p.day).toFixed(1)} ${getY(p.amt).toFixed(1)}`).join(' ');
+  const projPath = projPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${getX(p.day).toFixed(1)} ${getY(p.amt).toFixed(1)}`).join(' ');
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; overflow:visible;">
+      <!-- Grid Lines -->
+      <line x1="${padL}" y1="${getY(100000)}" x2="${width - padR}" y2="${getY(100000)}" stroke="var(--border-light)" stroke-dasharray="3,3" />
+      <line x1="${padL}" y1="${getY(200000)}" x2="${width - padR}" y2="${getY(200000)}" stroke="var(--border-light)" stroke-dasharray="3,3" />
+      <line x1="${padL}" y1="${getY(300000)}" x2="${width - padR}" y2="${getY(300000)}" stroke="var(--border-light)" stroke-dasharray="3,3" />
+      <line x1="${padL}" y1="${padT + plotH}" x2="${width - padR}" y2="${padT + plotH}" stroke="var(--border-color)" />
+
+      <!-- Y Axis Labels -->
+      <text x="${padL - 6}" y="${getY(100000) + 3}" fill="var(--text-dim)" font-size="9" text-anchor="end">$100K</text>
+      <text x="${padL - 6}" y="${getY(200000) + 3}" fill="var(--text-dim)" font-size="9" text-anchor="end">$200K</text>
+      <text x="${padL - 6}" y="${getY(300000) + 3}" fill="var(--text-dim)" font-size="9" text-anchor="end">$300K</text>
+
+      <!-- Curves -->
+      <path d="${augPath}" fill="none" stroke="#64748b" stroke-width="2" />
+      <path d="${sepPath}" fill="none" stroke="#3b82f6" stroke-width="3" />
+      <path d="${projPath}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="4,4" />
+
+      <!-- Markers -->
+      <circle cx="${getX(18)}" cy="${getY(sepCum)}" r="4.5" fill="#3b82f6" stroke="#fff" stroke-width="1.5" />
+      <text x="${getX(18)}" y="${getY(sepCum) - 8}" fill="#3b82f6" font-size="10" font-weight="800" text-anchor="middle">$228K (9/18)</text>
+
+      <circle cx="${getX(30)}" cy="${getY(projTarget)}" r="4.5" fill="#38bdf8" stroke="#fff" stroke-width="1.5" />
+      <text x="${getX(30) - 4}" y="${getY(projTarget) - 8}" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="end">~$340K (월말 예상)</text>
+
+      <circle cx="${getX(31)}" cy="${getY(325361)}" r="4" fill="#64748b" stroke="#fff" stroke-width="1.5" />
+      <text x="${getX(31)}" y="${getY(325361) + 14}" fill="#94a3b8" font-size="9" text-anchor="end">$325K (8월마감)</text>
+
+      <!-- X Axis Labels -->
+      <text x="${getX(1)}" y="${height - 6}" fill="var(--text-dim)" font-size="9" text-anchor="middle">1일</text>
+      <text x="${getX(10)}" y="${height - 6}" fill="var(--text-dim)" font-size="9" text-anchor="middle">10일</text>
+      <text x="${getX(18)}" y="${height - 6}" fill="#3b82f6" font-size="9" font-weight="700" text-anchor="middle">18일(현재)</text>
+      <text x="${getX(25)}" y="${height - 6}" fill="var(--text-dim)" font-size="9" text-anchor="middle">25일(출하계획)</text>
+      <text x="${getX(30)}" y="${height - 6}" fill="var(--text-dim)" font-size="9" text-anchor="middle">30일(월말)</text>
+    </svg>
+  `;
+}
+
+function renderPhCustomerComparisonTable() {
+  const tbody = document.getElementById('phCustomerComparisonTbody');
+  if (!tbody || !_phWeeklyData) return;
+
+  const list = _phWeeklyData.customer_comparison || [];
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-dim);">데이터가 없습니다.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = list.map(c => `
+    <tr style="border-bottom:1px solid var(--border-light);">
+      <td style="padding:8px 10px; font-weight:700; color:var(--text-primary);">${escapeAttr(c.customer)}</td>
+      <td style="padding:8px 10px; text-align:right; color:var(--text-secondary);">$${Math.round(c.aug_actual_amt).toLocaleString()}</td>
+      <td style="padding:8px 10px; text-align:right; font-weight:700; color:#3b82f6;">$${Math.round(c.sep_mtd_actual_amt).toLocaleString()}</td>
+      <td style="padding:8px 10px; text-align:right; font-weight:800; color:#38bdf8;">$${Math.round(c.sep_projected_amt).toLocaleString()}</td>
+      <td style="padding:8px 10px; text-align:right;">$${Math.round(c.open_po_amt).toLocaleString()}</td>
+      <td style="padding:8px 10px; text-align:right;">$${Math.round(c.kwe_balance_amt).toLocaleString()}</td>
+      <td style="padding:8px 10px; text-align:right; color:var(--text-dim);">$${Math.round(c.forecast_9w_amt).toLocaleString()}</td>
+    </tr>
+  `).join('');
+}
+
+function renderPhInventoryItemsTable() {
+  const tbody = document.getElementById('phInventoryItemsTbody');
+  if (!tbody || !_phWeeklyData) return;
+
+  const searchInput = document.getElementById('phInvItemSearchInput');
+  const query = (searchInput ? searchInput.value.trim().toLowerCase() : '');
+
+  const items = _phWeeklyData.top_inventory_items || [];
+  const filtered = items.filter(it => {
+    if (!query) return true;
+    return (
+      (it.pn && it.pn.toLowerCase().includes(query)) ||
+      (it.cust_pn && it.cust_pn.toLowerCase().includes(query)) ||
+      (it.end_customer && it.end_customer.toLowerCase().includes(query))
+    );
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(it => `
+    <tr style="border-bottom:1px solid var(--border-light);">
+      <td style="padding:6px 8px; font-weight:700; color:var(--text-primary);">${escapeAttr(it.pn)}</td>
+      <td style="padding:6px 8px; color:var(--text-dim);">${escapeAttr(it.cust_pn)}</td>
+      <td style="padding:6px 8px;"><span style="background:var(--bg-card-sub); padding:1px 5px; border-radius:3px; font-weight:600;">${escapeAttr(it.end_customer)}</span></td>
+      <td style="padding:6px 8px; text-align:right;">$${it.unit_price ? it.unit_price.toFixed(2) : '0.00'}</td>
+      <td style="padding:6px 8px; text-align:right;">${Math.round(it.awu_month_qty).toLocaleString()}</td>
+      <td style="padding:6px 8px; text-align:right; font-weight:700;">${Math.round(it.open_po_qty).toLocaleString()}</td>
+      <td style="padding:6px 8px; text-align:right; color:#22c55e;">${Math.round(it.kwe_balance_qty).toLocaleString()}</td>
+      <td style="padding:6px 8px; text-align:right; font-weight:700; color:#38bdf8;">${Math.round(it.plan_sep25_qty).toLocaleString()}</td>
+      <td style="padding:6px 8px; text-align:right; color:var(--text-dim);">${it.inventory_weeks ? it.inventory_weeks.toFixed(1) : '-'}</td>
+    </tr>
+  `).join('');
+}
+window.renderPhInventoryItemsTable = renderPhInventoryItemsTable;

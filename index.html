@@ -671,107 +671,265 @@
               </div>
             </div>
 
-            <!-- 내부 뷰 스위처: RAG 스마트 브리핑 | 고객사별 프로젝트 | 일일 업무 보고 | 주간 방문 일정 -->
-            <div style="display:flex; gap:4px; margin-bottom:12px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
-              <button class="ph-inner-tab active" data-ph-tab="phRagView" onclick="switchPhInnerTab('phRagView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:700; border:1px solid #2563eb; border-radius:6px; background:#2563eb; color:#fff; cursor:pointer; white-space:nowrap;">RAG 스마트 검색 & 브리핑</button>
-              <button class="ph-inner-tab" data-ph-tab="phProjectView" onclick="switchPhInnerTab('phProjectView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">고객사별 프로젝트 (요약본)</button>
-              <button class="ph-inner-tab" data-ph-tab="phDailyView" onclick="switchPhInnerTab('phDailyView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">일일 업무 보고 (번역 요약)</button>
-              <button class="ph-inner-tab" data-ph-tab="phVisitView" onclick="switchPhInnerTab('phVisitView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">주간 방문 일정</button>
+            <!-- 필리핀 지사 리포트 대분류 스위처: Daily Report vs Weekly Report -->
+            <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+              <button class="ph-main-subtab-btn active" id="btnPhMainDaily" onclick="switchPhMainSubTab('daily', this)" style="padding:8px 18px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                Daily Report (일일 업무 보고 &amp; 프로젝트)
+              </button>
+              <button class="ph-main-subtab-btn" id="btnPhMainWeekly" onclick="switchPhMainSubTab('weekly', this)" style="padding:8px 18px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                Weekly Report (주간 인벤토리 &amp; 9월 매출 예측)
+              </button>
             </div>
 
-            <!-- 1) RAG 스마트 검색 & 종합 브리핑 뷰 -->
-            <div id="phRagView">
-              <!-- 검색창 -->
-              <div style="margin-bottom:8px;">
-                <input type="text" id="phRagSearchInput" placeholder="고객사명(ATP, SSPC 등), 부품번호, 날짜(2026-09), 이슈 키워드 입력..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="onPhRagSearchInput()" />
+            <!-- ========================================================= -->
+            <!-- 1. Daily Report 컨테이너 (기존 기능 완전 보존 및 묶음)         -->
+            <!-- ========================================================= -->
+            <div id="phDailyContainer">
+              <!-- 내부 뷰 스위처: RAG 스마트 브리핑 | 고객사별 프로젝트 | 일일 업무 보고 | 주간 방문 일정 -->
+              <div style="display:flex; gap:4px; margin-bottom:12px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
+                <button class="ph-inner-tab active" data-ph-tab="phRagView" onclick="switchPhInnerTab('phRagView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:700; border:1px solid #2563eb; border-radius:6px; background:#2563eb; color:#fff; cursor:pointer; white-space:nowrap;">RAG 스마트 검색 & 브리핑</button>
+                <button class="ph-inner-tab" data-ph-tab="phProjectView" onclick="switchPhInnerTab('phProjectView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">고객사별 프로젝트 (요약본)</button>
+                <button class="ph-inner-tab" data-ph-tab="phDailyView" onclick="switchPhInnerTab('phDailyView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">일일 업무 보고 (번역 요약)</button>
+                <button class="ph-inner-tab" data-ph-tab="phVisitView" onclick="switchPhInnerTab('phVisitView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">주간 방문 일정</button>
               </div>
 
-              <!-- 빠른 추천 칩 -->
-              <div style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px;">
-                <span style="font-size:11px; color:var(--text-dim); align-self:center; white-space:nowrap;">빠른 질의:</span>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('ATP')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATP 현황</button>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('SSPC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">SSPC 현황</button>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('TIPI')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">TIPI 현황</button>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('ATEC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATEC 현황</button>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('진행중')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">진행중 프로젝트</button>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('단가')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">단가/견적 이슈</button>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('어닐링')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">어닐링 공정</button>
-                <button class="action-btn-sm secondary" onclick="setPhRagChip('2026-09')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">2026년 9월 보고</button>
-              </div>
-
-              <!-- 다차원 필터 바 -->
-              <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
-                <select id="phRagCustomerFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px; min-width:110px;">
-                  <option value="ALL">전체 고객사 (21개사)</option>
-                </select>
-                <select id="phRagStatusFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
-                  <option value="ALL">전체 상태</option>
-                  <option value="Ongoing">진행중 (Ongoing)</option>
-                  <option value="Done">완료 (Done)</option>
-                  <option value="Closed">종결 (Closed)</option>
-                  <option value="Dropped">드롭 (Dropped)</option>
-                </select>
-                <select id="phRagPeriodFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
-                  <option value="ALL">전체 기간</option>
-                  <option value="7d">최근 7일</option>
-                  <option value="30d">최근 30일</option>
-                  <option value="2026">2026년 전체</option>
-                  <option value="2025">2025년</option>
-                </select>
-              </div>
-
-              <!-- RAG AI 실시간 종합 브리핑 카드 -->
-              <div id="phRagAiBriefCard" style="margin-bottom:12px; padding:12px 14px; background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-left:4px solid #2563eb; border-radius:8px;">
-                <div style="font-size:11px; font-weight:700; color:#2563eb; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
-                  <span>RAG 스마트 종합 브리핑</span>
-                  <span id="phRagBriefStats" style="font-weight:600; color:var(--text-secondary); font-size:10px;"></span>
+              <!-- 1) RAG 스마트 검색 & 종합 브리핑 뷰 -->
+              <div id="phRagView">
+                <div style="margin-bottom:8px;">
+                  <input type="text" id="phRagSearchInput" placeholder="고객사명(ATP, SSPC 등), 부품번호, 날짜(2026-09), 이슈 키워드 입력..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="onPhRagSearchInput()" />
                 </div>
-                <div id="phRagBriefContent" style="font-size:12px; color:var(--text-primary); line-height:1.6;">
-                  상단 검색창에 고객사명이나 날짜, 키워드를 입력하시면 AI 종합 브리핑과 요약 카드가 자동 생성됩니다.
+                <div style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px;">
+                  <span style="font-size:11px; color:var(--text-dim); align-self:center; white-space:nowrap;">빠른 질의:</span>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('ATP')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATP 현황</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('SSPC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">SSPC 현황</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('TIPI')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">TIPI 현황</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('ATEC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATEC 현황</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('진행중')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">진행중 프로젝트</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('단가')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">단가/견적 이슈</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('어닐링')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">어닐링 공정</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('2026-09')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">2026년 9월 보고</button>
+                </div>
+                <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
+                  <select id="phRagCustomerFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px; min-width:110px;">
+                    <option value="ALL">전체 고객사 (21개사)</option>
+                  </select>
+                  <select id="phRagStatusFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
+                    <option value="ALL">전체 상태</option>
+                    <option value="Ongoing">진행중 (Ongoing)</option>
+                    <option value="Done">완료 (Done)</option>
+                    <option value="Closed">종결 (Closed)</option>
+                    <option value="Dropped">드롭 (Dropped)</option>
+                  </select>
+                  <select id="phRagPeriodFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
+                    <option value="ALL">전체 기간</option>
+                    <option value="7d">최근 7일</option>
+                    <option value="30d">최근 30일</option>
+                    <option value="2026">2026년 전체</option>
+                    <option value="2025">2025년</option>
+                  </select>
+                </div>
+                <div id="phRagAiBriefCard" style="margin-bottom:12px; padding:12px 14px; background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-left:4px solid #2563eb; border-radius:8px;">
+                  <div style="font-size:11px; font-weight:700; color:#2563eb; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>RAG 스마트 종합 브리핑</span>
+                    <span id="phRagBriefStats" style="font-weight:600; color:var(--text-secondary); font-size:10px;"></span>
+                  </div>
+                  <div id="phRagBriefContent" style="font-size:12px; color:var(--text-primary); line-height:1.6;">
+                    상단 검색창에 고객사명이나 날짜, 키워드를 입력하시면 AI 종합 브리핑과 요약 카드가 자동 생성됩니다.
+                  </div>
+                </div>
+                <div id="phRagResultsList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;"></div>
+              </div>
+
+              <!-- 2) 고객사별 프로젝트 뷰 (요약본 중심) -->
+              <div id="phProjectView" style="display:none;">
+                <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
+                  <select id="phCustomerFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; min-width:120px;">
+                    <option value="ALL">전체 고객사</option>
+                  </select>
+                  <select id="phStatusFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px;">
+                    <option value="ALL">전체 상태</option>
+                    <option value="Ongoing">진행중 (Ongoing)</option>
+                    <option value="Done">완료 (Done)</option>
+                    <option value="Closed">종결 (Closed)</option>
+                    <option value="Dropped">드롭 (Dropped)</option>
+                  </select>
+                </div>
+                <div id="phProjectList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
                 </div>
               </div>
 
-              <!-- 결과 요약 카드 목록 -->
-              <div id="phRagResultsList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                <!-- 동적 렌더링 -->
+              <!-- 3) 일일 업무 보고 뷰 (날짜별 총괄 요약 + 한국어 번역) -->
+              <div id="phDailyView" style="display:none;">
+                <div style="margin-bottom:8px;">
+                  <input type="text" id="phDailySearchInput" placeholder="날짜(2026-09), 고객사, 업무내용 검색..." style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; outline:none;" oninput="filterPhDaily()" />
+                </div>
+                <div id="phDailyList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+                </div>
+              </div>
+
+              <!-- 4) 주간 방문 일정 뷰 -->
+              <div id="phVisitView" style="display:none;">
+                <div id="phVisitList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+                </div>
               </div>
             </div>
 
-            <!-- 2) 고객사별 프로젝트 뷰 (요약본 중심) -->
-            <div id="phProjectView" style="display:none;">
-              <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
-                <select id="phCustomerFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; min-width:120px;">
-                  <option value="ALL">전체 고객사</option>
-                </select>
-                <select id="phStatusFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px;">
-                  <option value="ALL">전체 상태</option>
-                  <option value="Ongoing">진행중 (Ongoing)</option>
-                  <option value="Done">완료 (Done)</option>
-                  <option value="Closed">종결 (Closed)</option>
-                  <option value="Dropped">드롭 (Dropped)</option>
-                </select>
+            <!-- ========================================================= -->
+            <!-- 2. Weekly Report 컨테이너 (인벤토리 & 9월 매출 유추 예측)     -->
+            <!-- ========================================================= -->
+            <div id="phWeeklyContainer" style="display:none;">
+
+              <!-- (A) 상단 KPI 요약 배너 -->
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:14px;">
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px;">
+                  <div style="font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;">8월 최종 출하 실적 (기준점)</div>
+                  <div style="font-size:18px; font-weight:800; color:#cbd5e1;" id="phWkAugFinalAmt">$325,361</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">수량: 238,820 pcs (265건)</div>
+                </div>
+                <div style="background:var(--bg-card); border:1px solid #2563eb; border-radius:8px; padding:12px 14px;">
+                  <div style="font-size:11px; color:#60a5fa; font-weight:700; margin-bottom:4px;">9월 18일 현재 실적 (MTD)</div>
+                  <div style="font-size:18px; font-weight:800; color:#3b82f6;" id="phWkSepMtdAmt">$227,905</div>
+                  <div style="font-size:11px; color:#22c55e; margin-top:2px;" id="phWkMtdGrowth">전월 동기(8/18) 대비 +27.9%</div>
+                </div>
+                <div style="background:rgba(37,99,235,0.08); border:1.5px solid #2563eb; border-radius:8px; padding:12px 14px;">
+                  <div style="font-size:11px; color:#38bdf8; font-weight:700; margin-bottom:4px;">9월 예상 매출 총액 (유추 컨센서스)</div>
+                  <div style="font-size:20px; font-weight:800; color:#38bdf8;" id="phWkConsensusAmt">$339,656</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkConsensusGrowth">8월 대비 +$14,295 (+4.4% 성장 전망)</div>
+                </div>
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px;">
+                  <div style="font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;">KWE 창고 재고 &amp; Open PO 잔량</div>
+                  <div style="font-size:16px; font-weight:800; color:var(--text-primary);" id="phWkInventoryBalance">$642,508</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkOpenPoTotal">고객사 Open PO: $729,435 (충분)</div>
+                </div>
               </div>
-              <div id="phProjectList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+
+              <!-- (B) 9월 매출 총액 유추 4대 분석 모델 카드 -->
+              <div style="background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                  <div style="font-size:13.5px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                    <span>Summary of Inventory 기반 9월 매출 유추 4대 분석 모델</span>
+                  </div>
+                  <span style="font-size:11px; color:var(--text-dim);">기준일: 2026-09-18</span>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;" id="phProjectionModelsGrid">
+                  <!-- 동적 모델 4종 렌더링 -->
+                </div>
               </div>
+
+              <!-- (C) 인터랙티브 유추 계산 시뮬레이터 -->
+              <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:800; color:var(--text-primary); margin-bottom:10px;">
+                  실시간 조건별 9월 매출 시뮬레이터 (Interactive Forecast)
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+                  <div>
+                    <label style="display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:4px;">
+                      9월 잔여 출하 영업일수: <span id="simDaysVal" style="font-weight:700; color:#3b82f6;">7일</span>
+                    </label>
+                    <input type="range" id="simDaysRange" min="0" max="10" step="1" value="7" style="width:100%; cursor:pointer;" oninput="runPhForecastSimulation()" />
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:4px;">
+                      일평균 예상 출하액: <span id="simRateVal" style="font-weight:700; color:#3b82f6;">$16,280</span>
+                    </label>
+                    <input type="range" id="simRateRange" min="5000" max="25000" step="500" value="16280" style="width:100%; cursor:pointer;" oninput="runPhForecastSimulation()" />
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:4px;">
+                      9/25 주차 출하계획 반영률: <span id="simPlanVal" style="font-weight:700; color:#3b82f6;">100%</span>
+                    </label>
+                    <input type="range" id="simPlanRange" min="0" max="120" step="10" value="100" style="width:100%; cursor:pointer;" oninput="runPhForecastSimulation()" />
+                  </div>
+                </div>
+
+                <div style="background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                  <div>
+                    <span style="font-size:12px; color:var(--text-secondary);">시뮬레이션 산출 9월 총 매출액:</span>
+                    <span style="font-size:18px; font-weight:800; color:#38bdf8; margin-left:8px;" id="simResultAmt">$341,857</span>
+                  </div>
+                  <div style="font-size:12px; font-weight:700;" id="simResultGrowth">
+                    8월($325,361) 대비 <span style="color:#22c55e;">+$16,496 (+5.1%)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- (D) 8월 vs 9월 일자별 누적 매출 성장 추세 비교 SVG 차트 -->
+              <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <div style="font-size:13px; font-weight:800; color:var(--text-primary);">8월 vs 9월 일자별 누적 매출 성장 추세 비교</div>
+                  <div style="display:flex; gap:12px; font-size:11px;">
+                    <span style="color:#94a3b8; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#64748b; border-radius:2px;"></span> 8월 실적 곡선</span>
+                    <span style="color:#3b82f6; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#3b82f6; border-radius:2px;"></span> 9월 실적 곡선</span>
+                    <span style="color:#38bdf8; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:2px;"></span> 월말 예상 궤적</span>
+                  </div>
+                </div>
+                <div id="phWeeklyTrendSvgContainer" style="width:100%; height:160px;">
+                  <!-- 동적 SVG 렌더링 -->
+                </div>
+              </div>
+
+              <!-- (E) 고객사별 8월 실적 vs 9월 현재 실적 vs Forecast 비교 테이블 -->
+              <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                  <div style="font-size:13px; font-weight:800; color:var(--text-primary);">주요 고객사별 실적 및 Forecast/재고 비교 현황</div>
+                  <span style="font-size:11px; color:var(--text-dim);">단위: USD ($)</span>
+                </div>
+                <div style="overflow-x:auto;">
+                  <table style="width:100%; border-collapse:collapse; font-size:11.5px; text-align:left;">
+                    <thead>
+                      <tr style="border-bottom:1px solid var(--border-color); color:var(--text-dim); background:var(--bg-card-sub);">
+                        <th style="padding:8px 10px;">고객사</th>
+                        <th style="padding:8px 10px; text-align:right;">8월 확정 실적</th>
+                        <th style="padding:8px 10px; text-align:right; color:#60a5fa;">9월 MTD 실적(9/18)</th>
+                        <th style="padding:8px 10px; text-align:right; color:#38bdf8;">9월 예상 출하</th>
+                        <th style="padding:8px 10px; text-align:right;">Open PO 잔량</th>
+                        <th style="padding:8px 10px; text-align:right;">KWE 창고 재고</th>
+                        <th style="padding:8px 10px; text-align:right;">9주 Forecast</th>
+                      </tr>
+                    </thead>
+                    <tbody id="phCustomerComparisonTbody">
+                      <!-- 동적 렌더링 -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- (F) SUMMARY OF INVENTORY 주요 품목 상세 테이블 -->
+              <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                  <div style="font-size:13px; font-weight:800; color:var(--text-primary);">
+                    인벤토리 품목별 세부 지표 (Top 35 핵심 품목)
+                  </div>
+                  <input type="text" id="phInvItemSearchInput" placeholder="품번(P/N), 고객사 검색..." style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px; outline:none; width:180px;" oninput="renderPhInventoryItemsTable()" />
+                </div>
+                <div style="overflow-x:auto; max-height:420px;">
+                  <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:left;">
+                    <thead style="position:sticky; top:0; background:var(--bg-card-sub); z-index:1;">
+                      <tr style="border-bottom:1px solid var(--border-color); color:var(--text-dim);">
+                        <th style="padding:8px 8px;">Kostat P/N</th>
+                        <th style="padding:8px 8px;">고객사 P/N</th>
+                        <th style="padding:8px 8px;">End Customer</th>
+                        <th style="padding:8px 8px; text-align:right;">단가($)</th>
+                        <th style="padding:8px 8px; text-align:right;">월평균소비(AWU)</th>
+                        <th style="padding:8px 8px; text-align:right;">Open PO</th>
+                        <th style="padding:8px 8px; text-align:right;">KWE 재고</th>
+                        <th style="padding:8px 8px; text-align:right; color:#38bdf8;">9/25 출하계획</th>
+                        <th style="padding:8px 8px; text-align:right;">재고주수(Wks)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="phInventoryItemsTbody">
+                      <!-- 동적 렌더링 -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
             </div>
 
-            <!-- 3) 일일 업무 보고 뷰 (날짜별 총괄 요약 + 한국어 번역) -->
-            <div id="phDailyView" style="display:none;">
-              <div style="margin-bottom:8px;">
-                <input type="text" id="phDailySearchInput" placeholder="날짜(2026-09), 고객사, 업무내용 검색..." style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; outline:none;" oninput="filterPhDaily()" />
-              </div>
-              <div id="phDailyList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
-              </div>
-            </div>
-
-            <!-- 4) 주간 방문 일정 뷰 -->
-            <div id="phVisitView" style="display:none;">
-              <div id="phVisitList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1426,6 +1584,7 @@
   <script src="data/archive_data.js?v=1.0.169"></script>
   <script src="data/gimpo_tray_stock_data.js?v=1.0.169"></script>
   <script src="data/ph_daily_report_data.js?v=1.0.169"></script>
+  <script src="data/ph_weekly_forecast_data.js?v=1.0.169"></script>
   <script src="data/weekly_master_meta.js?v=1.0.169"></script>
   
   <script src="xlsx.full.min.js?v=1.0.169"></script>

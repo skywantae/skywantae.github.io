@@ -21,7 +21,8 @@ const ASSETS_TO_CACHE = [
   './data/feedback_board.js',
   './data/archive_data.js',
   './data/gimpo_tray_stock_data.js',
-  './data/ph_daily_report_data.js'
+  './data/ph_daily_report_data.js',
+  './data/ph_weekly_forecast_data.js'
 ];
 
 // 1. Install Event: 초기 캐싱 및 즉시 skipWaiting
