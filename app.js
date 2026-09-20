@@ -745,7 +745,7 @@ async function syncLiveDatabases(isManual = false) {
     }
 
     if (liveShip && Array.isArray(liveShip) && liveShip.length > 0) {
-      if (liveShip.length !== AppState.shipPlanData.length) {
+      if (liveShip.length !== AppState.shipPlanData.length && (!AppState.shipPlanData.length || liveShip.length >= AppState.shipPlanData.length * 0.5)) {
         AppState.shipPlanData = liveShip;
         await IDB.set('shipplan', liveShip);
         updated = true;
@@ -753,7 +753,7 @@ async function syncLiveDatabases(isManual = false) {
     }
 
     if (liveQuot && Array.isArray(liveQuot) && liveQuot.length > 0) {
-      if (liveQuot.length !== AppState.quotationsData.length) {
+      if (liveQuot.length !== AppState.quotationsData.length && (!AppState.quotationsData.length || liveQuot.length >= AppState.quotationsData.length * 0.5)) {
         AppState.quotationsData = liveQuot;
         await IDB.set('quotations', liveQuot);
         updated = true;
@@ -1309,7 +1309,11 @@ function applyAppLanguage(lang) {
   if (btnGimpoUpload) btnGimpoUpload.textContent = t.gimpo_manual_upload;
   const gimpoSearchInput = document.getElementById('gimpoSearchInput');
   if (gimpoSearchInput) gimpoSearchInput.placeholder = t.gimpo_search_holder;
-  // Gimpo 테이블 헤더
+  const gimpoBadgeText = document.getElementById('gimpoSearchBadgeText');
+  if (gimpoBadgeText) gimpoBadgeText.textContent = (lang === 'en' ? 'SEARCH' : '검색');
+  const gimpoHintEl = document.getElementById('gimpoSearchHint');
+  if (gimpoHintEl) gimpoHintEl.textContent = (lang === 'en' ? 'Multi-keyword instant search' : '실시간 다중 키워드 필터링 지원');
+  // Gimpo 테이블 헤더 (Warehouse / Production)
   const gimpoThs = document.querySelectorAll('#gimpoStockTable thead th');
   if (gimpoThs && gimpoThs.length >= 8) {
     const ghd = [t.th_gimpo_partno, t.th_gimpo_temp, t.th_gimpo_spec, t.th_gimpo_customer, t.th_gimpo_remark, t.th_gimpo_prod, t.th_gimpo_mat, t.th_gimpo_total];
@@ -8497,13 +8501,14 @@ function initPhWeeklyForecast() {
 
   const consensus = proj.consensus || {};
   const consensusEl = document.getElementById('phWkConsensusAmt');
-  if (consensusEl) consensusEl.textContent = '$' + Math.round(consensus.projected_median || 349944).toLocaleString();
+  if (consensusEl) consensusEl.textContent = '$' + Math.round(consensus.projected_median || 327973).toLocaleString();
 
   const consensusGrowthEl = document.getElementById('phWkConsensusGrowth');
   if (consensusGrowthEl) {
-    const gap = consensus.target_gap_vs_aug || 24583;
-    const pct = consensus.growth_vs_aug_pct || 7.6;
-    consensusGrowthEl.textContent = `8월 대비 +$${Math.round(gap).toLocaleString()} (+${pct}% 성장 전망)`;
+    const gap = consensus.target_gap_vs_aug !== undefined ? consensus.target_gap_vs_aug : 2612;
+    const pct = consensus.growth_vs_aug_pct !== undefined ? consensus.growth_vs_aug_pct : 0.8;
+    const isPlus = gap >= 0;
+    consensusGrowthEl.textContent = `8월($325,361) 대비 ${isPlus ? '+' : ''}$${Math.round(gap).toLocaleString()} (${isPlus ? '+' : ''}${pct}% 9/25 확정출하 100% 기준)`;
   }
 
   const invBalEl = document.getElementById('phWkInventoryBalance');
@@ -8526,7 +8531,7 @@ function initPhWeeklyForecast() {
     post18thEl.textContent = `평균 $${Math.round(histMetrics.avg_post_18th_shipment/1000)}K (최근 $${Math.round((histMetrics.recent_post_18th_shipment||145000)/1000)}K)`;
   }
 
-  // 2. 5대 분석 모델 카드 렌더링
+  // 2. 4대 분석 모델 카드 렌더링
   renderPhProjectionModels();
 
   // 3. 실시간 인터랙티브 시뮬레이터 실행
@@ -8552,11 +8557,10 @@ function renderPhProjectionModels() {
 
   const proj = _phWeeklyData.projection_models || {};
   const models = [
-    { key: 'model1_weekly_plan', tag: '출하 계획', border: '#2563eb', bg: 'rgba(37,99,235,0.06)' },
-    { key: 'model2_awu_demand', tag: '수요 소진 (125%)', border: '#0284c7', bg: 'rgba(2,132,199,0.06)' },
-    { key: 'model3_daily_runrate', tag: '런레이트 가속', border: '#10b981', bg: 'rgba(16,185,129,0.06)' },
-    { key: 'model4_aug_ratio', tag: '8개월 가중진도율', border: '#8b5cf6', bg: 'rgba(139,92,246,0.06)' },
-    { key: 'model5_customer_bottomup', tag: '고객사 바텀업', border: '#f59e0b', bg: 'rgba(245,158,11,0.06)' }
+    { key: 'model1_weekly_plan', tag: '확정 출하계획', border: '#2563eb', bg: 'rgba(37,99,235,0.06)' },
+    { key: 'model2_conservative_plan', tag: '보수적 하한치', border: '#64748b', bg: 'rgba(100,116,139,0.06)' },
+    { key: 'model3_customer_fcst', tag: '고객 Forecast', border: '#10b981', bg: 'rgba(16,185,129,0.06)' },
+    { key: 'model4_orderlist_bottomup', tag: 'Open PO 바텀업', border: '#f59e0b', bg: 'rgba(245,158,11,0.06)' }
   ];
 
   container.innerHTML = models.map(m => {
@@ -8616,7 +8620,7 @@ function renderPhMonthlyHistoryTable() {
   const meta = _phWeeklyData.metadata || {};
   const sepMtd = meta.sep_18th_mtd_amt || 227905;
   const sepQty = meta.sep_18th_mtd_qty || 172619;
-  const consensusMedian = (_phWeeklyData.projection_models || {}).consensus.projected_median || 349944;
+  const consensusMedian = (_phWeeklyData.projection_models || {}).consensus.projected_median || 327973;
   const sepRem = consensusMedian - sepMtd;
 
   html += `
@@ -8703,7 +8707,7 @@ function renderPhWeeklyTrendChart() {
   }
 
   // Projection points from 19 to 30
-  const projTarget = (_phWeeklyData.projection_models || {}).consensus.projected_median || 349944;
+  const projTarget = (_phWeeklyData.projection_models || {}).consensus.projected_median || 327973;
   const projPoints = [];
   const startAmt = sepCum;
   for (let d = 18; d <= 30; d++) {

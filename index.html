@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.170" />
+  <link rel="stylesheet" href="app.css?v=1.0.171" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -613,25 +613,29 @@
               </div>
             </div>
 
-            <!-- 검색 바 (고대비 가시성 개선: 명확한 블루 테두리 및 슬레이트 배경 적용) -->
-            <div class="gimpo-search-wrapper" style="margin-bottom:12px; display:flex; align-items:center; background:#1e293b; border:2px solid #3b82f6; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.35), 0 0 0 1px rgba(59,130,246,0.3); transition:all 0.2s ease;">
-              <div style="padding:0 10px 0 14px; display:flex; align-items:center; color:#60a5fa; flex-shrink:0;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <!-- 검색 바 (고대비 가시성 개선: 명확한 블루 테두리, 검색 뱃지, 슬레이트 배경 적용) -->
+            <div class="gimpo-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; box-shadow:0 0 0 3px rgba(59,130,246,0.25), 0 3px 12px rgba(0,0,0,0.4); padding:3px 6px; transition:all 0.2s ease;">
+              <div id="gimpoSearchBadge" style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0; letter-spacing:0.5px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
+                <span id="gimpoSearchBadgeText">검색</span>
               </div>
-              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." oninput="filterGimpoStock()" style="flex:1; padding:11px 10px 11px 0; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0; font-family:inherit;" />
-              <button id="btnGimpoSearchClear" onclick="clearGimpoSearch()" style="display:none; background:transparent; border:none; color:#94a3b8; padding:8px 14px; cursor:pointer; align-items:center; justify-content:center;" title="검색어 초기화">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." oninput="filterGimpoStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0; font-family:inherit;" />
+              <button id="btnGimpoSearchClear" onclick="clearGimpoSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="검색어 초기화">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </button>
             </div>
 
-            <!-- 결과 카운트 -->
-            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:6px;" id="gimpoResultCount">-</div>
+            <!-- 결과 카운트 및 검색 안내 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary); margin-bottom:8px; padding:0 2px;">
+              <span id="gimpoResultCount">-</span>
+              <span style="font-size:10.5px; color:var(--text-dim);" id="gimpoSearchHint">실시간 다중 키워드 필터링 지원</span>
+            </div>
 
             <!-- 재고 데이터 테이블 -->
             <div style="border-radius:10px; border:1px solid var(--border-color); overflow:hidden; max-height:calc(100vh - 240px); min-height:450px; overflow-y:auto; -webkit-overflow-scrolling:touch;">
@@ -795,9 +799,9 @@
                   <div style="font-size:11px; color:#22c55e; margin-top:2px;" id="phWkMtdGrowth">전월 동기(8/18) 대비 +27.9%</div>
                 </div>
                 <div style="background:rgba(37,99,235,0.08); border:1.5px solid #2563eb; border-radius:8px; padding:12px 14px;">
-                  <div style="font-size:11px; color:#38bdf8; font-weight:700; margin-bottom:4px;">9월 예상 매출 총액 (유추 컨센서스)</div>
-                  <div style="font-size:20px; font-weight:800; color:#38bdf8;" id="phWkConsensusAmt">$339,656</div>
-                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkConsensusGrowth">8월 대비 +$14,295 (+4.4% 성장 전망)</div>
+                  <div style="font-size:11px; color:#38bdf8; font-weight:700; margin-bottom:4px;">9월 예상 매출 총액 (9/25 출하계획 기준)</div>
+                  <div style="font-size:20px; font-weight:800; color:#38bdf8;" id="phWkConsensusAmt">$327,973</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkConsensusGrowth">8월 대비 +$2,612 (+0.8% 9/25 확정출하 100% 기준)</div>
                 </div>
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px;">
                   <div style="font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;">KWE 창고 재고 &amp; Open PO 잔량</div>
@@ -806,39 +810,39 @@
                 </div>
               </div>
 
-              <!-- (B) 1~8월 실적 학습 기반 9월 매출 유추 5대 분석 모델 카드 -->
+              <!-- (B) 고객사 Forecast & Open PO / 9.25 출하계획 기반 9월 예상 매출 분석 카드 -->
               <div style="background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
                   <div style="font-size:13.5px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
-                    <span>1~8월 납품 실적 및 인벤토리 학습 기반 5대 매출 유추 모델</span>
+                    <span>고객사 Forecast &amp; Open PO 및 9/25 출하계획 기반 9월 매출 유추 모델</span>
                   </div>
                   <div style="font-size:11px; color:#38bdf8; background:rgba(56,189,248,0.1); padding:2px 8px; border-radius:4px; border:1px solid rgba(56,189,248,0.2);">
-                    학습 데이터: 2026년 1~8월 전월 출하 &amp; 인벤토리 이력
+                    근거: Summary of Inventory 엑셀 Col 8(Open PO), Col 9(9주 Forecast), Col 65(9/25 출하계획)
                   </div>
                 </div>
 
-                <!-- 8개월 학습 핵심 메트릭 바 -->
+                <!-- 고객사 발주 및 출하계획 핵심 메트릭 바 -->
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:8px; margin-bottom:12px; font-size:11.5px;">
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">1~8월 평균 월매출</span>
-                    <span style="font-weight:800; color:var(--text-primary); font-size:14px;" id="histAvgMonthlySales">$309,232</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">8월 확정 출하 실적 (전월 기준)</span>
+                    <span style="font-weight:800; color:var(--text-primary); font-size:14px;">$325,361</span>
                   </div>
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">18일 기준 가중 진도율</span>
-                    <span style="font-weight:800; color:#3b82f6; font-size:14px;" id="histWeightedRatio">62.3%</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">9/25 정기 출하계획 (Col 65)</span>
+                    <span style="font-weight:800; color:#3b82f6; font-size:14px;">$100,068</span>
                   </div>
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">19일~말일 잔여 출하력</span>
-                    <span style="font-weight:800; color:#10b981; font-size:14px;" id="histPost18thSales">평균 $117K (최근 $145K)</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">고객사 주간 Forecast (Col 9)</span>
+                    <span style="font-weight:800; color:#10b981; font-size:14px;">$68,014 / 주</span>
                   </div>
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">AWU 실제 소화율 배수</span>
-                    <span style="font-weight:800; color:#8b5cf6; font-size:14px;">125.0% (수요 가속)</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">고객사 총 Open PO 잔고 (Col 8)</span>
+                    <span style="font-weight:800; color:#8b5cf6; font-size:14px;">$729,435 (출하한도 충분)</span>
                   </div>
                 </div>
 
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;" id="phProjectionModelsGrid">
-                  <!-- 동적 모델 5종 렌더링 -->
+                  <!-- 동적 모델 4종 렌더링 -->
                 </div>
               </div>
 
@@ -992,7 +996,7 @@
                     <h4>주간보고서</h4>
                   </div>
                   <div style="display:flex; gap:8px; align-items:center;">
-                    <a href="weekly_report_prototype.html?v=1.0.170_w38" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+                    <a href="weekly_report_prototype.html?v=1.0.171_w38" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
                       전체화면 새 창 열기
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
@@ -1005,7 +1009,7 @@
                   
                   <!-- 워크스페이스 임베드 컨테이너 -->
                   <div style="width:100%; height:840px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                    <iframe src="weekly_report_prototype.html?v=1.0.170_w38" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
+                    <iframe src="weekly_report_prototype.html?v=1.0.171_w38" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
                   </div>
                 </div>
               </div>
@@ -1081,7 +1085,7 @@
         <div class="setting-item">
           <label id="lblSettingVer">앱 버전 정보:</label>
           <div class="version-box">
-            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.170</strong></span>
+            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.171</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -1622,24 +1626,24 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/skyworks_data.js?v=1.0.170"></script>
-  <script src="data/shipplan_data.js?v=1.0.170"></script>
-  <script src="data/quotations_data.js?v=1.0.170"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.170"></script>
-  <script src="data/drawings_data.js?v=1.0.170"></script>
-  <script src="data/knowledge_data.js?v=1.0.170"></script>
-  <script src="data/faq_db.js?v=1.0.170"></script>
-  <script src="data/feedback_board.js?v=1.0.170"></script>
-  <script src="data/archive_data.js?v=1.0.170"></script>
-  <script src="data/gimpo_tray_stock_data.js?v=1.0.170"></script>
-  <script src="data/ph_daily_report_data.js?v=1.0.170"></script>
-  <script src="data/ph_weekly_forecast_data.js?v=1.0.170"></script>
-  <script src="data/weekly_master_meta.js?v=1.0.170"></script>
+  <script src="data/skyworks_data.js?v=1.0.171"></script>
+  <script src="data/shipplan_data.js?v=1.0.171"></script>
+  <script src="data/quotations_data.js?v=1.0.171"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.171"></script>
+  <script src="data/drawings_data.js?v=1.0.171"></script>
+  <script src="data/knowledge_data.js?v=1.0.171"></script>
+  <script src="data/faq_db.js?v=1.0.171"></script>
+  <script src="data/feedback_board.js?v=1.0.171"></script>
+  <script src="data/archive_data.js?v=1.0.171"></script>
+  <script src="data/gimpo_tray_stock_data.js?v=1.0.171"></script>
+  <script src="data/ph_daily_report_data.js?v=1.0.171"></script>
+  <script src="data/ph_weekly_forecast_data.js?v=1.0.171"></script>
+  <script src="data/weekly_master_meta.js?v=1.0.171"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.170"></script>
-  <script src="exceljs.min.js?v=1.0.170"></script>
-  <script src="updater.js?v=1.0.170"></script>
-  <script src="app.js?v=1.0.170"></script>
+  <script src="xlsx.full.min.js?v=1.0.171"></script>
+  <script src="exceljs.min.js?v=1.0.171"></script>
+  <script src="updater.js?v=1.0.171"></script>
+  <script src="app.js?v=1.0.171"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

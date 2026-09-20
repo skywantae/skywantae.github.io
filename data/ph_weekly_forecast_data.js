@@ -1,6 +1,6 @@
 window.KOSTAT_PH_WEEKLY_FORECAST = {
   "metadata": {
-    "generated_at": "2026-09-20 20:29:54",
+    "generated_at": "2026-09-20 23:42:20",
     "data_as_of": "2026-09-18",
     "training_period": "2026-01 ~ 2026-08 (8 Months Actual Delivery)",
     "aug_final_actual_amt": 325360.75,
@@ -85,55 +85,49 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
   },
   "projection_models": {
     "model1_weekly_plan": {
-      "name": "주차별 출하계획 실행 모델 (Col 65 Plan)",
-      "desc": "Summary Col 65 출하요청($100.1K)의 90% 실행 및 잔여 3영업일 완충출하($14K) 반영",
+      "name": "9/25 확정 출하계획 100% 반영 (Col 65 Plan)",
+      "desc": "Summary of Inventory Col 65에 공식 등록된 9/25 출하계획($100,068) 100% 선적 기준",
       "mtd_actual": 227904.99,
-      "additional_expected": 104061.36,
-      "projected_total": 331966.35,
-      "growth_vs_aug": 2.0,
-      "confidence": "최상 (High - 엑셀 공시 계획)"
+      "additional_expected": 100068.18,
+      "projected_total": 327973.17,
+      "growth_vs_aug": 0.8,
+      "confidence": "기준치 (Baseline - 엑셀 공시 출하계획)"
     },
-    "model2_awu_demand": {
-      "name": "고객사 AWU 수요 실소화율 모델 (125% Realization)",
-      "desc": "1~8월 학습 실소화율(125%)을 잔여 1.75주 소요량($60.8K/주)에 적용한 안전재고/풀인 수요 반영",
+    "model2_conservative_plan": {
+      "name": "9/25 출하계획 90% 보수적 실행 (Conservative Floor)",
+      "desc": "고객사 입고 일정 또는 항공/해상 물류 지연으로 10% 이월 시 보수적 하한치",
       "mtd_actual": 227904.99,
-      "additional_expected": 133073.72,
-      "projected_total": 360978.71,
-      "growth_vs_aug": 10.9,
-      "confidence": "높음 (Good - 과거 8개월 데이터 기반)"
+      "additional_expected": 90061.36,
+      "projected_total": 317966.35,
+      "growth_vs_aug": -2.3,
+      "confidence": "하한치 (Floor - 90% 보수적 집행)"
     },
-    "model3_daily_runrate": {
-      "name": "일일 런레이트 및 월말 가속 모델 (Daily Surge)",
-      "desc": "9월 14영업일 일평균($16.3K/일)에 역사적 월말 가속 계수(1.05x)를 반영한 잔여 7영업일 추정",
+    "model3_customer_fcst": {
+      "name": "고객사 공식 주간 Forecast 모델 (Customer 9-Wk Forecast)",
+      "desc": "고객사 공식 9주 포캐스트($612.1K, 주당 $68,014)를 9월 잔여 1.75주 소진 시 상한치",
       "mtd_actual": 227904.99,
-      "additional_expected": 119650.12,
-      "projected_total": 347555.11,
-      "growth_vs_aug": 6.8,
-      "confidence": "높음 (Good - 현재 출하 속도 및 가속 추세)"
+      "additional_expected": 119024.26,
+      "projected_total": 346929.25,
+      "growth_vs_aug": 6.6,
+      "confidence": "상한치 (Ceiling - 고객사 제시 포캐스트)"
     },
-    "model4_aug_ratio": {
-      "name": "8개 월 가중 평균 진도율 모델 (Weighted Progress)",
-      "desc": "1~8월 전체 평균 18일 누적 진도율(62.28%)을 현재 9월 실적에 적용하여 역산한 통계치",
+    "model4_orderlist_bottomup": {
+      "name": "고객사 수주잔고(Open PO) 바텀업 (Order Book Capacity)",
+      "desc": "고객사 총 Open PO $729,435 확보 기반 주요 거래처(AMKOR, SSPC, TI) 월말 납기 바텀업",
       "mtd_actual": 227904.99,
-      "additional_expected": 138056.37,
-      "projected_total": 365961.36,
-      "growth_vs_aug": 12.5,
-      "confidence": "표준 (Balanced - 8개월 앙상블 진도율)"
-    },
-    "model5_customer_bottomup": {
-      "name": "고객사별 바텀업 수렴 모델 (Customer Bottom-Up)",
-      "desc": "주요 고객군(AMKOR $158K, SSPC $135K, TI $26.5K, 기타 $25K) 잔여 수주 소화력 합산",
-      "mtd_actual": 227904.99,
-      "additional_expected": 116600.0,
-      "projected_total": 344504.99,
-      "growth_vs_aug": 5.9,
-      "confidence": "우수 (Robust - 주요 거래선 개별 역량)"
+      "additional_expected": 100068.18,
+      "projected_total": 327973.17,
+      "growth_vs_aug": 0.8,
+      "confidence": "실행력 (Open PO $729K 수주잔고 확보)"
     },
     "consensus": {
-      "projected_range": "$332K ~ $366K",
-      "projected_median": 349944.17,
-      "growth_vs_aug_pct": 7.6,
-      "target_gap_vs_aug": 24583.42
+      "projected_range": "$318K ~ $347K",
+      "projected_median": 327973.17,
+      "growth_vs_aug_pct": 0.8,
+      "target_gap_vs_aug": 2612.42,
+      "order_buffer_po": 729435.11,
+      "forecast_weekly_amt": 68013.87,
+      "plan_sep25_amt": 100068.18
     }
   },
   "customer_comparison": [
