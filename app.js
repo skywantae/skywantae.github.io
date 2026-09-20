@@ -8480,6 +8480,7 @@ function initPhWeeklyForecast() {
   const meta = _phWeeklyData.metadata || {};
   const proj = _phWeeklyData.projection_models || {};
   const inv = _phWeeklyData.sep_inventory_summary || {};
+  const histMetrics = meta.historical_metrics || {};
 
   // 1. 상단 KPI 카드 값 채우기
   const augFinalEl = document.getElementById('phWkAugFinalAmt');
@@ -8496,12 +8497,12 @@ function initPhWeeklyForecast() {
 
   const consensus = proj.consensus || {};
   const consensusEl = document.getElementById('phWkConsensusAmt');
-  if (consensusEl) consensusEl.textContent = '$' + Math.round(consensus.projected_median || 339656).toLocaleString();
+  if (consensusEl) consensusEl.textContent = '$' + Math.round(consensus.projected_median || 349944).toLocaleString();
 
   const consensusGrowthEl = document.getElementById('phWkConsensusGrowth');
   if (consensusGrowthEl) {
-    const gap = consensus.target_gap_vs_aug || 14295;
-    const pct = consensus.growth_vs_aug_pct || 4.4;
+    const gap = consensus.target_gap_vs_aug || 24583;
+    const pct = consensus.growth_vs_aug_pct || 7.6;
     consensusGrowthEl.textContent = `8월 대비 +$${Math.round(gap).toLocaleString()} (+${pct}% 성장 전망)`;
   }
 
@@ -8511,7 +8512,21 @@ function initPhWeeklyForecast() {
   const openPoEl = document.getElementById('phWkOpenPoTotal');
   if (openPoEl) openPoEl.textContent = `고객사 Open PO: $${Math.round(inv.total_open_po_amt || 729435).toLocaleString()} (출하 버퍼 충분)`;
 
-  // 2. 4대 분석 모델 카드 렌더링
+  // 1-1. 8개월 학습 기반 메트릭 바 채우기
+  const avgSalesEl = document.getElementById('histAvgMonthlySales');
+  if (avgSalesEl && histMetrics.avg_monthly_sales) {
+    avgSalesEl.textContent = '$' + Math.round(histMetrics.avg_monthly_sales).toLocaleString();
+  }
+  const weightedRatioEl = document.getElementById('histWeightedRatio');
+  if (weightedRatioEl && histMetrics.weighted_18th_ratio) {
+    weightedRatioEl.textContent = histMetrics.weighted_18th_ratio + '%';
+  }
+  const post18thEl = document.getElementById('histPost18thSales');
+  if (post18thEl && histMetrics.avg_post_18th_shipment) {
+    post18thEl.textContent = `평균 $${Math.round(histMetrics.avg_post_18th_shipment/1000)}K (최근 $${Math.round((histMetrics.recent_post_18th_shipment||145000)/1000)}K)`;
+  }
+
+  // 2. 5대 분석 모델 카드 렌더링
   renderPhProjectionModels();
 
   // 3. 실시간 인터랙티브 시뮬레이터 실행
@@ -8520,10 +8535,13 @@ function initPhWeeklyForecast() {
   // 4. 8월 vs 9월 누적 매출 추이 비교 SVG 차트 렌더링
   renderPhWeeklyTrendChart();
 
-  // 5. 고객사별 실적 vs Forecast 비교 테이블
+  // 5. 1~8월 월별 실적 및 18일 진도율 학습 이력 테이블 렌더링
+  renderPhMonthlyHistoryTable();
+
+  // 6. 고객사별 실적 vs Forecast 비교 테이블
   renderPhCustomerComparisonTable();
 
-  // 6. 주요 품목 상세 인벤토리 테이블
+  // 7. 주요 품목 상세 인벤토리 테이블
   renderPhInventoryItemsTable();
 }
 window.initPhWeeklyForecast = initPhWeeklyForecast;
@@ -8535,9 +8553,10 @@ function renderPhProjectionModels() {
   const proj = _phWeeklyData.projection_models || {};
   const models = [
     { key: 'model1_weekly_plan', tag: '출하 계획', border: '#2563eb', bg: 'rgba(37,99,235,0.06)' },
-    { key: 'model2_awu_demand', tag: '수요 소진', border: '#0284c7', bg: 'rgba(2,132,199,0.06)' },
-    { key: 'model3_daily_runrate', tag: '일일 런레이트', border: '#10b981', bg: 'rgba(16,185,129,0.06)' },
-    { key: 'model4_aug_ratio', tag: '진도율 상관', border: '#8b5cf6', bg: 'rgba(139,92,246,0.06)' }
+    { key: 'model2_awu_demand', tag: '수요 소진 (125%)', border: '#0284c7', bg: 'rgba(2,132,199,0.06)' },
+    { key: 'model3_daily_runrate', tag: '런레이트 가속', border: '#10b981', bg: 'rgba(16,185,129,0.06)' },
+    { key: 'model4_aug_ratio', tag: '8개월 가중진도율', border: '#8b5cf6', bg: 'rgba(139,92,246,0.06)' },
+    { key: 'model5_customer_bottomup', tag: '고객사 바텀업', border: '#f59e0b', bg: 'rgba(245,158,11,0.06)' }
   ];
 
   container.innerHTML = models.map(m => {
@@ -8566,6 +8585,52 @@ function renderPhProjectionModels() {
       </div>
     `;
   }).join('');
+}
+
+function renderPhMonthlyHistoryTable() {
+  const tbody = document.getElementById('phMonthlyHistoryTbody');
+  if (!tbody || !_phWeeklyData) return;
+
+  const history = _phWeeklyData.monthly_history || {};
+  const mKeys = Object.keys(history).sort();
+  if (mKeys.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:16px; color:var(--text-dim);">학습 데이터가 없습니다.</td></tr>';
+    return;
+  }
+
+  let html = mKeys.map(k => {
+    const item = history[k];
+    return `
+      <tr style="border-bottom:1px solid var(--border-light);">
+        <td style="padding:7px 10px; font-weight:700; color:var(--text-primary);">${escapeAttr(item.label)} (${k})</td>
+        <td style="padding:7px 10px; text-align:right; font-weight:700;">$${Math.round(item.total_amt).toLocaleString()}</td>
+        <td style="padding:7px 10px; text-align:right; color:var(--text-secondary);">${Math.round(item.total_qty).toLocaleString()}</td>
+        <td style="padding:7px 10px; text-align:right; color:#60a5fa;">$${Math.round(item.amt_up_to_18th).toLocaleString()}</td>
+        <td style="padding:7px 10px; text-align:right; font-weight:700; color:#3b82f6;">${item.ratio_18th.toFixed(1)}%</td>
+        <td style="padding:7px 10px; text-align:right; color:#10b981;">+$${Math.round(item.amt_post_18th).toLocaleString()}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // 9월 현재 MTD 행 추가
+  const meta = _phWeeklyData.metadata || {};
+  const sepMtd = meta.sep_18th_mtd_amt || 227905;
+  const sepQty = meta.sep_18th_mtd_qty || 172619;
+  const consensusMedian = (_phWeeklyData.projection_models || {}).consensus.projected_median || 349944;
+  const sepRem = consensusMedian - sepMtd;
+
+  html += `
+    <tr style="border-top:2px solid #3b82f6; background:rgba(59,130,246,0.08); font-weight:800;">
+      <td style="padding:8px 10px; color:#3b82f6;">9월 MTD (9/18 현재)</td>
+      <td style="padding:8px 10px; text-align:right; color:#38bdf8;">~$${Math.round(consensusMedian).toLocaleString()} (예측)</td>
+      <td style="padding:8px 10px; text-align:right; color:var(--text-primary);">${Math.round(sepQty).toLocaleString()} (진행중)</td>
+      <td style="padding:8px 10px; text-align:right; color:#60a5fa;">$${Math.round(sepMtd).toLocaleString()}</td>
+      <td style="padding:8px 10px; text-align:right; color:#3b82f6;">${((sepMtd / consensusMedian) * 100).toFixed(1)}%</td>
+      <td style="padding:8px 10px; text-align:right; color:#10b981;">+$${Math.round(sepRem).toLocaleString()} (예상)</td>
+    </tr>
+  `;
+
+  tbody.innerHTML = html;
 }
 
 function runPhForecastSimulation() {
@@ -8638,7 +8703,7 @@ function renderPhWeeklyTrendChart() {
   }
 
   // Projection points from 19 to 30
-  const projTarget = (_phWeeklyData.projection_models || {}).consensus.projected_median || 339656;
+  const projTarget = (_phWeeklyData.projection_models || {}).consensus.projected_median || 349944;
   const projPoints = [];
   const startAmt = sepCum;
   for (let d = 18; d <= 30; d++) {
@@ -8688,7 +8753,7 @@ function renderPhWeeklyTrendChart() {
       <text x="${getX(18)}" y="${getY(sepCum) - 8}" fill="#3b82f6" font-size="10" font-weight="800" text-anchor="middle">$228K (9/18)</text>
 
       <circle cx="${getX(30)}" cy="${getY(projTarget)}" r="4.5" fill="#38bdf8" stroke="#fff" stroke-width="1.5" />
-      <text x="${getX(30) - 4}" y="${getY(projTarget) - 8}" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="end">~$340K (월말 예상)</text>
+      <text x="${getX(30) - 4}" y="${getY(projTarget) - 8}" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="end">~$350K (월말 예상)</text>
 
       <circle cx="${getX(31)}" cy="${getY(325361)}" r="4" fill="#64748b" stroke="#fff" stroke-width="1.5" />
       <text x="${getX(31)}" y="${getY(325361) + 14}" fill="#94a3b8" font-size="9" text-anchor="end">$325K (8월마감)</text>

@@ -1,62 +1,144 @@
 window.KOSTAT_PH_WEEKLY_FORECAST = {
   "metadata": {
-    "generated_at": "2026-09-20 19:21:52",
-    "aug_file": "Delivery List & Summary as of Aug 28, 2026",
-    "sep_file": "Delivery List & Summary as of Sept 18, 2026",
+    "generated_at": "2026-09-20 19:56:07",
+    "data_as_of": "2026-09-18",
+    "training_period": "2026-01 ~ 2026-08 (8 Months Actual Delivery)",
     "aug_final_actual_amt": 325360.75,
     "aug_final_actual_qty": 238820.0,
     "aug_18th_mtd_amt": 178179.5,
     "sep_18th_mtd_amt": 227904.99,
     "sep_18th_mtd_qty": 172619.0,
-    "mtd_yoy_growth_pct": 27.9
+    "mtd_yoy_growth_pct": 27.9,
+    "historical_metrics": {
+      "avg_monthly_sales": 309232.1,
+      "weighted_18th_ratio": 62.28,
+      "avg_post_18th_shipment": 116655.65,
+      "recent_post_18th_shipment": 145099.27,
+      "awu_realization_pct": 125.0
+    }
+  },
+  "monthly_history": {
+    "2026-01": {
+      "label": "1월",
+      "total_amt": 202291.5,
+      "total_qty": 150663.0,
+      "amt_up_to_18th": 98839.49,
+      "amt_post_18th": 103452.02,
+      "ratio_18th": 48.86
+    },
+    "2026-02": {
+      "label": "2월",
+      "total_amt": 291239.76,
+      "total_qty": 326165.0,
+      "amt_up_to_18th": 200072.09,
+      "amt_post_18th": 91167.67,
+      "ratio_18th": 68.7
+    },
+    "2026-03": {
+      "label": "3월",
+      "total_amt": 367075.27,
+      "total_qty": 559258.0,
+      "amt_up_to_18th": 242968.1,
+      "amt_post_18th": 124107.17,
+      "ratio_18th": 66.19
+    },
+    "2026-04": {
+      "label": "4월",
+      "total_amt": 293370.43,
+      "total_qty": 234483.0,
+      "amt_up_to_18th": 195074.68,
+      "amt_post_18th": 98295.75,
+      "ratio_18th": 66.49
+    },
+    "2026-05": {
+      "label": "5월",
+      "total_amt": 304130.32,
+      "total_qty": 394614.0,
+      "amt_up_to_18th": 185834.37,
+      "amt_post_18th": 118295.95,
+      "ratio_18th": 61.1
+    },
+    "2026-06": {
+      "label": "6월",
+      "total_amt": 298453.53,
+      "total_qty": 561974.0,
+      "amt_up_to_18th": 190725.43,
+      "amt_post_18th": 107728.1,
+      "ratio_18th": 63.9
+    },
+    "2026-07": {
+      "label": "7월",
+      "total_amt": 391935.2,
+      "total_qty": 259510.0,
+      "amt_up_to_18th": 248917.92,
+      "amt_post_18th": 143017.28,
+      "ratio_18th": 63.51
+    },
+    "2026-08": {
+      "label": "8월",
+      "total_amt": 325360.75,
+      "total_qty": 238820.0,
+      "amt_up_to_18th": 178179.5,
+      "amt_post_18th": 147181.25,
+      "ratio_18th": 54.76
+    }
   },
   "projection_models": {
     "model1_weekly_plan": {
-      "name": "주차별 출하요청 계획 모델 (Col 65 Plan)",
-      "desc": "9월 4주차(Sept 25) 출하 보충 계획액($100.1K) 및 월말 잔여출하 반영",
+      "name": "주차별 출하계획 실행 모델 (Col 65 Plan)",
+      "desc": "Summary Col 65 출하요청($100.1K)의 90% 실행 및 잔여 3영업일 완충출하($14K) 반영",
       "mtd_actual": 227904.99,
-      "additional_expected": 114068.18,
-      "projected_total": 341973.17,
-      "growth_vs_aug": 5.1,
-      "confidence": "최상 (High Confidence - 엑셀 명시 계획)"
+      "additional_expected": 104061.36,
+      "projected_total": 331966.35,
+      "growth_vs_aug": 2.0,
+      "confidence": "최상 (High - 엑셀 공시 계획)"
     },
     "model2_awu_demand": {
-      "name": "AWU 및 주간 소요량 수요 모델 (Customer Demand)",
-      "desc": "고객사 주간 평균소비량(AWU $60.8K/주) 기준 잔여 1.75주 소진 추정",
+      "name": "고객사 AWU 수요 실소화율 모델 (125% Realization)",
+      "desc": "1~8월 학습 실소화율(125%)을 잔여 1.75주 소요량($60.8K/주)에 적용한 안전재고/풀인 수요 반영",
       "mtd_actual": 227904.99,
-      "additional_expected": 106458.97,
-      "projected_total": 334363.96,
-      "growth_vs_aug": 2.8,
-      "confidence": "높음 (Moderate-High - 실소비량 기반 보수적 예측)"
+      "additional_expected": 133073.72,
+      "projected_total": 360978.71,
+      "growth_vs_aug": 10.9,
+      "confidence": "높음 (Good - 과거 8개월 데이터 기반)"
     },
     "model3_daily_runrate": {
-      "name": "일일 런레이트 추세 모델 (Daily Linear Run-Rate)",
-      "desc": "9월 1~18일 실적 14영업일 평균($16.3K/일) 기준 잔여 7영업일 추정",
+      "name": "일일 런레이트 및 월말 가속 모델 (Daily Surge)",
+      "desc": "9월 14영업일 일평균($16.3K/일)에 역사적 월말 가속 계수(1.05x)를 반영한 잔여 7영업일 추정",
       "mtd_actual": 227904.99,
-      "additional_expected": 113952.49,
-      "projected_total": 341857.48,
-      "growth_vs_aug": 5.1,
-      "confidence": "높음 (Good - 현재 출하 속도 유지 기준)"
+      "additional_expected": 119650.12,
+      "projected_total": 347555.11,
+      "growth_vs_aug": 6.8,
+      "confidence": "높음 (Good - 현재 출하 속도 및 가속 추세)"
     },
     "model4_aug_ratio": {
-      "name": "전월(8월) 진도율 상관 모델 (Historical Ratio)",
-      "desc": "8월 18일 누적 진도율(54.8%)과 동일한 가속도 적용 시 낙관치",
+      "name": "8개 월 가중 평균 진도율 모델 (Weighted Progress)",
+      "desc": "1~8월 전체 평균 18일 누적 진도율(62.28%)을 현재 9월 실적에 적용하여 역산한 통계치",
       "mtd_actual": 227904.99,
-      "additional_expected": 188255.9,
-      "projected_total": 416160.89,
-      "growth_vs_aug": 27.9,
-      "confidence": "참고치 (Optimistic Ceiling - 최대 낙관치)"
+      "additional_expected": 138056.37,
+      "projected_total": 365961.36,
+      "growth_vs_aug": 12.5,
+      "confidence": "표준 (Balanced - 8개월 앙상블 진도율)"
+    },
+    "model5_customer_bottomup": {
+      "name": "고객사별 바텀업 수렴 모델 (Customer Bottom-Up)",
+      "desc": "주요 고객군(AMKOR $158K, SSPC $135K, TI $26.5K, 기타 $25K) 잔여 수주 소화력 합산",
+      "mtd_actual": 227904.99,
+      "additional_expected": 116600.0,
+      "projected_total": 344504.99,
+      "growth_vs_aug": 5.9,
+      "confidence": "우수 (Robust - 주요 거래선 개별 역량)"
     },
     "consensus": {
-      "projected_range": "$334K ~ $342K",
-      "projected_median": 339655.7,
-      "growth_vs_aug_pct": 4.4,
-      "target_gap_vs_aug": 14294.95
+      "projected_range": "$332K ~ $366K",
+      "projected_median": 349944.17,
+      "growth_vs_aug_pct": 7.6,
+      "target_gap_vs_aug": 24583.42
     }
   },
   "customer_comparison": [
     {
-      "customer": "ATP",
+      "customer": "AMKOR",
       "aug_actual_amt": 144310.78,
       "aug_actual_qty": 134774.0,
       "sep_mtd_actual_amt": 127013.33,
@@ -80,7 +162,19 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "plan_sep25_amt": 0.0
     },
     {
-      "customer": "TIPI",
+      "customer": "OTHERS",
+      "aug_actual_amt": 7535.13,
+      "aug_actual_qty": 10026.0,
+      "sep_mtd_actual_amt": 9416.6,
+      "sep_mtd_actual_qty": 17605.0,
+      "sep_projected_amt": 12530.55,
+      "open_po_amt": 165682.72,
+      "forecast_9w_amt": 133160.09,
+      "kwe_balance_amt": 155708.66,
+      "plan_sep25_amt": 3113.95
+    },
+    {
+      "customer": "TI",
       "aug_actual_amt": 27839.4,
       "aug_actual_qty": 2456.0,
       "sep_mtd_actual_amt": 7688.52,
@@ -89,42 +183,6 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "open_po_amt": 186830.32,
       "forecast_9w_amt": 75980.31,
       "kwe_balance_amt": 11483.43,
-      "plan_sep25_amt": 0.0
-    },
-    {
-      "customer": "ASE",
-      "aug_actual_amt": 4471.6,
-      "aug_actual_qty": 9630.0,
-      "sep_mtd_actual_amt": 4960.92,
-      "sep_mtd_actual_qty": 15136.0,
-      "sep_projected_amt": 4960.92,
-      "open_po_amt": 160743.36,
-      "forecast_9w_amt": 110691.78,
-      "kwe_balance_amt": 153183.24,
-      "plan_sep25_amt": 0.0
-    },
-    {
-      "customer": "ST MICRO",
-      "aug_actual_amt": 1288.53,
-      "aug_actual_qty": 36.0,
-      "sep_mtd_actual_amt": 2469.68,
-      "sep_mtd_actual_qty": 69.0,
-      "sep_projected_amt": 5583.63,
-      "open_po_amt": 4939.37,
-      "forecast_9w_amt": 22370.31,
-      "kwe_balance_amt": 1825.42,
-      "plan_sep25_amt": 3113.95
-    },
-    {
-      "customer": "TONG HSING",
-      "aug_actual_amt": 1280.0,
-      "aug_actual_qty": 60.0,
-      "sep_mtd_actual_amt": 1491.0,
-      "sep_mtd_actual_qty": 2100.0,
-      "sep_projected_amt": 1491.0,
-      "open_po_amt": 0.0,
-      "forecast_9w_amt": 0.0,
-      "kwe_balance_amt": 0.0,
       "plan_sep25_amt": 0.0
     },
     {
@@ -137,18 +195,6 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "open_po_amt": 0.0,
       "forecast_9w_amt": 0.0,
       "kwe_balance_amt": 10350.0,
-      "plan_sep25_amt": 0.0
-    },
-    {
-      "customer": "DHL",
-      "aug_actual_amt": 0.0,
-      "aug_actual_qty": 0.0,
-      "sep_mtd_actual_amt": 495.0,
-      "sep_mtd_actual_qty": 300.0,
-      "sep_projected_amt": 495.0,
-      "open_po_amt": 0.0,
-      "forecast_9w_amt": 0.0,
-      "kwe_balance_amt": 0.0,
       "plan_sep25_amt": 0.0
     },
     {
@@ -176,18 +222,6 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "plan_sep25_amt": 0.0
     },
     {
-      "customer": "DHl",
-      "aug_actual_amt": 495.0,
-      "aug_actual_qty": 300.0,
-      "sep_mtd_actual_amt": 0.0,
-      "sep_mtd_actual_qty": 0.0,
-      "sep_projected_amt": 0.0,
-      "open_po_amt": 0.0,
-      "forecast_9w_amt": 0.0,
-      "kwe_balance_amt": 0.0,
-      "plan_sep25_amt": 0.0
-    },
-    {
       "customer": "ON SEMI",
       "aug_actual_amt": 4500.0,
       "aug_actual_qty": 1500.0,
@@ -198,53 +232,31 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "forecast_9w_amt": 0.0,
       "kwe_balance_amt": 0.0,
       "plan_sep25_amt": 0.0
-    },
-    {
-      "customer": "OTHERS",
-      "aug_actual_amt": 0.0,
-      "aug_actual_qty": 0.0,
-      "sep_mtd_actual_amt": 0.0,
-      "sep_mtd_actual_qty": 0.0,
-      "sep_projected_amt": 56.0,
-      "open_po_amt": 0.0,
-      "forecast_9w_amt": 98.0,
-      "kwe_balance_amt": 700.0,
-      "plan_sep25_amt": 0.0
     }
   ],
   "aug_deliv_summary": {
     "total_amt": 325360.75,
     "total_qty": 238820.0,
     "by_customer": {
-      "TIPI": {
+      "TI": {
         "qty": 2456.0,
         "amt": 27839.4,
         "count": 29
       },
-      "ATP": {
+      "AMKOR": {
         "qty": 134774.0,
         "amt": 144310.78,
         "count": 184
       },
-      "TONG HSING": {
-        "qty": 60.0,
-        "amt": 1280.0,
-        "count": 3
-      },
-      "ASE": {
-        "qty": 9630.0,
-        "amt": 4471.6,
-        "count": 14
+      "OTHERS": {
+        "qty": 10026.0,
+        "amt": 7535.13,
+        "count": 19
       },
       "SSPC": {
         "qty": 88944.0,
         "amt": 139809.84,
         "count": 24
-      },
-      "DHl": {
-        "qty": 300.0,
-        "amt": 495.0,
-        "count": 1
       },
       "ON SEMI": {
         "qty": 1500.0,
@@ -259,11 +271,6 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "ANALOG": {
         "qty": 120.0,
         "amt": 165.6,
-        "count": 1
-      },
-      "ST MICRO": {
-        "qty": 36.0,
-        "amt": 1288.53,
         "count": 1
       }
     },
@@ -409,17 +416,17 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
         "amt": 250.0,
         "count": 1
       },
-      "ASE": {
-        "qty": 15136.0,
-        "amt": 4960.92,
-        "count": 18
+      "OTHERS": {
+        "qty": 17605.0,
+        "amt": 9416.6,
+        "count": 22
       },
-      "TIPI": {
+      "TI": {
         "qty": 252.0,
         "amt": 7688.52,
         "count": 5
       },
-      "ATP": {
+      "AMKOR": {
         "qty": 90492.0,
         "amt": 127013.33,
         "count": 113
@@ -429,24 +436,9 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
         "amt": 82463.04,
         "count": 16
       },
-      "ST MICRO": {
-        "qty": 69.0,
-        "amt": 2469.68,
-        "count": 2
-      },
       "ROHM": {
         "qty": 950.0,
         "amt": 1073.5,
-        "count": 1
-      },
-      "TONG HSING": {
-        "qty": 2100.0,
-        "amt": 1491.0,
-        "count": 1
-      },
-      "DHL": {
-        "qty": 300.0,
-        "amt": 495.0,
         "count": 1
       }
     },
@@ -539,7 +531,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-0804-1132",
       "cust_pn": "4204303-0023",
       "end_customer": "TIPI",
-      "cust_key": "TIPI",
+      "cust_key": "TI",
       "pkg_type": "3DBZ CARRIER TAPE",
       "material": "",
       "unit_price": 30.51,
@@ -560,7 +552,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-8503",
       "cust_pn": "TZ44-II-B",
       "end_customer": "ASE",
-      "cust_key": "ASE",
+      "cust_key": "OTHERS",
       "pkg_type": "TSOP11 400 X 725 MIL",
       "material": "PSU",
       "unit_price": 0.96,
@@ -581,7 +573,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870365/00",
       "cust_pn": "101421532.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MAX MAF 12*12 PSU KOSTAT TRAY",
       "material": "",
       "unit_price": 1.43,
@@ -602,7 +594,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-880827",
       "cust_pn": "101419455.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "SCSP12.4*12.4 150C",
       "material": "MPPO",
       "unit_price": 1.36,
@@ -623,7 +615,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870247",
       "cust_pn": "TLB6X6-B",
       "end_customer": "ASE",
-      "cust_key": "ASE",
+      "cust_key": "OTHERS",
       "pkg_type": "QFN6X6X0.6",
       "material": "",
       "unit_price": 1.1,
@@ -644,7 +636,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KAH7 133500",
       "cust_pn": "201304182.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "Cover Tape KAH7 13.3X500",
       "material": "500.0",
       "unit_price": 24.6,
@@ -665,7 +657,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-871319",
       "cust_pn": "101425010.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 4*4 140C MPSU",
       "material": "",
       "unit_price": 1.27,
@@ -686,7 +678,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870278",
       "cust_pn": "TLB5X5-B",
       "end_customer": "ASE",
-      "cust_key": "ASE",
+      "cust_key": "OTHERS",
       "pkg_type": "QFN32 5X5X0.6MM",
       "material": "",
       "unit_price": 1.07,
@@ -707,7 +699,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-1612-279",
       "cust_pn": "201300270.0",
       "end_customer": "ATP/Nordic Semi",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 6X6 - W16 P12 L263",
       "material": "",
       "unit_price": 15.9,
@@ -728,7 +720,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-880272",
       "cust_pn": "101349315.0",
       "end_customer": "ATP/NORDIC",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 4x4MM, L/P",
       "material": "MPSU",
       "unit_price": 0.98,
@@ -749,7 +741,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870858",
       "cust_pn": "101411434.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 4X4 150DC TRAY",
       "material": "MPPO",
       "unit_price": 1.32,
@@ -770,7 +762,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-880382",
       "cust_pn": "101373633.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "BGA 10X10",
       "material": "PSU",
       "unit_price": 1.19,
@@ -791,7 +783,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-1208-180 REV1 ROTARY",
       "cust_pn": "201300446.0",
       "end_customer": "ATP/Nordic Semi",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 5X5 W12 P8 L515",
       "material": "",
       "unit_price": 24.36,
@@ -812,7 +804,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-8303",
       "cust_pn": "101316637.0",
       "end_customer": "ATP/ALTERA",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "TQFP20X20X1.4",
       "material": "MPSU",
       "unit_price": 1.01,
@@ -833,7 +825,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870549",
       "cust_pn": "101408859.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "LGA 4.5X3.0",
       "material": "MPPO",
       "unit_price": 1.33,
@@ -854,7 +846,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-88488",
       "cust_pn": "4207694-0001",
       "end_customer": "TIPI",
-      "cust_key": "TIPI",
+      "cust_key": "TI",
       "pkg_type": "BG14x14 tray BLACK",
       "material": "",
       "unit_price": 1.23,
@@ -875,7 +867,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870251",
       "cust_pn": "101355098.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 9*9 150C GREEN PBIN",
       "material": "PSU",
       "unit_price": 1.1,
@@ -896,7 +888,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-880179",
       "cust_pn": "4207107-0001",
       "end_customer": "TIPI",
-      "cust_key": "TIPI",
+      "cust_key": "TI",
       "pkg_type": "BGA,7X7MM, KS-880179",
       "material": "",
       "unit_price": 1.2,
@@ -917,7 +909,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-880731",
       "cust_pn": "101404798.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "BGA 7.0X7.0",
       "material": "MPPO",
       "unit_price": 1.41,
@@ -938,7 +930,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-8212",
       "cust_pn": "101363087.0",
       "end_customer": "ATP/ONSEMI",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MQFP 14X20",
       "material": "PSU",
       "unit_price": 0.91,
@@ -959,7 +951,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870161",
       "cust_pn": "TLF8x8-B",
       "end_customer": "ASE",
-      "cust_key": "ASE",
+      "cust_key": "OTHERS",
       "pkg_type": "QFN 8x8x1.0MM BLACK- no gpin",
       "material": "",
       "unit_price": 1.05,
@@ -980,7 +972,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870274",
       "cust_pn": "101357316.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "mlf 9x9 150dc tray",
       "material": "PSU",
       "unit_price": 1.1,
@@ -1001,7 +993,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870325",
       "cust_pn": "TLB7X7-B",
       "end_customer": "ASE",
-      "cust_key": "ASE",
+      "cust_key": "OTHERS",
       "pkg_type": "QFN7X7X0.6",
       "material": "",
       "unit_price": 1.15,
@@ -1022,7 +1014,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870325",
       "cust_pn": "101367289.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 7X7MM",
       "material": "MPPO",
       "unit_price": 1.02,
@@ -1043,7 +1035,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-1612-165",
       "cust_pn": "201303308.0",
       "end_customer": "ATP/Nordic Semi",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MLF 7X7 - 16MMX305MM",
       "material": "",
       "unit_price": 19.49,
@@ -1064,7 +1056,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-4432-33",
       "cust_pn": "4204303-0019",
       "end_customer": "TIPI",
-      "cust_key": "TIPI",
+      "cust_key": "TI",
       "pkg_type": "PBGA 44mm,27x27mm",
       "material": "",
       "unit_price": 15.12,
@@ -1085,7 +1077,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870264",
       "cust_pn": "101355664.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "MAX MLF 10X10MM",
       "material": "MPSU",
       "unit_price": 1.02,
@@ -1106,7 +1098,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-1208-176",
       "cust_pn": "LF20CT",
       "end_customer": "ASE",
-      "cust_key": "ASE",
+      "cust_key": "OTHERS",
       "pkg_type": "MLF 4X4",
       "material": "",
       "unit_price": 26.27,
@@ -1127,7 +1119,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KAH7 93500",
       "cust_pn": "201304056.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "Cover Tape KAH7 9.3X500",
       "material": "500.0",
       "unit_price": 19.68,
@@ -1148,7 +1140,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-86015",
       "cust_pn": "101316632.0",
       "end_customer": "ATP/ALTERA",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "TQFP 7x7x1.0 MM",
       "material": "MPSU",
       "unit_price": 1.02,
@@ -1169,7 +1161,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-880201",
       "cust_pn": "101356562.0",
       "end_customer": "ATP/ST/AMALFI",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "BGA 5*6 150C PSU",
       "material": "PSU",
       "unit_price": 1.01,
@@ -1190,7 +1182,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-1204-07",
       "cust_pn": "3CP11532",
       "end_customer": "ST MICRO",
-      "cust_key": "ST MICRO",
+      "cust_key": "OTHERS",
       "pkg_type": "Carrier Tape MLF 2x3",
       "material": "",
       "unit_price": 35.792500000000004,
@@ -1211,7 +1203,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-8502-R",
       "cust_pn": "TZ8134KA-R",
       "end_customer": "ASE",
-      "cust_key": "ASE",
+      "cust_key": "OTHERS",
       "pkg_type": "TSOP 400x825 MIL RED",
       "material": "",
       "unit_price": 3.0,
@@ -1232,7 +1224,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-870337",
       "cust_pn": "101368149.0",
       "end_customer": "ATP",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "CSP 6X6 150C KOSTAT TRAY",
       "material": "MPPO",
       "unit_price": 1.12,
@@ -1253,7 +1245,7 @@ window.KOSTAT_PH_WEEKLY_FORECAST = {
       "pn": "KS-8605",
       "cust_pn": "101316636.0",
       "end_customer": "ATP/ALTERA",
-      "cust_key": "ATP",
+      "cust_key": "AMKOR",
       "pkg_type": "TQFP 14X14X1.0",
       "material": "MPSU",
       "unit_price": 0.95,
