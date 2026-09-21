@@ -158,7 +158,8 @@ function detectLatestDataDateFromShipPlan() {
 }
 
 function getDataDateStatusText() {
-  return `${AppState.dataDate} 자 데이터 적용 중`;
+  const isEn = (AppState.currentLang === 'en');
+  return isEn ? `Data as of ${AppState.dataDate}` : `${AppState.dataDate} 자 데이터 적용 중`;
 }
 
 // --- DOM 엘리먼트 ---

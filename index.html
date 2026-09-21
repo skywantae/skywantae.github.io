@@ -28,10 +28,6 @@
         <img src="logo.png" class="brand-img" alt="KOSTAT" />
         <span class="logo-title">ERP</span>
       </div>
-      <div class="connection-pill" id="connStatusPill">
-        <span class="status-dot online" id="statusDot"></span>
-        <span class="status-text" id="statusText">2026년 9월 15일 자 데이터 적용 중</span>
-      </div>
     </div>
     
     <div class="header-right">
@@ -71,6 +67,10 @@
           <div class="viewer-title-group">
             <h3>출하 계획 (Ship Plan)</h3>
             <span class="count-badge" id="shipPlanStatusBadge">0건</span>
+            <div class="connection-pill" id="connStatusPill" style="display:inline-flex; align-items:center;">
+              <span class="status-dot online" id="statusDot"></span>
+              <span class="status-text" id="statusText">2026년 9월 15일 자 데이터 적용 중</span>
+            </div>
           </div>
           <div class="viewer-tools">
             <input type="text" id="shipPlanCustomerInput" class="compact-search" placeholder="고객사 검색..." style="width: 130px;" />
