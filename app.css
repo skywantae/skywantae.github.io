@@ -573,7 +573,7 @@ html, body {
   border-color: var(--border-subtle);
 }
 
-/* 테이블 뷰 */
+/* 테이블 뷰 & 공통 스크롤바 디자인 시스템 (사내 FAQ 스크롤바 스타일 계승) */
 .table-responsive-wrapper {
   flex: 1;
   overflow: auto;
@@ -581,6 +581,93 @@ html, body {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+}
+
+/* 실험실 (Lab) 서브패널 독립 스크롤 컨테이너 */
+.lab-sub-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  height: 100%;
+}
+
+#phWeeklyContainer {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   [전사 공통 스크롤바 디자인 시스템 - 사내 FAQ 스크롤바 톤앤매너 계승]
+   적용: 출하계획, 견적서, 계약검토서, 도면 관리, Skyworks, 김포공장 Tray 재고,
+         필리핀 지사 리포트 & 프로젝트(Weekly Report), 주간보고서 등
+   ========================================================================== */
+.table-responsive-wrapper,
+.lab-sub-panel,
+.gimpo-stock-table-wrapper,
+.custom-kostat-scrollbar,
+#phWeeklyContainer,
+#phDailyList,
+#phRagResultsList,
+#phProjectList,
+#phVisitList {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar,
+.lab-sub-panel::-webkit-scrollbar,
+.gimpo-stock-table-wrapper::-webkit-scrollbar,
+.custom-kostat-scrollbar::-webkit-scrollbar,
+#phWeeklyContainer::-webkit-scrollbar,
+#phDailyList::-webkit-scrollbar,
+#phRagResultsList::-webkit-scrollbar,
+#phProjectList::-webkit-scrollbar,
+#phVisitList::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-track,
+.lab-sub-panel::-webkit-scrollbar-track,
+.gimpo-stock-table-wrapper::-webkit-scrollbar-track,
+.custom-kostat-scrollbar::-webkit-scrollbar-track,
+#phWeeklyContainer::-webkit-scrollbar-track,
+#phDailyList::-webkit-scrollbar-track,
+#phRagResultsList::-webkit-scrollbar-track,
+#phProjectList::-webkit-scrollbar-track,
+#phVisitList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb,
+.lab-sub-panel::-webkit-scrollbar-thumb,
+.gimpo-stock-table-wrapper::-webkit-scrollbar-thumb,
+.custom-kostat-scrollbar::-webkit-scrollbar-thumb,
+#phWeeklyContainer::-webkit-scrollbar-thumb,
+#phDailyList::-webkit-scrollbar-thumb,
+#phRagResultsList::-webkit-scrollbar-thumb,
+#phProjectList::-webkit-scrollbar-thumb,
+#phVisitList::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.35);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb:hover,
+.lab-sub-panel::-webkit-scrollbar-thumb:hover,
+.gimpo-stock-table-wrapper::-webkit-scrollbar-thumb:hover,
+.custom-kostat-scrollbar::-webkit-scrollbar-thumb:hover,
+#phWeeklyContainer::-webkit-scrollbar-thumb:hover,
+#phDailyList::-webkit-scrollbar-thumb:hover,
+#phRagResultsList::-webkit-scrollbar-thumb:hover,
+#phProjectList::-webkit-scrollbar-thumb:hover,
+#phVisitList::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
 }
 
 .modern-table {

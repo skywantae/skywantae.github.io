@@ -44,6 +44,31 @@
       padding-bottom: 80px;
     }
 
+    /* 전역 및 스크롤 영역 FAQ 스타일 스크롤바 디자인 */
+    html, body, div, table, .table-container, .modal-body, * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.35);
+      border-radius: 3px;
+      transition: background 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.6);
+    }
+
     /* 고정 헤더 */
     .app-header {
       background: rgba(17, 24, 39, 0.95);
