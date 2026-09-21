@@ -590,6 +590,7 @@
                 <span style="font-size:11px; color:var(--text-secondary);" id="gimpoAsOfDate">기준일 로딩중...</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="action-btn-sm primary" id="btnGimpoRefresh" onclick="fetchLatestGimpoStock(true)" style="font-size:11px; padding:5px 10px; cursor:pointer;">최신 재고 새로고침</button>
                 <button class="action-btn-sm secondary" onclick="showGimpoAccessGuide()" style="font-size:11px; padding:5px 10px; cursor:pointer;">외부 접속 계정 안내</button>
                 <button class="action-btn-sm secondary" onclick="document.getElementById('gimpoStockFileInput').click()" style="font-size:11px; padding:5px 10px; cursor:pointer;">엑셀 수동 업로드</button>
                 <input type="file" id="gimpoStockFileInput" accept=".xlsx,.xls" style="display:none;" />

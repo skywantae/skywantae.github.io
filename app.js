@@ -861,6 +861,7 @@ const APP_I18N = {
 
     // Gimpo Tray Stock
     gimpo_title: '김포공장 Tray 재고 현황',
+    gimpo_refresh_btn: '최신 재고 새로고침',
     gimpo_as_of: '기준',
     gimpo_access_guide: '외부 접속 계정 안내',
     gimpo_manual_upload: '엑셀 수동 업로드',
@@ -999,6 +1000,7 @@ const APP_I18N = {
 
     // Gimpo Tray Stock
     gimpo_title: 'Gimpo Factory Tray Stock',
+    gimpo_refresh_btn: 'Refresh Stock',
     gimpo_as_of: 'As of',
     gimpo_access_guide: 'External Access Guide',
     gimpo_manual_upload: 'Manual Excel Upload',
@@ -1303,6 +1305,8 @@ function applyAppLanguage(lang) {
   // 11. 김포공장 Tray 재고 현황 i18n
   const gimpoTitleEl = document.querySelector('#labSubGimpo h4');
   if (gimpoTitleEl) gimpoTitleEl.textContent = t.gimpo_title;
+  const btnGimpoRefreshEl = document.getElementById('btnGimpoRefresh');
+  if (btnGimpoRefreshEl) btnGimpoRefreshEl.textContent = t.gimpo_refresh_btn;
   const btnGimpoGuide = document.querySelector('#labSubGimpo button[onclick*="showGimpoAccessGuide"]');
   if (btnGimpoGuide) btnGimpoGuide.textContent = t.gimpo_access_guide;
   const btnGimpoUpload = document.querySelector('#labSubGimpo button[onclick*="gimpoStockFileInput"]');
@@ -7390,6 +7394,12 @@ function switchLabSubTab(tabId, btn) {
     else if (tabId === 'labSubPH') badge.textContent = t.lab_tab_ph;
     else if (tabId === 'labSubWeekly') badge.textContent = t.lab_tab_weekly;
   }
+  if (tabId === 'labSubGimpo') {
+    if (!_gimpoStockData) initGimpoStock();
+    if (typeof fetchLatestGimpoStock === 'function') {
+      fetchLatestGimpoStock(false);
+    }
+  }
 }
 window.switchLabSubTab = switchLabSubTab;
 
@@ -7452,6 +7462,70 @@ window.switchPhInnerTab = switchPhInnerTab;
 // =====================================================
 let _gimpoStockData = null;
 let _gimpoFilteredItems = [];
+let _isGimpoFetching = false;
+
+async function fetchLatestGimpoStock(isManual = false) {
+  if (_isGimpoFetching) return;
+  _isGimpoFetching = true;
+  const btn = document.getElementById('btnGimpoRefresh');
+  const lang = AppState.currentLang || 'ko';
+  const t = APP_I18N[lang] || APP_I18N.ko;
+  const origText = btn ? btn.textContent : '';
+  if (btn && isManual) {
+    btn.disabled = true;
+    btn.textContent = lang === 'en' ? 'Updating...' : '동기화 중...';
+  }
+
+  try {
+    const resp = await fetch('data/gimpo_tray_stock_data.json?t=' + Date.now(), {
+      cache: 'no-store',
+      headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data && data.items && Array.isArray(data.items)) {
+        window.KOSTAT_GIMPO_TRAY_STOCK = data;
+        _gimpoStockData = data;
+        
+        const qInput = document.getElementById('gimpoSearchInput');
+        const hasQuery = qInput && qInput.value.trim().length > 0;
+        if (hasQuery) {
+          filterGimpoStock();
+        } else {
+          _gimpoFilteredItems = data.items;
+          renderGimpoStock();
+        }
+
+        const asOfEl = document.getElementById('gimpoAsOfDate');
+        if (asOfEl) {
+          asOfEl.textContent = t.gimpo_as_of + ': ' + data.as_of_date + ' ' + (data.as_of_time || '') +
+            ' / ' + (data.source_file || '');
+        }
+
+        if (isManual) {
+          const msg = lang === 'en'
+            ? `Stock data updated (As of: ${data.as_of_date} ${data.as_of_time || ''})`
+            : `최신 재고 데이터가 반영되었습니다. (기준: ${data.as_of_date} ${data.as_of_time || ''})`;
+          showToast(msg, 'success');
+        }
+      }
+    } else if (isManual) {
+      showToast(lang === 'en' ? 'Failed to fetch latest stock' : '최신 재고를 불러오지 못했습니다.', 'error');
+    }
+  } catch (err) {
+    console.warn('[GimpoStock] Fetch error:', err);
+    if (isManual) {
+      showToast(lang === 'en' ? 'Network error checking stock' : '재고 데이터 조회 중 네트워크 오류가 발생했습니다.', 'error');
+    }
+  } finally {
+    _isGimpoFetching = false;
+    if (btn && isManual) {
+      btn.disabled = false;
+      btn.textContent = origText || t.gimpo_refresh_btn || '최신 재고 새로고침';
+    }
+  }
+}
+window.fetchLatestGimpoStock = fetchLatestGimpoStock;
 
 function initGimpoStock() {
   _gimpoStockData = window.KOSTAT_GIMPO_TRAY_STOCK || null;
@@ -7461,6 +7535,8 @@ function initGimpoStock() {
       const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
       asOfEl.textContent = t.gimpo_as_of + ': N/A';
     }
+    // 내장 번들이 없더라도 원격 최신본 fetch 시도
+    fetchLatestGimpoStock(false);
     return;
   }
   const asOfEl = document.getElementById('gimpoAsOfDate');
@@ -7472,6 +7548,9 @@ function initGimpoStock() {
 
   _gimpoFilteredItems = _gimpoStockData.items;
   renderGimpoStock();
+
+  // 백그라운드 최신 재고 fetch
+  fetchLatestGimpoStock(false);
 }
 
 function formatNum(n) {
