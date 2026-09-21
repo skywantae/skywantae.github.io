@@ -45,55 +45,11 @@
     </div>
   </header>
 
-  <!-- [모바일 전용 / 폭 768px 미만] 반응형 100% 풀스크린 탭 전환 바 -->
-  <nav class="mobile-nav-switcher" id="mobileNavSwitcher">
-    <button class="mobile-nav-btn active" id="btnNavChat" data-panel="chat">
-      <span class="nav-text">AI 챗봇</span>
-    </button>
-    <button class="mobile-nav-btn" id="btnNavViewer" data-panel="viewer">
-      <span class="nav-text" id="mobileViewerNavText">ERP 데이터 뷰어</span>
-    </button>
-  </nav>
-
-  <!-- 메인 레이아웃 컨테이너 -->
+  <!-- 메인 레이아웃 컨테이너 (전체 화면 통합 뷰어) -->
   <main class="app-layout" id="appLayout">
     
-    <!-- [좌측 / 주 패널] 사내 규정 & FAQ 지식 질의응답 챗봇 -->
-    <section class="panel-chat active" id="panelChat">
-      <!-- 채팅 메시지 스크롤 영역 -->
-      <div class="chat-messages-container" id="chatContainer">
-        <!-- 초기 환영 메시지 -->
-        <div class="chat-bubble bot-msg">
-          <div class="bubble-header">
-            <span class="bot-badge">KOSTAT 봇</span>
-            <span class="msg-time" id="welcomeTime">방금</span>
-          </div>
-          <div class="bubble-content">
-            안녕하세요! <strong>KOSTAT 사내 규정 및 업무 지식(FAQ) 챗봇</strong>입니다.<br>
-            사내 규정, 인코텀즈 무역 조건, 위탁재고 등에 대해 자유롭게 질문해 주세요.
-          </div>
-        </div>
-      </div>
-
-      <!-- 하단 메시지 입력 바 -->
-      <div class="chat-input-wrapper">
-        <form class="chat-input-form" id="chatForm">
-          <input 
-            type="text" 
-            id="chatInput" 
-            class="chat-input" 
-            placeholder="사내 규정 및 업무 지식 질문 입력... (예: EXW 조건, 위탁재고)" 
-            autocomplete="off"
-          />
-          <button type="submit" class="send-btn" id="btnSend">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- [우측 / 보조 패널] 데이터 뷰어 (출하계획 -> 견적서 -> Skyworks 순서) -->
-    <section class="panel-viewer" id="panelViewer">
+    <!-- 데이터 뷰어 (전체 화면 탭 시스템) -->
+    <section class="panel-viewer full-width" id="panelViewer">
       
       <!-- 서브 뷰 네비게이션 헤더 -->
       <div class="viewer-nav-bar">
@@ -103,7 +59,8 @@
         <button class="viewer-tab-btn" data-target="viewDrawings">도면</button>
         <button class="viewer-tab-btn" data-target="viewSkyworks">Skyworks PO</button>
         <button class="viewer-tab-btn" data-target="viewFeedback">기능 요청</button>
-        <button class="viewer-tab-btn" data-target="viewFaq">FAQ 지식</button>
+        <button class="viewer-tab-btn" data-target="viewChatbot" id="tabBtnChatbot">FAQ 챗봇</button>
+        <button class="viewer-tab-btn" data-target="viewFaq">사내 FAQ</button>
         <button class="viewer-tab-btn" data-target="viewArchive">자료실</button>
         <button class="viewer-tab-btn" data-target="viewLab">실험실</button>
       </div>
@@ -383,7 +340,63 @@
         </div>
       </div>
 
-      <!-- 5. 사내 FAQ 및 업무 지식베이스 뷰 -->
+      <!-- 5. 사내 규정 & FAQ 지식 질의응답 챗봇 뷰 -->
+      <div class="viewer-content-card" id="viewChatbot" style="display:none; flex-direction:column; padding:0; height:100%; overflow:hidden;">
+        <!-- 상단 헤더 바 -->
+        <div class="viewer-card-header" style="padding:12px 16px; border-bottom:1px solid var(--border-subtle); flex-shrink:0;">
+          <div class="viewer-title-group">
+            <h3 id="chatbotHeaderTitle">FAQ 지식 챗봇</h3>
+            <span class="count-badge" id="chatbotStatusBadge" style="background:rgba(16,185,129,0.15); color:#34d399; border-color:rgba(16,185,129,0.4);">실시간 지식 질의응답</span>
+          </div>
+          <div class="viewer-tools">
+            <button class="action-btn-sm secondary" id="btnClearChat" onclick="clearChatHistory()" style="font-size:11px; padding:4px 10px; cursor:pointer;">대화 초기화</button>
+          </div>
+        </div>
+
+        <!-- 퀵 액션 칩 바 (자주 묻는 질문 바로가기) -->
+        <div class="quick-chips-bar" style="padding:8px 16px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border-subtle); display:flex; gap:6px; overflow-x:auto; flex-shrink:0; -webkit-overflow-scrolling:touch; scrollbar-width:none;">
+          <button class="quick-chip" data-cmd="EXW 조건">EXW 조건</button>
+          <button class="quick-chip" data-cmd="위탁재고">위탁재고</button>
+          <button class="quick-chip" data-cmd="견적 유효기간">견적 유효기간</button>
+          <button class="quick-chip" data-cmd="연차휴가 규정">연차휴가</button>
+          <button class="quick-chip" data-cmd="출장여비 규정">출장여비</button>
+          <button class="quick-chip" data-cmd="FOB 조건">FOB 조건</button>
+        </div>
+
+        <!-- 채팅 메시지 스크롤 영역 -->
+        <div class="chat-messages-container" id="chatContainer" style="flex:1; overflow-y:auto; padding:16px; overscroll-behavior-y:contain;">
+          <!-- 초기 환영 메시지 -->
+          <div class="chat-bubble bot-msg">
+            <div class="bubble-header">
+              <span class="bot-badge">KOSTAT 봇</span>
+              <span class="msg-time" id="welcomeTime">방금</span>
+            </div>
+            <div class="bubble-content">
+              안녕하세요! <strong>KOSTAT 사내 규정 및 업무 지식(FAQ) 챗봇</strong>입니다.<br>
+              사내 규정, 인코텀즈 무역 조건, 위탁재고 등에 대해 자유롭게 질문해 주세요.
+            </div>
+          </div>
+        </div>
+
+        <!-- 하단 메시지 입력 바 -->
+        <div class="chat-input-wrapper" style="flex-shrink:0; padding:12px 16px; background:rgba(18,22,32,0.98); border-top:1px solid var(--border-subtle);">
+          <form class="chat-input-form" id="chatForm" style="display:flex; gap:8px; align-items:center; max-width:860px; margin:0 auto;">
+            <input 
+              type="text" 
+              id="chatInput" 
+              class="chat-input" 
+              placeholder="사내 규정 및 업무 지식 질문 입력... (예: EXW 조건, 위탁재고)" 
+              autocomplete="off"
+              style="flex:1; font-size:15px;"
+            />
+            <button type="submit" class="send-btn" id="btnSend" style="flex-shrink:0; width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 6. 사내 FAQ 및 업무 지식베이스 뷰 -->
       <div class="viewer-content-card" id="viewFaq" style="display:none;">
         <div class="viewer-card-header">
           <div class="viewer-title-group">

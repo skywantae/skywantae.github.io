@@ -181,7 +181,7 @@ html, body {
   transform: scale(0.94);
 }
 
-/* --- 메인 레이아웃 (갤럭시 Z 폴드 8 & PC 듀얼 화면 기본) --- */
+/* --- 메인 레이아웃 (전체 화면 통합 뷰어) --- */
 .app-layout {
   position: absolute;
   top: var(--header-height);
@@ -189,22 +189,13 @@ html, body {
   left: 0;
   right: 0;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   overflow: hidden;
 }
 
-/* --- 좌측/주 패널: 챗봇 화면 (38% 분할, 최소 280px) --- */
+/* 챗봇은 이제 #viewChatbot 탭 카드로 통합 */
 .panel-chat {
-  flex: 38 0 320px;
-  max-width: 45%;
-  min-width: 280px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: var(--bg-surface);
-  position: relative;
-  overflow: hidden;
-  border-right: 1px solid var(--border-subtle);
+  display: none !important;
 }
 
 /* 퀵 액션 칩 바 */
@@ -432,24 +423,49 @@ html, body {
   transform: scale(0.92);
 }
 
-/* --- 우측/보조 패널: 데이터 뷰어 (62% 분할) --- */
+/* --- 데이터 뷰어 (전체 화면 통합 레이아웃) --- */
 .panel-viewer {
   display: flex;
-  flex: 62 1 400px;
+  flex: 1 1 100%;
+  width: 100%;
   min-width: 0;
   flex-direction: column;
   height: 100%;
   background: var(--bg-app);
+  position: relative;
   overflow: hidden;
+}
+
+/* FAQ 챗봇 탭 카드 */
+#viewChatbot {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+#viewChatbot.active {
+  display: flex !important;
 }
 
 .viewer-nav-bar {
   display: flex;
-  gap: 4px;
+  gap: 5px;
   padding: 8px 12px;
-  background: rgba(18, 22, 32, 0.85);
+  background: rgba(18, 22, 32, 0.95);
+  backdrop-filter: var(--glass-blur);
   border-bottom: 1px solid var(--border-subtle);
   overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+
+.viewer-nav-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .viewer-tab-btn {
@@ -1303,26 +1319,7 @@ html, body {
   cursor: pointer;
 }
 
-/* 갤럭시 Z 폴드 8 세로/커버 화면 등 좁은 화면에서도 듀얼 스크린 비율 최적 유지 */
-@media (max-width: 768px) {
-  .panel-chat {
-    flex: 40 0 260px !important;
-    max-width: 48% !important;
-    min-width: 240px !important;
-  }
-  .panel-viewer {
-    flex: 60 1 300px !important;
-    min-width: 0 !important;
-  }
-  .quick-chip {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-  .viewer-tab-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-}
+
 
 /* ==========================================================================
    PRINT STYLES FOR QUOTATION PDF EXPORT
@@ -2020,130 +2017,249 @@ html, body {
 }
 
 /* ==========================================================================
-   반응형 100% 풀스크린 탭 전환식 시스템 (아이폰 & 일반 스마트폰 최적화)
-   - 768px 미만: 듀얼 분할 해제 -> 챗봇 100% or ERP/원격 100% 풀스크린 토글
-   - 768px 이상: 기존 갤럭시 Z 폴드 8 펼침 & PC 듀얼 스크린 (38:62) 자동 유지
+/* ==========================================================================
+   모바일 & 갤럭시 Z 폴드 8 전면 반응형 최적화
+   1) 커버 스크린 (<= 359px): Fold 커버 초협소 세로 모드
+   2) 일반 모바일 (360px ~ 767px): Galaxy S, iPhone 등
+   3) 메인 스크린 & 태블릿 (768px ~ 1024px): Fold 대화면 펼침 모드
+   4) 공통 터치 / Safe Area Insets 지원
    ========================================================================== */
 
-/* 기본 (넓은 화면 / 폴드 펼침 / PC): 모바일 스위처 숨김 */
+/* 모바일 전용 스위처 영구 숨김 (단일 통합 탭으로 완전 대체) */
 .mobile-nav-switcher {
   display: none !important;
 }
 
-@media (max-width: 767px) {
-  /* 1. 모바일 전용 상단 탭 스위처 표시 */
-  .mobile-nav-switcher {
-    display: flex !important;
-    position: absolute;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    height: 42px;
-    background: rgba(14, 18, 28, 0.98);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 4px 8px;
-    gap: 6px;
-    z-index: 50;
-    box-sizing: border-box;
+/* 1. 커버 스크린 및 초협소 화면 (갤럭시 폴드 8 접었을 때: <= 359px) */
+@media (max-width: 359px) {
+  :root {
+    --header-height: 46px;
   }
-
-  .mobile-nav-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-muted);
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    padding: 0 10px;
-    touch-action: manipulation;
-  }
-
-  .mobile-nav-btn.active {
-    background: rgba(59, 130, 246, 0.18);
-    border-color: rgba(59, 130, 246, 0.5);
-    color: #60a5fa;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  }
-
-  .mobile-nav-btn .nav-icon {
-    font-size: 15px;
-  }
-
-  /* 2. 메인 레이아웃 높이 및 배치 조정 */
-  .app-layout {
-    top: calc(var(--header-height) + 42px) !important;
-    flex-direction: column !important;
-  }
-
-  /* 3. 패널 100% 풀스크린 전환 (아이폰 찌그러짐 원천 차단) */
-  .panel-chat, .panel-viewer {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 100% !important;
-    flex: 1 1 100% !important;
-    height: 100% !important;
-    border-right: none !important;
-    position: absolute;
-    inset: 0;
-  }
-
-  /* 기본: 챗봇 100% 표시 */
-  .app-layout:not(.show-viewer) .panel-chat {
-    display: flex !important;
-    z-index: 10;
-  }
-  .app-layout:not(.show-viewer) .panel-viewer {
-    display: none !important;
-  }
-
-  /* 뷰어 모드: ERP 데이터/원격 뷰어 100% 표시 */
-  .app-layout.show-viewer .panel-chat {
-    display: none !important;
-  }
-  .app-layout.show-viewer .panel-viewer {
-    display: flex !important;
-    z-index: 10;
-  }
-
-  /* 4. 모바일 뷰어 네비게이션 가로 스크롤 최적화 */
-  .viewer-nav-bar {
-    padding: 6px 8px;
-    gap: 5px;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex-shrink: 0;
-  }
-  .viewer-nav-bar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .viewer-tab-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    flex-shrink: 0;
-  }
-
-  /* 5. 헤더 컴팩트화 (아이폰 상단 공간 절약) */
   .app-header {
-    height: 48px;
-    padding: 0 10px;
+    height: 46px;
+    padding: env(safe-area-inset-top, 0) 8px 0 8px;
+  }
+  .brand-img {
+    height: 18px;
+  }
+  .logo-title {
+    font-size: 11px;
+  }
+  .connection-pill {
+    padding: 2px 6px;
+    font-size: 9.5px;
+    max-width: 90px;
+  }
+  .status-text {
+    max-width: 75px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 9.5px;
+  }
+  .header-right {
+    gap: 3px;
+  }
+  .header-right .icon-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    padding: 0;
+  }
+  #btnToggleLang {
+    min-width: 30px !important;
+    font-size: 10px !important;
+    padding: 0 4px !important;
+  }
+  .viewer-nav-bar {
+    padding: 5px 6px;
+    gap: 4px;
+  }
+  .viewer-tab-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  .viewer-card-header {
+    padding: 8px 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .viewer-tools {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .compact-search {
+    width: 100% !important;
+    font-size: 11.5px;
+    padding: 5px 8px;
+  }
+  .compact-select {
+    font-size: 11px;
+    padding: 4px 6px;
+  }
+  .action-btn-sm {
+    font-size: 10.5px;
+    padding: 4px 8px;
+  }
+  .quick-chips-bar {
+    padding: 6px 10px;
+    gap: 4px;
+  }
+  .quick-chip {
+    padding: 3px 8px;
+    font-size: 10.5px;
+  }
+  .chat-bubble {
+    max-width: 95%;
+    padding: 9px 11px;
+    font-size: 12.5px;
+  }
+  .chat-input {
+    font-size: 14px;
+  }
+  .modern-table th, .modern-table td {
+    padding: 5px 6px !important;
+    font-size: 10.5px !important;
+  }
+  .modal-dialog {
+    width: 98% !important;
+    margin: 8px auto !important;
+    padding: 12px 10px !important;
+  }
+}
+
+/* 2. 일반 스마트폰 모바일 (Galaxy S24/S25, iPhone: 360px ~ 767px) */
+@media (min-width: 360px) and (max-width: 767px) {
+  :root {
+    --header-height: 50px;
+  }
+  .app-header {
+    height: 50px;
+    padding: env(safe-area-inset-top, 0) 12px 0 12px;
   }
   .brand-img {
     height: 20px;
   }
   .connection-pill {
-    font-size: 10px;
     padding: 2px 8px;
+    font-size: 10px;
+    max-width: 150px;
+  }
+  .status-text {
+    max-width: 135px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+  }
+  .header-right {
+    gap: 5px;
+  }
+  .header-right .icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+  .viewer-nav-bar {
+    padding: 6px 8px;
+    gap: 5px;
+  }
+  .viewer-tab-btn {
+    padding: 6px 11px;
+    font-size: 12px;
+  }
+  .viewer-card-header {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .viewer-tools {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .quick-chips-bar {
+    padding: 6px 12px;
+    gap: 5px;
+  }
+  .quick-chip {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+  .chat-bubble {
+    max-width: 90%;
+    font-size: 13.5px;
+    padding: 11px 13px;
+  }
+  .chat-input {
+    font-size: 15px;
+  }
+  .modern-table th, .modern-table td {
+    padding: 6px 8px !important;
+    font-size: 11.5px !important;
+  }
+  .modal-dialog {
+    width: 96% !important;
+    margin: 12px auto !important;
+    padding: 16px 14px !important;
+  }
+}
+
+/* 3. 갤럭시 Z 폴드 8 메인 스크린 & 태블릿 (펼쳤을 때: 768px ~ 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  :root {
+    --header-height: 54px;
+  }
+  .app-header {
+    height: 54px;
+    padding: env(safe-area-inset-top, 0) 16px 0 16px;
+  }
+  .viewer-nav-bar {
+    padding: 8px 14px;
+    gap: 6px;
+  }
+  .viewer-tab-btn {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+  .chat-messages-container {
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .chat-input-wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .chat-bubble {
+    max-width: 80%;
+    font-size: 14px;
+  }
+  .table-responsive-wrapper {
+    overflow-x: auto;
+  }
+}
+
+/* 4. 공통 모바일 터치 및 Safe Area 보정 */
+@media (max-width: 1024px) {
+  .chat-input-wrapper {
+    padding-bottom: max(10px, env(safe-area-inset-bottom, 10px)) !important;
+  }
+  .table-responsive-wrapper {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .modern-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--bg-card);
+  }
+  /* 터치 편의성: 탭 및 버튼 빠른 반응 */
+  .viewer-tab-btn, .action-btn-sm, .quick-chip, .icon-btn {
+    touch-action: manipulation;
   }
 }
 

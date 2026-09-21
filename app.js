@@ -177,6 +177,11 @@ const DOM = {
   panelChat: document.getElementById('panelChat'),
   panelViewer: document.getElementById('panelViewer'),
   bottomNavBar: document.getElementById('bottomNavBar'),
+  viewChatbot: document.getElementById('viewChatbot'),
+  tabBtnChatbot: document.getElementById('tabBtnChatbot'),
+  chatbotHeaderTitle: document.getElementById('chatbotHeaderTitle'),
+  chatbotStatusBadge: document.getElementById('chatbotStatusBadge'),
+  btnClearChat: document.getElementById('btnClearChat'),
   
   // Skyworks
   skyworksTable: document.getElementById('skyworksTable'),
@@ -829,6 +834,7 @@ const APP_I18N = {
     tab_drawings: '도면 관리',
     tab_skyworks: 'Skyworks',
     tab_feedback: '기능 요청',
+    tab_chatbot: 'FAQ 챗봇',
     tab_faq: '사내 FAQ',
     tab_archive: '자료실',
     tab_lab: '실험실',
@@ -846,6 +852,9 @@ const APP_I18N = {
     skyworks_sub: 'Skyworks 전용 실시간 오더 현황',
     feedback_title: '기능 요청 게시판',
     feedback_sub: '모바일 웹앱 개선 의견 및 버그 제보',
+    chatbot_title: '사내 규정 & FAQ 지식 챗봇',
+    chatbot_status_live: '실시간 지식 질의응답',
+    btn_clear_chat: '대화 초기화',
     faq_title: '사내 규정 & FAQ 지식베이스',
     faq_sub: '무역조건, ERP 프로세스, 사내규정 가이드',
     archive_title: '사내 공용 자료실',
@@ -968,6 +977,7 @@ const APP_I18N = {
     tab_drawings: 'Drawings',
     tab_skyworks: 'Skyworks',
     tab_feedback: 'Feature Requests',
+    tab_chatbot: 'FAQ Chatbot',
     tab_faq: 'Regulations & FAQ',
     tab_archive: 'Archive',
     tab_lab: 'Lab',
@@ -985,6 +995,9 @@ const APP_I18N = {
     skyworks_sub: 'Skyworks Dedicated Real-time Order Status',
     feedback_title: 'Feature Request Board',
     feedback_sub: 'Web App Feedback & Feature Requests',
+    chatbot_title: 'Regulations & FAQ Chatbot',
+    chatbot_status_live: 'Live Knowledge Q&A',
+    btn_clear_chat: 'Clear Chat',
     faq_title: 'Regulations & FAQ Knowledge Base',
     faq_sub: 'Incoterms, ERP Process & Company Regulations Guide',
     archive_title: 'Enterprise Shared Archive',
@@ -1195,6 +1208,7 @@ function applyAppLanguage(lang) {
     viewDrawings: t.tab_drawings,
     viewSkyworks: t.tab_skyworks,
     viewFeedback: t.tab_feedback,
+    viewChatbot: t.tab_chatbot,
     viewFaq: t.tab_faq,
     viewArchive: t.tab_archive,
     viewLab: t.tab_lab
@@ -1217,6 +1231,8 @@ function applyAppLanguage(lang) {
   // 7. 검색 플레이스홀더
   const chatInput = document.getElementById('chatInput');
   if (chatInput) chatInput.placeholder = t.chat_placeholder;
+  const btnClearChat = document.getElementById('btnClearChat');
+  if (btnClearChat) btnClearChat.textContent = t.btn_clear_chat;
   const shipPlanCustomerInput = document.getElementById('shipPlanCustomerInput');
   if (shipPlanCustomerInput) shipPlanCustomerInput.placeholder = t.ship_holder_cust;
   const shipPlanPartInput = document.getElementById('shipPlanPartInput');
@@ -1244,6 +1260,7 @@ function applyAppLanguage(lang) {
     { selector: '#viewDrawings .viewer-title-group h3', title: t.drawings_title, subSel: '#viewDrawings .viewer-tools span', sub: t.drawings_sub },
     { selector: '#viewSkyworks .viewer-title-group h3', title: t.skyworks_title, subSel: '#viewSkyworks .viewer-tools span', sub: t.skyworks_sub },
     { selector: '#viewFeedback .viewer-title-group h3', title: t.feedback_title, subSel: '#viewFeedback .viewer-tools span', sub: t.feedback_sub },
+    { selector: '#viewChatbot .viewer-title-group h3', title: t.chatbot_title, subSel: '#chatbotStatusBadge', sub: t.chatbot_status_live },
     { selector: '#viewFaq .viewer-title-group h3', title: t.faq_title, subSel: '#viewFaq .viewer-tools span', sub: t.faq_sub },
     { selector: '#viewArchive .viewer-title-group h3', title: t.archive_title, subSel: '#viewArchive .viewer-tools span', sub: t.archive_sub },
     { selector: '#viewLab .viewer-title-group h3', title: t.lab_title, subSel: '#viewLab .viewer-tools span', sub: t.lab_sub }
@@ -3422,14 +3439,44 @@ function switchMobilePanel(panelType) {
   }
 }
 
+function clearChatHistory() {
+  const container = document.getElementById('chatContainer');
+  if (!container) return;
+  const now = new Date();
+  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const lang = AppState.currentLang || 'ko';
+  const isEn = lang === 'en';
+  const botName = isEn ? 'KOSTAT Bot' : 'KOSTAT 봇';
+  const welcomeText = isEn
+    ? 'Hello! This is the <strong>KOSTAT Regulations & FAQ Chatbot</strong>.<br>Feel free to ask questions about company regulations, Incoterms, consignment inventory, etc.'
+    : '안녕하세요! <strong>KOSTAT 사내 규정 및 업무 지식(FAQ) 챗봇</strong>입니다.<br>사내 규정, 인코텀즈 무역 조건, 위탁재고 등에 대해 자유롭게 질문해 주세요.';
+  
+  container.innerHTML = `
+    <div class="chat-bubble bot-msg">
+      <div class="bubble-header">
+        <span class="bot-badge">${botName}</span>
+        <span class="msg-time">${timeStr}</span>
+      </div>
+      <div class="bubble-content">${welcomeText}</div>
+    </div>
+  `;
+  showToast(isEn ? 'Chat history cleared.' : '대화 기록이 초기화되었습니다.');
+}
+window.clearChatHistory = clearChatHistory;
+
 function switchViewerCard(targetId) {
   if (!targetId) return;
 
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
     const isTarget = btn.getAttribute('data-target') === targetId;
     btn.classList.toggle('active', isTarget);
-    if (isTarget && DOM.mobileViewerNavText) {
-      DOM.mobileViewerNavText.textContent = btn.textContent.trim();
+    if (isTarget) {
+      if (DOM.mobileViewerNavText) {
+        DOM.mobileViewerNavText.textContent = btn.textContent.trim();
+      }
+      try {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      } catch (_) {}
     }
   });
   
@@ -3472,6 +3519,13 @@ function switchViewerCard(targetId) {
   } else if (targetId === 'viewFeedback') {
     renderFeedbackBoard();
     fetchRemoteFeedback(true); // 탭 진입 시 클라우드 최신 글 자동 동기화
+  } else if (targetId === 'viewChatbot') {
+    const container = document.getElementById('chatContainer');
+    if (container) {
+      setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+      }, 50);
+    }
   } else if (targetId === 'viewFaq') {
     renderFaqList();
     syncLiveDatabases(false);
