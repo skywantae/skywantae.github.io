@@ -1,6 +1,6 @@
 {
   "source_file": "PH Weekly Report WW38 rev. 04.xlsx",
-  "extracted_at": "2026-09-23 13:07:13",
+  "extracted_at": "2026-09-23 13:57:53",
   "summary": {
     "daily_report_count": 400,
     "customer_count": 21,
@@ -9006,7 +9006,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-05-25: 총 14건 업무 보고 (SFA, Device Design) - 주요안건: LA69-01468A DDR4 CAP Fitting Test Fail S"
+      "day_summary_ko": "2026-05-25: 총 14건 업무 보고 (Device Design, SFA) - 주요안건: LA69-01468A DDR4 CAP Fitting Test Fail S"
     },
     {
       "date": "2026-05-21",
@@ -9762,7 +9762,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATEC, ATP3) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
+      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATP3, ATEC) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
     },
     {
       "date": "2026-05-13",
@@ -12706,7 +12706,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (SFA, Device Dynamics) - 주요안건: Attendees:"
+      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (Device Dynamics, SFA) - 주요안건: Attendees:"
     },
     {
       "date": "2026-03-26",
@@ -35692,7 +35692,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (ROHM, KWE) - 주요안건: ST Supplier contacts file ST"
+      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (KWE, ROHM) - 주요안건: ST Supplier contacts file ST"
     },
     {
       "date": "2025-07-01",
@@ -39960,7 +39960,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (Microship, KWE) - 주요안건: PCN request Rohm"
+      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (KWE, Microship) - 주요안건: PCN request Rohm"
     },
     {
       "date": "2025-05-19",
@@ -41678,7 +41678,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (TICL, STMicro) - 주요안건: REEL INQUIRY H:7&4 ATP"
+      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (STMicro, TICL) - 주요안건: REEL INQUIRY H:7&4 ATP"
     },
     {
       "date": "2025-04-28",
@@ -44312,7 +44312,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-03-27: 총 20건 업무 보고 (ATEC, TICL) - 주요안건: KOSTAT PHP PO# 4502520685 STMicro"
+      "day_summary_ko": "2025-03-27: 총 20건 업무 보고 (TICL, ATEC) - 주요안건: KOSTAT PHP PO# 4502520685 STMicro"
     },
     {
       "date": "2025-03-26",
@@ -44574,7 +44574,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-03-25: 총 8건 업무 보고 (SFA, TICL) - 주요안건: Move to Clark"
+      "day_summary_ko": "2025-03-25: 총 8건 업무 보고 (TICL, SFA) - 주요안건: Move to Clark"
     },
     {
       "date": "2025-03-20",
@@ -49321,7 +49321,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (TongHsing, ATP1) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (ATP1, TongHsing) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-21",
@@ -49517,7 +49517,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-21: 총 19건 업무 보고 (ATEC, SPI Semicon, ATP4) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-21: 총 19건 업무 보고 (ATP4, SPI Semicon, ATEC) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-20",
@@ -49593,7 +49593,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-20: 총 7건 업무 보고 (Analog, Kenner) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-20: 총 7건 업무 보고 (Kenner, Analog) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-16",
@@ -51484,12 +51484,12 @@
         "status": "Closed",
         "remark": "failed double unit",
         "hq_comment": "",
-        "summary_ko": "[종결] 개방형 공구 점검 및 CADFit 시뮬레이션용.",
+        "summary_ko": "[종결] 개방형 공구 검사 및 CADFit 시뮬레이션용.",
         "bullets_ko": [
           "단가/견적: 견적을 제출했습니다.",
           "진행/이슈: 개방형 공구(KS-880593)를 사용할 수 있습니다. CADfit 시뮬레이션도 제출"
         ],
-        "progress_ko": "개방형 공구 점검 및 CADFit 시뮬레이션용.\n개방형 공구(KS-880593)를 사용할 수 있습니다. CADfit 시뮬레이션도 제출\n견적을 제출했습니다.\n이중 장치 실패",
+        "progress_ko": "개방형 공구 검사 및 CADFit 시뮬레이션용.\n개방형 공구(KS-880593)를 사용할 수 있습니다. CADfit 시뮬레이션도 제출\n견적을 제출했습니다.\n이중 장치 실패",
         "progress_en": "For open tool check and CADFit simulation.\nOpen tool is available, KS-880593. Submitted CADfit simulation as well\nSubmitted quotation.\nFailed double unit",
         "status_ko": "종결",
         "customer": "ATP"
@@ -52410,7 +52410,7 @@
           "단가/견적: 제출된 견적, CADFit 시뮬레이션.",
           "사양/금형: 오픈 금형를 가지고 있습니다."
         ],
-        "progress_ko": "오픈 금형를 가지고 있습니다.\n제출된 견적, CADFit 시뮬레이션.\n내부적으로 검토합니다.\n그들은 이 제품에 어느 정도 맞는 기존 csrrier tpae를 사용할 것입니다.",
+        "progress_ko": "오픈 금형를 가지고 있습니다.\n제출된 견적, CADFit 시뮬레이션.\n내부적으로 검토합니다.\n그들은 어떻게든 이 제품에 맞는 기존 csrrier tpae를 사용할 것입니다.",
         "progress_en": "Have open tool.\nSubmitted quotation, CADFit simulation.\nTo review it internaly.\nThey will use exisitng csrrier tpae that somehow fit this product.",
         "status_ko": "To use existing carrier tape",
         "customer": "TIPI"

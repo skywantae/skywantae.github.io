@@ -6,7 +6,6 @@
 
 const AppState = {
   // 내장 로컬 데이터베이스
-  skyworksData: [],
   shipPlanData: [],
   quotationsData: [],
   knowledgeData: [],
@@ -37,10 +36,6 @@ const AppState = {
   shipPlanPageSize: 50,
   shipPlanFilteredRows: [],
 
-  // Skyworks PO 페이징 상태
-  skyworksCurrentPage: 1,
-  skyworksPageSize: 50,
-  skyworksFilteredRows: [],
 
   // 기능 요청 게시판 상태
   feedbackData: [],
@@ -80,7 +75,6 @@ const AdminState = window.AdminState = {
   isDeploying: false,
   latestDetectedDate: '',
   parsedShipRows: null,
-  parsedSkyworksRows: null,
   sourceFileName: '',
   sourceFileSize: 0
 };
@@ -184,17 +178,6 @@ const DOM = {
   chatbotStatusBadge: document.getElementById('chatbotStatusBadge'),
   btnClearChat: document.getElementById('btnClearChat'),
   
-  // Skyworks
-  skyworksTable: document.getElementById('skyworksTable'),
-  skyworksTbody: document.getElementById('skyworksTbody'),
-  skyworksCount: document.getElementById('skyworksCount'),
-  skyworksSearchInput: document.getElementById('skyworksSearchInput'),
-  skyworksYearSelect: document.getElementById('skyworksYearSelect'),
-  skyworksPageSizeSelect: document.getElementById('skyworksPageSizeSelect'),
-  skyworksPagination: document.getElementById('skyworksPagination'),
-  skyworksPageInfo: document.getElementById('skyworksPageInfo'),
-  skyworksPageControls: document.getElementById('skyworksPageControls'),
-  btnSkyworksReload: document.getElementById('btnSkyworksReload'),
 
   // Ship Plan
   shipPlanTable: document.getElementById('shipPlanTable'),
@@ -555,9 +538,6 @@ async function loadInitialDatabases() {
   updateStatus(false, '데이터 로딩 중...');
   try {
     // 1. 번들된 전역 JS 객체 우선 바인딩 (Zero Latency, 100% 보장)
-    if (window.KOSTAT_SKYWORKS_DATA && window.KOSTAT_SKYWORKS_DATA.length > 0) {
-      AppState.skyworksData = window.KOSTAT_SKYWORKS_DATA;
-    }
     if (window.KOSTAT_SHIPPLAN_DATA && window.KOSTAT_SHIPPLAN_DATA.length > 0) {
       AppState.shipPlanData = window.KOSTAT_SHIPPLAN_DATA;
     }
@@ -598,9 +578,6 @@ async function loadInitialDatabases() {
       }
     } catch (_) {}
     // 3. IndexedDB의 더 최신 캐시가 있다면 갱신
-    const cachedSky = await IDB.get('skyworks');
-    if (cachedSky && cachedSky.length >= AppState.skyworksData.length) AppState.skyworksData = cachedSky;
-    
     const cachedShip = await IDB.get('shipplan');
     if (cachedShip && cachedShip.length >= AppState.shipPlanData.length) AppState.shipPlanData = cachedShip;
     
@@ -699,8 +676,6 @@ async function loadInitialDatabases() {
     updateStatus(true, getDataDateStatusText());
     
     // UI 초기 렌더링
-    renderSkyworksTable(AppState.skyworksData);
-    initSkyworksYears();
     renderQuotHistory();
     renderContractReviews();
     renderDrawingsHistory();
@@ -708,7 +683,7 @@ async function loadInitialDatabases() {
     renderFeedbackBoard();
     renderFaqList();
 
-    console.log(`[DB Ready] Skyworks: ${AppState.skyworksData.length}, ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}, Drawings: ${AppState.drawingsData.length}`);
+    console.log(`[DB Ready] ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}, Drawings: ${AppState.drawingsData.length}`);
   } catch (err) {
     console.error('DB Load Error:', err);
     updateStatus(true, getDataDateStatusText());
@@ -730,25 +705,16 @@ async function syncLiveDatabases(isManual = false) {
 
   try {
     const fetchPromises = [
-      fetch(`${GITHUB_RAW_BASE}/skyworks_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${GITHUB_RAW_BASE}/shipplan_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${GITHUB_RAW_BASE}/quotations_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${GITHUB_RAW_BASE}/faq_db.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${GITHUB_RAW_BASE}/knowledge_data.json?t=${timestamp}`).then(r => r.ok ? r.json() : null).catch(() => null)
     ];
 
-    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve([null, null, null, null, null]), 6000));
-    const [liveSky, liveShip, liveQuot, liveFaq, liveKnow] = await Promise.race([Promise.all(fetchPromises), timeoutPromise]);
+    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve([null, null, null, null]), 6000));
+    const [liveShip, liveQuot, liveFaq, liveKnow] = await Promise.race([Promise.all(fetchPromises), timeoutPromise]);
 
     let updated = false;
-
-    if (liveSky && Array.isArray(liveSky) && liveSky.length > 0) {
-      if (liveSky.length !== AppState.skyworksData.length) {
-        AppState.skyworksData = liveSky;
-        await IDB.set('skyworks', liveSky);
-        updated = true;
-      }
-    }
 
     if (liveShip && Array.isArray(liveShip) && liveShip.length > 0) {
       if (liveShip.length !== AppState.shipPlanData.length && (!AppState.shipPlanData.length || liveShip.length >= AppState.shipPlanData.length * 0.5)) {
@@ -777,11 +743,9 @@ async function syncLiveDatabases(isManual = false) {
     }
 
     AppState.lastSyncTime = new Date();
-    const totalCount = AppState.skyworksData.length + AppState.shipPlanData.length + AppState.quotationsData.length;
+    const totalCount = AppState.shipPlanData.length + AppState.quotationsData.length + (AppState.contractReviewsData?.length || 0);
 
     if (updated) {
-      renderSkyworksTable(AppState.skyworksData);
-      initSkyworksYears();
       renderQuotHistory();
       renderShipPlanHistory();
       try {
@@ -811,7 +775,7 @@ async function syncLiveDatabases(isManual = false) {
 function updateStatus(isOnline, text) {
   DOM.statusDot.className = isOnline ? 'status-dot online' : 'status-dot';
   DOM.statusText.textContent = text;
-  const total = (AppState.skyworksData?.length || 0) + (AppState.shipPlanData?.length || 0) + (AppState.quotationsData?.length || 0);
+  const total = (AppState.shipPlanData?.length || 0) + (AppState.quotationsData?.length || 0) + (AppState.contractReviewsData?.length || 0) + (AppState.drawingsData?.length || 0);
   if (DOM.connStatusPill && total > 0) {
     DOM.connStatusPill.setAttribute('title', `총 ${total.toLocaleString()}건 ERP 데이터 탑재`);
   }
@@ -833,7 +797,6 @@ const APP_I18N = {
     tab_quotations: '견적서',
     tab_contract: '계약검토서',
     tab_drawings: '도면 관리',
-    tab_skyworks: 'Skyworks',
     tab_feedback: '기능 요청',
     tab_chatbot: 'FAQ 챗봇',
     tab_faq: '사내 FAQ',
@@ -849,8 +812,6 @@ const APP_I18N = {
     contract_sub: '프로젝트 및 계약 검토 이력',
     drawings_title: '연구소 도면 관리',
     drawings_sub: 'Tray / Carrier Tape 승인 도면',
-    skyworks_title: 'Skyworks 수주 현황',
-    skyworks_sub: 'Skyworks 전용 실시간 오더 현황',
     feedback_title: '기능 요청 게시판',
     feedback_sub: '모바일 웹앱 개선 의견 및 버그 제보',
     chatbot_title: '사내 규정 & FAQ 지식 챗봇',
@@ -894,7 +855,6 @@ const APP_I18N = {
     quot_holder: '견적 번호(Q...), 고객사, 작성자 검색...',
     contract_holder: '프로젝트명, 고객사, 품목 검색...',
     drawing_holder: 'KS 번호, 도면명, 고객사 검색...',
-    skyworks_holder: 'PO No, Part No 검색...',
     feedback_holder: '요청 제목, 작성자, 내용 검색...',
     faq_holder: '규정 키워드 검색 (예: EXW, 위탁재고, 출하)...',
     archive_holder: '문서명, 분류, 등록자, 파일명 검색...',
@@ -918,7 +878,7 @@ const APP_I18N = {
     settings_lang_label: '언어 설정 (Language):',
     settings_lang_desc: '모바일 웹앱의 모든 메뉴, 검색 필터, 탭 헤더가 선택한 언어로 즉시 전환됩니다.',
     settings_env_label: '동작 환경 (오프라인 지원):',
-    settings_env_desc: '• <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>• <strong>탑재 데이터</strong>: Skyworks PO 7,300+건, 출하 계획 58,000+건, 견적서 20,000+건, 사내 FAQ 내장.',
+    settings_env_desc: '• <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>• <strong>탑재 데이터</strong>: 출하 계획 110,000+건, 견적서 22,000+건, 계약검토서(Project) 2,300+건, 도면 2,900+건, 사내 FAQ 내장.',
     settings_ver_label: '앱 버전 정보:',
     settings_cur_ver_prefix: '현재 버전:',
     settings_admin_label: '관리자 전용 메뉴:',
@@ -957,12 +917,6 @@ const APP_I18N = {
     th_rev_date: '개정일자',
     th_download: '다운로드',
 
-    // Table Headers (Skyworks)
-    th_line: '라인',
-    th_item_code: '품목코드',
-    th_description: '품명',
-    th_due_date: '납기일자',
-    th_ship_status: '출하상태'
   },
   en: {
     lang_badge: 'KO',
@@ -976,7 +930,6 @@ const APP_I18N = {
     tab_quotations: 'Quotations',
     tab_contract: 'Project',
     tab_drawings: 'Drawings',
-    tab_skyworks: 'Skyworks',
     tab_feedback: 'Feature Requests',
     tab_chatbot: 'FAQ Chatbot',
     tab_faq: 'Regulations & FAQ',
@@ -992,8 +945,6 @@ const APP_I18N = {
     contract_sub: 'Project & Contract Review History',
     drawings_title: 'R&D Drawing Management',
     drawings_sub: 'Tray / Carrier Tape Approved Drawings',
-    skyworks_title: 'Skyworks PO Status',
-    skyworks_sub: 'Skyworks Dedicated Real-time Order Status',
     feedback_title: 'Feature Request Board',
     feedback_sub: 'Web App Feedback & Feature Requests',
     chatbot_title: 'Regulations & FAQ Chatbot',
@@ -1037,7 +988,6 @@ const APP_I18N = {
     quot_holder: 'Search Quote No(Q...), Customer, Author...',
     contract_holder: 'Search Project, Customer, Item...',
     drawing_holder: 'Search KS No, Drawing Name, Customer...',
-    skyworks_holder: 'Search PO No, Part No...',
     feedback_holder: 'Search Title, Author, Content...',
     faq_holder: 'Search regulations (e.g. EXW, Consignment, Shipment)...',
     archive_holder: 'Search Document, Category, Author, File...',
@@ -1061,7 +1011,7 @@ const APP_I18N = {
     settings_lang_label: 'Language Settings:',
     settings_lang_desc: 'All navigation menus, search filters, and table headers will immediately switch to the selected language.',
     settings_env_label: 'Operating Environment (Offline Support):',
-    settings_env_desc: '• <strong>Standalone Mode</strong>: Operates fully offline on mobile without internal Wi-Fi or PC connection.<br>• <strong>Embedded Data</strong>: Skyworks PO 7,300+, Shipment Plans 58,000+, Quotes 20,000+, Built-in Regulations FAQ.',
+    settings_env_desc: '• <strong>Standalone Mode</strong>: Operates fully offline on mobile without internal Wi-Fi or PC connection.<br>• <strong>Embedded Data</strong>: Shipment Plans 110,000+, Quotes 22,000+, Projects 2,300+, Drawings 2,900+, Built-in Regulations FAQ.',
     settings_ver_label: 'App Version Info:',
     settings_cur_ver_prefix: 'Current Version:',
     settings_admin_label: 'Admin Menu:',
@@ -1100,12 +1050,6 @@ const APP_I18N = {
     th_rev_date: 'Rev Date',
     th_download: 'Download',
 
-    // Table Headers (Skyworks)
-    th_line: 'Line',
-    th_item_code: 'Part No',
-    th_description: 'Description',
-    th_due_date: 'Due Date',
-    th_ship_status: 'Status'
   }
 };
 
@@ -1207,7 +1151,6 @@ function applyAppLanguage(lang) {
     viewQuotations: t.tab_quotations,
     viewContractReviews: t.tab_contract,
     viewDrawings: t.tab_drawings,
-    viewSkyworks: t.tab_skyworks,
     viewFeedback: t.tab_feedback,
     viewChatbot: t.tab_chatbot,
     viewFaq: t.tab_faq,
@@ -1246,8 +1189,6 @@ function applyAppLanguage(lang) {
   if (contractSearchInput) contractSearchInput.placeholder = t.contract_holder;
   const drawingSearchInput = document.getElementById('drawingSearchInput');
   if (drawingSearchInput) drawingSearchInput.placeholder = t.drawing_holder;
-  const skyworksSearchInput = document.getElementById('skyworksSearchInput');
-  if (skyworksSearchInput) skyworksSearchInput.placeholder = t.skyworks_holder;
   const faqSearchInput = document.getElementById('faqSearchInput');
   if (faqSearchInput) faqSearchInput.placeholder = t.faq_holder;
   const archiveSearchInput = document.getElementById('archiveSearchInput');
@@ -1259,7 +1200,6 @@ function applyAppLanguage(lang) {
     { selector: '#viewQuotations .viewer-title-group h3', title: t.quotations_title, subSel: '#viewQuotations .viewer-tools span', sub: t.quotations_sub },
     { selector: '#viewContractReviews .viewer-title-group h3', title: t.contract_title, subSel: '#viewContractReviews .viewer-tools span', sub: t.contract_sub },
     { selector: '#viewDrawings .viewer-title-group h3', title: t.drawings_title, subSel: '#viewDrawings .viewer-tools span', sub: t.drawings_sub },
-    { selector: '#viewSkyworks .viewer-title-group h3', title: t.skyworks_title, subSel: '#viewSkyworks .viewer-tools span', sub: t.skyworks_sub },
     { selector: '#viewFeedback .viewer-title-group h3', title: t.feedback_title, subSel: '#viewFeedback .viewer-tools span', sub: t.feedback_sub },
     { selector: '#viewChatbot .viewer-title-group h3', title: t.chatbot_title, subSel: '#chatbotStatusBadge', sub: t.chatbot_status_live },
     { selector: '#viewFaq .viewer-title-group h3', title: t.faq_title, subSel: '#viewFaq .viewer-tools span', sub: t.faq_sub },
@@ -1314,11 +1254,6 @@ function applyAppLanguage(lang) {
     drawingThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
   }
 
-  const skyworksThs = document.querySelectorAll('#skyworksTable thead th');
-  if (skyworksThs && skyworksThs.length >= 7) {
-    const headers = [t.th_po_no, t.th_line, t.th_item_code, t.th_description, t.th_qty, t.th_due_date, t.th_ship_status];
-    skyworksThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
-  }
 
   // 11. 김포공장 Tray 재고 현황 i18n
   const gimpoTitleEl = document.querySelector('#labSubGimpo h4');
@@ -1404,16 +1339,6 @@ function initUI() {
     DOM.btnNavViewer.addEventListener('click', () => switchMobilePanel('viewer'));
   }
 
-  // Skyworks 필터
-  DOM.skyworksSearchInput.addEventListener('input', debounce(filterSkyworksTable, 200));
-  DOM.skyworksYearSelect.addEventListener('change', filterSkyworksTable);
-  if (DOM.skyworksPageSizeSelect) {
-    DOM.skyworksPageSizeSelect.addEventListener('change', () => {
-      AppState.skyworksPageSize = parseInt(DOM.skyworksPageSizeSelect.value, 10) || 50;
-      AppState.skyworksCurrentPage = 1;
-      renderSkyworksPage(1);
-    });
-  }
   
   // 견적서 검색 이벤트 (아래 404~435에서 올바르게 등록됨)
 
@@ -1438,12 +1363,6 @@ function initUI() {
     });
   }
   
-  DOM.btnSkyworksReload.addEventListener('click', () => {
-    DOM.skyworksSearchInput.value = '';
-    DOM.skyworksYearSelect.value = '';
-    renderSkyworksTable(AppState.skyworksData);
-    syncLiveDatabases(true);
-  });
 
   // 출하 계획 검색 & 필터 & 페이지 크기
   if (DOM.shipPlanCustomerInput) {
@@ -1669,7 +1588,7 @@ function handleLocalChatCommand(text) {
   // 매칭되는 답변이 없을 때 안내
   appendBotMessage({
     sender: 'KOSTAT 봇',
-    text: `**'${escapeHtml(clean)}'**에 대한 사내 규정 또는 FAQ 정보를 찾지 못했습니다.\n\n다른 키워드로 질문해 주세요. (예: EXW 조건, 위탁재고, 연차휴가, 견적 유효기간 등)\n※ Skyworks PO, 출하 계획, 견적서 검색은 우측 탭 메뉴에서 바로 이용하실 수 있습니다.`
+    text: `**'${escapeHtml(clean)}'**에 대한 사내 규정 또는 FAQ 정보를 찾지 못했습니다.\n\n다른 키워드로 질문해 주세요. (예: EXW 조건, 위탁재고, 연차휴가, 견적 유효기간 등)\n※ 출하 계획, 견적서 검색은 우측 탭 메뉴에서 바로 이용하실 수 있습니다.`
   });
 }
 
@@ -1769,148 +1688,6 @@ function searchLocalFAQ(query) {
     return output;
   }
   return null;
-}
-
-// --- 4. Skyworks PO 뷰어 로컬 렌더링 ---
-function initSkyworksYears() {
-  const years = [...new Set(AppState.skyworksData.map(r => {
-    const d = r.exfactorydate || r.shipdate || r.order_date || '';
-    return d.length >= 4 ? d.slice(0, 4) : '';
-  }).filter(Boolean))].sort().reverse();
-
-  DOM.skyworksYearSelect.innerHTML = `<option value="">전체 연도</option>` + years.map(y => `<option value="${y}">${y}년</option>`).join('');
-}
-
-function renderSkyworksTable(rows) {
-  AppState.skyworksFilteredRows = rows || [];
-  AppState.skyworksCurrentPage = 1;
-  renderSkyworksPage(1);
-}
-
-function renderSkyworksPage(page) {
-  const rows = AppState.skyworksFilteredRows || [];
-  const totalRows = rows.length;
-  const pageSize = AppState.skyworksPageSize || 50;
-  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
-
-  page = Math.max(1, Math.min(page, totalPages));
-  AppState.skyworksCurrentPage = page;
-
-  if (DOM.skyworksCount) {
-    DOM.skyworksCount.textContent = `${totalRows.toLocaleString()}건`;
-  }
-
-  if (DOM.skyworksPageInfo) {
-    DOM.skyworksPageInfo.textContent = `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
-  }
-
-  if (!DOM.skyworksTbody) return;
-
-  if (totalRows === 0) {
-    DOM.skyworksTbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">일치하는 Skyworks 데이터가 없습니다.</td></tr>`;
-    if (DOM.skyworksPageControls) DOM.skyworksPageControls.innerHTML = '';
-    return;
-  }
-
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
-  const sliced = rows.slice(start, end);
-
-  DOM.skyworksTbody.innerHTML = sliced.map(r => {
-    const exDate = r.exfactorydate || r.ex_date || r.order_date || '-';
-    const shipDate = r.shipdate || r.ship_date || r.delivery_date || '-';
-    const pono = r.pono || r.po_no || '-';
-    const pn = r.kostat_pn || r.part_no || r.item || '-';
-    const qty = r.poqty || r.qty || 0;
-    const price = r.unit_price || r.price || '-';
-    const amount = r.amount || '-';
-    const bal = r.balance !== undefined ? r.balance : '-';
-
-    return `
-      <tr class="erp-copyable-cell">
-        <td>${formatDate(exDate)}</td>
-        <td>${formatDate(shipDate)}</td>
-        <td style="font-weight:600;color:#60a5fa;">${escapeHtml(pono)}</td>
-        <td>${escapeHtml(pn)}</td>
-        <td style="text-align:right;">${Number(qty) ? Number(qty).toLocaleString() : qty}</td>
-        <td style="text-align:right;">${price}</td>
-        <td style="text-align:right;color:#34d399;">${amount !== '-' && Number(amount) ? Number(amount).toLocaleString() : amount}</td>
-        <td><span class="count-badge">${Number(bal) > 0 ? `잔여 ${Number(bal).toLocaleString()}` : '완료'}</span></td>
-      </tr>
-    `;
-  }).join('');
-
-  renderSkyworksPaginationControls(page, totalPages);
-}
-
-function renderSkyworksPaginationControls(currentPage, totalPages) {
-  if (!DOM.skyworksPageControls) return;
-
-  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
-  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
-  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
-  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
-
-  let btnsHtml = '';
-
-  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToSkyworksPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
-  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToSkyworksPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
-
-  const delta = 2;
-  const range = [];
-  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
-    range.push(i);
-  }
-
-  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToSkyworksPage(1)">1</button>`;
-
-  if (range.length > 0 && range[0] > 2) {
-    btnsHtml += `<span class="page-ellipsis">...</span>`;
-  }
-
-  range.forEach(p => {
-    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToSkyworksPage(${p})">${p}</button>`;
-  });
-
-  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
-    btnsHtml += `<span class="page-ellipsis">...</span>`;
-  }
-
-  if (totalPages > 1) {
-    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToSkyworksPage(${totalPages})">${totalPages}</button>`;
-  }
-
-  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToSkyworksPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
-  btnsHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToSkyworksPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
-
-  DOM.skyworksPageControls.innerHTML = btnsHtml;
-}
-
-window.goToSkyworksPage = function(page) {
-  renderSkyworksPage(page);
-};
-
-function filterSkyworksTable() {
-  const search = DOM.skyworksSearchInput.value.toLowerCase().trim();
-  const searchNorm = search.replace(/[-_\s]/g, '');
-  const year = DOM.skyworksYearSelect.value;
-  
-  let filtered = AppState.skyworksData;
-  if (year) {
-    filtered = filtered.filter(r => {
-      const d = r.exfactorydate || r.shipdate || r.order_date || '';
-      return d.startsWith(year);
-    });
-  }
-  if (search) {
-    filtered = filtered.filter(r => {
-      const str = JSON.stringify(r).toLowerCase();
-      if (str.includes(search)) return true;
-      if (searchNorm.length >= 2 && str.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
-      return false;
-    });
-  }
-  renderSkyworksTable(filtered);
 }
 
 // --- 5. 출하 및 선적 계획 뷰어 (로컬 + 다중 페이지네이션 & 고객사/부품 필터) ---
@@ -3417,7 +3194,6 @@ function switchMobileTab(tab) {
     'quotations': 'viewQuotations',
     'contract_reviews': 'viewContractReviews',
     'drawings': 'viewDrawings',
-    'skyworks': 'viewSkyworks'
   };
   if (tabTargetMap[tab]) {
     switchViewerCard(tabTargetMap[tab]);
@@ -3513,10 +3289,6 @@ function switchViewerCard(targetId) {
       AppState.drawingsFilteredRows = AppState.drawingsData || [];
     }
     renderDrawingsPage(AppState.drawingsCurrentPage || 1);
-  } else if (targetId === 'viewSkyworks') {
-    if (!DOM.skyworksTbody || DOM.skyworksTbody.children.length <= 1) {
-      renderSkyworksTable(AppState.skyworksData);
-    }
   } else if (targetId === 'viewFeedback') {
     renderFeedbackBoard();
     fetchRemoteFeedback(true); // 탭 진입 시 클라우드 최신 글 자동 동기화
@@ -3729,7 +3501,6 @@ window.copyCellText = copyCellText;
   const summaryCard = document.getElementById('adminFileSummary');
   const summaryFileName = document.getElementById('adminSummaryFileName');
   const summaryTotal = document.getElementById('adminSummaryTotal');
-  const summarySkyworks = document.getElementById('adminSummarySkyworks');
   const summaryLatestDate = document.getElementById('adminSummaryLatestDate');
 
   const progressSection = document.getElementById('adminProgressSection');
@@ -3764,7 +3535,6 @@ window.copyCellText = copyCellText;
     // 배포되지 않은 임시 파일 및 파싱 상태 리셋 (데이터 일자 보존)
     if (!AdminState.isDeploying) {
       AdminState.parsedShipRows = null;
-      AdminState.parsedSkyworksRows = null;
       AdminState.latestDetectedDate = '';
       if (fileInput) fileInput.value = '';
       if (summaryCard) summaryCard.style.display = 'none';
@@ -3808,7 +3578,6 @@ window.copyCellText = copyCellText;
     btnLogout.addEventListener('click', () => {
       AdminState.isAuthenticated = false;
       AdminState.parsedShipRows = null;
-      AdminState.parsedSkyworksRows = null;
       if (authSection) authSection.style.display = 'block';
       if (uploadSection) uploadSection.style.display = 'none';
       if (summaryCard) summaryCard.style.display = 'none';
@@ -3912,7 +3681,6 @@ window.copyCellText = copyCellText;
         const candFwd = ['fowarder', 'forwarder', '포워더', '운송사'];
 
         const shipRows = [];
-        const skyworksRows = [];
         const todayIso = new Date().toISOString().slice(0, 10);
         let latestDate = '';
 
@@ -3941,19 +3709,6 @@ window.copyCellText = copyCellText;
           if (validEx && validEx <= todayIso && validEx > latestDate) latestDate = validEx;
           if (validShip && validShip <= todayIso && validShip > latestDate) latestDate = validShip;
 
-          // Skyworks PO 추출
-          if (cust.toUpperCase().includes('SKYWORKS')) {
-            skyworksRows.push({
-              customer_name: cust,
-              pono: pono,
-              kostat_pn: pn,
-              exfactorydate: ex,
-              shipdate: ship,
-              poqty: qty,
-              balance: bal,
-              fowarder: fwd
-            });
-          }
         }
 
         // 2016~2020 고정 과거 출하 데이터 보존 및 병합
@@ -3972,32 +3727,15 @@ window.copyCellText = copyCellText;
           shipRows.sort((a, b) => String(b.e || '').localeCompare(String(a.e || '')));
         }
 
-        // Skyworks 2016~2020 과거 데이터 보존 및 병합
-        const fixedSkyRows = (AppState.skyworksData || []).filter(r => {
-          const d = String(r.exfactorydate || r.shipdate || '').replace(/[-.\s]/g, '');
-          return d && d < '20210101';
-        });
-        if (fixedSkyRows.length > 0) {
-          const seenSky = new Set(skyworksRows.map(r => `${r.customer_name}|${r.pono}|${r.kostat_pn}|${r.exfactorydate}`));
-          for (const fs of fixedSkyRows) {
-            const h = `${fs.customer_name}|${fs.pono}|${fs.kostat_pn}|${fs.exfactorydate}`;
-            if (!seenSky.has(h)) {
-              skyworksRows.push(fs);
-            }
-          }
-          skyworksRows.sort((a, b) => String(b.exfactorydate || '').localeCompare(String(a.exfactorydate || '')));
-        }
 
         const effectiveDate = latestDate || todayIso;
         AdminState.parsedShipRows = shipRows;
-        AdminState.parsedSkyworksRows = skyworksRows;
         AdminState.latestDetectedDate = effectiveDate;
 
         // 요약 카드 렌더링
         if (summaryCard) summaryCard.style.display = 'block';
         if (summaryFileName) summaryFileName.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
         if (summaryTotal) summaryTotal.textContent = `${shipRows.length.toLocaleString()}건`;
-        if (summarySkyworks) summarySkyworks.textContent = `${skyworksRows.length.toLocaleString()}건`;
         const dataDateInput = document.getElementById('adminDataDateInput');
         if (dataDateInput) dataDateInput.value = effectiveDate;
         if (summaryLatestDate) summaryLatestDate.textContent = formatKoreanDate(effectiveDate);
@@ -4100,13 +3838,6 @@ window.copyCellText = copyCellText;
       const shipJsonStr = JSON.stringify(AdminState.parsedShipRows);
       await pushFile('data/shipplan_data.json', shipJsonStr, `chore: update shipplan_data.json via web admin`);
 
-      // 2) skyworks_data.js
-      progressLabel.textContent = '2/4 Skyworks PO 데이터(skyworks_data.js) 업로드 중...';
-      progressPercent.textContent = '65%';
-      progressBarFill.style.width = '65%';
-
-      const skyJsStr = `window.KOSTAT_SKYWORKS_DATA = ${JSON.stringify(AdminState.parsedSkyworksRows)};\n`;
-      await pushFile('data/skyworks_data.js', skyJsStr, `chore: update skyworks_data.js (${AdminState.parsedSkyworksRows.length} rows) via web admin`);
 
       // 3) version.json 업데이트 & 캐시 갱신
       progressLabel.textContent = '3/4 버전 정보 및 서비스 워커 캐시 갱신 중...';
@@ -4131,7 +3862,6 @@ window.copyCellText = copyCellText;
         data_date: deployDataDate,
         updated_at: nowStr,
         shipplan_count: AdminState.parsedShipRows.length,
-        skyworks_count: AdminState.parsedSkyworksRows.length,
         updated_by: 'Web Admin'
       };
       await pushFile('version.json', JSON.stringify(versionPayload, null, 2), `chore: bump version to v${nextVer} via web admin`);
@@ -4142,9 +3872,7 @@ window.copyCellText = copyCellText;
       progressBarFill.style.width = '100%';
 
       window.KOSTAT_SHIPPLAN_DATA = AdminState.parsedShipRows;
-      window.KOSTAT_SKYWORKS_DATA = AdminState.parsedSkyworksRows;
       AppState.shipPlanData = AdminState.parsedShipRows;
-      AppState.skyworksData = AdminState.parsedSkyworksRows;
       AppState.dataDate = formatKoreanDate(deployDataDate);
       AppState.shipPlanFilteredRows = AdminState.parsedShipRows;
 
@@ -4155,14 +3883,12 @@ window.copyCellText = copyCellText;
 
       renderShipPlanPage(1);
       updateStatus(true, getDataDateStatusText());
-      const skyCountBadge = document.getElementById('skyworksCount');
-      if (skyCountBadge) skyCountBadge.textContent = `${AdminState.parsedSkyworksRows.length.toLocaleString()}건`;
 
       const curVerEl = document.getElementById('currentAppVersion');
       if (curVerEl) curVerEl.textContent = `v${nextVer}`;
 
       showToast(`배포 완료! 출하 계획 ${AdminState.parsedShipRows.length.toLocaleString()}건 (${AppState.dataDate} 기준)이 반영되었습니다.`);
-      alert(`성공적으로 배포되었습니다!\n\n• 배포 버전: v${nextVer}\n• 데이터 기준일: ${AppState.dataDate}\n• 총 출하 건수: ${AdminState.parsedShipRows.length.toLocaleString()}건\n• Skyworks PO: ${AdminState.parsedSkyworksRows.length.toLocaleString()}건\n\n모든 사용자의 모바일 기기에 최신 출하 내역이 즉시 동기화됩니다.`);
+      alert(`성공적으로 배포되었습니다!\n\n• 배포 버전: v${nextVer}\n• 데이터 기준일: ${AppState.dataDate}\n• 총 출하 건수: ${AdminState.parsedShipRows.length.toLocaleString()}건\n\n모든 사용자의 모바일 기기에 최신 출하 내역이 즉시 동기화됩니다.`);
 
       closeAdminModal();
     } catch (err) {
