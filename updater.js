@@ -1,13 +1,8 @@
 /**
- * KOSTAT ERP Mobile - In-App Auto Updater (Option B: In-App Download with Token)
- * Multi-Source Hybrid Update Engine (GitHub Raw + Releases API + Fallback)
- * 100% Reliable without Rate Limits or 404/Auth Errors (using injected token)
+ * KOSTAT ERP Mobile - Pure Web (PWA) Live Updater
+ * Checks server version.json and refreshes PWA cache seamlessly.
+ * Strictly adheres to enterprise UI standards with zero emojis.
  */
-
-const GITHUB_REPO = "skywantae/KOSTAT-ERP-Chatbot";
-const RELEASES_PAGE_URL = `https://github.com/${GITHUB_REPO}/releases`;
-
-let appGithubToken = null;
 
 function showToast(msg) {
   if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
@@ -27,92 +22,90 @@ function showToast(msg) {
   setTimeout(() => toast.remove(), 2500);
 }
 
+function isNewerVersion(latest, current) {
+  if (!latest || !current) return false;
+  const lClean = latest.replace(/^v/, '');
+  const cClean = current.replace(/^v/, '');
+  const lParts = lClean.split('.').map(n => parseInt(n, 10) || 0);
+  const cParts = cClean.split('.').map(n => parseInt(n, 10) || 0);
+  for (let i = 0; i < Math.max(lParts.length, cParts.length); i++) {
+    const l = lParts[i] || 0;
+    const c = cParts[i] || 0;
+    if (l > c) return true;
+    if (l < c) return false;
+  }
+  return false;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+async function applyWebUpdate() {
+  showToast('최신 버전을 반영하기 위해 새로고침합니다...');
+  try {
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const reg of regs) {
+        await reg.update().catch(() => {});
+      }
+    }
+  } catch (e) {
+    console.warn('Cache clearing error:', e);
+  }
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 300);
+}
+
 async function checkForAppUpdates(isManualCheck = false) {
   const statusMsgEl = document.getElementById('updateStatusMsg');
   const currentVerEl = document.getElementById('currentAppVersion');
-  const currentVer = currentVerEl ? currentVerEl.textContent.trim().replace(/^v/, '') : '1.0.110';
-  
+  const currentVer = currentVerEl ? currentVerEl.textContent.trim().replace(/^v/, '') : '1.0.173';
+
   if (statusMsgEl) {
-    statusMsgEl.innerHTML = '<span style="color:#60a5fa;">최신 버전을 확인하는 중...</span>';
+    statusMsgEl.innerHTML = '<span style="color:#60a5fa;font-size:12px;">최신 버전을 확인하는 중...</span>';
   }
 
   try {
-    // 1. 앱에 내장된 로컬 version.json에서 토큰 추출
-    const localRes = await fetch('version.json').catch(() => null);
-    if (localRes && localRes.ok) {
-      const localData = await localRes.json();
-      if (localData._download_token) {
-        appGithubToken = localData._download_token;
+    const res = await fetch(`version.json?_t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const serverVer = (data.version || '').replace(/^v/, '');
+    const serverDataDate = data.data_date || '';
+
+    if (isNewerVersion(serverVer, currentVer)) {
+      if (statusMsgEl) {
+        statusMsgEl.innerHTML = `
+          <div style="margin-top:8px;padding:12px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:10px;">
+            <div style="font-weight:700;color:#34d399;font-size:13px;">새 버전 (v${serverVer}) 업데이트 가능</div>
+            <p style="font-size:11px;color:#cbd5e1;margin:6px 0 10px 0;line-height:1.4;">
+              최신 웹 기능 및 출하 데이터가 배포되었습니다. (데이터 기준: ${escapeHtml(serverDataDate)})
+            </p>
+            <button onclick="applyWebUpdate()" class="action-btn-sm primary" style="width:100%;font-size:12px;padding:8px;text-align:center;">
+              지금 새로고침하여 즉시 반영
+            </button>
+          </div>
+        `;
       }
-    }
-  } catch(e) {
-    console.warn("로컬 토큰 추출 실패");
-  }
-
-  let latestMeta = null;
-  const headers = {};
-  if (appGithubToken) {
-    headers['Authorization'] = `token ${appGithubToken}`;
-    headers['Accept'] = 'application/vnd.github.v3+json';
-  }
-
-  try {
-    // 2. GitHub Releases API를 통해 최신 릴리즈 확인 (가장 확실함)
-    const relRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, { headers }).catch(() => null);
-    
-    if (relRes && relRes.ok) {
-      const relData = await relRes.json();
-      const apkAsset = (relData.assets || []).find(a => a.name && a.name.endsWith('.apk'));
-      
-      latestMeta = {
-        version: (relData.tag_name || '').replace(/^v/, ''),
-        download_url: apkAsset ? apkAsset.url : null, // API Asset URL (다운로드 시 Accept: application/octet-stream 필수)
-        browser_download_url: apkAsset ? apkAsset.browser_download_url : null,
-        release_notes: relData.name || relData.body || '새로운 업데이트가 있습니다.',
-        apk_filename: apkAsset ? apkAsset.name : 'Kostat_Chatbot_Mobile_Update.apk'
-      };
+      showUpdateNotification(serverVer, serverDataDate);
+      return;
     }
 
-    // 메타데이터가 있으면 버전 비교
-    if (latestMeta && latestMeta.version) {
-      const latestVer = latestMeta.version.replace(/^v/, '');
-      const downloadUrl = latestMeta.download_url || latestMeta.browser_download_url || `${RELEASES_PAGE_URL}/latest`;
-      const filename = latestMeta.apk_filename;
-      const notes = latestMeta.release_notes;
-
-      if (isNewerVersion(latestVer, currentVer)) {
-        // 신규 버전 발견
-        if (statusMsgEl) {
-          statusMsgEl.innerHTML = `
-            <div style="margin-top:8px;padding:12px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:10px;">
-              <div style="font-weight:700;color:#34d399;font-size:13px;display:flex;align-items:center;gap:6px;">
-                <span>새 버전 (v${latestVer}) 발견!</span>
-              </div>
-              <p style="font-size:11px;color:#cbd5e1;margin:6px 0 10px 0;line-height:1.4;">${escapeHtml(notes)}</p>
-              <button onclick="downloadApkInApp('${downloadUrl}', '${filename}')" class="action-btn-sm primary" style="width:100%;font-size:12px;padding:8px;text-align:center;">
-                최신 APK 즉시 다운로드 (앱 내 처리)
-              </button>
-            </div>
-          `;
-        }
-        showUpdateNotification(latestVer, downloadUrl, filename);
-        return;
-      }
-    }
-
-    // 최신 버전 사용 중인 경우
-    const directApkUrl = latestMeta?.download_url || null;
-    const filename = latestMeta?.apk_filename || `Kostat_Chatbot_Mobile_v${currentVer}.apk`;
-    
     if (statusMsgEl) {
       statusMsgEl.innerHTML = `
         <div style="margin-top:6px;padding:10px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:8px;">
           <div style="color:#34d399;font-weight:600;font-size:12px;">현재 최신 버전(v${currentVer})을 사용 중입니다.</div>
+          ${serverDataDate ? `<div style="font-size:11px;color:#94a3b8;margin-top:4px;">데이터 기준일자: ${escapeHtml(serverDataDate)}</div>` : ''}
           <div style="margin-top:8px;">
-            ${directApkUrl ? `
-            <button onclick="downloadApkInApp('${directApkUrl}', '${filename}')" class="action-btn-sm secondary" style="font-size:11px;padding:5px 12px;">
-              강제 재다운로드
-            </button>` : ''}
+            <button onclick="applyWebUpdate()" class="action-btn-sm secondary" style="font-size:11px;padding:5px 12px;">
+              캐시 초기화 및 새로고침
+            </button>
           </div>
         </div>
       `;
@@ -124,79 +117,17 @@ async function checkForAppUpdates(isManualCheck = false) {
     if (statusMsgEl) {
       statusMsgEl.innerHTML = `
         <div style="margin-top:6px;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
-          <span style="color:#cbd5e1;font-size:12px;">현재 버전(v${currentVer}) 작동 중</span>
+          <span style="color:#cbd5e1;font-size:12px;">현재 버전(v${currentVer}) 정상 작동 중</span>
         </div>
       `;
     }
     if (isManualCheck) {
-      showToast('오프라인 상태이거나 업데이트를 확인할 수 없습니다.');
+      showToast('오프라인 상태이거나 서버에 연결할 수 없습니다.');
     }
   }
 }
 
-// In-App 완전 자동 다운로드 로직 (Blob)
-async function downloadApkInApp(url, filename) {
-  const statusMsgEl = document.getElementById('updateStatusMsg');
-  if (statusMsgEl) {
-    statusMsgEl.innerHTML = `<div style="padding:10px;color:#3b82f6;font-size:12px;font-weight:bold;">백그라운드 다운로드 중... 잠시만 기다려주세요 (약 4MB).</div>`;
-  }
-  showToast('다운로드를 시작합니다...');
-  
-  try {
-    const headers = {};
-    if (appGithubToken) {
-        headers['Authorization'] = `token ${appGithubToken}`;
-        headers['Accept'] = 'application/octet-stream'; // GitHub Asset API 다운로드 필수 헤더
-    } else {
-        // 브라우저 직접 다운로드 Fallback
-        window.open(url, '_blank');
-        return;
-    }
-    
-    const res = await fetch(url, { headers });
-    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-    
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename || 'Kostat_Chatbot_Mobile_Update.apk';
-    document.body.appendChild(a);
-    a.click();
-    
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    }, 1000);
-    
-    if (statusMsgEl) {
-      statusMsgEl.innerHTML = `<div style="padding:10px;color:#10b981;font-size:12px;font-weight:bold;">다운로드 완료! 상단 알림창(또는 내 파일 > 다운로드)에서 실행해 주세요.</div>`;
-    }
-    showToast('다운로드가 완료되었습니다. 내 파일 앱에서 실행해 주세요.');
-  } catch (err) {
-    console.error('Download error:', err);
-    if (statusMsgEl) {
-      statusMsgEl.innerHTML = `<div style="padding:10px;color:#ef4444;font-size:12px;">다운로드 실패. 관리자에게 문의하세요.</div>`;
-    }
-    showToast('다운로드 실패: ' + err.message);
-  }
-}
-
-function isNewerVersion(latest, current) {
-  if (!latest || !current) return false;
-  const lParts = latest.split('.').map(n => parseInt(n, 10) || 0);
-  const cParts = current.split('.').map(n => parseInt(n, 10) || 0);
-  for (let i = 0; i < Math.max(lParts.length, cParts.length); i++) {
-    const l = lParts[i] || 0;
-    const c = cParts[i] || 0;
-    if (l > c) return true;
-    if (l < c) return false;
-  }
-  return false;
-}
-
-function showUpdateNotification(newVersion, downloadUrl, filename) {
+function showUpdateNotification(newVersion, dataDate) {
   const existing = document.getElementById('updateNotiBanner');
   if (existing) existing.remove();
 
@@ -213,28 +144,24 @@ function showUpdateNotification(newVersion, downloadUrl, filename) {
   `;
   noti.innerHTML = `
     <div>
-      <strong style="color:#60a5fa;font-size:13px;">새 버전 v${newVersion} 출시</strong>
-      <p style="font-size:11px;color:#94a3b8;margin:2px 0 0 0;">새로운 기능 및 출하 데이터가 업데이트되었습니다.</p>
+      <strong style="color:#60a5fa;font-size:13px;">새 버전 v${newVersion} 배포 완료</strong>
+      <p style="font-size:11px;color:#94a3b8;margin:2px 0 0 0;">최신 데이터가 배포되었습니다. 새로고침 시 즉시 반영됩니다.</p>
     </div>
     <div style="display:flex;gap:6px;">
-      <button onclick="downloadApkInApp('${downloadUrl}', '${filename}')" style="background:#3b82f6;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;border:none;cursor:pointer;">즉시 다운로드</button>
+      <button onclick="applyWebUpdate()" style="background:#3b82f6;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;border:none;cursor:pointer;">새로고침</button>
       <button onclick="this.parentElement.parentElement.remove()" style="background:transparent;border:none;color:#94a3b8;font-size:16px;cursor:pointer;">&times;</button>
     </div>
   `;
   document.body.appendChild(noti);
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+window.applyWebUpdate = applyWebUpdate;
+window.checkForAppUpdates = checkForAppUpdates;
 
-// 이벤트 바인딩
 document.addEventListener('DOMContentLoaded', () => {
   const btnCheck = document.getElementById('btnCheckAppUpdate');
   if (btnCheck) {
     btnCheck.addEventListener('click', () => checkForAppUpdates(true));
   }
-  // 앱 실행 3초 후 조용히 백그라운드 확인
   setTimeout(() => checkForAppUpdates(false), 3000);
 });
