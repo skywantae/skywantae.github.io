@@ -1,6 +1,6 @@
 {
   "source_file": "PH Weekly Report WW38 rev. 04.xlsx",
-  "extracted_at": "2026-09-21 10:57:01",
+  "extracted_at": "2026-09-23 13:07:13",
   "summary": {
     "daily_report_count": 400,
     "customer_count": 21,
@@ -12706,7 +12706,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (Device Dynamics, SFA) - 주요안건: Attendees:"
+      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (SFA, Device Dynamics) - 주요안건: Attendees:"
     },
     {
       "date": "2026-03-26",
@@ -30928,7 +30928,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ASE, ATP4) - 주요안건: MLF 5x6"
+      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ATP4, ASE) - 주요안건: MLF 5x6"
     },
     {
       "date": "2025-08-19",
@@ -35692,7 +35692,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (KWE, ROHM) - 주요안건: ST Supplier contacts file ST"
+      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (ROHM, KWE) - 주요안건: ST Supplier contacts file ST"
     },
     {
       "date": "2025-07-01",
@@ -36408,7 +36408,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (ATP3, KWE) - 주요안건: PLY ★ Important! Request for securing pa"
+      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (KWE, ATP3) - 주요안건: PLY ★ Important! Request for securing pa"
     },
     {
       "date": "2025-06-23",
@@ -39960,7 +39960,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (KWE, Microship) - 주요안건: PCN request Rohm"
+      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (Microship, KWE) - 주요안건: PCN request Rohm"
     },
     {
       "date": "2025-05-19",
@@ -40716,7 +40716,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-09: 총 14건 업무 보고 (STMicro, ATP4) - 주요안건: TNR RFQ TongHsing"
+      "day_summary_ko": "2025-05-09: 총 14건 업무 보고 (ATP4, STMicro) - 주요안건: TNR RFQ TongHsing"
     },
     {
       "date": "2025-05-08",
@@ -41678,7 +41678,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (STMicro, TICL) - 주요안건: REEL INQUIRY H:7&4 ATP"
+      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (TICL, STMicro) - 주요안건: REEL INQUIRY H:7&4 ATP"
     },
     {
       "date": "2025-04-28",
@@ -49321,7 +49321,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (ATP1, TongHsing) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (TongHsing, ATP1) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-21",
@@ -50996,7 +50996,7 @@
           "사양/금형: 에이징 후 PST에 실패했습니다. 숙성 사양 : 60C, 72시간. 씰 너비는 7mm에 불과한 반면 사양은 8.3mm입니다. 다시 PST를 수행하는 데 ",
           "진행/이슈: 제출된 샘플"
         ],
-        "progress_ko": "제출된 샘플\n PST로 진행하면 지금까지 문제가 발생하지 않았습니다.\n아직 진행 중입니다. 현재 로드가 없기 때문에 업데이트가 많지 않습니다.\nQual은 이제 막바지 단계에 있습니다. Qual 보고서가 곧 공개될 예정입니다. 누락된 부분이 없는지 확인하기 위해 인쇄물을 검토하고 있습니다.\n에이징 후 PST에 실패했습니다. 숙성 사양 : 60C, 72시간. 씰 너비는 7mm에 불과한 반면 사양은 8.3mm입니다. 다시 PST를 수행하는 데 동의했습니다.\n8.3mm 씰 너비로 변환한 후 PST에 실패했습니다.\n씰링 사양을 확인하세요. 권장 씰링 사양 범위를 표시했습니다.\n본사와 협력하여 권장 씰링 사양을 얻으려면.\n커버 테이프가 있는 샘플을 받습니다. 배송이 필요한지 여부를 본사에서 결정합니다.\nIFX에서 사용하는 새로운 커버 테이프를 제출했습니다.\n11/14 - 후속 상태.\n이미 샘플을 실행했으며 이제 에이징 작업이 진행 중입니다.\n노화 완료는 WW49에서 WW50까지입니다.",
+        "progress_ko": "제출된 샘플\n PST로 진행하면 지금까지 문제가 발생하지 않았습니다.\n아직 진행 중입니다. 현재 로드가 없기 때문에 업데이트가 많지 않습니다.\nQual은 이제 막바지 단계에 있습니다. Qual 보고서가 곧 공개될 예정입니다. 누락된 부분이 없는지 확인하기 위해 인쇄물을 검토하고 있습니다.\n에이징 후 PST에 실패했습니다. 숙성 사양 : 60C, 72시간. 씰 너비는 7mm에 불과한 반면 사양은 8.3mm입니다. 다시 PST를 수행하는 데 동의했습니다.\n8.3mm 씰 너비로 변환한 후 PST에 실패했습니다.\n씰링 사양을 확인하세요. 권장 씰링 사양 범위를 표시했습니다.\n본사와 조율하여 권장 씰링 사양을 얻으려면.\n커버 테이프가 있는 샘플을 받습니다. 배송이 필요한지 여부를 본사에서 결정합니다.\nIFX에서 사용하는 새로운 커버 테이프를 제출했습니다.\n11/14 - 후속 상태.\n이미 샘플을 실행했으며 이제 에이징 작업이 진행 중입니다.\n노화 완료는 WW49에서 WW50까지입니다.",
         "progress_en": "Submitted sample\n on going PST, result so far no issues encountered.\nStill on going. Not much update since there are no load for now.\nQual is now on final stage. Qual report is to be released very soon. They are on going review on the printout to make sure that none is missed.\nFailed PST after aging. Aging specs : 60C for 72 hours. Seal width is only 7mm, while specs is 8.3mm. agreed to do re-PST.\nFailed PST after converting to 8.3mm seal width.\nGet sealing specs. Showed our recommended sealing specs range.\nTo coordinate with HQ and get recommended sealing specs.\nSample with cover tape receive. HQ to decide if needed to be shipped to them.\nSubmitted new cover tape used by IFX.\n11/14- followed up status.\nAlready run the samples and now on going aging.\nAging completion will be WW49 to WW50.\n1/21 - POS fail after hot test for KAH7-ST type. For KAH7-TA type is still on going cold and hot test.\n3/7 - follow up customer. Still no progress\n3/20 - follow up customer. Still no update.\n4/16 - falied still on hi temp aging.\nto try the TA model.\n5/15(request for visit) - follow up customer. Not yet set up still waiting for machine allocation from production \n5/21(request for visit) - follow up customer if they have machine allocation.\n6/20 - still no machine allocation\n7/15 - follow up customer.\n8/12 - passed hot, ambient and cold aging.\n9/18 - ureshii price is $0.043/M, our offer is $29.25/500M.\n9/18 - cannot compete on ureshii price.\n10/01 - check one more time with HQ\n10/01 - cannot meet target price.\n10/02 - project is closed",
         "status_ko": "종결",
         "customer": "ATP"
@@ -51100,7 +51100,7 @@
           "사양/금형: 10x10x1.T의 경우 ATP가 새로운 금형(Tooling)을 진행하더라도 펜스 길이에는 약간의 차이만 있습니다.",
           "진행/이슈: 열려 있는 도구를 확인하세요."
         ],
-        "progress_ko": "전체 울타리 디자인 컨셉입니다.\n열려 있는 도구를 확인하세요.\n제안된 디자인은 풀펜스 디자인이 아닙니다. 풀펜스 디자인을 요청하셨습니다.\n7x7x1.4 신규 디자인 제안(풀펜스 디자인) 제출\n10x10x1.4의 경우 개방형 도구이므로 KS-2416-262를 고려하십시오.\n목표 가격.\nKS-1612-166 : 5억 - $25/롤 ($51.8)\nKS-2416-362 : 3억 - $20/롤 ($46.38)\n  - 어드밴텍 : $46.\n  - Ubot : $19\n10x10x1.T의 경우 ATP가 새로운 금형(Tooling)을 진행하더라도 펜스 길이에는 약간의 차이만 있습니다.",
+        "progress_ko": "전체 울타리 디자인 컨셉입니다.\n열려 있는 도구를 확인하세요.\n제안된 디자인은 풀펜스 디자인이 아닙니다. 풀펜스 디자인을 요청하셨습니다.\n7x7x1.4 신규 디자인 제안(풀 펜스 디자인) 제출\n10x10x1.4의 경우 개방형 도구이므로 KS-2416-262를 고려하십시오.\n목표 가격.\nKS-1612-166 : 5억 - $25/롤 ($51.8)\nKS-2416-362 : 3억 - $20/롤 ($46.38)\n  - 어드밴텍 : $46.\n  - Ubot : $19\n10x10x1.T의 경우 ATP가 새로운 금형(Tooling)을 진행하더라도 펜스 길이에는 약간의 차이만 있습니다.",
         "progress_en": "Full fence design concept.\nCheck for open tool.\nProposed design is not full fence design. Requested for the full fence design.\nSubmitted new design proposal(full fence design) for 7x7x1.4\nFor 10x10x1.4 to please consider KS-2416-262 since its open tool\nTarget price.\nKS-1612-166 : 500M - $25/roll ($51.8)\nKS-2416-362 : 300M - $20/roll ($46.38)\n  - Advantek : $46.\n  - UBOT : $19\nFor 10x10x1.T, there is only slight difference in fence length even if ATP proceeds new tooling",
         "status_ko": "드롭",
         "customer": "ATP"
@@ -51182,7 +51182,7 @@
           "주요내용: PCN 업데이트에 대한 프레젠테이션",
           "주요내용: 11개 고객사는 완료되어 구현을 기다리고 있으며 8개 고객사는 승인을 기다리고 있습니다."
         ],
-        "progress_ko": "ATP SQE\nPCN 업데이트에 대한 프레젠테이션\n11개 고객사는 완료되어 구현을 기다리고 있으며 8개 고객사는 승인을 기다리고 있습니다.\n조치 항목\n각 고객에게 SID 번호를 표시하고 조건부 통과가 가능한지 확인하고 구현을 시작합니다.\n몬제는 TPM과 조율하여 3개월 안에 완료하는 것을 목표로 하고 있습니다.\n목록에서 ST를 제거하려면 SID 번호는 다르며 우리가 제공하는 것은 PBIN이지만 PCN은 PBIN이 아닙니다.\n 도시바도 제거하세요. PCN에는 포함되지 않습니다.\n 현재 목록에는 10명의 고객이 승인되었으며 9명의 고객이 승인을 기다리고 있습니다.\nKOSTAT VIETNAM SAMPLES(KS-880272) - 샘플 300개 제공(7/18 - FOC PO 수령, 7/22 - 발송)\n6명의 고객이 승인을 기다리고 있습니다. 나머지는 구현을 위한 것입니다.\n아직 6명의 고객이 승인을 기다리고 있습니다.\n5/21 - 후속 고객.\n5/27 -",
+        "progress_ko": "ATP SQE\nPCN 업데이트에 대한 프레젠테이션\n11개 고객사는 완료되어 구현을 기다리고 있으며 8개 고객사는 승인을 기다리고 있습니다.\n조치사항\n각 고객에게 SID 번호를 표시하고 조건부 통과가 가능한지 확인하고 구현을 시작합니다.\n몬제는 TPM과 조율하여 3개월 안에 완료하는 것을 목표로 하고 있습니다.\n목록에서 ST를 제거하려면 SID 번호는 다르며 우리가 제공하는 것은 PBIN이지만 PCN은 PBIN이 아닙니다.\n 도시바도 제거하세요. PCN에는 포함되지 않습니다.\n 현재 목록에는 10명의 고객이 승인되었으며 9명의 고객이 승인을 기다리고 있습니다.\nKOSTAT VIETNAM SAMPLES(KS-880272) - 샘플 300개 제공(7/18 - FOC PO 수령, 7/22 - 발송)\n6명의 고객이 승인을 기다리고 있습니다. 나머지는 구현을 위한 것입니다.\n아직 6명의 고객이 승인을 기다리고 있습니다.\n5/21 - 후속 고객.\n5/27 -",
         "progress_en": "ATP SQE\nPresentation on PCN updates\n11 customers completed and awaiting implementation and 8 customers are awaiting approval\nAction items\nTo show SID numbers each customer and check if possible to do conditional pass and start implementation\nMonje to coordinate with TPM and target is to complete it within 3 months.\nTo remove ST in the list. SID number is different and what we supply is with PBIN while the PCN is no PBIN.\n Remove Toshiba as well. it is not included in the PCN.\n List now is 10 customer approved and 9 customer is waiting approval.\nKOSTAT VIETNAM SAMPLES(KS-880272) - to provide 300pcs sample.(7/18 - received FOC PO; 7/22 - shipped out)\n6 customers left awaiting for approval. the rest are for implementation.\nStill 6 customers awaiting approval.\n5/21 - follow up customer.\n5/27 - follow up customer.\n6/23 - follow up customer\n10/6 - On going talk with IFX.\n1/22 - follow up customer.",
         "status_ko": "진행중",
         "customer": "ATP"
@@ -51203,7 +51203,7 @@
           "사양/금형: 빨간색 커버 트레이 - PES 제안을 보기 전에 다른 업체의 ABS 제안을 확인합니다.",
           "진행/이슈: Kostat Material Inc. – ERP 문제 확인 – Jun은 다음 주에 업데이트를 제공할 예정입니다."
         ],
-        "progress_ko": "ATP 구매\n토론 PCN 업데이트\n캐리어 테이프용 PCN – 완료되었으나 현재 재고 소진으로 인해 주문량이 많지 않음\n5x5 및 6x6 캐리어 테이프/커버 테이프 프로젝트 – Kostat는 가격 측면에서 3위입니다. #1 Ubot, #2 CPAK\nTQ14x14 – 최종 고객 결정 및 전체 펜스 설계 추진.\n\n조치 항목\nKostat Material Inc. – ERP 문제 확인 – Jun은 다음 주에 업데이트를 제공할 예정입니다.\n빨간색 커버 트레이 - PES 제안을 보기 전에 다른 업체의 ABS 제안을 확인합니다.\n어닐링(Annealing) – 2시간, 3시간 시뮬레이션 – 더미 장치 필요\nPCN – 조건부 통과를 제공할 수 있는지 TPM에 확인합니다.\n엔지니어링 자격 – Raquel에게 확인하세요.\n저스틴은 2024년 9월을 완료 목표로 설정했습니다.",
+        "progress_ko": "ATP 구매\n토론 PCN 업데이트\n캐리어 테이프용 PCN – 완료되었으나 현재 재고 소진으로 인해 주문량이 많지 않음\n5x5 및 6x6 캐리어 테이프/커버 테이프 프로젝트 – Kostat는 가격 측면에서 3위입니다. #1 Ubot, #2 CPAK\nTQ14x14 – 최종 고객 결정 및 전체 펜스 설계 추진.\n\n조치사항\nKostat Material Inc. – ERP 문제 확인 – Jun은 다음 주에 업데이트를 제공할 예정입니다.\n빨간색 커버 트레이 - PES 제안을 보기 전에 다른 업체의 ABS 제안을 확인합니다.\n어닐링(Annealing) – 2시간, 3시간 시뮬레이션 – 더미 장치 필요\nPCN – 조건부 통과를 제공할 수 있는지 TPM에 확인합니다.\n엔지니어링 자격 – Raquel에게 확인하세요.\n저스틴은 2024년 9월을 완료 목표로 설정했습니다.",
         "progress_en": "ATP Purchasing\nDiscussion PCN updates\nPCN for carrier tapes – though completed, not much order because of the depletion of the current inventory\n5x5 and 6x6 carrier tape/cover tape project – Kostat is #3 in terms of pricing. #1 Ubot, #2 CPAK\nTQ14x14 – End customer decision and pushed for the full fence design.\n\nAction items\nKostat Material Inc. – checking the ERP issues – Jun to give update next week\nCover tray red – to check ABS offer of other before looking at our PES offer\nAnnealing – to simulate 2 hours, 3 hours – need dummy unit\nPCN – to check with TPM if possible to provide conditional pass\nQualification of Engineering – to check with Raquel.\nJustine set target to complete is September 2024",
         "status_ko": "드롭",
         "customer": "ATP"
@@ -51423,12 +51423,12 @@
         "status": "Closed",
         "remark": "device already EOL",
         "hq_comment": "",
-        "summary_ko": "[종결] 101390486 KS-870196 - ST용으로만 녹색 pbin 동일한 재료로 변환할 계획입니다. PBIN 엔드탭 도구는 한국에 있으며 VN으로 배송될 예...",
+        "summary_ko": "[종결] 101390486 KS-870196 - ST용으로만 녹색 pbin 동일한 재료로 전환할 계획입니다. PBIN 엔드탭 도구는 한국에 있으며 VN으로 배송될 예...",
         "bullets_ko": [
-          "진행/이슈: 101390486 KS-870196 - ST용으로만 녹색 pbin 동일한 재료로 변환할 계획입니다. PBIN 엔드탭 도구는 한국에 있으며 VN으로 배송될",
+          "진행/이슈: 101390486 KS-870196 - ST용으로만 녹색 pbin 동일한 재료로 전환할 계획입니다. PBIN 엔드탭 도구는 한국에 있으며 VN으로 배송될",
           "주요내용: 진행되지 않습니다. 기기가 이미 EOL되었습니다."
         ],
-        "progress_ko": "101390486 KS-870196 - ST용으로만 녹색 pbin 동일한 재료로 변환할 계획입니다. PBIN 엔드탭 도구는 한국에 있으며 VN으로 배송될 예정이므로 샘플을 제출하기 전에 먼저 예측이 필요합니다.\n진행되지 않습니다. 기기가 이미 EOL되었습니다.",
+        "progress_ko": "101390486 KS-870196 - ST용으로만 녹색 pbin 동일한 재료로 전환할 계획입니다. PBIN 엔드탭 도구는 한국에 있으며 VN으로 배송될 예정이므로 샘플을 제출하기 전에 먼저 예측이 필요합니다.\n진행되지 않습니다. 기기가 이미 EOL되었습니다.",
         "progress_en": "101390486 KS-870196 - plan to convert to green pbin same material for ST use only. Since the PBIN endtab tool in Korea and will be shipped to VN, we need the forecast first, before we submit sample.\nWill not proceed, device already EOL",
         "status_ko": "종결",
         "customer": "ATP"
@@ -51469,7 +51469,7 @@
           "사양/금형: 열려 있는 도구를 확인했습니다. 제안된 도면 디자인을 제공할 도구가 없는 경우.",
           "진행/이슈: 필수 서류를 제출했습니다."
         ],
-        "progress_ko": "제안된 디자인 KS-1204-576.\nSOT 5LDS에 대한 새로운 문의입니다.\n열려 있는 도구를 확인했습니다. 제안된 도면 디자인을 제공할 도구가 없는 경우.\n오픈 도구가 없습니다.\n고객에게 정사각형 포켓이 있는 4mm 피치와 슬롯형 포켓이 있는 8mm 피치 중 무엇을 선호하는지 문의했습니다.\n답변을 받으면 이에 따라 제안된 도면을 작성해 드리겠습니다.\n고객은 빨간색 쪽으로 기울고 있습니다.\nD에 대한 새 치수를 사용하여 CADFit을 수정하려면 다음과 같이 하십시오.\n최소 2.8mm\n공칭 2.9mm\n최대 3.23mm\n또한 SOT #LDS에서 했던 것처럼 패키지 너비 치수를 CADfit에 포함합니다.\n필수 서류를 제출했습니다.\nFOC 도구를 사용하여 목표 가격은 $40/RL입니다.\n우리가 제공할 수 있는 최선의 서비스를 제공할 수 있도록 고객에게 예측을 보내달라고 요청했습니다.\n새 장치이므로 예측이 없습니다.\nFOC 도구를 사용하여 제출된 견적\n샘플용 견적 PO를 받았습니다. 포함하도록 요청됨",
+        "progress_ko": "제안된 디자인 KS-1204-576.\nSOT 5LDS에 대한 새로운 문의입니다.\n열려 있는 도구를 확인했습니다. 제안된 도면 디자인을 제공할 도구가 없는 경우.\n오픈 도구가 없습니다.\n고객에게 정사각형 포켓이 있는 4mm 피치 또는 슬롯형 포켓이 있는 8mm 피치 중 무엇을 선호하는지 문의했습니다.\n답변을 받으면 이에 따라 제안된 도면을 작성해 드리겠습니다.\n고객은 빨간색 쪽으로 기울고 있습니다.\nD에 대한 새 치수를 사용하여 CADFit을 수정하려면 다음과 같이 하십시오.\n최소 2.8mm\n공칭 2.9mm\n최대 3.23mm\n또한 SOT #LDS에서 했던 것처럼 패키지 너비 치수를 CADfit에 포함합니다.\n필수 서류를 제출했습니다.\nFOC 도구를 사용하여 목표 가격은 $40/RL입니다.\n우리가 제공할 수 있는 최선의 서비스를 제공할 수 있도록 고객에게 예측을 보내달라고 요청했습니다.\n새 장치이므로 예측이 없습니다.\nFOC 도구를 사용하여 제출된 견적\n샘플용 견적 PO를 받았습니다. 포함하도록 요청됨",
         "progress_en": "Proposed design KS-1204-576.\nNew inquiry for SOT 5LDS.\nChecked for open tool. If no tool to provide proposed drawign design.\nNo opne tool.\nInquired with custoemr which do they prefer, 4mm pitch with square pocket or 8mm pitch but slotted pocket?\nUpon receipt of reply, we will make proposed drawing accordingly.\nCustomer are leaning towards red color\nTo revise the CADFit using new dimension for D as follows:\n2.8mm min\n2.9mm nom\n3.23mm max\nAlso will include in the CADfit the package Width dimensions as we did on the SOT #LDS.\nSubmitted the required document.\nTarget price us $40/RL with FOC tool.\nRequested customer to send us forecast so we can give the best we can offer.\nNo forecast since it is new device.\nSubmitted quote with FOC tool\nReceived proforma PO for sample. Requested to include the tool as well.\n12/17 - FOC PO for the tool will be released this week.\n1/3 - Received proporma PO for the FOC tool.\nSince this is a rotary tool, fabrication will take 4 weeks minimum, earliest should be 1/31. But due to CNY, earliest would be 2/13.\nChecked with HQ status of mold fabrication.\nMold completion will be 2/14 and will be shipped to PH factory by 2/17.\n2/13 - tool will be shipped from HQ to PH factory this week and will produce sample next week.\nTool arrived 2/22. For preparation of sample.\n2/27 - Sample is ready. On going processign PEZA docuemnts and hoping we can deliver on 2/28 in the morning.\n2/28 - delivered sample in P3, 1 roll and 2 rolls in P1 as instructed.\n3/14 - follow up customer. Pending on SQE approval. checked with Ms. Beth. - status: completed. Awaiting load from customer.\n4/4 - submitted final drawing.\n4/25 - follow up qualification of the sample.\n6/23 - follow up customer\n7/2- Sample already passed. Development on front of line are not yet completed.\n7/15 - follow up customer.\n7/15 - Q4’25 will be the earliest target date\n10/7 - Follow up customer.\n1/14 - Still no further updates. Customer still using the current SID which is 201304956, KS-1204-292.",
         "status_ko": "Done.",
         "customer": "ATP"
@@ -51504,13 +51504,13 @@
         "status": "Closed",
         "remark": "Other supplier with open tool.",
         "hq_comment": "",
-        "summary_ko": "[종결] 개방형 공구 점검 및 CADFit 시뮬레이션용.",
+        "summary_ko": "[종결] 개방형 공구 검사 및 CADFit 시뮬레이션용.",
         "bullets_ko": [
           "단가/견적: 제안된 디자인 및 견적 제출",
           "사양/금형: 오픈 금형가 없습니다.",
           "진행/이슈: 2/27 - 고객에게 후속 조치를 취함"
         ],
-        "progress_ko": "개방형 공구 점검 및 CADFit 시뮬레이션용.\n오픈 금형가 없습니다.\n제안된 디자인 및 견적 제출\n2/27 - 고객에게 후속 조치를 취함\n3/7 - 고객에게 후속 조치를 취했습니다.\n3/20 - 고객 후속 조치.\n4/10 - 후속 고객\n5/21 - 후속 고객",
+        "progress_ko": "개방형 공구 검사 및 CADFit 시뮬레이션용.\n오픈 금형가 없습니다.\n제안된 디자인 및 견적 제출\n2/27 - 고객에게 후속 조치를 취함\n3/7 - 고객에게 후속 조치를 취했습니다.\n3/20 - 고객 후속 조치.\n4/10 - 후속 고객\n5/21 - 후속 고객",
         "progress_en": "For open tool check and CADFit simulation.\nNo open tool.\nSubmitted proposed design and quotation\n2/27 - folowed up customer\n3/7 - followed up customer.\n3/20 - follow up customer.\n4/10 - follow up customer\n5/21 -follow up customer",
         "status_ko": "종결",
         "customer": "ATP"
@@ -51689,9 +51689,9 @@
         "summary_ko": "[완료] 제공. 이것은 오픈 금형이며 SID 201300446에 속합니다.",
         "bullets_ko": [
           "사양/금형: KS-1208-180 제공. 이것은 오픈 금형이며 SID 201300446에 속합니다.",
-          "진행/이슈: 검토를 위해 도면 및 CADFit 시뮬레이션을 제출했습니다."
+          "진행/이슈: 검토를 위해 도면과 CADFit 시뮬레이션을 제출했습니다."
         ],
-        "progress_ko": "KS-1208-180 제공. 이것은 오픈 금형이며 SID 201300446에 속합니다.\n포드 5x5x0.85\n검토를 위해 도면 및 CADFit 시뮬레이션을 제출했습니다.\n4/10 - 고객에게 후속 조치를 취합니다.\n5/21 - 후속 고객\n5/26 - 고객 후속 조치\n6/23 - 후속 고객\n7/15 - 후속 고객\n10/7 - 아직 영업 중인지 고객에게 확인하세요.\n12/3 - 후속 고객\n1/22 - 후속 고객",
+        "progress_ko": "KS-1208-180 제공. 이것은 오픈 금형이며 SID 201300446에 속합니다.\n포드 5x5x0.85\n검토를 위해 도면과 CADFit 시뮬레이션을 제출했습니다.\n4/10 - 고객에게 후속 조치를 취합니다.\n5/21 - 후속 고객\n5/26 - 고객 후속 조치\n6/23 - 후속 고객\n7/15 - 후속 고객\n10/7 - 아직 영업 중인지 고객에게 확인합니다.\n12/3 - 후속 고객\n1/22 - 후속 고객",
         "progress_en": "Offered KS-1208-180. This is an open tool and it is under SID 201300446.\nPOD 5x5x0.85\nSubmitted drawing and CADFit simulation for review.\n4/10 - folow up customer.\n5/21 - follow up customer\n5/26 - folow up customer\n6/23 - follow up customer\n7/15 - follow up customer\n10/7 - check with customer if this is still open.\n12/3 - follow up customer\n1/22 - follow up customer",
         "status_ko": "완료",
         "customer": "ATP"
@@ -52220,9 +52220,9 @@
         "bullets_ko": [
           "단가/견적: KX 가격에 대해 Joseph에게 도움을 요청하세요. 그가 확인하고 우리에게 알려줄 것입니다.",
           "사양/금형: 오픈 금형가 없습니다.",
-          "진행/이슈: KX도 견적을 제출했고 금형(Tooling) 비용도 있습니다. Edmund에 따르면 KX에는 금형(Tooling) 비용이 없습니다."
+          "진행/이슈: KX도 견적을 제출했고, 금형(Tooling) 비용도 있습니다. Edmund에 따르면 KX에는 금형(Tooling) 비용이 없습니다."
         ],
-        "progress_ko": "jedec 트레이에 대해 고객으로부터 문의를 받았습니다. 5.1x6.24x.06\n오픈툴 문의드립니다\n오픈 금형가 없습니다.\n예측을 위해 고객에게 전화를 걸었습니다. 삼성전자 제품이 아닌 신제품이므로 예측은 없습니다.\nKX 가격에 대해 Joseph에게 도움을 요청하세요. 그가 확인하고 우리에게 알려줄 것입니다.\n4/15 - 프로세스 엔지니어링 팀의 Darwin Dominguez씨가 견적을 검토 중입니다.\nKX도 견적을 제출했고 금형(Tooling) 비용도 있습니다. Edmund에 따르면 KX에는 금형(Tooling) 비용이 없습니다.\nKostat는 예측에 따라 FOC 금형(Tooling) 또는 상각 금형(Tooling)을 수행할 수 있는 유연성을 논의했습니다.\n4/25 - Edmund와 함께 상태를 추적했습니다.\n5/20 - 후속 조치 Erness\n6/10 - 후속 고객\n6/24 - 후속 고객\n7/15 - 후속 고객\n9/29 - 후속 고객.\n10/7 - 후속 고객\n10/20 - 후속 고객",
+        "progress_ko": "jedec 트레이에 대해 고객으로부터 문의를 받았습니다. 5.1x6.24x.06\n오픈툴 문의드립니다\n오픈 금형가 없습니다.\n예측을 위해 고객에게 전화를 걸었습니다. 삼성 제품이 아닌 신제품이므로 예측이 없습니다.\nKX 가격에 대해 Joseph에게 도움을 요청하세요. 그가 확인하고 우리에게 알려줄 것입니다.\n4/15 - 프로세스 엔지니어링 팀의 Darwin Dominguez 씨가 견적을 검토 중입니다.\nKX도 견적을 제출했고, 금형(Tooling) 비용도 있습니다. Edmund에 따르면 KX에는 금형(Tooling) 비용이 없습니다.\nKostat는 예측에 따라 FOC 금형(Tooling) 또는 상각 금형(Tooling)을 수행할 수 있는 유연성을 논의했습니다.\n4/25 - Edmund와 함께 상태를 추적했습니다.\n5/20 - 후속 조치 Erness\n6/10 - 후속 고객\n6/24 - 후속 고객\n7/15 - 후속 고객\n9/29 - 후속 고객.\n10/7 - 후속 고객\n10/20 - 후속 고객",
         "progress_en": "Received inquiry from customer for jedec tray. 5.1x6.24x.06\nInquired for open tool\nNo open tool.\nCalled up customer for any forecast. No forecast since this is new product, non-Samsung.\nSeek help from Joseph for the price of KX. He will check and let us know.\n4/15 - Quotation is still on going review by Mr. Darwin Dominguez of Process Engineering Team.\nKX also submitted quotation and has tooling cost as well. Per Edmund, KX has no tooling cost.\nDiscussed that Kostat is flexible, wherein we can FOC tooling or ammortized tooling depending on the forecast.\n4/25 - followed up status with Edmund.\n5/20 - follow up Erness\n6/10 - follow up customer\n6/24 - follow up customer\n7/15 - follow up customer\n9/29 - follow up customer.\n10/7 - follow up customer\n10/20 - follow up customer",
         "status_ko": "Unknown",
         "customer": "SSPC"
@@ -52240,9 +52240,9 @@
         "summary_ko": "[Unknown] 4/21 - LA69-02165A RED 견적 제출",
         "bullets_ko": [
           "단가/견적: 4/21 - LA69-02165A RED 견적 제출",
-          "진행/이슈: 6월 10일 - 이에 대해 우려사항이 있는 경우 고객에게 후속 조치를 취합니다."
+          "진행/이슈: 6/10 - 이에 대해 우려사항이 있는 경우 고객에게 후속 조치를 취합니다."
         ],
-        "progress_ko": "4/21 - LA69-02165A RED 견적 제출\n4/24 - SSK는 현재 귀하의 한국 사이트와 견적에 관해 조율 중입니다.\n5/20 - SSK로 배송됨\n6월 10일 - 이에 대해 우려사항이 있는 경우 고객에게 후속 조치를 취합니다.",
+        "progress_ko": "4/21 - LA69-02165A RED 견적 제출\n4/24 - SSK는 현재 귀하의 한국 사이트와 견적에 관해 조율 중입니다.\n5/20 - SSK로 배송됨\n6/10 - 이에 대해 우려사항이 있는 경우 고객에게 후속 조치를 취합니다.",
         "progress_en": "4/21 - Submnittted quotation for LA69-02165A RED\n4/24 - SSK is currently coordinating with your Korea site about the quotation.\n5/20 - delivered to SSK\n6/10 - follow up customer if they have concerns on this.",
         "status_ko": "Unknown",
         "customer": "SSPC"
@@ -52369,7 +52369,7 @@
           "주요내용: TIPI에 4204303-0019(KS-4432-33) 현지화를 요청했습니다.",
           "주요내용: 우리에게 샘플 요청을 보내주십시오."
         ],
-        "progress_ko": "TIPI에 4204303-0019(KS-4432-33) 현지화를 요청했습니다.\n제출된 PCN\n우리에게 샘플 요청을 보내주십시오.\n4/14 - 6개월 동안 재고를 구축한 후 도구를 중국에서 PH로 이전할 수 있습니다.\n샘플 및 GAP 분석을 제출합니다.\n문제가 발생하지 않으면 PCN은 6개월 이상 걸리지 않습니다.\n4/25 - 고객에게 현재 6개월치 재고를 지속적으로 구축하고 도구를 PH로 이전하고 있다고 안내했습니다.\n10/8 - 후속 고객. 현재 우리는 275개의 롤을 보유하고 있으며 현재 월간 사용량은 월 16롤(864M)로 6개월 동안 사용하기에 충분한 양입니다.\nZVPO i가 발급되면 공구를 한국에서 PH 공장으로 옮길 것입니다.",
+        "progress_ko": "TIPI에 4204303-0019(KS-4432-33) 현지화를 요청했습니다.\n제출된 PCN\n우리에게 샘플 요청을 보내주십시오.\n4/14 - 6개월 동안 재고를 구축한 후 도구를 중국에서 PH로 이전할 수 있습니다.\n샘플 및 GAP 분석을 제출합니다.\n문제가 발생하지 않으면 PCN은 6개월 이상 걸리지 않습니다.\n4/25 - 고객에게 현재 6개월치 재고를 지속적으로 구축하고 도구를 PH로 이전하고 있다고 안내했습니다.\n10/8 - 후속 고객. 현재 우리는 275개의 롤을 보유하고 있으며 현재 월간 사용량은 월 16롤(864M)로 6개월 동안 사용하기에 충분한 양입니다.\nZVPO i가 발급되면 공구를 한국에서 PH 공장으로 옮길 예정입니다.",
         "progress_en": "Requested TIPI to localize 4204303-0019 (KS-4432-33).\nSubmitted PCN\nto send us request for sample.\n4/14 - To build inventory for 6 months, then we can transfer the tool from China to PH.\nTo submit sample and GAP analysis.\nPCN will not take more than 6 months if no problem will encounter.\n4/25 - advised customer that we are now ongoing building 6 months inventory and transfer the tool to PH.\n10/8 - follow up customer. Currently we have 275 rolls and current monthly usage is 16rolls(864M) per month more than enough for 6 months usage.\nOnce ZVPO i issued, I will have the tool move to PH factory from Korea.",
         "status_ko": "Unknown",
         "customer": "TIPI"
@@ -52708,7 +52708,7 @@
           "사양/금형: 수냉식 금형 신기술 제시",
           "진행/이슈: 프로세스 제어와 함께 FMEA를 제출하려면"
         ],
-        "progress_ko": "수냉식 금형 신기술 제시\n현재 사용하고 있는 캐리어 테이프는 Adantek과 CPAK입니다.\nST GM 지침은 비용을 절감하고 가격 경쟁력이 있는 경우 당사를 고려하는 것입니다.\n2024년 하반기는 평탄하겠지만 네스트 해는 좋을 것\n\n조치 항목\n프로세스 제어와 함께 FMEA를 제출하려면\n포장 목록에 상자당 로트 번호/수량 및 제조/유통 날짜에 대한 분석이 포함되어 있는 경우 SAP 거래에서 공급업체 로트 번호를 사용합니다.\nPCN 이후 로컬에서 공급한 후 이를 구현하는 것이 좋습니다.",
+        "progress_ko": "수냉식 금형 신기술 제시\n현재 사용하고 있는 캐리어 테이프는 Adantek과 CPAK입니다.\nST GM 지침은 비용을 절감하고 가격 경쟁력이 있는 경우 당사를 고려하는 것입니다.\n2024년 하반기는 평탄하겠지만 네스트 해는 좋을 것\n\n조치사항\n프로세스 제어와 함께 FMEA를 제출하려면\n포장 목록에 상자당 로트 번호/수량 및 제조/유통 날짜에 대한 분석이 포함되어 있는 경우 SAP 거래에서 공급업체 로트 번호를 사용합니다.\nPCN 이후 로컬에서 공급한 후 이를 구현하는 것이 좋습니다.",
         "progress_en": "Presented new technology on water cooled mold\nCurrent carrier tape using are Adantek and CPAK\nST GM directives is to reduce cost, to consider us if price is competitive\n2nd half 2024 will be flat but nest year will be good\n\nAction items\nTo submit FMEA with process control\nTo use supplier lot number in SAP transaction provided that packing list contains the breakdown of lot no/qty per box and mfg/exp date.\nSuggested to implement this once we supply from local, after the PCN.",
         "status_ko": "진행중",
         "customer": "ST MICRO"
@@ -52910,9 +52910,9 @@
         "bullets_ko": [
           "진행/이슈: CADFit을 제출했습니다.",
           "주요내용: CADFit 분석용.",
-          "주요내용: 요청한 샘플 - 절차에 따라 구매와 조율하는 것이 좋습니다. 트레이는 아날로그에 나열된 어셈블리 트레이의 일부였으므로 샘플이 필요하지 않습니다. CADF"
+          "주요내용: 요청한 샘플 - 절차에 따라 구매와 조율하는 것이 좋습니다. 트레이는 아날로그에 나열된 조립 트레이의 일부였으므로 샘플이 필요하지 않습니다. CADFit"
         ],
-        "progress_ko": "RJ 파조\nCADFit 분석용.\nCADFit을 제출했습니다.\n요청한 샘플 - 절차에 따라 구매와 조율하는 것이 좋습니다. 트레이는 아날로그에 나열된 어셈블리 트레이의 일부였으므로 샘플이 필요하지 않습니다. CADFit 토론. 더블 유닛을 제외한 모든 기준을 통과했습니다. 이는 해당 하위 콘에서 이미 사용하고 있으며 문제가 발생하지 않았으므로 진행이 가능합니다.\n11/5 - 후속 조치 상태\n11/21 - 후속 고객\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 고객에게 후속 조치를 취했습니다.\n5/5 - 후속 고객\n5/19 - 후속 고객.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 후속 고객\n10/20 - 후속 고객.\n1/22 - 후속 고객",
+        "progress_ko": "RJ 파조\nCADFit 분석용.\nCADFit을 제출했습니다.\n요청한 샘플 - 절차에 따라 구매와 조율하는 것이 좋습니다. 트레이는 아날로그에 나열된 조립 트레이의 일부였으므로 샘플이 필요하지 않습니다. CADFit 토론. 더블 유닛을 제외한 모든 기준을 통과했습니다. 이는 해당 하위 콘에서 이미 사용하고 있으며 문제가 발생하지 않았으므로 진행이 가능합니다.\n11/5 - 후속 조치 상태\n11/21 - 후속 고객\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 고객에게 후속 조치를 취했습니다.\n5/5 - 후속 고객\n5/19 - 후속 고객.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 후속 고객\n10/20 - 후속 고객.\n1/22 - 후속 고객",
         "progress_en": "RJ Pajo\nFor CADFit analysis.\nSubmitted CADFit.\nRequested sample - advised to coordinate with purchasing on the procedure. No need for the sample as the tray was part of the listed assembly trays in Analog. CADFit discussion. Passed all criteria except the double unit. Since this is alreay used by their subcon and no issues encountered, possible to push through.\n11/5 - followed up status\n11/21 - followed up customer\n1/9 - followed up customer\n2/11 - followed up customer\n3/27 - followed up customer.\n5/5 - follow up customer\n5/19 - follow up customer.\n6/9 - follow up customer.\n7/11 - follow up customer\n10/20 - follow up customer.\n1/22 - follow up customer",
         "status_ko": "진행중",
         "customer": "Analog"
@@ -52930,10 +52930,10 @@
         "summary_ko": "[완료] CADfit 분석을 제출했습니다. CADFit 토론. 더블 유닛을 제외한 모든 기준을 통과했습니다. 조립/하위 콘 사이트에서 POD를 다시 확인하는 아날로그...",
         "bullets_ko": [
           "진행/이슈: CADfit 분석을 제출했습니다. CADFit 토론. 더블 유닛을 제외한 모든 기준을 통과했습니다. 조립/하위 콘 사이트에서 POD를 다시 확인하는 아날",
-          "주요내용: 고객은 오늘(10/28) P-PR을 실시할 예정이며 아마도 이번 주 안에 승인이 빠르게 진행될 것입니다. 재고가 있는지, ETD가 언제 가능한지 본사에 ",
+          "주요내용: 고객은 오늘(10/28) P-PR을 실시할 예정이며 아마도 이번 주 내로 승인이 신속히 처리될 것입니다. 재고가 있는지, ETD가 언제 가능한지 본사에 ",
           "주요내용: KS-881436에 대한 PO가 접수되었습니다."
         ],
-        "progress_ko": "CADfit 분석을 제출했습니다. CADFit 토론. 더블 유닛을 제외한 모든 기준을 통과했습니다. 조립/하위 콘 사이트에서 POD를 다시 확인하는 아날로그입니다. Mika는 POD가 최종 POD임을 확인했습니다. 우리에게 샘플을 요청합니다. 이중 단위 기준에서 실패하더라도 CADfit을 수락하는지 그녀에게 확인했습니다. 샘플에 대한 자재, 수량, 배송 주소 및 주의 사항을 확인했습니다.\n고객은 오늘(10/28) P-PR을 실시할 예정이며 아마도 이번 주 안에 승인이 빠르게 진행될 것입니다. 재고가 있는지, ETD가 언제 가능한지 본사에 확인하세요. 수량은 1,500개 입니다.\nKS-881436에 대한 PO가 접수되었습니다.",
+        "progress_ko": "CADfit 분석을 제출했습니다. CADFit 토론. 더블 유닛을 제외한 모든 기준을 통과했습니다. 조립/하위 콘 사이트에서 POD를 다시 확인하는 아날로그입니다. Mika는 POD가 최종 POD임을 확인했습니다. 우리에게 샘플을 요청합니다. 이중 단위 기준에서 실패하더라도 CADfit을 수락하는지 그녀에게 확인했습니다. 샘플에 대한 자재, 수량, 배송 주소 및 주의 사항을 확인했습니다.\n고객은 오늘(10/28) P-PR을 실시할 예정이며 아마도 이번 주 내로 승인이 신속히 처리될 것입니다. 재고가 있는지, ETD가 언제 가능한지 본사에 확인하세요. 수량은 1,500개 입니다.\nKS-881436에 대한 PO가 접수되었습니다.",
         "progress_en": "Submitted CADfit analysis. CADFit discussion. Passed all criteria except the double unit. Analog to double check POD from Assembly/Subcon site. Mika confirmed that the POD is the final one. Requesting us sample.Cheked with her if they are accepting the CADfit even failed on double unit criteria. Checked material, quantity and shipping address and attention to for the sample.\nCustomer will P-PR today(10/28) and will fast track the approval probably within this week. checked with HQ if we stock and when is the  possible ETD. Qty is 1,500pcs.\nPO received for KS-881436.",
         "status_ko": "완료",
         "customer": "Analog"
@@ -52948,13 +52948,13 @@
         "status": "Done",
         "remark": "Received PO for black",
         "hq_comment": "",
-        "summary_ko": "[완료] 동일한 플라스틱 소재를 사용하고 있는데 블랙 트레이의 가격이 인상되는 이유가 무엇인지 궁금하십니까?",
+        "summary_ko": "[완료] 동일한 플라스틱 소재를 사용하고 있는데 블랙 트레이 가격을 인상하는 이유가 무엇인지 문의하셨나요?",
         "bullets_ko": [
           "단가/견적: 견적을 제출했습니다.",
           "사양/금형: 본사당 ADI 블랙 트레이 가격은 MPPO와 PSU가 1.32달러로 고정되어 있습니다.",
           "진행/이슈: 11/5 - 후속 조치 상태"
         ],
-        "progress_ko": "로날린 카야고\n견적을 제출했습니다.\n동일한 플라스틱 소재를 사용하고 있는데 블랙 트레이의 가격이 인상되는 이유가 무엇인지 궁금하십니까?\n블랙 트레이 비용을 1.25달러로 유지할 수 있는지 요청했습니다.\n본사당 ADI 블랙 트레이 가격은 MPPO와 PSU가 1.32달러로 고정되어 있습니다.\n11/5 - 후속 조치 상태\n11/21 - 고객에게 후속 조치를 취했습니다.\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 고객에게 후속 조치를 취했습니다.\n5/5 - 후속 고객.",
+        "progress_ko": "로날린 카야고\n견적을 제출했습니다.\n동일한 플라스틱 소재를 사용하고 있는데 블랙 트레이 가격을 인상하는 이유가 무엇인지 문의하셨나요?\n블랙 트레이 비용을 1.25달러로 유지할 수 있는지 요청했습니다.\n본사당 ADI 블랙 트레이 가격은 MPPO와 PSU가 1.32달러로 고정되어 있습니다.\n11/5 - 후속 조치 상태\n11/21 - 고객에게 후속 조치를 취했습니다.\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 고객에게 후속 조치를 취했습니다.\n5/5 - 후속 고객.",
         "progress_en": "Ronnalyn Cayago\nSubmitted quote.\nInquired why price increase your price for black tray considering that we are using same plastic material?\nRequested us if we can retain the cost of black tray to $1.25.\nPer HQ, ADI black tray price is fixed MPPO and PSU to $1.32.\n11/5 - followed up status\n11/21 - followed up customer.\n1/9 - followed up customer\n2/11 - followed up customer\n3/27 - followed up customer.\n5/5 - follow up customer.",
         "status_ko": "완료",
         "customer": "Analog"
@@ -52994,7 +52994,7 @@
           "사양/금형: 오픈 금형가 없습니다.",
           "진행/이슈: 새로운 금형(Tooling)을 진행할 것인지 확인했습니다."
         ],
-        "progress_ko": "RJ 파조\nPOD를 받았습니다.\n오픈툴 체크용\n오픈 금형가 없습니다.\n새로운 금형(Tooling)을 진행할 것인지 확인했습니다.\n11/21 - 고객에게 후속 조치를 취했습니다.\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 후속 고객\n4/10 - 후속 고객\n5/5 - 후속 고객\n5/19 - 이 프로젝트가 아직 진행 중인지, 새로운 금형(Tooling)을 진행하기 원하는지 고객에게 확인했습니다.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 후속 고객\n1/22 - 후속 고객",
+        "progress_ko": "RJ 파조\nPOD를 받았습니다.\n오픈툴 체크용\n오픈 금형가 없습니다.\n새로운 금형(Tooling)을 진행할 것인지 확인했습니다.\n11/21 - 고객에게 후속 조치를 취했습니다.\n1/9 - 후속 고객\n2/11 - 후속 고객\n3/27 - 후속 고객\n4/10 - 후속 고객\n5/5 - 후속 고객\n5/19 - 이 프로젝트가 아직 진행 중인지, 새로운 금형(Tooling)을 진행하고 싶은지 고객에게 확인했습니다.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 후속 고객\n1/22 - 후속 고객",
         "progress_en": "RJ Pajo\nReceived POD.\nFor open tool check\nNo open tool.\nChecked if they wish to proceed with new tooling.\n11/21 - followed up customer.\n1/9 - followed up customer\n2/11 - followed up customer\n3/27 - followed up customer\n4/10 - followed up customer\n5/5 - follow up customer\n5/19 - checked with customer if this project is still open and if they wish to proceed with new tooling.\n6/9 - follow up customer.\n7/11 - follow up customer\n1/22 - follow up customer",
         "status_ko": "진행중",
         "customer": "Analog"
@@ -53095,9 +53095,9 @@
         "summary_ko": "[진행중] 샘플 및 견적요청 접수",
         "bullets_ko": [
           "단가/견적: 샘플 및 견적요청 접수",
-          "진행/이슈: 3/7 - 견적 접수되었습니다. 고객에게 제출되었습니다."
+          "진행/이슈: 3/7 - 견적 및 샘플을 위해 본사에 후속 조치를 취했습니다."
         ],
-        "progress_ko": "샘플 및 견적요청 접수\n본사에 문의했습니다.\n3/7 - 견적 및 샘플을 위해 본사에 연락했습니다.\n3/7 - 견적 접수되었습니다. 고객에게 제출되었습니다.\n3/10 - 샘플 상태에 대해 본사에 후속 조치를 취했습니다.\nks-871489 샘플은 3월 24일경에 배송예정입니다.\n3/27 - 샘플 배송 문서를 제출했습니다.\n5/5 - 샘플 적격성 상태에 대한 후속 조치.\n5/19 - 후속 평가 상태.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 고객에게 후속 조치를 취합니다.\n9/26 - 후속 고객.\n1/22 - 후속 고객",
+        "progress_ko": "샘플 및 견적요청 접수\n본사에 문의했습니다.\n3/7 - 견적 및 샘플을 위해 본사에 후속 조치를 취했습니다.\n3/7 - 견적 접수되었습니다. 고객에게 제출되었습니다.\n3/10 - 샘플 상태에 대해 본사에 후속 조치를 취했습니다.\nks-871489 샘플은 3월 24일경에 배송예정입니다.\n3/27 - 샘플 배송 문서를 제출했습니다.\n5/5 - 샘플 적격성 상태에 대한 후속 조치.\n5/19 - 후속 평가 상태.\n6/9 - 고객에게 후속 조치를 취합니다.\n7/11 - 고객에게 후속 조치를 취합니다.\n9/26 - 후속 고객.\n1/22 - 후속 고객",
         "progress_en": "Received request for sample and quotation\nInquired with HQ.\n3/7 - followed up HQ for the quotation and sample.\n3/7 - received quotation. Submitted to customer.\n3/10 - followed up HQ on the status of the sample.\nSample for ks-871489 is tentatively be shipped around 03/24.\n3/27 - submitted shipping docs for the sample.\n5/5 - follow up sample qualificaiton status.\n5/19 - follow up evaluation status.\n6/9 - follow up customer.\n7/11 - follow up customer.\n9/26 - follow up customer.\n1/22 - follow up customer",
         "status_ko": "진행중",
         "customer": "Analog"
@@ -53385,7 +53385,7 @@
           "사양/금형: 오픈 금형가 없습니다.",
           "진행/이슈: 검토를 위해 야구장을 제출했습니다."
         ],
-        "progress_ko": "SOIC36L 375밀\n오픈 금형가 없습니다.\n검토를 위해 야구장을 제출했습니다.\n견적을 제출했습니다.\n휴무\n다른 트레이 공급업체는 더 빠른 트레이 디자인 제안 및 샘플을 제공했습니다.",
+        "progress_ko": "SOIC36L 375밀\n오픈 금형가 없습니다.\n검토를 위해 야구장을 제출했습니다.\n견적을 제출했습니다.\n휴무\n다른 트레이 공급업체는 보다 빠른 트레이 디자인 제안 및 샘플을 제공했습니다.",
         "progress_en": "SOIC36L 375 mils\nNo open tool.\nSubmitted ball park for review.\nSubmitted quotation.\nClosed\nOther tray vendor provided faster tray design proposal and sample.",
         "status_ko": "종결",
         "customer": "ONSEMI"
@@ -53441,12 +53441,12 @@
         "status": "Ongoing",
         "remark": "",
         "hq_comment": "",
-        "summary_ko": "[진행중] 6/17 - 문의를 받고 POD를 제출하고 CADFit을 요청했습니다.",
+        "summary_ko": "[진행중] 6/17 - POD 제출 문의를 받고 CADFit을 요청했습니다.",
         "bullets_ko": [
           "단가/견적: 6/18 - 제출된 견적",
-          "진행/이슈: 6/17 - 문의를 받고 POD를 제출하고 CADFit을 요청했습니다."
+          "진행/이슈: 6/17 - POD 제출 문의를 받고 CADFit을 요청했습니다."
         ],
-        "progress_ko": "6/17 - 문의를 받고 POD를 제출하고 CADFit을 요청했습니다.\n가. POD 대 KOSTAT 7.0MMX7.0MM 180'C KS-870160.\n비. POD 대 KOSTAT KS-870325\nKS-870160은 사용 가능하며 모든 기준을 통과했습니다.\n6/18 - 제출된 견적\n6/19 - 이것이 개방형 도구이며 도구 비용이 필요하지 않음을 고객에게 확인했습니다.\n6/23 - 후속 고객.\n7/11 - 고객에게 후속 조치를 취합니다.\n10/20 - 후속 고객\n1/23 - 후속 고객\n1/23 - 이미 최종 사용자/요청자에게 전달되었습니다. 견적이 더 이상 유효하지 않으므로 지금은 이 항목을 보관할 수 있습니다.",
+        "progress_ko": "6/17 - POD 제출 문의를 받고 CADFit을 요청했습니다.\n가. POD 대 KOSTAT 7.0MMX7.0MM 180'C KS-870160.\n비. POD 대 KOSTAT KS-870325\nKS-870160은 사용 가능하며 모든 기준을 통과했습니다.\n6/18 - 제출된 견적\n6/19 - 이것이 개방형 도구이며 도구 비용이 필요하지 않음을 고객에게 확인했습니다.\n6/23 - 후속 고객.\n7/11 - 고객에게 후속 조치를 취합니다.\n10/20 - 후속 고객\n1/23 - 후속 고객\n1/23 - 이미 최종 사용자/요청자에게 전달되었습니다. 견적이 더 이상 유효하지 않으므로 지금은 이 항목을 보관할 수 있습니다.",
         "progress_en": "6/17 - Received inquiry submitted POD and requested CADFit for\na. POD vs KOSTAT 7.0MMX7.0MM 180'C KS-870160.\nb. POD vs KOSTAT KS-870325\nKS-870160 is ok to use, passed all criteria.\n6/18 - submitted quote\n6/19 - confirmed to customer that this is an open tool and no tooling cost is required.\n6/23 - follow up customer.\n7/11 - follow up customer.\n10/20 - follow up customer\n1/23 - follow up customer\n1/23 - This has already been forwarded to the end user/requestor. As the quote is no longer valid, we may park this item for now.",
         "status_ko": "진행중",
         "customer": "ONSEMI"
@@ -53481,12 +53481,12 @@
         "status": "Closed",
         "remark": "Double unit not accepted",
         "hq_comment": "",
-        "summary_ko": "[종결] 8/7 - KS-870163에 대한 제공 POD의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00...",
+        "summary_ko": "[종결] 8/7 - KS-870163에 대한 POD 제공의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00...",
         "bullets_ko": [
-          "단가/견적: 8/7 - KS-870163에 대한 제공 POD의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(",
+          "단가/견적: 8/7 - KS-870163에 대한 POD 제공의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(",
           "진행/이슈: 10/20 - 후속 고객."
         ],
-        "progress_ko": "8/7 - KS-870163에 대한 제공 POD의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00)을 제안합니다. 더블유닛 빼고 모두 합격. 고객 리뷰를 위해.\n10/20 - 후속 고객.\n1/23 - 고객의 후속 조치.",
+        "progress_ko": "8/7 - KS-870163에 대한 POD 제공의 CADFit 시뮬레이션에 대한 문의를 받았습니다. 측면 GAP 및 이중 장치 실패. KS-870283(00)을 제안합니다. 더블유닛 빼고 모두 합격. 고객 리뷰를 위해.\n10/20 - 후속 고객.\n1/23 - 고객의 후속 조치.",
         "progress_en": "8/7 - received inquiry for CADFit simulation of the give POD against KS-870163. Failed lateral GAP and double unit. Offer KS-870283(00). All passed except double unit. For customer review.\n10/20 - follow up customer.\n1/23 - follow up direction of customer.",
         "status_ko": "종결",
         "customer": "ONSEMI"
@@ -53523,10 +53523,10 @@
         "hq_comment": "",
         "summary_ko": "[Done, 50pcs requirement is considered as sample only.] 12/16 - 문의접수",
         "bullets_ko": [
-          "단가/견적: 1/8 - 50개에 한해 견적 제출을 진행합니다.",
+          "단가/견적: 1/8 - 50개에 대해서만 견적 제출을 진행합니다.",
           "진행/이슈: 12/17 - CADFit 시뮬레이션 제출"
         ],
-        "progress_ko": "12/16 - 문의접수\n12/17 - CADFit 시뮬레이션 제출\n1/8 - 50개에 한해 견적 제출을 진행합니다.\n1/9 - 본사를 요청했습니다.\n1/20 - ZV 견적 제출\n1/22 - ZVPO 후속 조치.\n2/4 - 배송 주소, 수신인 및 전화번호를 받았습니다.",
+        "progress_ko": "12/16 - 문의접수\n12/17 - CADFit 시뮬레이션 제출\n1/8 - 50개에 대해서만 견적 제출을 진행합니다.\n1/9 - 본사를 요청했습니다.\n1/20 - ZV 견적 제출\n1/22 - ZVPO 후속 조치.\n2/4 - 배송 주소, 수신인 및 전화번호를 받았습니다.",
         "progress_en": "12/16 - received inquiry\n12/17 - submitted CADFit simulation\n1/8 - to proceed submittion of quote for 50pcs only.\n1/9 - requested HQ.\n1/20 - submitted ZV quote\n1/22 - follow up ZVPO.\n2/4 - received shipping address, attn to and tel number.",
         "status_ko": "Done, 50pcs requirement is considered as sample only.",
         "customer": "ONSEMI"
@@ -53632,7 +53632,7 @@
           "사양/금형: 7/1 - 제안된 디자인이 승인되었습니다. 수정된 견적과 부품 번호를 포함한 수정된 도면.",
           "진행/이슈: 6/17 - 와플팩이 아닌 배송트레이(블리스터 트레이)임을 확인해주세요"
         ],
-        "progress_ko": "5/27 - 와플팩 문의\n6/17 - 와플팩이 아닌 배송트레이(블리스터 트레이)임을 확인해주세요\n6/18 - 본사에 견적 및 제안된 디자인을 요청했습니다.\n7/1 - 제안된 디자인이 승인되었습니다. 수정된 견적과 부품 번호를 포함한 수정된 도면.\n7/2 - 제출된 수정 견적은 MOQ를 630개로 조정했습니다.\n7/3 - 150개 FOC 샘플을 제공하기로 합의했습니다. 가장 빠른 배송 일정을 확인하기 위해.\n7/4 - 프로젝트가 보류되었습니다. 고객이 방향을 바꾸었습니다. 트레이를 사용하는 대신 최종 고객이 BOM을 기반으로 위탁하는 와플 트레이를 사용할 것입니다.\n이 프로젝트는 진행되지 않을 가능성이 높습니다.",
+        "progress_ko": "5/27 - 와플팩 문의\n6/17 - 와플팩이 아닌 배송트레이(블리스터 트레이)임을 확인해주세요\n6/18 - 본사에 견적 및 제안된 디자인을 요청했습니다.\n7/1 - 제안된 디자인이 승인되었습니다. 수정된 견적과 부품 번호를 포함한 수정된 도면.\n7/2 - 제출된 수정 견적은 MOQ를 630개로 조정했습니다.\n7/3 - 150개 FOC 샘플을 제공하기로 합의했습니다. 가장 빠른 배송 일정을 확인하기 위한 것입니다.\n7/4 - 프로젝트가 보류되었습니다. 고객이 방향을 바꾸었습니다. 트레이를 사용하는 대신 최종 고객이 BOM을 기반으로 위탁하는 와플 트레이를 사용할 것입니다.\n이 프로젝트는 추진되지 않을 가능성이 높습니다.",
         "progress_en": "5/27 - inquiry on waffle pack\n6/17 - confimre dthat this is not waffle pack but shipping tray(Blister tray)\n6/18 - requested HQ for the quote and proposed design.\n7/1 - proposed design is approved. revised quotation and the revised drawing including the Part Number.\n7/2 - Submitted revised quotation adjusted the MOQ to 630pcs.\n7/3 - agreed to provide 150pcs FOC sample. For confirmation of the earliest delivery schedule.\n7/4 - Project put on hold. Customer has changed its direction. Instead of using tray, they will go with waffle trays, where their end customer will consign based on the BOM.\nThis project is most likely not going to push through.",
         "status_ko": "종결",
         "customer": "TongHsing"
@@ -54890,7 +54890,7 @@
           "주요내용: PCN을 요청한 고객:",
           "주요내용: 중국에서 VN으로 KS-8605"
         ],
-        "progress_ko": "PCN을 요청한 고객:\n중국에서 VN으로 KS-8605\nKS-880373 한국에서 VN으로\n고객 요청당 4M 알림 제출\n5/16 - 요청: 이 PCN 및 다른 PN에 대한 녹색 조달.\n본사에 문의했습니다.\n5/16 - 본사로부터 문서를 받아 고객에게 제출했습니다.\n5/26 - KS-880373용 PCN이 완성되었습니다. VN 공장에서 공급을 시작할 수도 있습니다.\n7/2 - KS-8506 PCN - 아직 사용여부 확인중입니다. 그들은 우리에게 도구를 이전하기 전에 확인하고 싶었습니다.\n현재 이 PN에 대한 수요가 높습니다.",
+        "progress_ko": "PCN을 요청한 고객:\n중국에서 VN으로 KS-8605\nKS-880373 한국에서 VN으로\n고객 요청당 4M 알림 제출\n5/16 - 요청: 이 PCN 및 다른 PN에 대한 녹색 조달.\n본사에 문의했습니다.\n5/16 - 본사로부터 문서를 받아 고객에게 제출했습니다.\n5/26 - KS-880373용 PCN이 완성되었습니다. VN 공장에서 공급을 시작할 수도 있습니다.\n7/2 - KS-8506 PCN - 아직 사용여부 확인중입니다. 그들은 우리에게 도구를 양도하기 전에 확인하고 싶어했습니다.\n현재 이 PN에 대한 수요가 높습니다.",
         "progress_en": "Requested customer for PCN for:\nKS-8605 from China to VN\nKS-880373 from Korea to VN\nSubmitted 4M notification per request of customer\n5/16 - REQUEST: GREEN PROCUREMENT for this PCN and the other PN.\nInquired with HQ.\n5/16 - Received the document from HQ and submitted to customer.\n5/26 - PCN for KS-880373 is completed. We may start supplying from VN factory.\n7/2 - KS-8506 PCN - still confirmation on the usage. They wanted to make sure before letting us to transfer the tool.\nCurrently, the demand on this PN is high.",
         "status_ko": "진행중",
         "customer": "ROHM"

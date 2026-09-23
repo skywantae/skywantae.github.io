@@ -974,7 +974,7 @@ const APP_I18N = {
     // Viewer Tabs
     tab_shipplan: 'Ship Plan',
     tab_quotations: 'Quotations',
-    tab_contract: 'Contract Review',
+    tab_contract: 'Project',
     tab_drawings: 'Drawings',
     tab_skyworks: 'Skyworks',
     tab_feedback: 'Feature Requests',
