@@ -2512,6 +2512,11 @@
     let SELECTED_WEEK = 'W4';
     let IS_ADMIN_UNLOCKED = false;
     let SALES_VIEW_MODE = 'current'; // 'current' or 'history'
+    function toggleSalesHistoryView() {
+      SALES_VIEW_MODE = (SALES_VIEW_MODE === 'current') ? 'history' : 'current';
+      renderMemberView();
+    }
+    window.toggleSalesHistoryView = toggleSalesHistoryView;
 
     // 구버전 캐시 정리 및 공식 규격 적용
     try {
@@ -2520,8 +2525,8 @@
       localStorage.removeItem('kostat_weekly_report_live_cache_v3');
       localStorage.removeItem('kostat_weekly_report_live_cache_v4');
       localStorage.removeItem('kostat_weekly_report_live_cache_v5');
-      localStorage.removeItem('kostat_weekly_report_live_cache_v6');
-      localStorage.removeItem('kostat_weekly_report_live_cache_v9');
+      localStorage.removeItem('kostat_weekly_report_live_cache_v7');
+      localStorage.removeItem('kostat_weekly_report_live_cache_v8');
       const cachedLocal = localStorage.getItem('kostat_weekly_report_live_cache_v9');
       if (cachedLocal) {
         const parsed = JSON.parse(cachedLocal);
