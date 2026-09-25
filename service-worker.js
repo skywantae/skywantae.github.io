@@ -24,6 +24,7 @@ const ASSETS_TO_CACHE = [
   './data/ph_daily_report_data.js',
   './data/ph_weekly_forecast_data.js',
   './data/overseas_sales_targets_2026.js',
+  './data/overseas_monthly_actuals_2026.js',
   './data/weekly_report_live.js',
   './weekly_report_prototype.html'
 ];
