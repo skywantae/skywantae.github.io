@@ -1,7 +1,7 @@
 window.KOSTAT_WEEKLY_REPORT_LIVE = {
   "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서",
   "week_label": "9월 4주차 (0921-0925)",
-  "last_updated_at": "2026-09-18 02:37:43",
+  "last_updated_at": "2026-09-25T16:45:00Z",
   "last_updated_by": "김완태 사원",
   "kpi": {
     "target": 1900000,
@@ -84,70 +84,43 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
       "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
       "sales": [
         {
-          "site": "Skyworks & 미주 (US) - NPI C/T Hybrid PC",
-          "target": 363001,
-          "current": 90281,
-          "additional": 359719,
-          "expected": 450000,
-          "note": "NPI 34종 완료, WLCSP 9종 진행중, 9월 마감 450K 달성 예상 (달성율 124.0%)",
+          "site": "Skyworks US (미국)",
+          "country": "US",
+          "target": 300000,
+          "current": 270000,
+          "additional": 50000,
+          "expected": 320000,
+          "note": "NPI 34차 완료 및 미국 향 직수출",
           "weekly_forecasts": {
             "W1": {
-              "target": 363001,
-              "current": 30000,
-              "additional": 333000,
-              "expected": 363000
+              "target": 300000,
+              "current": 100000,
+              "additional": 200000,
+              "expected": 300000
             },
             "W2": {
-              "target": 363001,
-              "current": 61680,
-              "additional": 358320,
-              "expected": 420000
+              "target": 300000,
+              "current": 180000,
+              "additional": 130000,
+              "expected": 310000
             },
             "W3": {
-              "target": 363001,
-              "current": 90281,
-              "additional": 359719,
-              "expected": 450000
+              "target": 300000,
+              "current": 250000,
+              "additional": 70000,
+              "expected": 320000
             },
             "W4": {
-              "target": 363001,
-              "current": 90281,
-              "additional": 359719,
-              "expected": 450000
-            }
-          }
-        },
-        {
-          "site": "유럽 (EU) - Infineon / Renesas",
-          "target": 16500,
-          "current": 15000,
-          "additional": 10000,
-          "expected": 25000,
-          "note": "EU 기존 재고 소진 및 직납 안정화 (달성율 151.5%)",
-          "weekly_forecasts": {
-            "W1": {
-              "target": 16500,
-              "current": 5000,
-              "additional": 11500,
-              "expected": 16500
+              "target": 300000,
+              "current": 270000,
+              "additional": 50000,
+              "expected": 320000
             },
-            "W2": {
-              "target": 16500,
-              "current": 10000,
-              "additional": 10000,
-              "expected": 20000
-            },
-            "W3": {
-              "target": 16500,
-              "current": 15000,
-              "additional": 10000,
-              "expected": 25000
-            },
-            "W4": {
-              "target": 16500,
-              "current": 15000,
-              "additional": 10000,
-              "expected": 25000
+            "W38": {
+              "target": 300000,
+              "current": 270000,
+              "additional": 50000,
+              "expected": 320000
             }
           }
         }
