@@ -121,6 +121,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "current": 270000,
               "additional": 50000,
               "expected": 320000
+            },
+            "W39": {
+              "target": 300000,
+              "current": 270000,
+              "additional": 50000,
+              "expected": 320000,
+              "note": "NPI 34차 완료 및 미국 향 직수출"
             }
           }
         }
@@ -328,6 +335,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "additional": 87344,
               "expected": 180000,
               "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)"
+            },
+            "W39": {
+              "target": 340999,
+              "current": 92656,
+              "additional": 87344,
+              "expected": 180000,
+              "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)"
             }
           },
           "country": "MY"
@@ -466,6 +480,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "additional": 187557,
               "expected": 620000,
               "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)"
+            },
+            "W39": {
+              "target": 759000,
+              "current": 432443,
+              "additional": 187557,
+              "expected": 620000,
+              "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)"
             }
           },
           "country": "TW"
@@ -485,6 +506,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "expected": 1000
             },
             "W38": {
+              "target": 1100,
+              "current": 270000,
+              "additional": 1000,
+              "expected": 1000,
+              "note": "추가예상 1K (달성율 90.9%)"
+            },
+            "W39": {
               "target": 1100,
               "current": 270000,
               "additional": 1000,
@@ -628,6 +656,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "additional": 140708,
               "expected": 200000,
               "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)"
+            },
+            "W39": {
+              "target": 330000,
+              "current": 59292,
+              "additional": 140708,
+              "expected": 200000,
+              "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)"
             }
           },
           "country": "SG"
@@ -652,6 +687,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "additional": 18800,
               "expected": 20000,
               "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)"
+            },
+            "W39": {
+              "target": 44001,
+              "current": 1200,
+              "additional": 18800,
+              "expected": 20000,
+              "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)"
             }
           },
           "country": "SG"
@@ -671,6 +713,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "expected": 21000
             },
             "W38": {
+              "target": 300000,
+              "current": 270000,
+              "additional": 21000,
+              "expected": 21000,
+              "note": "추가예상 $21,000 마감 예상"
+            },
+            "W39": {
               "target": 300000,
               "current": 270000,
               "additional": 21000,
@@ -814,6 +863,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "additional": 74292,
               "expected": 300000,
               "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K"
+            },
+            "W39": {
+              "target": 297001,
+              "current": 225708,
+              "additional": 74292,
+              "expected": 300000,
+              "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K"
             }
           },
           "country": "PH"
@@ -838,6 +894,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "additional": 25143,
               "expected": 46000,
               "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)"
+            },
+            "W39": {
+              "target": 22000,
+              "current": 20857,
+              "additional": 25143,
+              "expected": 46000,
+              "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)"
             }
           },
           "country": "PH"
@@ -857,6 +920,13 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
               "expected": 495
             },
             "W38": {
+              "target": 231000,
+              "current": 495,
+              "additional": 230505,
+              "expected": 495,
+              "note": "실적 $495 (달성율 0.2%)"
+            },
+            "W39": {
               "target": 231000,
               "current": 495,
               "additional": 230505,
