@@ -1,6 +1,6 @@
 {
   "source_file": "PH Weekly Report WW38 rev. 04.xlsx",
-  "extracted_at": "2026-09-25 16:43:16",
+  "extracted_at": "2026-09-25 16:58:46",
   "summary": {
     "daily_report_count": 400,
     "customer_count": 21,
@@ -9006,7 +9006,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-05-25: 총 14건 업무 보고 (SFA, Device Design) - 주요안건: LA69-01468A DDR4 CAP Fitting Test Fail S"
+      "day_summary_ko": "2026-05-25: 총 14건 업무 보고 (Device Design, SFA) - 주요안건: LA69-01468A DDR4 CAP Fitting Test Fail S"
     },
     {
       "date": "2026-05-21",
@@ -9762,7 +9762,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATEC, ATP3) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
+      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATP3, ATEC) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
     },
     {
       "date": "2026-05-13",
@@ -12266,7 +12266,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (Olffice, ATP1) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
+      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (ATP1, Olffice) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
     },
     {
       "date": "2026-04-07",
@@ -23377,7 +23377,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (KWE, TongHsing) - 주요안건: Kostat Tray KS-8603 Microchip"
+      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (TongHsing, KWE) - 주요안건: Kostat Tray KS-8603 Microchip"
     },
     {
       "date": "2025-11-12",
@@ -28733,7 +28733,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (KWE, TongHsing) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
+      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (TongHsing, KWE) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
     },
     {
       "date": "2025-09-15",
@@ -35692,7 +35692,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (KWE, ROHM) - 주요안건: ST Supplier contacts file ST"
+      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (ROHM, KWE) - 주요안건: ST Supplier contacts file ST"
     },
     {
       "date": "2025-07-01",
@@ -36408,7 +36408,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (KWE, ATP3) - 주요안건: PLY ★ Important! Request for securing pa"
+      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (ATP3, KWE) - 주요안건: PLY ★ Important! Request for securing pa"
     },
     {
       "date": "2025-06-23",
@@ -38078,7 +38078,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-05: 총 23건 업무 보고 (SFA, Amertron) - 주요안건: CADFIT AND DRAWING FOR TRAY 101411434 AT"
+      "day_summary_ko": "2025-06-05: 총 23건 업무 보고 (Amertron, SFA) - 주요안건: CADFIT AND DRAWING FOR TRAY 101411434 AT"
     },
     {
       "date": "2025-06-04",
@@ -38768,7 +38768,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-29: 총 24건 업무 보고 (SFA, ATP) - 주요안건: TNR INQUIRY ATP"
+      "day_summary_ko": "2025-05-29: 총 24건 업무 보고 (ATP, SFA) - 주요안건: TNR INQUIRY ATP"
     },
     {
       "date": "2025-05-28",
@@ -39960,7 +39960,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (KWE, Microship) - 주요안건: PCN request Rohm"
+      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (Microship, KWE) - 주요안건: PCN request Rohm"
     },
     {
       "date": "2025-05-19",
@@ -48473,7 +48473,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-02-06: 총 10건 업무 보고 (SFA, Amertron) - 주요안건: Plastic blue reel"
+      "day_summary_ko": "2025-02-06: 총 10건 업무 보고 (Amertron, SFA) - 주요안건: Plastic blue reel"
     },
     {
       "date": "2025-02-05",

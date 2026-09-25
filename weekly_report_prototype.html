@@ -2567,8 +2567,22 @@
     }
 
 
-        function renderPeriodWeekButtons() {
+    function renderPeriodWeekButtons() {
       // Period buttons helper
+    }
+
+    function renderLockStatus() {
+      const pill = document.getElementById('lockStatusPill');
+      if (pill) {
+        pill.innerHTML = '<span>편집 가능 (수정 모드)</span>';
+      }
+    }
+
+    function updateRevCountBadge() {
+      const b = document.getElementById('revCountBadge');
+      if (b) {
+        b.textContent = (typeof REVISION_HISTORY !== 'undefined' && Array.isArray(REVISION_HISTORY)) ? REVISION_HISTORY.length : 0;
+      }
     }
 
     function selectMember(memberId, btnEl) {
