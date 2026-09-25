@@ -1,12 +1,12 @@
 {
-  "source_file": "PH Weekly Report WW38 rev. 04.xlsx",
-  "extracted_at": "2026-09-25 16:58:46",
+  "source_file": "PH Weekly Report WW39 rev. 03.xlsx",
+  "extracted_at": "2026-09-25 18:34:21",
   "summary": {
-    "daily_report_count": 400,
+    "daily_report_count": 404,
     "customer_count": 21,
     "total_projects": 197,
-    "visit_week_count": 89,
-    "images_attached_count": 33,
+    "visit_week_count": 90,
+    "images_attached_count": 35,
     "project_stats": {
       "ATP": {
         "total": 55,
@@ -159,6 +159,356 @@
   },
   "daily_reports": [
     {
+      "date": "2026-09-23",
+      "entries": [
+        {
+          "customer": "Office",
+          "detail": "RE: Request for Quote: TBG5.5X5.5X0.6-B ASE\nCustomer Requirement / Current Status\n      • Received advice from HQ that we are currently unable to support ASE’s red trays due to the unavailability of the required raw materials.\n      • The customer was advised that we are currently unable to provide an updated quotation for the red trays because the required raw materials are not available at this time.\n      • We will continue to keep the customer updated regarding any developments on material availability.\n      • In the meantime, we can still support the customer’s immediate requirements using our existing local inventory of 300 pcs. The customer may continue purchasing these at the current price until the available stock is depleted.\n\nClarification with HQ\n      • We advised HQ that ASE’s black trays have corresponding red tray versions and inquired whether this would also mean discontinuing the supply of the corresponding red trays.\n      • We requested HQ’s guidance on the appropriate course of action moving forward.\n\nHQ Database Review\n      • Based on HQ’s review of the database, a total of 16 tray items have been shipped to ASE-PH over the past five years:\n      • TR300155\n      • TR300268\n      • TR350605\n      • TR350949\n      • TR351181\n      • TR351379\n      • TR352195\n      • TR352640\n      • TR352788\n      • TR353129\n      • TR353262\n      • TR353510\n      • TR354380\n      • TR355770\n      • TR356088\n      • TR355559\n\n      • Among these 16 items, TR355559 is the only red tray that has ever been shipped to ASE-PH, and it was delivered only once, on March 9, 2023.\n\nHQ Assessment\n      • There is currently no ongoing forecast, production viability, or commercial feasibility for the red tray items.\n      • Producing these red trays would require securing dedicated red raw materials, which are subject to significant MOQ requirements.\n      • In addition, production would require an unusually large initial batch, resulting in excessive scrap and potential financial losses for HQ and the factory.\n      • Given the limited historical demand and the associated material and production constraints, HQ has determined that the company cannot sustain the losses required to continue supplying the red trays.\n      • Therefore, the corresponding red tray supply will also be discontinued.\n\nNext Action\n      • Explain the situation to the customer clearly, emphasizing that the decision is driven by raw material availability, minimum order requirements, production constraints, and the lack of sufficient demand/forecast.\n      • For the immediate requirement, offer the available 300 pcs of local inventory at the current price, with supply continuing only until the existing stock is depleted.\n      • Continue monitoring any changes from HQ regarding raw material availability or future production feasibility and update the customer accordingly.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: Request for Quote: TBG5.5X5.5X0.6-B ASE\nCustomer Requirement / Current Status\n      • Received advice from HQ that we are currently unable to support ASE’s red trays due to the unavailability of the required raw materials.\n      • The customer was advised that we are currently unable to provide an updated quotation for the red trays because the required raw materials are not available at this time.\n      • We will continue to keep the customer updated regarding any developments on material availability.\n      • In the meantime, we can still support the customer’s immediate requirements using our existing local inventory of 300 pcs. The customer may continue purchasing these at the current price until the available stock is depleted.\n\nClarification with HQ\n      • We advised HQ that ASE’s black trays have corresponding red tray versions and inquired whether this would also mean discontinuing the supply of the corresponding red trays.\n      • We requested HQ’s guidance on the appropriate course of action moving forward.\n\nHQ Database Review\n      • Based on HQ’s review of the database, a total of 16 tray items have been shipped to ASE-PH over the past five years:\n      • TR300155\n      • TR300268\n      • TR350605\n      • TR350949\n      • TR351181\n      • TR351379\n      • TR352195\n      • TR352640\n      • TR352788\n      • TR353129\n      • TR353262\n      • TR353510\n      • TR354380\n      • TR355770\n      • TR356088\n      • TR355559\n\n      • Among these 16 items, TR355559 is the only red tray that has ever been shipped to ASE-PH, and it was delivered only once, on March 9, 2023.\n\nHQ Assessment\n      • There is currently no ongoing forecast, production viability, or commercial feasibility for the red tray items.\n      • Producing these red trays would require securing dedicated red raw materials, which are subject to significant MOQ requirements.\n      • In addition, production would require an unusually large initial batch, resulting in excessive scrap and potential financial losses for HQ and the factory.\n      • Given the limited historical demand and the associated material and production constraints, HQ has determined that the company cannot sustain the losses required to continue supplying the red trays.\n      • Therefore, the corresponding red tray supply will also be discontinued.\n\nNext Action\n      • Explain the situation to the customer clearly, emphasizing that the decision is driven by raw material availability, minimum order requirements, production constraints, and the lack of sufficient demand/forecast.\n      • For the immediate requirement, offer the available 300 pcs of local inventory at the current price, with supply continuing only until the existing stock is depleted.\n      • Continue monitoring any changes from HQ regarding raw material availability or future production feasibility and update the customer accordingly.",
+          "summary_ko": "[Office] Request for Quote: TBG5.5X5.5X0.6-B ASE",
+          "detail_ko": "RE: Request for Quote: TBG5.5X5.5X0.6-B ASE\nCustomer Requirement / Current Status\n      • Received advice from HQ that we are currently unable to support ASE’s red trays due to the unavailability of the required raw materials.\n      • The customer was advised that we are currently unable to provide an updated quotation for the red trays because the required raw materials are not available at this time.\n      • We will continue to keep the customer updated regarding any developments on material availability.\n      • In the meantime, we can still support the customer’s immediate requirements using our existing local inventory of 300 pcs. The customer may continue purchasing these at the current price until the available stock is depleted.\n\nClarification with HQ\n      • We advised HQ that ASE’s black trays have corresponding red tray versions and inquired whether this would also mean discontinuing the supply of the corresponding red trays.\n      • We requested HQ’s guidance on the appropriate course of action moving forward.\n\nHQ Database Review\n      • Based on HQ’s review of the database, a total of 16 tray items have been shipped to ASE-PH over the past five years:\n      • TR300155\n      • TR300268\n      • TR350605\n      • TR350949\n      • TR351181\n      • TR351379\n      • TR352195\n      • TR352640\n      • TR352788\n      • TR353129\n      • TR353262\n      • TR353510\n      • TR354380\n      • TR355770\n      • TR356088\n      • TR355559\n\n      • Among these 16 items, TR355559 is the only red tray that has ever been shipped to ASE-PH, and it was delivered only once, on March 9, 2023.\n\nHQ Assessment\n      • There is currently no ongoing forecast, production viability, or commercial feasibility for the red tray items.\n      • Producing these red trays would require securing dedicated red raw materials, which are subject to significant MOQ requirements.\n      • In addition, production would require an unusually large initial batch, resulting in excessive scrap and potential financial losses for HQ and the factory.\n      • Given the limited historical demand and the associated material and production constraints, HQ has determined that the company cannot sustain the losses required to continue supplying the red trays.\n      • Therefore, the corresponding red tray supply will also be discontinued.\n\nNext Action\n      • Explain the situation to the customer clearly, emphasizing that the decision is driven by raw material availability, minimum order requirements, production constraints, and the lack of sufficient demand/forecast.\n      • For the immediate requirement, offer the available 300 pcs of local inventory at the current price, with supply continuing only until the existing stock is depleted.\n      • Continue monitoring any changes from HQ regarding raw material availability or future production feasibility and update the customer accordingly.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: 187 ARA tray sample for TIPI\n• Received the shipping documents for the 187 ARA tray sample for TI.\n• Requested a copy of the Certificate of Conformance (COC) from HQ and subsequently received the document.\n• Forwarded both the shipping documents and COC to the customer for their reference.\n• Requested the customer to confirm receipt of the sample and provide feedback on the evaluation results/outcome once completed.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: 187 ARA tray sample for TIPI\n• Received the shipping documents for the 187 ARA tray sample for TI.\n• Requested a copy of the Certificate of Conformance (COC) from HQ and subsequently received the document.\n• Forwarded both the shipping documents and COC to the customer for their reference.\n• Requested the customer to confirm receipt of the sample and provide feedback on the evaluation results/outcome once completed.",
+          "summary_ko": "187 ARA tray sample for TIPI",
+          "detail_ko": "RE: 187 ARA tray sample for TIPI\n• Received the shipping documents for the 187 ARA tray sample for TI.\n• Requested a copy of the Certificate of Conformance (COC) from HQ and subsequently received the document.\n• Forwarded both the shipping documents and COC to the customer for their reference.\n• Requested the customer to confirm receipt of the sample and provide feedback on the evaluation results/outcome once completed.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: [SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA\n• Had a short discussion with the customer regarding the status of the tray evaluation.\n• Inquired about the actual reason for the cancellation of the evaluation and tray orders for both Kostat and Myung Sung.\n• Based on the discussion, the initial direction is to use re-use trays as shipping trays. The customer discussed this approach with their QA team, and they initially agreed to proceed with it.\n• The customer had previously used re-use trays as shipping trays. However, they encountered an FM issue on the balls of their devices at that time.\n• For the current evaluation, they will try using the re-use trays again and closely monitor whether the same issue occurs.\n• Updated HQ accordingly regarding the customer’s current direction and evaluation plan.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: [SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA\n• Had a short discussion with the customer regarding the status of the tray evaluation.\n• Inquired about the actual reason for the cancellation of the evaluation and tray orders for both Kostat and Myung Sung.\n• Based on the discussion, the initial direction is to use re-use trays as shipping trays. The customer discussed this approach with their QA team, and they initially agreed to proceed with it.\n• The customer had previously used re-use trays as shipping trays. However, they encountered an FM issue on the balls of their devices at that time.\n• For the current evaluation, they will try using the re-use trays again and closely monitor whether the same issue occurs.\n• Updated HQ accordingly regarding the customer’s current direction and evaluation plan.",
+          "summary_ko": "[SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA",
+          "detail_ko": "RE: [SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA\n• Had a short discussion with the customer regarding the status of the tray evaluation.\n• Inquired about the actual reason for the cancellation of the evaluation and tray orders for both Kostat and Myung Sung.\n• Based on the discussion, the initial direction is to use re-use trays as shipping trays. The customer discussed this approach with their QA team, and they initially agreed to proceed with it.\n• The customer had previously used re-use trays as shipping trays. However, they encountered an FM issue on the balls of their devices at that time.\n• For the current evaluation, they will try using the re-use trays again and closely monitor whether the same issue occurs.\n• Updated HQ accordingly regarding the customer’s current direction and evaluation plan.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: TDS and CofC cover tape AMS\n• As requested by the customer, they required an English version of the TDS for the cover tape.\n• Requested the English version from HQ.\n• Received the revised TDS document from HQ.\n• Submitted the revised document to the customer for their review and reference.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: TDS and CofC cover tape AMS\n• As requested by the customer, they required an English version of the TDS for the cover tape.\n• Requested the English version from HQ.\n• Received the revised TDS document from HQ.\n• Submitted the revised document to the customer for their review and reference.",
+          "summary_ko": "TDS and CofC cover tape AMS",
+          "detail_ko": "RE: TDS and CofC cover tape AMS\n• As requested by the customer, they required an English version of the TDS for the cover tape.\n• Requested the English version from HQ.\n• Received the revised TDS document from HQ.\n• Submitted the revised document to the customer for their review and reference.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: [ATP BID] New Company Sign-up Request ATP\n• Received confirmation from the customer that our eBID registration request has been approved.\n• The customer requested us to access the eBID system from our side and verify if there are any issues or concerns.\n• Will proceed with the access and check accordingly.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: [ATP BID] New Company Sign-up Request ATP\n• Received confirmation from the customer that our eBID registration request has been approved.\n• The customer requested us to access the eBID system from our side and verify if there are any issues or concerns.\n• Will proceed with the access and check accordingly.",
+          "summary_ko": "[ATP BID] New Company Sign-up Request ATP",
+          "detail_ko": "RE: [ATP BID] New Company Sign-up Request ATP\n• Received confirmation from the customer that our eBID registration request has been approved.\n• The customer requested us to access the eBID system from our side and verify if there are any issues or concerns.\n• Will proceed with the access and check accordingly.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: 48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL26000018 ATEC\n• Received an update from the customer regarding the shipment of the affected sample to VN.\n• Shipment details are as follows:\n      • AWB Tracking No.: 5392 6709 7241\n• Advised HQ accordingly regarding the shipment details.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: 48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL26000018 ATEC\n• Received an update from the customer regarding the shipment of the affected sample to VN.\n• Shipment details are as follows:\n      • AWB Tracking No.: 5392 6709 7241\n• Advised HQ accordingly regarding the shipment details.",
+          "summary_ko": "48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL2",
+          "detail_ko": "RE: 48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL26000018 ATEC\n• Received an update from the customer regarding the shipment of the affected sample to VN.\n• Shipment details are as follows:\n      • AWB Tracking No.: 5392 6709 7241\n• Advised HQ accordingly regarding the shipment details.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "AMS",
+          "detail": "RE: TDS and CofC cover tape AMS\nCustomer Concern\n      • The customer’s current concern is a sticking issue with the cover tape.\n\nDiscussion\n      • Based on the data provided, the customer is interested in our sticky-free specification.\n      • Discussed that our technology incorporates embossing on the bottom surface of the cover tape.\n      • These embossing function as contact limiters, reducing direct contact between the cover tape and the die/chip surface.\n      • With a smaller contact area, the potential for adhesion is reduced, which helps minimize sticking issues.\n\nConclusion\n      • Our embossing-based bottom-surface technology is designed to reduce direct contact with the die/chip, thereby helping to minimize sticking and support a sticky-free cover tape solution.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: TDS and CofC cover tape AMS\nCustomer Concern\n      • The customer’s current concern is a sticking issue with the cover tape.\n\nDiscussion\n      • Based on the data provided, the customer is interested in our sticky-free specification.\n      • Discussed that our technology incorporates embossing on the bottom surface of the cover tape.\n      • These embossing function as contact limiters, reducing direct contact between the cover tape and the die/chip surface.\n      • With a smaller contact area, the potential for adhesion is reduced, which helps minimize sticking issues.\n\nConclusion\n      • Our embossing-based bottom-surface technology is designed to reduce direct contact with the die/chip, thereby helping to minimize sticking and support a sticky-free cover tape solution.",
+          "summary_ko": "[AMS] TDS and CofC cover tape AMS",
+          "detail_ko": "RE: TDS and CofC cover tape AMS\nCustomer Concern\n      • The customer’s current concern is a sticking issue with the cover tape.\n\nDiscussion\n      • Based on the data provided, the customer is interested in our sticky-free specification.\n      • Discussed that our technology incorporates embossing on the bottom surface of the cover tape.\n      • These embossing function as contact limiters, reducing direct contact between the cover tape and the die/chip surface.\n      • With a smaller contact area, the potential for adhesion is reduced, which helps minimize sticking issues.\n\nConclusion\n      • Our embossing-based bottom-surface technology is designed to reduce direct contact with the die/chip, thereby helping to minimize sticking and support a sticky-free cover tape solution.",
+          "pending_ko": ""
+        }
+      ],
+      "day_summary_ko": "2026-09-23: 총 7건 업무 보고 (AMS) - 주요안건: Request for Quote: TBG5.5X5.5X0.6-B ASE"
+    },
+    {
+      "date": "2026-09-22",
+      "entries": [
+        {
+          "customer": "Office",
+          "detail": "FW: Tray Recycling Pre-Bidding Meeting ATP\nReceived bid documents from customer.\n• Coordinated with HQ as follows:\n• That I was invited to attend the pre-bid meeting yesterday and would like to share the details of the opportunity.\n\nForecast volume:\n      • 1,206,308 kg/year\n      • Approximately 1,940,012 pcs/year\n\n• The volume is a combination of ABS, MPPO, PSU, MPSU, and PES materials sourced from various suppliers, including Kostat, Daewon, Peak, Ubot, and others.\n\n• I am scheduled to conduct the ocular visit today at 10:00 AM.\n• The required initial contract period is 2 years.\n• Checked if Kostat would be interested in participating in this opportunity.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "FW: Tray Recycling Pre-Bidding Meeting ATP\nReceived bid documents from customer.\n• Coordinated with HQ as follows:\n• That I was invited to attend the pre-bid meeting yesterday and would like to share the details of the opportunity.\n\nForecast volume:\n      • 1,206,308 kg/year\n      • Approximately 1,940,012 pcs/year\n\n• The volume is a combination of ABS, MPPO, PSU, MPSU, and PES materials sourced from various suppliers, including Kostat, Daewon, Peak, Ubot, and others.\n\n• I am scheduled to conduct the ocular visit today at 10:00 AM.\n• The required initial contract period is 2 years.\n• Checked if Kostat would be interested in participating in this opportunity.",
+          "summary_ko": "[Office] Tray Recycling Pre-Bidding Meeting ATP",
+          "detail_ko": "FW: Tray Recycling Pre-Bidding Meeting ATP\nReceived bid documents from customer.\n• Coordinated with HQ as follows:\n• That I was invited to attend the pre-bid meeting yesterday and would like to share the details of the opportunity.\n\nForecast volume:\n      • 1,206,308 kg/year\n      • Approximately 1,940,012 pcs/year\n\n• The volume is a combination of ABS, MPPO, PSU, MPSU, and PES materials sourced from various suppliers, including Kostat, Daewon, Peak, Ubot, and others.\n\n• I am scheduled to conduct the ocular visit today at 10:00 AM.\n• The required initial contract period is 2 years.\n• Checked if Kostat would be interested in participating in this opportunity.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Received the forwarder details and account number from HQ.\n\n• Updated the customer accordingly and informed them that the designated forwarder will be used to return the affected samples to Vietnam.\n\n• Received confirmation from the customer that the samples have already been endorsed to their shipping team.\n\n• Requested the customer to provide status updates and send the shipping documents once available, so we can monitor the shipment from our end.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Received the forwarder details and account number from HQ.\n\n• Updated the customer accordingly and informed them that the designated forwarder will be used to return the affected samples to Vietnam.\n\n• Received confirmation from the customer that the samples have already been endorsed to their shipping team.\n\n• Requested the customer to provide status updates and send the shipping documents once available, so we can monitor the shipment from our end.",
+          "summary_ko": "SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) AT",
+          "detail_ko": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Received the forwarder details and account number from HQ.\n\n• Updated the customer accordingly and informed them that the designated forwarder will be used to return the affected samples to Vietnam.\n\n• Received confirmation from the customer that the samples have already been endorsed to their shipping team.\n\n• Requested the customer to provide status updates and send the shipping documents once available, so we can monitor the shipment from our end.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "FW: TDK | SOT23-3L Package and 5L ATP\n• Inquired with HQ to coordinate with the Design Team and confirm whether the mold flash was considered in the CADfit simulation previously shared with ATP.\n\n• Submitted the following for reference:\n      • CADfit simulation for both the 3L and 5L packages\n      • Corresponding carrier tape drawings for each package\n      • POD\n\n• Requested HQ’s assistance in confirming the details with the Design Team and providing feedback accordingly.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "FW: TDK | SOT23-3L Package and 5L ATP\n• Inquired with HQ to coordinate with the Design Team and confirm whether the mold flash was considered in the CADfit simulation previously shared with ATP.\n\n• Submitted the following for reference:\n      • CADfit simulation for both the 3L and 5L packages\n      • Corresponding carrier tape drawings for each package\n      • POD\n\n• Requested HQ’s assistance in confirming the details with the Design Team and providing feedback accordingly.",
+          "summary_ko": "TDK | SOT23-3L Package and 5L ATP",
+          "detail_ko": "FW: TDK | SOT23-3L Package and 5L ATP\n• Inquired with HQ to coordinate with the Design Team and confirm whether the mold flash was considered in the CADfit simulation previously shared with ATP.\n\n• Submitted the following for reference:\n      • CADfit simulation for both the 3L and 5L packages\n      • Corresponding carrier tape drawings for each package\n      • POD\n\n• Requested HQ’s assistance in confirming the details with the Design Team and providing feedback accordingly.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: KOSTAT TRAY 101357316 CADFIT ATP\n• Received advise from custoem that their end custoemr rejected the propopsal due to double unit failing.\n• Customer requested us revise to make the double unit passed.\n• Reviewed the history fo this inquiry.\n• Updated customer that we performed the CADfit simulation based on the POD they shared with us using their recommended SID number.\n• Based on the CADfit simulation results, the design will fail for the double-unit configuration.\n\n• We also checked our other available/open tools, but unfortunately, we do not have any available tool that is compatible with this POD.\n• As such, a new tool will be required for this application.\n\n• Requested to let us know if they would like to proceed with the new tooling.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: KOSTAT TRAY 101357316 CADFIT ATP\n• Received advise from custoem that their end custoemr rejected the propopsal due to double unit failing.\n• Customer requested us revise to make the double unit passed.\n• Reviewed the history fo this inquiry.\n• Updated customer that we performed the CADfit simulation based on the POD they shared with us using their recommended SID number.\n• Based on the CADfit simulation results, the design will fail for the double-unit configuration.\n\n• We also checked our other available/open tools, but unfortunately, we do not have any available tool that is compatible with this POD.\n• As such, a new tool will be required for this application.\n\n• Requested to let us know if they would like to proceed with the new tooling.",
+          "summary_ko": "KOSTAT TRAY 101357316 CADFIT ATP",
+          "detail_ko": "RE: KOSTAT TRAY 101357316 CADFIT ATP\n• Received advise from custoem that their end custoemr rejected the propopsal due to double unit failing.\n• Customer requested us revise to make the double unit passed.\n• Reviewed the history fo this inquiry.\n• Updated customer that we performed the CADfit simulation based on the POD they shared with us using their recommended SID number.\n• Based on the CADfit simulation results, the design will fail for the double-unit configuration.\n\n• We also checked our other available/open tools, but unfortunately, we do not have any available tool that is compatible with this POD.\n• As such, a new tool will be required for this application.\n\n• Requested to let us know if they would like to proceed with the new tooling.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "FW: PO#AC26000101_KOSTAT ATEC\n• As requested by Teo via Kakao, trace back the above PO copy and send to him for reference.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "FW: PO#AC26000101_KOSTAT ATEC\n• As requested by Teo via Kakao, trace back the above PO copy and send to him for reference.",
+          "summary_ko": "PO#AC26000101_KOSTAT ATEC",
+          "detail_ko": "FW: PO#AC26000101_KOSTAT ATEC\n• As requested by Teo via Kakao, trace back the above PO copy and send to him for reference.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: TDS and CofC cover tape AMS\n• As requested by the customer, submitted the TDS for the cover tape for their review.\n• CofC to follow; currently coordinating with HQ and requested a copy of the CofC for this sample shipment.\n• Coordinated with HQ to provide the English version of the TDS, as requested by the customer.\n• Setting up a meeting with the customer next week to discuss the matter further.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: TDS and CofC cover tape AMS\n• As requested by the customer, submitted the TDS for the cover tape for their review.\n• CofC to follow; currently coordinating with HQ and requested a copy of the CofC for this sample shipment.\n• Coordinated with HQ to provide the English version of the TDS, as requested by the customer.\n• Setting up a meeting with the customer next week to discuss the matter further.",
+          "summary_ko": "TDS and CofC cover tape AMS",
+          "detail_ko": "RE: TDS and CofC cover tape AMS\n• As requested by the customer, submitted the TDS for the cover tape for their review.\n• CofC to follow; currently coordinating with HQ and requested a copy of the CofC for this sample shipment.\n• Coordinated with HQ to provide the English version of the TDS, as requested by the customer.\n• Setting up a meeting with the customer next week to discuss the matter further.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: 48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL26000018 ATEC\n• Received a follow-up from the Engineering VP regarding the status of the issue.\n• Advised that our factory prefers to receive the actual affected sample first before proceeding with the investigation to ensure a more accurate and effective analysis.\n• Informed him that I was able to push the factory to proceed with the 8D report even without the affected sample.\n• Submitted the 8D report to the customer for review.\n• Will work closely with the SQE to monitor the progress and drive closure of the issue.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: 48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL26000018 ATEC\n• Received a follow-up from the Engineering VP regarding the status of the issue.\n• Advised that our factory prefers to receive the actual affected sample first before proceeding with the investigation to ensure a more accurate and effective analysis.\n• Informed him that I was able to push the factory to proceed with the 8D report even without the affected sample.\n• Submitted the 8D report to the customer for review.\n• Will work closely with the SQE to monitor the progress and drive closure of the issue.",
+          "summary_ko": "48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL2",
+          "detail_ko": "RE: 48L HTQFP 7x7 (JG-48) e-pad Dev 808231: Bakeable Shipping Tray_PO# AL26000018 ATEC\n• Received a follow-up from the Engineering VP regarding the status of the issue.\n• Advised that our factory prefers to receive the actual affected sample first before proceeding with the investigation to ensure a more accurate and effective analysis.\n• Informed him that I was able to push the factory to proceed with the 8D report even without the affected sample.\n• Submitted the 8D report to the customer for review.\n• Will work closely with the SQE to monitor the progress and drive closure of the issue.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: RFQ for 12X12X1.8MM  & 9.8X17.2X1.7 TongHsing\n• As advised by HQ, submitted the revised quotation to the customer for reference.\n• The unit price (U/M) remains unchanged. The only revision is the winding length for KS-3216-131.\n• According to our factory, we currently do not have a matching reel suitable for the specified pocket depth (K0) that would allow a winding length of only 250M.\n• Due to this technical constraint, the winding length was adjusted accordingly.\n• Requested the customer’s assistance in coordinating and revising the PO to reflect the updated winding length.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: RFQ for 12X12X1.8MM  & 9.8X17.2X1.7 TongHsing\n• As advised by HQ, submitted the revised quotation to the customer for reference.\n• The unit price (U/M) remains unchanged. The only revision is the winding length for KS-3216-131.\n• According to our factory, we currently do not have a matching reel suitable for the specified pocket depth (K0) that would allow a winding length of only 250M.\n• Due to this technical constraint, the winding length was adjusted accordingly.\n• Requested the customer’s assistance in coordinating and revising the PO to reflect the updated winding length.",
+          "summary_ko": "RFQ for 12X12X1.8MM  & 9.8X17.2X1.7 TongHsing",
+          "detail_ko": "RE: RFQ for 12X12X1.8MM  & 9.8X17.2X1.7 TongHsing\n• As advised by HQ, submitted the revised quotation to the customer for reference.\n• The unit price (U/M) remains unchanged. The only revision is the winding length for KS-3216-131.\n• According to our factory, we currently do not have a matching reel suitable for the specified pocket depth (K0) that would allow a winding length of only 250M.\n• Due to this technical constraint, the winding length was adjusted accordingly.\n• Requested the customer’s assistance in coordinating and revising the PO to reflect the updated winding length.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: Tray Recycling Pre-Bidding Meeting ATP\n• Prepared the Minutes of Meeting (MOM) based on my ocular visit with the customer.\n• Submitted the MOM to HQ for reference and further review.\n• Please see below the detailed ATP report.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: Tray Recycling Pre-Bidding Meeting ATP\n• Prepared the Minutes of Meeting (MOM) based on my ocular visit with the customer.\n• Submitted the MOM to HQ for reference and further review.\n• Please see below the detailed ATP report.",
+          "summary_ko": "Tray Recycling Pre-Bidding Meeting ATP",
+          "detail_ko": "RE: Tray Recycling Pre-Bidding Meeting ATP\n• Prepared the Minutes of Meeting (MOM) based on my ocular visit with the customer.\n• Submitted the MOM to HQ for reference and further review.\n• Please see below the detailed ATP report.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "FW: Request for Quote: TBG5.5X5.5X0.6-B ASE\n• Received a request from the customer for an updated quotation for TBG5.5X5.5X0.6-R.\n• Checked my records and confirmed that the equivalent Kostat P/N for TBG5.5X5.5X0.6-R is KS-880566.\n• Coordinated with HQ accordingly for the quotation update.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "FW: Request for Quote: TBG5.5X5.5X0.6-B ASE\n• Received a request from the customer for an updated quotation for TBG5.5X5.5X0.6-R.\n• Checked my records and confirmed that the equivalent Kostat P/N for TBG5.5X5.5X0.6-R is KS-880566.\n• Coordinated with HQ accordingly for the quotation update.",
+          "summary_ko": "Request for Quote: TBG5.5X5.5X0.6-B ASE",
+          "detail_ko": "FW: Request for Quote: TBG5.5X5.5X0.6-B ASE\n• Received a request from the customer for an updated quotation for TBG5.5X5.5X0.6-R.\n• Checked my records and confirmed that the equivalent Kostat P/N for TBG5.5X5.5X0.6-R is KS-880566.\n• Coordinated with HQ accordingly for the quotation update.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "FW: QMS AUDIT PLAN F.Y 2026 ROHM\n• Received an advisory from the customer that KOSTAT VIETNAM (maker of IC trays) is included in their QMS Audit Plan for FY2026, conducted via WEB.\n• Planned Audit Schedule: December 4, 2026.\n• To prepare the required form in advance for submission to the customer.\n• Coordinated with HQ accordingly.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "FW: QMS AUDIT PLAN F.Y 2026 ROHM\n• Received an advisory from the customer that KOSTAT VIETNAM (maker of IC trays) is included in their QMS Audit Plan for FY2026, conducted via WEB.\n• Planned Audit Schedule: December 4, 2026.\n• To prepare the required form in advance for submission to the customer.\n• Coordinated with HQ accordingly.",
+          "summary_ko": "QMS AUDIT PLAN F.Y 2026 ROHM",
+          "detail_ko": "FW: QMS AUDIT PLAN F.Y 2026 ROHM\n• Received an advisory from the customer that KOSTAT VIETNAM (maker of IC trays) is included in their QMS Audit Plan for FY2026, conducted via WEB.\n• Planned Audit Schedule: December 4, 2026.\n• To prepare the required form in advance for submission to the customer.\n• Coordinated with HQ accordingly.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "FW: [SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA\n• Received an advisory from the customer that the qualification of KOSTAT China will not proceed further due to the customer’s request.\n• At present, the sample trays will be returned to us, and replacement samples will no longer be required until further notice.\n• Forwarded the email from Chulki Kim for reference.\n• Coordinated with HQ accordingly and requested the domestic team to check if they have any additional details regarding this matter.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "FW: [SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA\n• Received an advisory from the customer that the qualification of KOSTAT China will not proceed further due to the customer’s request.\n• At present, the sample trays will be returned to us, and replacement samples will no longer be required until further notice.\n• Forwarded the email from Chulki Kim for reference.\n• Coordinated with HQ accordingly and requested the domestic team to check if they have any additional details regarding this matter.",
+          "summary_ko": "[SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA",
+          "detail_ko": "FW: [SFA반도체] 중국 SITE TRAY 평가 결과 공유 건 SFA\n• Received an advisory from the customer that the qualification of KOSTAT China will not proceed further due to the customer’s request.\n• At present, the sample trays will be returned to us, and replacement samples will no longer be required until further notice.\n• Forwarded the email from Chulki Kim for reference.\n• Coordinated with HQ accordingly and requested the domestic team to check if they have any additional details regarding this matter.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "ATP",
+          "detail": "Tray Recycling ocular visit\n\nAdditional Information\n1. Additional brands: ITW, EPAK, and CPAK\n2. Palletizing: We will be responsible for the palletizing.\n3. Tray pull-out: They plan to pull out the trays approximately every 5 pallets due to limited space in the area.\n4. Estimated volume: Minimum average of 5 tons/week, equivalent to approximately 20–23 tons/month.\n5. Broken trays: Approximately 2% of the trays are broken due to handling. These will be segregated but will still be included in the purchase.\n\nRequirements\n1. Manpower\n      o Allocate one person to handle the palletizing.\n      o The person must have NC II certification, as he will be required to operate ATP's forklift.\n      o He may use the shuttle service to and from ATP3/ATP4.\n      o Working hours will be 7:00 AM to 4:30 PM, Monday to Friday, except holidays.\n      o He will be issued an ATP ID, which will also allow him to use the ATP canteen.\n\n2. Pallets\n3. Pallet truck\n4. Stretch film\n\nNext Action\nPlease help try to access the e-Bid system and complete the new vendor registration today, if possible.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "Tray Recycling ocular visit\n\nAdditional Information\n1. Additional brands: ITW, EPAK, and CPAK\n2. Palletizing: We will be responsible for the palletizing.\n3. Tray pull-out: They plan to pull out the trays approximately every 5 pallets due to limited space in the area.\n4. Estimated volume: Minimum average of 5 tons/week, equivalent to approximately 20–23 tons/month.\n5. Broken trays: Approximately 2% of the trays are broken due to handling. These will be segregated but will still be included in the purchase.\n\nRequirements\n1. Manpower\n      o Allocate one person to handle the palletizing.\n      o The person must have NC II certification, as he will be required to operate ATP's forklift.\n      o He may use the shuttle service to and from ATP3/ATP4.\n      o Working hours will be 7:00 AM to 4:30 PM, Monday to Friday, except holidays.\n      o He will be issued an ATP ID, which will also allow him to use the ATP canteen.\n\n2. Pallets\n3. Pallet truck\n4. Stretch film\n\nNext Action\nPlease help try to access the e-Bid system and complete the new vendor registration today, if possible.",
+          "summary_ko": "[ATP] Tray Recycling ocular visit",
+          "detail_ko": "Tray Recycling ocular visit\n\nAdditional Information\n1. Additional brands: ITW, EPAK, and CPAK\n2. Palletizing: We will be responsible for the palletizing.\n3. Tray pull-out: They plan to pull out the trays approximately every 5 pallets due to limited space in the area.\n4. Estimated volume: Minimum average of 5 tons/week, equivalent to approximately 20–23 tons/month.\n5. Broken trays: Approximately 2% of the trays are broken due to handling. These will be segregated but will still be included in the purchase.\n\nRequirements\n1. Manpower\n      o Allocate one person to handle the palletizing.\n      o The person must have NC II certification, as he will be required to operate ATP's forklift.\n      o He may use the shuttle service to and from ATP3/ATP4.\n      o Working hours will be 7:00 AM to 4:30 PM, Monday to Friday, except holidays.\n      o He will be issued an ATP ID, which will also allow him to use the ATP canteen.\n\n2. Pallets\n3. Pallet truck\n4. Stretch film\n\nNext Action\nPlease help try to access the e-Bid system and complete the new vendor registration today, if possible.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "KWE",
+          "detail": "Labelling for Delivery to ASE\n     • Prepared and attached the labels for the following items scheduled for delivery to ASE:\n           • PBAND 12 mm – 7 boxes\n           • PBAND 16 mm – 12 boxes\n           • PBAND 32 mm - 2 boxes\n           • LF20CT – 10 boxes\n           • KS-8503 – 16 boxes\n           • KS-870325 – 16 boxes\n           • KS-88146 – 2 boxes\n           • KS-870161 – 4 boxes",
+          "pending": "",
+          "remark": "",
+          "detail_en": "Labelling for Delivery to ASE\n     • Prepared and attached the labels for the following items scheduled for delivery to ASE:\n           • PBAND 12 mm – 7 boxes\n           • PBAND 16 mm – 12 boxes\n           • PBAND 32 mm - 2 boxes\n           • LF20CT – 10 boxes\n           • KS-8503 – 16 boxes\n           • KS-870325 – 16 boxes\n           • KS-88146 – 2 boxes\n           • KS-870161 – 4 boxes",
+          "summary_ko": "[KWE] Labelling for Delivery to ASE",
+          "detail_ko": "Labelling for Delivery to ASE\n     • Prepared and attached the labels for the following items scheduled for delivery to ASE:\n           • PBAND 12 mm – 7 boxes\n           • PBAND 16 mm – 12 boxes\n           • PBAND 32 mm - 2 boxes\n           • LF20CT – 10 boxes\n           • KS-8503 – 16 boxes\n           • KS-870325 – 16 boxes\n           • KS-88146 – 2 boxes\n           • KS-870161 – 4 boxes",
+          "pending_ko": ""
+        }
+      ],
+      "day_summary_ko": "2026-09-22: 총 14건 업무 보고 (KWE, ATP) - 주요안건: Tray Recycling Pre-Bidding Meeting ATP"
+    },
+    {
+      "date": "2026-09-21",
+      "entries": [
+        {
+          "customer": "Office",
+          "detail": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\nAdvised customer that due to the limited time available, our HQ decided to have the affected samples shipped directly to Vietnam for further handling and evaluation.\n\nShipment Details\nRecipient: Nguyễn Thị Tâm\nEmail: kv1@kostat.com\nMobile: 0368 953 258\nCompany: Kostat Vina Co., Ltd.\nAddress: No. 3A, Lot CN02-1, Yen Phong IP, Yen Trung, Yen Phong, Bac Ninh, Vietnam\n\nShipping Arrangement\nWe checked with the customer regarding the additional information required for them to ship the affected samples directly to Vietnam.\n\nThe customer advised that they require the following details:\n      • Nominated forwarder\n      • Forwarder account number\n\nWe have coordinated with our HQ to obtain the required forwarding information and account details. Further updates will be provided once the information is confirmed.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\nAdvised customer that due to the limited time available, our HQ decided to have the affected samples shipped directly to Vietnam for further handling and evaluation.\n\nShipment Details\nRecipient: Nguyễn Thị Tâm\nEmail: kv1@kostat.com\nMobile: 0368 953 258\nCompany: Kostat Vina Co., Ltd.\nAddress: No. 3A, Lot CN02-1, Yen Phong IP, Yen Trung, Yen Phong, Bac Ninh, Vietnam\n\nShipping Arrangement\nWe checked with the customer regarding the additional information required for them to ship the affected samples directly to Vietnam.\n\nThe customer advised that they require the following details:\n      • Nominated forwarder\n      • Forwarder account number\n\nWe have coordinated with our HQ to obtain the required forwarding information and account details. Further updates will be provided once the information is confirmed.",
+          "summary_ko": "[Office] SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) AT",
+          "detail_ko": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\nAdvised customer that due to the limited time available, our HQ decided to have the affected samples shipped directly to Vietnam for further handling and evaluation.\n\nShipment Details\nRecipient: Nguyễn Thị Tâm\nEmail: kv1@kostat.com\nMobile: 0368 953 258\nCompany: Kostat Vina Co., Ltd.\nAddress: No. 3A, Lot CN02-1, Yen Phong IP, Yen Trung, Yen Phong, Bac Ninh, Vietnam\n\nShipping Arrangement\nWe checked with the customer regarding the additional information required for them to ship the affected samples directly to Vietnam.\n\nThe customer advised that they require the following details:\n      • Nominated forwarder\n      • Forwarder account number\n\nWe have coordinated with our HQ to obtain the required forwarding information and account details. Further updates will be provided once the information is confirmed.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: Cover tape inquiry ATP\nReceived a request for assistance in providing our nominated cover tape for the listed carrier tape.\n\nSubmitted the required details below for review and reference.\n\n\n\n\n\nReceived a request from the customer for the TDS and MSDS of the recommended cover tapes.\nSubmitted the requested documents to the customer for their review and evaluation.",
+          "pending": "",
+          "remark": "",
+          "images": [
+            "data/ph_images/image43.png"
+          ],
+          "detail_en": "RE: Cover tape inquiry ATP\nReceived a request for assistance in providing our nominated cover tape for the listed carrier tape.\n\nSubmitted the required details below for review and reference.\n\n\n\n\n\nReceived a request from the customer for the TDS and MSDS of the recommended cover tapes.\nSubmitted the requested documents to the customer for their review and evaluation.",
+          "summary_ko": "Cover tape inquiry ATP",
+          "detail_ko": "RE: Cover tape inquiry ATP\nReceived a request for assistance in providing our nominated cover tape for the listed carrier tape.\n\nSubmitted the required details below for review and reference.\n\n\n\n\n\nReceived a request from the customer for the TDS and MSDS of the recommended cover tapes.\nSubmitted the requested documents to the customer for their review and evaluation.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: [Urgent Request] Sample Tray Retrieval from SFA Philippines & Return to Gimpo Factory SFA\n• Requested the drawing for the SFA IC trays and received the requested drawing for review.\n\n• Reviewed the evaluation report provided by SFA. Based on the drawing, the bottom and top stacking widths indicate that the tray walls are tapered.\n\n• Based on my initial review, there is a possibility that the measurements may have been taken from an incorrect reference point.\n\n• Had a short discussion with the customer regarding the measurement concern. I advised that I would provide a drawing indicating the correct reference points for measurement and request SFA to re-measure the tray accordingly.\n\n• Sent the drawing with the indicated measurement reference points to the customer for their review and re-measurement.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: [Urgent Request] Sample Tray Retrieval from SFA Philippines & Return to Gimpo Factory SFA\n• Requested the drawing for the SFA IC trays and received the requested drawing for review.\n\n• Reviewed the evaluation report provided by SFA. Based on the drawing, the bottom and top stacking widths indicate that the tray walls are tapered.\n\n• Based on my initial review, there is a possibility that the measurements may have been taken from an incorrect reference point.\n\n• Had a short discussion with the customer regarding the measurement concern. I advised that I would provide a drawing indicating the correct reference points for measurement and request SFA to re-measure the tray accordingly.\n\n• Sent the drawing with the indicated measurement reference points to the customer for their review and re-measurement.",
+          "summary_ko": "[Urgent Request] Sample Tray Retrieval from SFA Philippines & Return t",
+          "detail_ko": "RE: [Urgent Request] Sample Tray Retrieval from SFA Philippines & Return to Gimpo Factory SFA\n• Requested the drawing for the SFA IC trays and received the requested drawing for review.\n\n• Reviewed the evaluation report provided by SFA. Based on the drawing, the bottom and top stacking widths indicate that the tray walls are tapered.\n\n• Based on my initial review, there is a possibility that the measurements may have been taken from an incorrect reference point.\n\n• Had a short discussion with the customer regarding the measurement concern. I advised that I would provide a drawing indicating the correct reference points for measurement and request SFA to re-measure the tray accordingly.\n\n• Sent the drawing with the indicated measurement reference points to the customer for their review and re-measurement.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "Administrative Job\nStarted with the expense report.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "Administrative Job\nStarted with the expense report.",
+          "summary_ko": "Administrative Job",
+          "detail_ko": "Administrative Job\nStarted with the expense report.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "ATP",
+          "detail": "Tray Recycling Pre-Bidding Meeting\n\n• Date: September 21, 2026\n• Time: 3:00 PM – 4:00 PM\n• Venue: Microsoft Teams\n\n1. Attendees\n    Procurement:\n           • Ariel Breis\n           • Angelita Sta. Maria\n\n    Bidders:\n           • Kostat\n           • Tecreach\n           • Cycle Trend\n           • AQRI\n\n2. Ocular Site Visit\n      • Date: September 22, 2026\n      • Time: 10:00 AM\n      • Location: Plant 3\n      • Contact Person: Germie Nanong\n\n3. Bid Submission Period\n      • Bid Opening: September 23, 2026 at 8:00 AM\n      • Bid Closing: September 28, 2026 at 6:00 PM\n\n4. Key Timeline",
+          "pending": "",
+          "remark": "",
+          "images": [
+            "data/ph_images/image42.png"
+          ],
+          "detail_en": "Tray Recycling Pre-Bidding Meeting\n\n• Date: September 21, 2026\n• Time: 3:00 PM – 4:00 PM\n• Venue: Microsoft Teams\n\n1. Attendees\n    Procurement:\n           • Ariel Breis\n           • Angelita Sta. Maria\n\n    Bidders:\n           • Kostat\n           • Tecreach\n           • Cycle Trend\n           • AQRI\n\n2. Ocular Site Visit\n      • Date: September 22, 2026\n      • Time: 10:00 AM\n      • Location: Plant 3\n      • Contact Person: Germie Nanong\n\n3. Bid Submission Period\n      • Bid Opening: September 23, 2026 at 8:00 AM\n      • Bid Closing: September 28, 2026 at 6:00 PM\n\n4. Key Timeline",
+          "summary_ko": "[ATP] Tray Recycling Pre-Bidding Meeting",
+          "detail_ko": "Tray Recycling Pre-Bidding Meeting\n\n• Date: September 21, 2026\n• Time: 3:00 PM – 4:00 PM\n• Venue: Microsoft Teams\n\n1. Attendees\n    Procurement:\n           • Ariel Breis\n           • Angelita Sta. Maria\n\n    Bidders:\n           • Kostat\n           • Tecreach\n           • Cycle Trend\n           • AQRI\n\n2. Ocular Site Visit\n      • Date: September 22, 2026\n      • Time: 10:00 AM\n      • Location: Plant 3\n      • Contact Person: Germie Nanong\n\n3. Bid Submission Period\n      • Bid Opening: September 23, 2026 at 8:00 AM\n      • Bid Closing: September 28, 2026 at 6:00 PM\n\n4. Key Timeline",
+          "pending_ko": ""
+        }
+      ],
+      "day_summary_ko": "2026-09-21: 총 5건 업무 보고 (ATP) - 주요안건: SCAR# 26_020 Kostat ESD Qualification Fa"
+    },
+    {
+      "date": "2026-09-18",
+      "entries": [
+        {
+          "customer": "Office",
+          "detail": "FW: Purchase Order 7200036745_KOSTAT(貝立得_20260903 (TH-PH) TongHsing\n• As requested, submitted drawing to PHK for reference.\n• Details as follows:\n      • KS-3216-131\n      • KS-2416-797\n• This is to confirm if PHK has necessary raw materials to be used.\n• Plan is to fabricate the tooll in Korea and once testing is completed, it will be shipped to PHK for mass production.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "FW: Purchase Order 7200036745_KOSTAT(貝立得_20260903 (TH-PH) TongHsing\n• As requested, submitted drawing to PHK for reference.\n• Details as follows:\n      • KS-3216-131\n      • KS-2416-797\n• This is to confirm if PHK has necessary raw materials to be used.\n• Plan is to fabricate the tooll in Korea and once testing is completed, it will be shipped to PHK for mass production.",
+          "summary_ko": "[Office] Purchase Order 7200036745_KOSTAT(貝立得_20260903 (TH-PH) TongHsing",
+          "detail_ko": "FW: Purchase Order 7200036745_KOSTAT(貝立得_20260903 (TH-PH) TongHsing\n• As requested, submitted drawing to PHK for reference.\n• Details as follows:\n      • KS-3216-131\n      • KS-2416-797\n• This is to confirm if PHK has necessary raw materials to be used.\n• Plan is to fabricate the tooll in Korea and once testing is completed, it will be shipped to PHK for mass production.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: SMP290 TRAY INQUIRY\n• Received inquiry for IC tray.\n• Short discussion with Justine and received the following details:\n      • Design - as per POD. Based on POD, no tool is available.\n         Need to tool up\n         Customer agrred for new tooling\n      • Baking temp is 150C\n      • Required material is MPPO\n      • Forecast - This is new product\n      • End customer is Bosch, ATP3\n      • Competitor is Techreach (Peak and Daewoon)\n\n• Requirement:\n      • To provide best tray quote\n      • Tooling cost target proice is USD10,000.\n\n• Coordinated with HQ.\n\n• Received quotation from HQ\n      • U/P USD 1.25\n      • Tooling USD 10,000.00\n• Submitted to customer\n• Submitted the revised CADfit simulation as well",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: SMP290 TRAY INQUIRY\n• Received inquiry for IC tray.\n• Short discussion with Justine and received the following details:\n      • Design - as per POD. Based on POD, no tool is available.\n         Need to tool up\n         Customer agrred for new tooling\n      • Baking temp is 150C\n      • Required material is MPPO\n      • Forecast - This is new product\n      • End customer is Bosch, ATP3\n      • Competitor is Techreach (Peak and Daewoon)\n\n• Requirement:\n      • To provide best tray quote\n      • Tooling cost target proice is USD10,000.\n\n• Coordinated with HQ.\n\n• Received quotation from HQ\n      • U/P USD 1.25\n      • Tooling USD 10,000.00\n• Submitted to customer\n• Submitted the revised CADfit simulation as well",
+          "summary_ko": "SMP290 TRAY INQUIRY",
+          "detail_ko": "RE: SMP290 TRAY INQUIRY\n• Received inquiry for IC tray.\n• Short discussion with Justine and received the following details:\n      • Design - as per POD. Based on POD, no tool is available.\n         Need to tool up\n         Customer agrred for new tooling\n      • Baking temp is 150C\n      • Required material is MPPO\n      • Forecast - This is new product\n      • End customer is Bosch, ATP3\n      • Competitor is Techreach (Peak and Daewoon)\n\n• Requirement:\n      • To provide best tray quote\n      • Tooling cost target proice is USD10,000.\n\n• Coordinated with HQ.\n\n• Received quotation from HQ\n      • U/P USD 1.25\n      • Tooling USD 10,000.00\n• Submitted to customer\n• Submitted the revised CADfit simulation as well",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: HEADS UP: IQA FAILURE | Chipout / Broken Fences | SID #: 101378525 ATP\n• Summarized the validation and sorting results as follows:\n      • Batch E263600308 = 1\n      • Batch E263600306 = 3\nFindings : Handling issue\n• Seen some dents in the box\n• Seen tray imprint inside the box\n• Provided some photos confirming my claims for both Batch E263600308 and Batch E263600306\n• Requested customer to split quantity and move to good location.\n\n• As requested forwarded the result to RJ and Daniel for reference.\n\n• Received and reviewed the 3D reort.\n• Submitted to customer.\n• Since this claim was determined to be due to a handling issue, we will not proceed with the 8D report.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: HEADS UP: IQA FAILURE | Chipout / Broken Fences | SID #: 101378525 ATP\n• Summarized the validation and sorting results as follows:\n      • Batch E263600308 = 1\n      • Batch E263600306 = 3\nFindings : Handling issue\n• Seen some dents in the box\n• Seen tray imprint inside the box\n• Provided some photos confirming my claims for both Batch E263600308 and Batch E263600306\n• Requested customer to split quantity and move to good location.\n\n• As requested forwarded the result to RJ and Daniel for reference.\n\n• Received and reviewed the 3D reort.\n• Submitted to customer.\n• Since this claim was determined to be due to a handling issue, we will not proceed with the 8D report.",
+          "summary_ko": "HEADS UP: IQA FAILURE | Chipout / Broken Fences | SID #: 101378525 ATP",
+          "detail_ko": "RE: HEADS UP: IQA FAILURE | Chipout / Broken Fences | SID #: 101378525 ATP\n• Summarized the validation and sorting results as follows:\n      • Batch E263600308 = 1\n      • Batch E263600306 = 3\nFindings : Handling issue\n• Seen some dents in the box\n• Seen tray imprint inside the box\n• Provided some photos confirming my claims for both Batch E263600308 and Batch E263600306\n• Requested customer to split quantity and move to good location.\n\n• As requested forwarded the result to RJ and Daniel for reference.\n\n• Received and reviewed the 3D reort.\n• Submitted to customer.\n• Since this claim was determined to be due to a handling issue, we will not proceed with the 8D report.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: Tray Recycling Pre-Bidding Meeting ATP\n• Received a call from Purcasing director, Ms. Beng Sta. Maria.\n• She is inviting us to join the bidding for Plastic tray recycling.\n• Advised to send us invites and I waill join the intial meeting.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: Tray Recycling Pre-Bidding Meeting ATP\n• Received a call from Purcasing director, Ms. Beng Sta. Maria.\n• She is inviting us to join the bidding for Plastic tray recycling.\n• Advised to send us invites and I waill join the intial meeting.",
+          "summary_ko": "Tray Recycling Pre-Bidding Meeting ATP",
+          "detail_ko": "RE: Tray Recycling Pre-Bidding Meeting ATP\n• Received a call from Purcasing director, Ms. Beng Sta. Maria.\n• She is inviting us to join the bidding for Plastic tray recycling.\n• Advised to send us invites and I waill join the intial meeting.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "",
+          "detail": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Received querry form customer if we are supplying trays to Allegro.\n•Advised that as of the moment, we don’t have tray supplied to Allegro.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Received querry form customer if we are supplying trays to Allegro.\n•Advised that as of the moment, we don’t have tray supplied to Allegro.",
+          "summary_ko": "SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) AT",
+          "detail_ko": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Received querry form customer if we are supplying trays to Allegro.\n•Advised that as of the moment, we don’t have tray supplied to Allegro.",
+          "pending_ko": ""
+        },
+        {
+          "customer": "ATEC",
+          "detail": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Short meeting with Arvin.\n• Supposed to pick up the affected sample, 10pcs each PN, total of 30pcs.\n• Waited until the end of the day but ufotrunately, documents were not completed.\n• To reschedule tehpick up next week.\n\n• Inquired about the probe they use.\n      • 2 point Probe type SR meter is used to check the SR reading inside the pocket.\n      • The 5 lbs electrode is used to take SR of the tray.\n      • They prefer that both test should be passed.",
+          "pending": "",
+          "remark": "",
+          "detail_en": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Short meeting with Arvin.\n• Supposed to pick up the affected sample, 10pcs each PN, total of 30pcs.\n• Waited until the end of the day but ufotrunately, documents were not completed.\n• To reschedule tehpick up next week.\n\n• Inquired about the probe they use.\n      • 2 point Probe type SR meter is used to check the SR reading inside the pocket.\n      • The 5 lbs electrode is used to take SR of the tray.\n      • They prefer that both test should be passed.",
+          "summary_ko": "[ATEC] SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) AT",
+          "detail_ko": "RE: SCAR# 26_020 Kostat ESD Qualification Fail (Shipping and Chip Tray) ATEC\n• Short meeting with Arvin.\n• Supposed to pick up the affected sample, 10pcs each PN, total of 30pcs.\n• Waited until the end of the day but ufotrunately, documents were not completed.\n• To reschedule tehpick up next week.\n\n• Inquired about the probe they use.\n      • 2 point Probe type SR meter is used to check the SR reading inside the pocket.\n      • The 5 lbs electrode is used to take SR of the tray.\n      • They prefer that both test should be passed.",
+          "pending_ko": ""
+        }
+      ],
+      "day_summary_ko": "2026-09-18: 총 6건 업무 보고 (ATEC) - 주요안건: Purchase Order 7200036745_KOSTAT(貝立得_202"
+    },
+    {
       "date": "2026-09-17",
       "entries": [
         {
@@ -237,8 +587,8 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image36.png",
-            "data/ph_images/image37.png"
+            "data/ph_images/image44.png",
+            "data/ph_images/image45.png"
           ],
           "detail_en": "RE: HEADS UP: IQA FAILURE | Chipout / Broken Fences | SID #: 101378525\n• Done validation on the quality alert submitted by customer.\n• Validation result\n      • Handling issue.\n      • Seen tray imprints inside box and box deformation\n      • Please see below photo:\n\n• Batch E263600308 = 1 reject\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n• Batch E263600306 = 3 reject",
           "summary_ko": "[ATP1] HEADS UP: IQA FAILURE | Chipout / Broken Fences | SID #: 101378525",
@@ -807,7 +1157,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image38.png"
+            "data/ph_images/image46.png"
           ],
           "detail_en": "RE: SUPPLIER LT and Capacity Ratio (%) ATP\n• Received data on the Lead Time (LT) and capacity ratio of the IC Tray factory covering the past three years.\n\n\n\n\n\n• Reviewed the received data for completeness.\n• Submitted to customer",
           "summary_ko": "SUPPLIER LT and Capacity Ratio (%) ATP",
@@ -1678,7 +2028,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image40.png"
+            "data/ph_images/image48.png"
           ],
           "detail_en": "7. Forecast",
           "summary_ko": "7. Forecast",
@@ -1691,7 +2041,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image41.png"
+            "data/ph_images/image49.png"
           ],
           "detail_en": "8. Process:",
           "summary_ko": "8. Process:",
@@ -2754,7 +3104,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image39.png"
+            "data/ph_images/image47.png"
           ],
           "detail_en": "RE: LAST CALL : Utilization of QR Code ROHM\nVerifed with customer regarding the item name and specificdation request to be included in the QR code\nItem and Specification as follows:\n\n\n\n\n\n\nCoordinated wiht Teo. \nGive him brief overview of this request.\nAdvise what customer needs.\nRequested to check if we can comply and requested for a sample of the QR code.",
           "summary_ko": "LAST CALL : Utilization of QR Code ROHM",
@@ -4169,8 +4519,8 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image42.png",
-            "data/ph_images/image43.png"
+            "data/ph_images/image50.png",
+            "data/ph_images/image51.png"
           ],
           "detail_en": "Meeting Minutes\n\nMeeting: Customer Meeting\n\nAttendees:\nJoseph Mabalo\nEdmund Casenas\nDiscussion\n\nSfA Update\n     * Card products: Zero forecast is expected starting September.\n     * DDR5: Production will continue.\n     * DDR4: Will be available for special orders only.\n    *. The customer will continue purchasing DDR4 module trays, which will be used for the DDR5 test      process.\n     * SSD: Demand is increasing; however, the customer has not yet decided whether production will include both assembly and test or test only.\n     * The customer will focus on DDR5 components moving forward.\n\nRequest to Meet Mr. Kim\n     * A request was made to meet with Mr. Kim.\n     * He is currently busy with machine qualification activities, and material-related concerns are currently a lower priority.\n\nMyungSung PCN Status\n     * No samples or supporting documents have been submitted yet.\n\nPAx Silica Agreement with the U.S.\n     * The customer is monitoring the progress of the PAx Silica agreement with the U.S.\n     * They are looking forward to further testing business if the U.S. government approves the establishment of PAx Silica operations in the Philippines.\n\nMachine Transfer Status\n     * 12 Advantest machines arrived on July 24.\n     * A total of 180 machines are expected to be transferred this year, with an additional 155 machines planned for next year.\n     * Phase 1 has been temporarily halted because the assembly line must first be relocated and removed before installation can proceed. Overall completion is currently 20%.\n     * Phase 2 is nearly complete, reaching 95% completion this month while the assembly line was being removed.\n     * With the assembly line now fully removed, work on Phase 1 will resume.\n\nIC tray forecast\n\n\n\n\n\n\n\n\n\n\n\nModule trays and blister forecast\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAction Items\n     * Continue monitoring the customer's DDR5 production plans and SSD business direction.\n     * Monitor on the submission of MyungSung PCN samples and required documents.\n     * Monitor the progress of the PAx Silica agreement and any updates regarding implementation in the Philippines.\n     * Track the progress of the machine transfer and Phase 1 installation activities.",
           "summary_ko": "[SFA] Meeting Minutes",
@@ -5001,7 +5351,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image44.png"
+            "data/ph_images/image52.png"
           ],
           "detail_en": "Re: IC tray forecast SFA\nReceived updated forecast from customer.\n\n\n\n\n\n\nBased on our telecon, requested her the detailed concern about our quotation.",
           "summary_ko": "Re: IC tray forecast SFA",
@@ -6273,7 +6623,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-07-01: 총 18건 업무 보고 (ATP, KWE) - 주요안건: Vivere Hotel - airport pick up"
+      "day_summary_ko": "2026-07-01: 총 18건 업무 보고 (KWE, ATP) - 주요안건: Vivere Hotel - airport pick up"
     },
     {
       "date": "2026-06-30",
@@ -6596,7 +6946,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image45.png"
+            "data/ph_images/image53.png"
           ],
           "detail_en": "7. Forecast\nThis is production plan and numbers are in Chip form",
           "summary_ko": "7. Forecast",
@@ -6609,7 +6959,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image46.png"
+            "data/ph_images/image54.png"
           ],
           "detail_en": "This is Shipping plan. Chips to be processed as modules are not included",
           "summary_ko": "This is Shipping plan. Chips to be processed as modules are not includ",
@@ -6637,7 +6987,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-06-26: 총 18건 업무 보고 (Device design, SFA) - 주요안건: FOX AUTO_ KOSTAT_WARP TRAYS STMicro"
+      "day_summary_ko": "2026-06-26: 총 18건 업무 보고 (SFA, Device design) - 주요안건: FOX AUTO_ KOSTAT_WARP TRAYS STMicro"
     },
     {
       "date": "2026-06-24",
@@ -7420,7 +7770,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image47.png"
+            "data/ph_images/image55.png"
           ],
           "detail_en": "Attendees\nJoseph Mabalo\nEdmund Ceniza\nVal\n\n1. IC Tray\n• Currently they will supply the chips to Hanyang only at the moment. No Onyang and SESS at the yet. The rest of the chips will move forward to SMT to produce modules.\n\n2. Forecast\t\n• Please see below",
           "summary_ko": "[SFA] Attendees",
@@ -8445,7 +8795,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image48.png"
+            "data/ph_images/image56.png"
           ],
           "detail_en": "Quotation for TongHsing\nAdvised HQ that the following items PO#7200033096 is now on route for approval. They are requesting us to initiate the tooling. Checked with HQ possibilities.\nLatest update was the PO#7200033096 has been approved. Their purchasing will send the PO copy asap.\nADvised HQ that upon checking, PO for carrier tape and reel of 7x7 was sent last May22, PO#7200032690, the PSA cover tape was not included on last time  since no quote yet for cover tape last time.",
           "summary_ko": "Quotation for TongHsing",
@@ -8802,7 +9152,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image49.png"
+            "data/ph_images/image57.png"
           ],
           "detail_en": "Attendees:\nJoseph Mabalo\nEdmund Ceniza\nVal\n\n1. IC Tray\nReceived confirmation that the previously shared plan was accurate based on the shipping trays.\nWIP trays are not included in the count.\nAverage chip capacity per tray is approximately 128 pcs.\nThe forecast provided by Ms. Kelly refers to the number of chips.\n\n2. Machine Transfer\nThe first batch transfer is currently at 70% completion, while the overall progress is at 20%.\nTarget completion for the first batch is by June, with an estimated total of 90 machines.\nThe second batch target completion is by December, with a total projected machine count of 155 machines.\n\n3. Kelly Update\nReceived confirmation that Ms. Kelly will stay only until May 29.\n\n4. SSD\nProduction has temporarily slowed down to give way to the machine transfer activities.\n\n5. Carrier Tape\nThere is still a plan to proceed, but no tooling is available yet.\nFinal decision will be made after completion of the second batch transfer.\nThey are expecting to receive six (6) units of ICOS TNR machines.\n\n6. Reuse Tray\nBased on the information received, the trays will be used as in-process trays.\n\n7. Company Status\nThere will be no Chips Assembly and no non-Samsung products to be produced.\nAssembly operations will be handled in Onnyang and Korea and SESS China\n\n8. SFA process update",
           "summary_ko": "[SFA] Attendees:",
@@ -12266,7 +12616,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (ATP1, Olffice) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
+      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (Olffice, ATP1) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
     },
     {
       "date": "2026-04-07",
@@ -12645,7 +12995,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image50.png"
+            "data/ph_images/image58.png"
           ],
           "detail_en": "Forecast\nReceived updated forecast as per below:",
           "summary_ko": "Forecast",
@@ -12688,7 +13038,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image51.png"
+            "data/ph_images/image59.png"
           ],
           "detail_en": "Discusion regarding the inquiry of TNR project.\n3 models: 201, 2501 and DBS\nReceived the drawings of each carrier tape.\nMaterial is PS Black\nUsage:\n201 = 2,000 rolls/year (18M/roll)\n2501 = 500 - 1,000 rolls/year (18M/roll)\nDBS = 100 rolls/year (24M/roll)\n\nPlastic reel\nThis should be supplied in plastic reel with size 80x330mm, width will be dependent on carrier tape width.\nPlease see below actual sample photo\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCover tape\nHSA type.\n\nThis project is localization. Currently they are getting it from China.",
           "summary_ko": "Discusion regarding the inquiry of TNR project.",
@@ -13281,7 +13631,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image52.png"
+            "data/ph_images/image60.png"
           ],
           "detail_en": "RE: REPI REQUEST: Utilization of QR Code Rohm\nRequested HQ to make sample and I will get approval from customer.\nMinimum requirement as per below:",
           "summary_ko": "REPI REQUEST: Utilization of QR Code Rohm",
@@ -14402,7 +14752,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image53.png"
+            "data/ph_images/image61.png"
           ],
           "detail_en": "Updated forecast\nQTY are in thousand",
           "summary_ko": "Updated forecast",
@@ -15703,7 +16053,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image54.png"
+            "data/ph_images/image62.png"
           ],
           "detail_en": "Attendees:\nJoseph Mabalo\nEdmund Ceniza\nVal\nReceived forecast as follows:",
           "summary_ko": "[SFA] Attendees:",
@@ -16246,7 +16596,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image55.png"
+            "data/ph_images/image63.png"
           ],
           "detail_en": "Short discussion with SFA\nRequested for the detail quantity plan of SSD.\nReceived details as follows:\n\n\n\n\n\nNo official forecast received from purchasing though.",
           "summary_ko": "Short discussion with SFA",
@@ -17937,7 +18287,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image56.png"
+            "data/ph_images/image64.png"
           ],
           "detail_en": "REQUEST DELIVERY TOMORROW_ URGENT MODULE DIMM BODY SFA\nAs discussed over the phone, received delivery request from customer.\n\n\n\n\n\nAdvised customer that we can complete the quantity and arragne pickup 1/29 evening.",
           "summary_ko": "REQUEST DELIVERY TOMORROW_ URGENT MODULE DIMM BODY SFA",
@@ -20660,8 +21010,8 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image57.png",
-            "data/ph_images/image59.png"
+            "data/ph_images/image65.png",
+            "data/ph_images/image67.png"
           ],
           "detail_en": "EPSU>> Tray for TRF Assy board ATEC\nRequirement:\nIC tray, same material of EPSU(MPPO)\nStackable with EPSU trays\nThis will be used a WIP tray.\nThis TRF board is inside the EPSU LGA package\nProduct orientation with the tray is same as the orientation of the EPSU on the tray\nTRF orientation in EPSU LGA\n\n\n\n\n\n\n\n                                                                                            or",
           "summary_ko": "[ATEC] EPSU>> Tray for TRF Assy board ATEC",
@@ -20674,7 +21024,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image58.png"
+            "data/ph_images/image66.png"
           ],
           "detail_en": "Overall dimensions:",
           "summary_ko": "Overall dimensions:",
@@ -20687,7 +21037,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image58.png"
+            "data/ph_images/image66.png"
           ],
           "detail_en": "While waiting for the POD, customer wanted to receive the quotation first.",
           "summary_ko": "While waiting for the POD, customer wanted to receive the quotation fi",
@@ -20842,7 +21192,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image60.png"
+            "data/ph_images/image68.png"
           ],
           "detail_en": "KX DDR4 DIMM Body\nPlease see below actual raw mats used by KX. To check if it's same as our raw mats.",
           "summary_ko": "KX DDR4 DIMM Body",
@@ -20855,7 +21205,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image61.png"
+            "data/ph_images/image69.png"
           ],
           "detail_en": "KX DDR5 DIMM Body\nPlease see below actual raw mats used by KX. To check if it's the same as our raw mats.",
           "summary_ko": "KX DDR5 DIMM Body",
@@ -23377,7 +23727,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (TongHsing, KWE) - 주요안건: Kostat Tray KS-8603 Microchip"
+      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (KWE, TongHsing) - 주요안건: Kostat Tray KS-8603 Microchip"
     },
     {
       "date": "2025-11-12",
@@ -28733,7 +29083,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (TongHsing, KWE) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
+      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (KWE, TongHsing) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
     },
     {
       "date": "2025-09-15",
@@ -30880,7 +31230,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image62.png"
+            "data/ph_images/image70.png"
           ],
           "detail_en": "CARRIER TAPE (KOSTAT)\nRegarding the outstanding project, they wanted us to revisit if we wanted to have this pushed throgh. They are willing to revive this project if we wanted to. Please see below list.",
           "summary_ko": "CARRIER TAPE (KOSTAT)",
@@ -30928,7 +31278,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ASE, ATP4) - 주요안건: MLF 5x6"
+      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ATP4, ASE) - 주요안건: MLF 5x6"
     },
     {
       "date": "2025-08-19",
@@ -31337,8 +31687,8 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image63.png",
-            "data/ph_images/image64.png"
+            "data/ph_images/image71.png",
+            "data/ph_images/image72.png"
           ],
           "detail_en": "Online meeting with ASE.\nReceived minutes as follows:\n\n\n\n\n\n\n\n\n\n\n\n\n\nReceived follow up regarding the PCN of carrier tape.\nChecked what is the impact on cost if this will be localized.\nSince we will be having meeting next week, we can discuss this face to face.\nRegarding the relabelling, checked if we still need to put PO number on the box once the deliveries are all labelled as ASE.\nThey will check with the QA team and let us  know.",
           "summary_ko": "Online meeting with ASE.",
@@ -32403,7 +32753,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image65.png"
+            "data/ph_images/image73.png"
           ],
           "detail_en": "Discussion regarding black blister tray.\nUnderstand his requirement particularly on the small portion of the product corner that can be touched by the top tray.\nDimension A=B=4mm.\nLength is the smallest possible based on design restriction.",
           "summary_ko": "[TongHsing] Discussion regarding black blister tray.",
@@ -33912,7 +34262,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image66.png"
+            "data/ph_images/image74.png"
           ],
           "detail_en": "Please see below allocation update",
           "summary_ko": "[SFA] Please see below allocation update",
@@ -35692,7 +36042,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (ROHM, KWE) - 주요안건: ST Supplier contacts file ST"
+      "day_summary_ko": "2025-07-02: 총 19건 업무 보고 (KWE, ROHM) - 주요안건: ST Supplier contacts file ST"
     },
     {
       "date": "2025-07-01",
@@ -36408,7 +36758,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (ATP3, KWE) - 주요안건: PLY ★ Important! Request for securing pa"
+      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (KWE, ATP3) - 주요안건: PLY ★ Important! Request for securing pa"
     },
     {
       "date": "2025-06-23",
@@ -36956,7 +37306,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-18: 총 17건 업무 보고 (ATP1, KWE) - 주요안건: URGENT TRAY REJECT - 101318825 ATP"
+      "day_summary_ko": "2025-06-18: 총 17건 업무 보고 (KWE, ATP1) - 주요안건: URGENT TRAY REJECT - 101318825 ATP"
     },
     {
       "date": "2025-06-17",
@@ -38078,7 +38428,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-05: 총 23건 업무 보고 (Amertron, SFA) - 주요안건: CADFIT AND DRAWING FOR TRAY 101411434 AT"
+      "day_summary_ko": "2025-06-05: 총 23건 업무 보고 (SFA, Amertron) - 주요안건: CADFIT AND DRAWING FOR TRAY 101411434 AT"
     },
     {
       "date": "2025-06-04",
@@ -38768,7 +39118,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-29: 총 24건 업무 보고 (ATP, SFA) - 주요안건: TNR INQUIRY ATP"
+      "day_summary_ko": "2025-05-29: 총 24건 업무 보고 (SFA, ATP) - 주요안건: TNR INQUIRY ATP"
     },
     {
       "date": "2025-05-28",
@@ -39960,7 +40310,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (Microship, KWE) - 주요안건: PCN request Rohm"
+      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (KWE, Microship) - 주요안건: PCN request Rohm"
     },
     {
       "date": "2025-05-19",
@@ -40434,7 +40784,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-14: 총 8건 업무 보고 (TICL, KWE) - 주요안건: Purchase Order #4502525252 STMicroelectr"
+      "day_summary_ko": "2025-05-14: 총 8건 업무 보고 (KWE, TICL) - 주요안건: Purchase Order #4502525252 STMicroelectr"
     },
     {
       "date": "2025-05-13",
@@ -40716,7 +41066,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-09: 총 14건 업무 보고 (STMicro, ATP4) - 주요안건: TNR RFQ TongHsing"
+      "day_summary_ko": "2025-05-09: 총 14건 업무 보고 (ATP4, STMicro) - 주요안건: TNR RFQ TongHsing"
     },
     {
       "date": "2025-05-08",
@@ -42021,7 +42371,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image67.png"
+            "data/ph_images/image75.png"
           ],
           "detail_en": "Payment Remittance Advice from ASE Co., Ltd. - Philippines Branch ASE\nForwarded to EY the remittance details of customer.",
           "summary_ko": "Payment Remittance Advice from ASE Co., Ltd. - Philippines Branch ASE",
@@ -42653,7 +43003,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-16: 총 13건 업무 보고 (TongHsing, ATP4) - 주요안건: 8 X 7 X 1.85MM JEDEC TRAY"
+      "day_summary_ko": "2025-04-16: 총 13건 업무 보고 (ATP4, TongHsing) - 주요안건: 8 X 7 X 1.85MM JEDEC TRAY"
     },
     {
       "date": "2025-04-15",
@@ -44284,7 +44634,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image68.png"
+            "data/ph_images/image76.png"
           ],
           "detail_en": "ATEC: Tray Design Request ATEC.\nReceived confrmation that customer wil proceed with the new tooling since this is a new package.\nNo other supplier has offered.\nThis is a jedec standard design with vacuum cell and side pick up.\nBaking requirement of 125C/24 hrs\nInquired on the Pin 1 location.\nPin1 is as shown below:",
           "summary_ko": "ATEC: Tray Design Request ATEC.",
@@ -44574,7 +44924,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-03-25: 총 8건 업무 보고 (TICL, SFA) - 주요안건: Move to Clark"
+      "day_summary_ko": "2025-03-25: 총 8건 업무 보고 (SFA, TICL) - 주요안건: Move to Clark"
     },
     {
       "date": "2025-03-20",
@@ -44786,7 +45136,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-03-19: 총 10건 업무 보고 (ATP, KWE) - 주요안건: For Supplier verification_PBIN Color KS-"
+      "day_summary_ko": "2025-03-19: 총 10건 업무 보고 (KWE, ATP) - 주요안건: For Supplier verification_PBIN Color KS-"
     },
     {
       "date": "2025-03-18",
@@ -47492,7 +47842,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-02-18: 총 15건 업무 보고 (Analog, KWE) - 주요안건: MRB - KOSTAT TRAY ATP"
+      "day_summary_ko": "2025-02-18: 총 15건 업무 보고 (KWE, Analog) - 주요안건: MRB - KOSTAT TRAY ATP"
     },
     {
       "date": "2025-02-17",
@@ -48309,7 +48659,7 @@
           "pending": "",
           "remark": "",
           "images": [
-            "data/ph_images/image69.png"
+            "data/ph_images/image77.png"
           ],
           "detail_en": "SSD\nThey will process in SFA M.2 SSD.\nWith the below list",
           "summary_ko": "SSD",
@@ -48473,7 +48823,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-02-06: 총 10건 업무 보고 (Amertron, SFA) - 주요안건: Plastic blue reel"
+      "day_summary_ko": "2025-02-06: 총 10건 업무 보고 (SFA, Amertron) - 주요안건: Plastic blue reel"
     },
     {
       "date": "2025-02-05",
@@ -49321,7 +49671,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (ATP1, TongHsing) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (TongHsing, ATP1) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-21",
@@ -49517,7 +49867,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-21: 총 19건 업무 보고 (SPI Semicon, ATEC, ATP4) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-21: 총 19건 업무 보고 (ATP4, SPI Semicon, ATEC) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-20",
@@ -51988,7 +52338,7 @@
         "progress": "",
         "start": "2024-06-19",
         "target": "2024-03-01",
-        "days": "821",
+        "days": "827",
         "status": "Ongoing\nPending\nDone,\nDropped, \nPedning: 완료 Target date 를 넘긴영우, Remark란에 사유 나타낼 것\nDropped 의 경우, \nRemark 란에 Dropped 사유 나한탤 것,",
         "remark": "",
         "hq_comment": "",
@@ -52630,8 +52980,8 @@
         "remark": "",
         "hq_comment": "",
         "images": [
-          "data/ph_images/image72.png",
-          "data/ph_images/image73.png"
+          "data/ph_images/image80.png",
+          "data/ph_images/image81.png"
         ],
         "summary_ko": "[Drop - pocket hole is too small] 참고용으로 POD를 요청합니다.",
         "bullets_ko": [
@@ -52655,8 +53005,8 @@
         "remark": "",
         "hq_comment": "",
         "images": [
-          "data/ph_images/image72.png",
-          "data/ph_images/image73.png"
+          "data/ph_images/image80.png",
+          "data/ph_images/image81.png"
         ],
         "summary_ko": "[They will not proceed for a new tooling.] 요구사항은 PS인지 PC인지",
         "bullets_ko": [
@@ -54921,6 +55271,44 @@
   },
   "visits": [
     {
+      "week": 39,
+      "year": "2026",
+      "start_date": "2026-09-21",
+      "reporter": "Val Nidoy",
+      "schedule": [
+        {
+          "day": "Mon",
+          "customer": "Office",
+          "action": "",
+          "remark": ""
+        },
+        {
+          "day": "Tue",
+          "customer": "ATP3",
+          "action": "Tray Recycling Pre-Bidding Meeting Ocular visit",
+          "remark": ""
+        },
+        {
+          "day": "Wed",
+          "customer": "KWE",
+          "action": "ASE Labelling / CARGO DAMAGE UPON STRIPPING",
+          "remark": ""
+        },
+        {
+          "day": "Thu",
+          "customer": "ATP1",
+          "action": "PCN updates/SOT 5LDS / Move to Clark",
+          "remark": ""
+        },
+        {
+          "day": "Fri",
+          "customer": "SFA",
+          "action": "Company updates",
+          "remark": ""
+        }
+      ]
+    },
+    {
       "week": 38,
       "year": "2026",
       "start_date": "2026-09-14",
@@ -55638,44 +56026,6 @@
           "day": "Fri",
           "customer": "",
           "action": "Holiday",
-          "remark": ""
-        }
-      ]
-    },
-    {
-      "week": 25,
-      "year": "2026",
-      "start_date": "2025-06-23",
-      "reporter": "Val Nidoy",
-      "schedule": [
-        {
-          "day": "Mon",
-          "customer": "",
-          "action": "Office",
-          "remark": ""
-        },
-        {
-          "day": "Tue",
-          "customer": "ATP",
-          "action": "Follow up cover tray evaluation result.",
-          "remark": ""
-        },
-        {
-          "day": "Wed",
-          "customer": "TongHsing",
-          "action": "TNR RFQ",
-          "remark": ""
-        },
-        {
-          "day": "Thu",
-          "customer": "Cirtek",
-          "action": "SOT89( KS-1208-76), SOIC16L NB(KS-1608-83), SOIC16L WB(no open tool)",
-          "remark": ""
-        },
-        {
-          "day": "Fri",
-          "customer": "SFA",
-          "action": "SSD updates, customer updates",
           "remark": ""
         }
       ]

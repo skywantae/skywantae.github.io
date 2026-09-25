@@ -1776,7 +1776,7 @@
           <button class="btn-action-xs" onclick="editManagementTarget()" style="font-size:11px; padding:2px 8px; border-radius:4px; border:1px solid var(--border-accent); background:var(--bg-card-sub); color:var(--primary-light); cursor:pointer; font-weight:600;" title="경영목표 금액 직접 변경">수정</button>
         </div>
         <div class="kpi-val" id="kpiTargetVal" onclick="editManagementTarget()" style="cursor:pointer;" title="클릭하여 경영목표 수정">$2,404,602</div>
-        <div class="kpi-subtext" id="kpiTargetSubtext">전년 동월(2025-09): $2,180,000</div>
+        <div class="kpi-subtext" id="kpiTargetSubtext">전년 동월(2025-09): $2,802,301 | 2025년 총: $29.27M</div>
       </div>
       <div class="kpi-card accent">
         <div class="kpi-label" id="kpiExpectedLabel">마감 예상 실적 (자동 집계)</div>
@@ -2234,6 +2234,59 @@
     </div>
   </div>
 
+  <!-- 해외영업 2025 실매출 및 2026 경영목표 조회 모달 -->
+  <div class="modal-backdrop" id="modalOverseasTargets" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:9999; justify-content:center; align-items:center; padding:16px;">
+    <div class="modal-card" style="background:#111827; border:1px solid #1e293b; border-radius:12px; max-width:1160px; width:100%; max-height:92vh; display:flex; flex-direction:column; box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);">
+      <div class="modal-header" style="padding:16px 22px; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center; background:#162032; border-radius:12px 12px 0 0;">
+        <div>
+          <h3 style="font-size:16px; font-weight:800; color:#f8fafc; margin-bottom:4px;">해외영업 2025년 실매출 및 2026년 경영목표 (신소재 포함)</h3>
+          <p style="font-size:11.5px; color:#94a3b8;">출처: 2026년 해외영업 9월 예상 매출 0923 김샘물 김완태 이상철.xlsx [2026목표 시트]</p>
+        </div>
+        <button class="modal-close" onclick="closeOverseasSalesTargetsModal()" style="background:transparent; border:none; color:#94a3b8; font-size:24px; cursor:pointer; padding:4px 8px; line-height:1;" title="닫기">&times;</button>
+      </div>
+
+      <!-- 상단 요약 KPI 바 -->
+      <div style="padding:12px 22px; background:#0f172a; border-bottom:1px solid #1e293b; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+        <div style="background:#1e293b; padding:10px 14px; border-radius:8px; border-left:3px solid #3b82f6;">
+          <div style="font-size:11px; color:#94a3b8; font-weight:700;">2026년 신소재포함 경영목표</div>
+          <div style="font-size:18px; font-weight:800; color:#60a5fa; margin-top:2px;">$25,766,880</div>
+          <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">9월 경영목표: $2,404,602</div>
+        </div>
+        <div style="background:#1e293b; padding:10px 14px; border-radius:8px; border-left:3px solid #10b981;">
+          <div style="font-size:11px; color:#94a3b8; font-weight:700;">2025년 연간 총 실매출</div>
+          <div style="font-size:18px; font-weight:800; color:#34d399; margin-top:2px;">$29,270,041</div>
+          <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">9월 총 실매출: $2,802,301</div>
+        </div>
+        <div style="background:#1e293b; padding:10px 14px; border-radius:8px; border-left:3px solid #f59e0b;">
+          <div style="font-size:11px; color:#94a3b8; font-weight:700;">2025 실매출 대비 2026 목표 증감</div>
+          <div style="font-size:18px; font-weight:800; color:#fbbf24; margin-top:2px;">-$3,503,161 (-12.0%)</div>
+          <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">9월 목표 대비 2025-09 실적: +$397,699</div>
+        </div>
+      </div>
+
+      <!-- 탭 내비게이션 -->
+      <div style="display:flex; gap:6px; padding:10px 22px 0 22px; background:#111827; border-bottom:1px solid #1e293b; overflow-x:auto;">
+        <button class="target-tab-btn active" id="btnTargetTab2026" onclick="switchTargetModalTab('2026')" style="padding:8px 16px; font-size:12px; font-weight:700; border:none; background:transparent; color:#3b82f6; border-bottom:2px solid #3b82f6; cursor:pointer;">1. 2026년 경영목표 (신소재 포함 달별)</button>
+        <button class="target-tab-btn" id="btnTargetTab2025" onclick="switchTargetModalTab('2025')" style="padding:8px 16px; font-size:12px; font-weight:700; border:none; background:transparent; color:#94a3b8; border-bottom:2px solid transparent; cursor:pointer;">2. 2025년 국가별 실매출 (달별)</button>
+        <button class="target-tab-btn" id="btnTargetTabCompare" onclick="switchTargetModalTab('compare')" style="padding:8px 16px; font-size:12px; font-weight:700; border:none; background:transparent; color:#94a3b8; border-bottom:2px solid transparent; cursor:pointer;">3. 연간 종합 비교 (2025 vs 2026)</button>
+      </div>
+
+      <!-- 모달 본문 테이블 영역 -->
+      <div class="modal-body" id="modalTargetsBody" style="padding:16px 22px; overflow-y:auto; flex:1;">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+
+      <div class="modal-footer" style="padding:12px 22px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; background:#162032; border-radius:0 0 12px 12px;">
+        <div style="font-size:11px; color:#94a3b8;">
+          11개 권역: EU, HK, JP, KR, MY, PH, SG, TH, TW, USA, VN (금액 단위: USD $)
+        </div>
+        <button class="btn-action primary" onclick="closeOverseasSalesTargetsModal()" style="padding:7px 18px; font-size:12.5px; font-weight:700;">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data/weekly_report_live.js?v=1.0.173"></script>
+  <script src="data/overseas_sales_targets_2026.js?v=1.0.173"></script>
   <script>
     // 공식 담당 국가 및 고객사 규격 강제 매핑 테이블
     const OFFICIAL_REGIONS = {
@@ -2269,16 +2322,17 @@
     const MASTER_COUNTRIES = [
       { code: 'US', name: '미국' },
       { code: 'KR', name: '한국' },
-      { code: 'CN', name: '중국' },
-      { code: 'VN', name: '베트남' },
       { code: 'TW', name: '대만' },
+      { code: 'VN', name: '베트남' },
+      { code: 'SG', name: '싱가포르' },
       { code: 'PH', name: '필리핀' },
       { code: 'MY', name: '말레이시아' },
-      { code: 'SG', name: '싱가포르' },
       { code: 'TH', name: '태국' },
       { code: 'JP', name: '일본' },
-      { code: 'MX', name: '멕시코' },
       { code: 'EU', name: '유럽' },
+      { code: 'HK', name: '홍콩' },
+      { code: 'CN', name: '중국' },
+      { code: 'MX', name: '멕시코' },
       { code: 'Others', name: '기타' }
     ];
 
@@ -2388,6 +2442,8 @@
         if (parsed && parsed.members) {
           LIVE_DB = parsed;
         }
+      } else if (typeof window.KOSTAT_WEEKLY_REPORT_LIVE !== 'undefined' && window.KOSTAT_WEEKLY_REPORT_LIVE) {
+        LIVE_DB = JSON.parse(JSON.stringify(window.KOSTAT_WEEKLY_REPORT_LIVE));
       }
     } catch(e) {}
 
@@ -2825,7 +2881,10 @@
             </div>
 
             <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-              <button class="btn-add-section" onclick="addNewSalesCountryRow()" style="padding:6px 14px; font-size:12px; font-weight:700;">+ 국가별 매출 추가</button>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <button class="btn-add-section" onclick="addNewSalesCountryRow()" style="padding:6px 14px; font-size:12px; font-weight:700;">+ 국가별 매출 추가</button>
+                <button class="btn-view-toggle" onclick="openOverseasSalesTargetsModal('2026')" style="font-size:11.5px; padding:6px 14px; background:rgba(59, 130, 246, 0.15); border:1px solid rgba(59, 130, 246, 0.4); color:#93c5fd; font-weight:700; border-radius:6px; cursor:pointer;" title="2025년 국가별 실매출 및 2026년 달별 경영목표 조회">2025 실매출 / 2026 경영목표 조회</button>
+              </div>
               <button class="btn-view-toggle" id="btnToggleSalesView" onclick="toggleSalesHistoryView()" style="font-size:11px; padding:4px 10px;">이력 추이 보기</button>
             </div>
           </div>
@@ -3769,7 +3828,7 @@
       if (allTab) allTab.textContent = (lang === 'en') ? 'Executive Summary' : '전체 팀 종합';
 
       const kpiSub = document.getElementById('kpiTargetSubtext');
-      if (kpiSub) kpiSub.textContent = (lang === 'en') ? 'Previous Year (2025-09): $2,180,000' : '전년 동월(2025-09): $2,180,000';
+      if (kpiSub) kpiSub.textContent = (lang === 'en') ? 'Previous Year (2025-09): $2,802,301 | 2025 Total: $29.27M' : '전년 동월(2025-09): $2,802,301 | 2025년 총: $29.27M';
 
       recalculateTeamKpi();
     }
@@ -3825,6 +3884,12 @@
       if (targetLabel) targetLabel.textContent = (REPORT_LANG === 'en') ? `${SELECTED_MONTH.slice(5)} Overseas Sales Target` : `${SELECTED_MONTH.slice(5)}월 해외영업 경영목표`;
       const targetVal = document.getElementById('kpiTargetVal');
       if (targetVal) targetVal.textContent = `$${Math.round(totalTarget).toLocaleString()}`;
+      const targetSub = document.getElementById('kpiTargetSubtext');
+      if (targetSub) {
+        targetSub.textContent = (REPORT_LANG === 'en') 
+          ? 'Previous Year (2025-09): $2,802,301 | 2025 Total: $29.27M'
+          : '전년 동월(2025-09): $2,802,301 | 2025년 총: $29.27M';
+      }
       const expLabel = document.getElementById('kpiExpectedLabel');
       if (expLabel) expLabel.textContent = (REPORT_LANG === 'en') ? `${SELECTED_WEEK} Forecast Month-End` : `${SELECTED_WEEK} 마감 예상 실적`;
       const expVal = document.getElementById('kpiExpectedVal');
@@ -3860,31 +3925,45 @@
       if (!metricBox || !svgWrapper) return;
 
       if (ACTIVE_CHART_MODE === 'yoy') {
-        const yoy = LIVE_DB.trends.yoy;
+        const yoy = (LIVE_DB.trends && LIVE_DB.trends.yoy) ? LIVE_DB.trends.yoy : {
+          last_year_actual: 2802301,
+          this_year_target: 2404602,
+          this_year_expected: 1863495,
+          yoy_growth_rate: -14.2
+        };
+        const currentData = getActiveDataset();
+        let dynExpected = 0;
+        (currentData.members || []).forEach(m => {
+          (m.sales || []).forEach(s => {
+            const wf = (s.weekly_forecasts && s.weekly_forecasts[SELECTED_WEEK]) ? s.weekly_forecasts[SELECTED_WEEK] : s;
+            dynExpected += (parseFloat(wf.expected || s.expected) || ((parseFloat(wf.current) || 0) + (parseFloat(wf.additional) || 0)));
+          });
+        });
+        if (dynExpected <= 0) dynExpected = yoy.this_year_expected || 1863495;
+        const rateVs2025 = (((dynExpected - yoy.last_year_actual) / yoy.last_year_actual) * 100).toFixed(1);
+        const rateVsTarget = (((dynExpected - yoy.this_year_target) / yoy.this_year_target) * 100).toFixed(1);
+
         metricBox.innerHTML = `
-          <div class="metric-item-label">전년 동월(2025-09) 대비 성장률</div>
-          <div class="metric-item-val" style="color:var(--success-light);">+${yoy.yoy_growth_rate}%</div>
+          <div class="metric-item-label">전년 동월(2025-09) 실적 대비 비교</div>
+          <div class="metric-item-val" style="color:${rateVs2025 >= 0 ? 'var(--success-light)' : 'var(--warning-light)'};">${rateVs2025 >= 0 ? '+' + rateVs2025 : rateVs2025}%</div>
           <div class="metric-item-sub">
-            • 2025년 9월 실적: $${Math.round(yoy.last_year_actual / 1000)}K<br>
-            • 2026년 9월 목표: $${Math.round(yoy.this_year_target / 1000)}K<br>
-            • 2026년 9월 마감예상: <strong>$${Math.round(yoy.this_year_expected / 1000)}K</strong>
+            • 2025년 9월 실적: $${Math.round(yoy.last_year_actual / 1000)}K ($2,802,301)<br>
+            • 2026년 9월 목표: $${Math.round(yoy.this_year_target / 1000)}K ($2,404,602)<br>
+            • 2026년 9월 마감예상: <strong>$${Math.round(dynExpected / 1000)}K</strong> (목표대비 ${rateVsTarget >= 0 ? '+' + rateVsTarget : rateVsTarget}%)
           </div>
         `;
         svgWrapper.innerHTML = `
           <svg viewBox="0 0 500 130" style="width:100%; height:130px;">
-            <text x="30" y="30" fill="#94a3b8" font-size="11">2025년 9월 실적 ($2,180K)</text>
-            <rect x="30" y="38" width="320" height="24" rx="4" fill="#334155" />
-            <text x="360" y="55" fill="#fff" font-size="12" font-weight="bold">$2,180K</text>
+            <text x="30" y="28" fill="#94a3b8" font-size="11">2025년 9월 실적 ($2,802K)</text>
+            <rect x="30" y="34" width="350" height="22" rx="4" fill="#334155" />
+            <text x="390" y="50" fill="#fff" font-size="12" font-weight="bold">$2,802K</text>
 
-            <text x="30" y="85" fill="#60a5fa" font-size="11" font-weight="bold">2026년 9월 마감예상 ($2,500K) [+14.7%]</text>
-            <rect x="30" y="93" width="370" height="26" rx="4" fill="url(#blueGrad)" />
-            <text x="410" y="111" fill="#60a5fa" font-size="13" font-weight="800">$2,500K</text>
-            <defs>
-              <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="#2563eb" />
-                <stop offset="100%" stop-color="#38bdf8" />
-              </linearGradient>
-            </defs>
+            <text x="30" y="74" fill="#fbbf24" font-size="11">2026년 9월 경영목표 ($2,405K)</text>
+            <rect x="30" y="80" width="300" height="20" rx="4" fill="#475569" stroke="#fbbf24" stroke-width="1" />
+            <text x="340" y="95" fill="#fbbf24" font-size="11" font-weight="bold">$2,405K</text>
+
+            <text x="30" y="118" fill="#60a5fa" font-size="11" font-weight="bold">2026년 9월 마감예상 ($${Math.round(dynExpected / 1000)}K)</text>
+            <rect x="30" y="122" width="${Math.min(380, Math.max(40, (dynExpected / 2802301) * 350))}" height="6" rx="3" fill="#3b82f6" />
           </svg>
         `;
       } else if (ACTIVE_CHART_MODE === 'mom') {
@@ -4555,6 +4634,339 @@
         div.style.transition = 'opacity 0.3s ease';
         setTimeout(() => div.remove(), 300);
       }, 3000);
+    }
+
+    // =========================================================================
+    // 해외영업 2025 실매출 및 2026 경영목표 조회 모달 컨트롤러
+    // =========================================================================
+    const COUNTRY_DISPLAY_NAMES = {
+      'EU': '유럽 (EU)',
+      'HK': '홍콩 (HK)',
+      'JP': '일본 (JP)',
+      'KR': '한국 (KR)',
+      'MY': '말레이시아 (MY)',
+      'PH': '필리핀 (PH)',
+      'SG': '싱가포르 (SG)',
+      'TH': '태국 (TH)',
+      'TW': '대만 (TW)',
+      'USA': '미국 (USA)',
+      'US': '미국 (USA)',
+      'VN': '베트남 (VN)'
+    };
+
+    let ACTIVE_TARGET_MODAL_TAB = '2026';
+
+    function openOverseasSalesTargetsModal(tabName) {
+      const modal = document.getElementById('modalOverseasTargets');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      switchTargetModalTab(tabName || '2026');
+    }
+    window.openOverseasSalesTargetsModal = openOverseasSalesTargetsModal;
+
+    function closeOverseasSalesTargetsModal() {
+      const modal = document.getElementById('modalOverseasTargets');
+      if (modal) modal.style.display = 'none';
+    }
+    window.closeOverseasSalesTargetsModal = closeOverseasSalesTargetsModal;
+
+    function switchTargetModalTab(tabName) {
+      ACTIVE_TARGET_MODAL_TAB = tabName;
+      const tabs = ['2026', '2025', 'compare'];
+      tabs.forEach(t => {
+        const btnId = `btnTargetTab${t === 'compare' ? 'Compare' : t}`;
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          if (t === tabName) {
+            btn.classList.add('active');
+            btn.style.color = '#3b82f6';
+            btn.style.borderBottom = '2px solid #3b82f6';
+          } else {
+            btn.classList.remove('active');
+            btn.style.color = '#94a3b8';
+            btn.style.borderBottom = '2px solid transparent';
+          }
+        }
+      });
+      renderTargetsModalContent(tabName);
+    }
+    window.switchTargetModalTab = switchTargetModalTab;
+
+    function getOverseasTargetsDataset() {
+      if (typeof window.KOSTAT_OVERSEAS_SALES_TARGETS_2026 !== 'undefined' && window.KOSTAT_OVERSEAS_SALES_TARGETS_2026) {
+        return window.KOSTAT_OVERSEAS_SALES_TARGETS_2026;
+      }
+      if (LIVE_DB && LIVE_DB.overseas_targets_2026) {
+        return LIVE_DB.overseas_targets_2026;
+      }
+      return null;
+    }
+
+    function renderTargetsModalContent(tabName) {
+      const container = document.getElementById('modalTargetsBody');
+      if (!container) return;
+
+      const dataset = getOverseasTargetsDataset();
+      if (!dataset) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:#94a3b8;">경영목표 데이터를 로드할 수 없습니다.</div>';
+        return;
+      }
+
+      if (tabName === '2026') {
+        const data2026 = dataset.management_targets_2026;
+        const months = data2026.months || [1,2,3,4,5,6,7,8,9,10,11,12];
+        const byCountry = data2026.by_country || {};
+        const monthlyTotals = data2026.monthly_total || {};
+        const countries = Object.keys(byCountry);
+
+        let tableHtml = `
+          <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:13px; font-weight:700; color:#cbd5e1;">2026년 해외영업 신소재포함 예상 매출 (달별 경영목표치)</div>
+            <div style="font-size:12px; color:#60a5fa; font-weight:700;">연간 총 경영목표: $${Math.round(data2026.annual_total).toLocaleString()}</div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="photo-table" style="width:100%; border-collapse:collapse; font-size:11.5px; font-variant-numeric:tabular-nums;">
+              <thead>
+                <tr style="background:#1e293b; color:#cbd5e1;">
+                  <th style="padding:8px 10px; text-align:left; position:sticky; left:0; background:#1e293b; z-index:3;">국가</th>
+        `;
+        months.forEach(m => {
+          const isCurrent = (m === 9);
+          tableHtml += `<th style="padding:8px 6px; text-align:right; min-width:68px; ${isCurrent ? 'background:rgba(59,130,246,0.25); color:#60a5fa; font-weight:800;' : ''}">${m}월</th>`;
+        });
+        tableHtml += `
+                  <th style="padding:8px 10px; text-align:right; min-width:85px; background:#162032; color:#34d399; font-weight:800;">연간 합계</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        countries.forEach((code, idx) => {
+          const item = byCountry[code];
+          const name = COUNTRY_DISPLAY_NAMES[code] || code;
+          const bg = idx % 2 === 0 ? '#111827' : '#162032';
+          tableHtml += `
+            <tr style="background:${bg}; border-bottom:1px solid #1e293b;">
+              <td style="padding:7px 10px; font-weight:700; color:#f8fafc; position:sticky; left:0; background:${bg}; z-index:2;">${name}</td>
+          `;
+          months.forEach(m => {
+            const val = item.months ? (item.months[m] || 0) : 0;
+            const isCurrent = (m === 9);
+            tableHtml += `
+              <td style="padding:7px 6px; text-align:right; color:${val > 0 ? '#cbd5e1' : '#64748b'}; ${isCurrent ? 'background:rgba(59,130,246,0.12); font-weight:700; color:#93c5fd;' : ''}">
+                ${val > 0 ? '$ ' + Math.round(val).toLocaleString() : '-'}
+              </td>
+            `;
+          });
+          tableHtml += `
+              <td style="padding:7px 10px; text-align:right; font-weight:700; color:#34d399; background:rgba(16,185,129,0.08);">
+                $ ${Math.round(item.total).toLocaleString()}
+              </td>
+            </tr>
+          `;
+        });
+
+        tableHtml += `
+              </tbody>
+              <tfoot>
+                <tr style="background:#1e293b; font-weight:800; border-top:2px solid #3b82f6;">
+                  <td style="padding:9px 10px; color:#60a5fa; position:sticky; left:0; background:#1e293b; z-index:2;">월별 합계</td>
+        `;
+        months.forEach(m => {
+          const tot = monthlyTotals[m] || 0;
+          const isCurrent = (m === 9);
+          tableHtml += `
+            <td style="padding:9px 6px; text-align:right; color:${isCurrent ? '#60a5fa' : '#f8fafc'}; ${isCurrent ? 'background:rgba(59,130,246,0.3); font-weight:800;' : ''}">
+              $ ${Math.round(tot).toLocaleString()}
+            </td>
+          `;
+        });
+        tableHtml += `
+                  <td style="padding:9px 10px; text-align:right; color:#34d399; font-size:12.5px; background:#0f172a;">
+                    $ ${Math.round(data2026.annual_total).toLocaleString()}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+        container.innerHTML = tableHtml;
+
+      } else if (tabName === '2025') {
+        const data2025 = dataset.actual_sales_2025;
+        const months = data2025.months || [1,2,3,4,5,6,7,8,9,10,11,12];
+        const byCountry = data2025.by_country || {};
+        const monthlyTotals = data2025.monthly_total || {};
+        const countries = Object.keys(byCountry);
+
+        let tableHtml = `
+          <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:13px; font-weight:700; color:#cbd5e1;">2025년 해외영업 국가별 실매출 및 총 매출 (달별 실적치)</div>
+            <div style="font-size:12px; color:#34d399; font-weight:700;">연간 총 실매출: $${Math.round(data2025.annual_total).toLocaleString()}</div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="photo-table" style="width:100%; border-collapse:collapse; font-size:11.5px; font-variant-numeric:tabular-nums;">
+              <thead>
+                <tr style="background:#1e293b; color:#cbd5e1;">
+                  <th style="padding:8px 10px; text-align:left; position:sticky; left:0; background:#1e293b; z-index:3;">국가</th>
+        `;
+        months.forEach(m => {
+          const isCurrent = (m === 9);
+          tableHtml += `<th style="padding:8px 6px; text-align:right; min-width:68px; ${isCurrent ? 'background:rgba(16,185,129,0.25); color:#34d399; font-weight:800;' : ''}">${m}월</th>`;
+        });
+        tableHtml += `
+                  <th style="padding:8px 10px; text-align:right; min-width:85px; background:#162032; color:#34d399; font-weight:800;">연간 실매출</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        countries.forEach((code, idx) => {
+          const item = byCountry[code];
+          const name = COUNTRY_DISPLAY_NAMES[code] || code;
+          const bg = idx % 2 === 0 ? '#111827' : '#162032';
+          tableHtml += `
+            <tr style="background:${bg}; border-bottom:1px solid #1e293b;">
+              <td style="padding:7px 10px; font-weight:700; color:#f8fafc; position:sticky; left:0; background:${bg}; z-index:2;">${name}</td>
+          `;
+          months.forEach(m => {
+            const val = item.months ? (item.months[m] || 0) : 0;
+            const isCurrent = (m === 9);
+            tableHtml += `
+              <td style="padding:7px 6px; text-align:right; color:${val > 0 ? '#cbd5e1' : '#64748b'}; ${isCurrent ? 'background:rgba(16,185,129,0.12); font-weight:700; color:#34d399;' : ''}">
+                ${val > 0 ? '$ ' + Math.round(val).toLocaleString() : '-'}
+              </td>
+            `;
+          });
+          tableHtml += `
+              <td style="padding:7px 10px; text-align:right; font-weight:700; color:#34d399; background:rgba(16,185,129,0.08);">
+                $ ${Math.round(item.total).toLocaleString()}
+              </td>
+            </tr>
+          `;
+        });
+
+        tableHtml += `
+              </tbody>
+              <tfoot>
+                <tr style="background:#1e293b; font-weight:800; border-top:2px solid #10b981;">
+                  <td style="padding:9px 10px; color:#34d399; position:sticky; left:0; background:#1e293b; z-index:2;">월별 총 실매출</td>
+        `;
+        months.forEach(m => {
+          const tot = monthlyTotals[m] || 0;
+          const isCurrent = (m === 9);
+          tableHtml += `
+            <td style="padding:9px 6px; text-align:right; color:${isCurrent ? '#34d399' : '#f8fafc'}; ${isCurrent ? 'background:rgba(16,185,129,0.3); font-weight:800;' : ''}">
+              $ ${Math.round(tot).toLocaleString()}
+            </td>
+          `;
+        });
+        tableHtml += `
+                  <td style="padding:9px 10px; text-align:right; color:#34d399; font-size:12.5px; background:#0f172a;">
+                    $ ${Math.round(data2025.annual_total).toLocaleString()}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+        container.innerHTML = tableHtml;
+
+      } else if (tabName === 'compare') {
+        const data2026 = dataset.management_targets_2026;
+        const data2025 = dataset.actual_sales_2025;
+        const countries2026 = data2026.by_country || {};
+        const countries2025 = data2025.by_country || {};
+
+        const allCodes = Array.from(new Set([...Object.keys(countries2026), ...Object.keys(countries2025)]));
+        allCodes.sort((a, b) => {
+          const valA = (countries2026[a] ? countries2026[a].total : 0);
+          const valB = (countries2026[b] ? countries2026[b].total : 0);
+          return valB - valA;
+        });
+
+        let tableHtml = `
+          <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:13px; font-weight:700; color:#cbd5e1;">2025년 국가별 실매출 vs 2026년 신소재포함 경영목표 종합 비교</div>
+            <div style="font-size:12px; color:#fbbf24; font-weight:700;">연간 비교 기준 (USD $)</div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="photo-table" style="width:100%; border-collapse:collapse; font-size:12px; font-variant-numeric:tabular-nums;">
+              <thead>
+                <tr style="background:#1e293b; color:#cbd5e1;">
+                  <th style="padding:9px 12px; text-align:left;">국가 (권역)</th>
+                  <th style="padding:9px 12px; text-align:right;">2025년 실매출</th>
+                  <th style="padding:9px 12px; text-align:right;">2026년 경영목표</th>
+                  <th style="padding:9px 12px; text-align:right;">증감액 ($)</th>
+                  <th style="padding:9px 12px; text-align:right;">증감율 (%)</th>
+                  <th style="padding:9px 12px; text-align:right;">2026 목표 점유율</th>
+                  <th style="padding:9px 12px; text-align:right; background:rgba(59,130,246,0.15);">9월 실적 vs 9월 목표</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        allCodes.forEach((code, idx) => {
+          const act = countries2025[code] ? countries2025[code].total : 0;
+          const tgt = countries2026[code] ? countries2026[code].total : 0;
+          const actSep = countries2025[code] && countries2025[code].months ? (countries2025[code].months['9'] || 0) : 0;
+          const tgtSep = countries2026[code] && countries2026[code].months ? (countries2026[code].months['9'] || 0) : 0;
+          const diff = tgt - act;
+          const pct = act > 0 ? ((diff / act) * 100) : 0;
+          const share = data2026.annual_total > 0 ? ((tgt / data2026.annual_total) * 100) : 0;
+          const name = COUNTRY_DISPLAY_NAMES[code] || code;
+          const bg = idx % 2 === 0 ? '#111827' : '#162032';
+
+          tableHtml += `
+            <tr style="background:${bg}; border-bottom:1px solid #1e293b;">
+              <td style="padding:8px 12px; font-weight:700; color:#f8fafc;">${name}</td>
+              <td style="padding:8px 12px; text-align:right; color:#cbd5e1;">$ ${Math.round(act).toLocaleString()}</td>
+              <td style="padding:8px 12px; text-align:right; font-weight:700; color:#60a5fa;">$ ${Math.round(tgt).toLocaleString()}</td>
+              <td style="padding:8px 12px; text-align:right; font-weight:700; color:${diff >= 0 ? '#34d399' : '#f87171'};">
+                ${diff >= 0 ? '+$ ' + Math.round(diff).toLocaleString() : '-$ ' + Math.round(Math.abs(diff)).toLocaleString()}
+              </td>
+              <td style="padding:8px 12px; text-align:right; font-weight:700; color:${pct >= 0 ? '#34d399' : '#f87171'};">
+                ${pct >= 0 ? '+' + pct.toFixed(1) : pct.toFixed(1)}%
+              </td>
+              <td style="padding:8px 12px; text-align:right; color:#cbd5e1;">${share.toFixed(1)}%</td>
+              <td style="padding:8px 12px; text-align:right; background:rgba(59,130,246,0.06); color:#93c5fd;">
+                $${Math.round(actSep/1000)}K -> $${Math.round(tgtSep/1000)}K
+              </td>
+            </tr>
+          `;
+        });
+
+        const totalAct = data2025.annual_total;
+        const totalTgt = data2026.annual_total;
+        const totalDiff = totalTgt - totalAct;
+        const totalPct = ((totalDiff / totalAct) * 100);
+        const sepActTotal = data2025.monthly_total ? (data2025.monthly_total['9'] || 0) : 2802301.32;
+        const sepTgtTotal = data2026.monthly_total ? (data2026.monthly_total['9'] || 0) : 2404602.0;
+
+        tableHtml += `
+              </tbody>
+              <tfoot>
+                <tr style="background:#0f172a; font-weight:800; border-top:2px solid #f59e0b; font-size:12.5px;">
+                  <td style="padding:10px 12px; color:#f8fafc;">연간 총계</td>
+                  <td style="padding:10px 12px; text-align:right; color:#34d399;">$ ${Math.round(totalAct).toLocaleString()}</td>
+                  <td style="padding:10px 12px; text-align:right; color:#60a5fa;">$ ${Math.round(totalTgt).toLocaleString()}</td>
+                  <td style="padding:10px 12px; text-align:right; color:${totalDiff >= 0 ? '#34d399' : '#f87171'};">
+                    ${totalDiff >= 0 ? '+$ ' + Math.round(totalDiff).toLocaleString() : '-$ ' + Math.round(Math.abs(totalDiff)).toLocaleString()}
+                  </td>
+                  <td style="padding:10px 12px; text-align:right; color:${totalPct >= 0 ? '#34d399' : '#f87171'};">
+                    ${totalPct >= 0 ? '+' + totalPct.toFixed(1) : totalPct.toFixed(1)}%
+                  </td>
+                  <td style="padding:10px 12px; text-align:right; color:#cbd5e1;">100.0%</td>
+                  <td style="padding:10px 12px; text-align:right; color:#fbbf24; background:rgba(59,130,246,0.15);">
+                    $${Math.round(sepActTotal/1000)}K -> $${Math.round(sepTgtTotal/1000)}K
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+        container.innerHTML = tableHtml;
+      }
     }
 
     function escapeAttr(str) {
