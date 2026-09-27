@@ -1605,6 +1605,21 @@
       color: #ffffff;
     }
 
+    /* 단일 주차 타임라인 선택기 버튼 스타일 */
+    .btn-timeline-top, .btn-timeline-nav {
+      transition: all 0.15s ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .btn-timeline-top:hover, .btn-timeline-nav:hover {
+      background: rgba(255, 255, 255, 0.14) !important;
+      border-color: #60a5fa !important;
+      color: #ffffff !important;
+    }
+    .btn-timeline-top:active, .btn-timeline-nav:active {
+      transform: scale(0.96);
+    }
+
     /* 내용등록 버튼 (노란색 강조) */
     .btn-submit-yellow {
       background: #eab308 !important;
@@ -1710,30 +1725,19 @@
       <div class="title-group">
         <h1 class="app-title">주간보고서</h1>
 
-        <!-- 1. Report 생산 주기 & 월간/주차 선택기 -->
+        <!-- 1. Report 생산 주기: 단일 주차 타임라인 선택기 (Single Unified Week Selector) -->
         <div class="period-nav-group" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
           <span style="font-size:11.5px; color:var(--text-muted); font-weight:700;">1. Report 생산 주기: 일주일</span>
           <span style="color:var(--border-light);">|</span>
-          <span style="font-size:11.5px; color:#ffffff; font-weight:700;">월간:</span>
-          <select class="select-dropdown-red" id="monthScheduleSelect" onchange="changeReportMonth(this.value)" title="2026년 월간 선택 (Drop-Down)" style="max-width:130px; font-weight:700;">
-            <option value="2026-01">2026년 1월</option>
-            <option value="2026-02">2026년 2월</option>
-            <option value="2026-03">2026년 3월</option>
-            <option value="2026-04">2026년 4월</option>
-            <option value="2026-05">2026년 5월</option>
-            <option value="2026-06">2026년 6월</option>
-            <option value="2026-07">2026년 7월</option>
-            <option value="2026-08">2026년 8월</option>
-            <option value="2026-09" selected>2026년 9월 [현재]</option>
+          <button type="button" class="btn-timeline-top" onclick="navigateWeek(-1)" title="이전 주차 (1주일 전)" style="padding:4px 9px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.22); color:#ffffff; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">&lt; 이전주</button>
+          <select class="select-dropdown-red" id="weekScheduleSelect" onchange="selectTimelineWeek(this.value)" title="2026년 주차 및 월간 타임라인 선택" style="max-width:340px; font-weight:700; color:#ffffff;">
+            <!-- 53개 주차 타임라인 옵션 동적 렌더링 -->
           </select>
-          <span style="color:var(--border-light);">|</span>
-          <span style="font-size:11.5px; color:#ffffff; font-weight:700;">주차:</span>
-          <select class="select-dropdown-red" id="weekScheduleSelect" onchange="changeWeeklySchedule(this.value)" title="2026년 주차 선택 (Drop-Down)" style="max-width:210px; font-weight:700;">
-            <!-- 54주차 동적 렌더링 -->
-          </select>
-          <div class="week-pills-container" id="weekPillsContainer">
-            <!-- 퀵 주차 버튼 -->
-          </div>
+          <button type="button" class="btn-timeline-top" onclick="navigateWeek(1)" title="다음 주차 (1주일 후)" style="padding:4px 9px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.22); color:#ffffff; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">다음주 &gt;</button>
+          <button type="button" class="btn-timeline-top" onclick="selectTimelineWeek(getTodayWeekNum())" title="현재 주차(이번주)로 즉시 이동" style="padding:4px 10px; background:rgba(37,99,235,0.25); border:1px solid #3b82f6; color:#93c5fd; border-radius:4px; font-size:11.5px; font-weight:700; cursor:pointer;">이번주 (현재)</button>
+          <span id="timelineMonthBadge" style="display:inline-block; font-size:11.5px; font-weight:800; color:#38bdf8; background:rgba(56, 189, 248, 0.12); border:1px solid rgba(56, 189, 248, 0.3); padding:3px 8px; border-radius:4px;">
+            9월 실적 연동
+          </span>
         </div>
 
         <!-- 보안 잠금 상태 뱃지 및 관리자(8805) 잠금 해제 버튼 -->
@@ -2452,61 +2456,167 @@
       updateSalesField(memId, siteIdx, field, num, false);
     }
 
-    function getWeekScheduleOptionsHtml(selectedWeek) {
+    function getTimelineWeekInfo(weekNum) {
+      const wNum = parseInt(weekNum, 10) || 39;
+      let found = null;
+      if (typeof MASTER_WEEKS_2026 !== 'undefined' && Array.isArray(MASTER_WEEKS_2026)) {
+        found = MASTER_WEEKS_2026.find(w => w.week_num === wNum);
+      }
+      if (!found) {
+        return {
+          week_num: wNum,
+          start: '2026-09-21',
+          end: '2026-09-27',
+          quarter: '3분기',
+          month_key: '2026-09',
+          month_num: 9,
+          week_in_month: '9월 4주차',
+          date_range: '09.21 ~ 09.27',
+          full_label: `WW${String(wNum).padStart(2, '0')} (09.21 ~ 09.27) - 9월 4주차`
+        };
+      }
+
+      const startDt = new Date(found.start + 'T00:00:00');
+      const thuDt = new Date(startDt.getTime() + 3 * 86400000);
+      const y = thuDt.getFullYear();
+      const m = thuDt.getMonth() + 1;
+      const monthKey = `${y}-${String(m).padStart(2, '0')}`;
+
+      let weekInMonth = 1;
+      for (let i = 0; i < MASTER_WEEKS_2026.length; i++) {
+        const item = MASTER_WEEKS_2026[i];
+        const itemThu = new Date(new Date(item.start + 'T00:00:00').getTime() + 3 * 86400000);
+        const itemKey = `${itemThu.getFullYear()}-${String(itemThu.getMonth() + 1).padStart(2, '0')}`;
+        if (itemKey === monthKey) {
+          if (item.week_num === wNum) break;
+          weekInMonth++;
+        }
+      }
+
+      const startMMDD = found.start.substring(5).replace('-', '.');
+      const endMMDD = found.end.substring(5).replace('-', '.');
+      const padW = String(wNum).padStart(2, '0');
+
+      return {
+        week_num: wNum,
+        start: found.start,
+        end: found.end,
+        quarter: found.quarter || '',
+        month_key: monthKey,
+        month_num: m,
+        week_in_month: `${m}월 ${weekInMonth}주차`,
+        date_range: `${startMMDD} ~ ${endMMDD}`,
+        full_label: `WW${padW} (${startMMDD} ~ ${endMMDD}) - ${m}월 ${weekInMonth}주차`
+      };
+    }
+    window.getTimelineWeekInfo = getTimelineWeekInfo;
+
+    function getTimelineWeekOptionsHtml(selectedWeek) {
       let h = '';
       const realCurWeek = (typeof getTodayWeekNum === 'function') ? getTodayWeekNum() : 39;
+      const selW = parseInt(selectedWeek || CURRENT_WEEK_NUM || realCurWeek, 10);
+      
+      let curQ = '';
       for (let i = 1; i <= 53; i++) {
-        const isSel = (i === (selectedWeek || CURRENT_WEEK_NUM || realCurWeek));
-        const curLabel = (i === realCurWeek) ? ' [현재]' : '';
-        h += `<option value="${i}" ${isSel ? 'selected' : ''}>${i}주차${curLabel}</option>`;
+        const wInfo = getTimelineWeekInfo(i);
+        const isSel = (i === selW);
+        const isCurrent = (i === realCurWeek);
+        const curTag = isCurrent ? ' [현재]' : '';
+        
+        if (wInfo.quarter && wInfo.quarter !== curQ) {
+          if (curQ !== '') h += '</optgroup>';
+          curQ = wInfo.quarter;
+          h += `<optgroup label="2026년 ${curQ}">`;
+        }
+        
+        h += `<option value="${i}" ${isSel ? 'selected' : ''}>${wInfo.full_label}${curTag}</option>`;
       }
+      if (curQ !== '') h += '</optgroup>';
       return h;
     }
+    window.getTimelineWeekOptionsHtml = getTimelineWeekOptionsHtml;
 
-    
-    function changeWeeklySchedule(val) {
-      changeReportWeekNum(val);
-    }
-    window.changeWeeklySchedule = changeWeeklySchedule;
+    function selectTimelineWeek(val, silent = false) {
+      const wNum = parseInt(val, 10) || 39;
+      CURRENT_WEEK_NUM = wNum;
+      const wInfo = getTimelineWeekInfo(wNum);
 
-    function changeReportMonth(mStr) {
-      SELECTED_MONTH = mStr;
-      const mSelect = document.getElementById('monthScheduleSelect');
-      if (mSelect) mSelect.value = mStr;
-      const cardMSelect = document.getElementById('cardMonthSelect');
-      if (cardMSelect) cardMSelect.value = mStr;
-      
-      const mNum = parseInt(mStr.split('-')[1], 10) || 9;
-      
+      // 자동 월 동기화 (주차가 결정되면 해당 월과 실적/목표가 100% 자동 연동)
+      SELECTED_MONTH = wInfo.month_key;
+
+      // 상단 및 카드 드롭다운 & 배지 동기화
+      const topWeekSelect = document.getElementById('weekScheduleSelect');
+      if (topWeekSelect) topWeekSelect.value = wNum;
+
+      const cardWeekSelect = document.getElementById('cardWeekSelect');
+      if (cardWeekSelect) cardWeekSelect.value = wNum;
+
+      const topMonthBadge = document.getElementById('timelineMonthBadge');
+      if (topMonthBadge) topMonthBadge.textContent = `${wInfo.month_num}월 실적 연동`;
+
+      const cardMonthBadge = document.getElementById('cardMonthBadge');
+      if (cardMonthBadge) cardMonthBadge.textContent = `${wInfo.month_num}월 실적`;
+
       // 즉시 KPI 및 테이블 렌더링
       recalculateTeamKpi();
       renderMemberView();
-      showToast(`${mNum}월 (${mStr}) 실적 및 매출 데이터로 전환되었습니다.`);
+
+      if (!silent) {
+        const curTag = (wNum === getTodayWeekNum()) ? ' [현재 주차]' : '';
+        showToast(`${wInfo.full_label}${curTag} (해당 월: ${wInfo.month_num}월 실적)로 전환되었습니다.`);
+      }
     }
-    window.changeReportMonth = changeReportMonth;
+    window.selectTimelineWeek = selectTimelineWeek;
+
+    function navigateWeek(delta) {
+      const cur = CURRENT_WEEK_NUM || 39;
+      let target = cur + delta;
+      if (target < 1) target = 1;
+      if (target > 53) target = 53;
+      selectTimelineWeek(target);
+    }
+    window.navigateWeek = navigateWeek;
+
+    // 레거시 호환성 유지
+    function getWeekScheduleOptionsHtml(selectedWeek) {
+      return getTimelineWeekOptionsHtml(selectedWeek);
+    }
+    
+    function changeWeeklySchedule(val) {
+      selectTimelineWeek(val);
+    }
+    window.changeWeeklySchedule = changeWeeklySchedule;
 
     function changeReportWeekNum(val) {
-      const wNum = parseInt(val, 10) || 39;
-      CURRENT_WEEK_NUM = wNum;
-      const weekSelect = document.getElementById('weekScheduleSelect');
-      if (weekSelect) weekSelect.value = wNum;
-      const cardWeekSelect = document.getElementById('cardWeekSelect');
-      if (cardWeekSelect) cardWeekSelect.value = wNum;
-      renderMemberView();
-      showToast(`${wNum}주차 보고서로 전환되었습니다.`);
+      selectTimelineWeek(val);
     }
+    window.changeReportWeekNum = changeReportWeekNum;
+
+    function changeReportMonth(mStr) {
+      SELECTED_MONTH = mStr;
+      if (typeof MASTER_WEEKS_2026 !== 'undefined') {
+        const found = MASTER_WEEKS_2026.find(w => getTimelineWeekInfo(w.week_num).month_key === mStr);
+        if (found) {
+          selectTimelineWeek(found.week_num);
+          return;
+        }
+      }
+      recalculateTeamKpi();
+      renderMemberView();
+    }
+    window.changeReportMonth = changeReportMonth;
 
     function getTodayWeekNum() {
       try {
         const todayStr = new Date().toISOString().substring(0, 10);
         if (typeof MASTER_WEEKS_2026 !== 'undefined' && Array.isArray(MASTER_WEEKS_2026)) {
           const found = MASTER_WEEKS_2026.find(w => todayStr >= w.start && todayStr <= w.end);
-          if (found) return found.week_num;
+          if (found) return Math.min(39, found.week_num);
         }
       } catch (_) {}
       return 39;
     }
-    // 현재 활성 주차 번호 (오늘 날짜 2026-09-25 기준: 39주차)
+    // 현재 활성 주차 번호 (오늘 기준: 39주차)
     let CURRENT_WEEK_NUM = getTodayWeekNum();
     let ISSUE_CUSTOMER_FILTER = 'ALL';
     
@@ -2658,25 +2768,16 @@
     let ACTIVE_BIZ_SUBTAB = 'project';
 
     function initWeeklyMasterData() {
-      // 1. 주차 드롭다운 채우기 (54주차)
+      // 1. 단일 주차 타임라인 드롭다운 채우기 (53개 주차)
       const weekSelect = document.getElementById('weekScheduleSelect');
-      if (weekSelect && typeof MASTER_WEEKS_2026 !== 'undefined') {
-        let optHtml = '';
-        let currentQuarter = '';
-        
-        MASTER_WEEKS_2026.forEach(w => {
-          if (w.quarter && w.quarter !== currentQuarter) {
-            if (currentQuarter !== '') optHtml += '</optgroup>';
-            currentQuarter = w.quarter;
-            optHtml += `<optgroup label="${w.quarter}">`;
-          }
-          const isCurrent = (w.week_num === (CURRENT_WEEK_NUM || 39));
-          const selAttr = isCurrent ? 'selected' : '';
-          const curLabel = (w.week_num === (typeof getTodayWeekNum === 'function' ? getTodayWeekNum() : 39)) ? ' [현재]' : '';
-          optHtml += `<option value="${w.week_num}" ${selAttr}>${w.week} (${w.start.substring(5)} ~ ${w.end.substring(5)})${curLabel}</option>`;
-        });
-        if (currentQuarter !== '') optHtml += '</optgroup>';
-        weekSelect.innerHTML = optHtml;
+      if (weekSelect) {
+        weekSelect.innerHTML = getTimelineWeekOptionsHtml(CURRENT_WEEK_NUM || 39);
+        weekSelect.value = CURRENT_WEEK_NUM || 39;
+      }
+      const topMonthBadge = document.getElementById('timelineMonthBadge');
+      if (topMonthBadge) {
+        const wInfo = getTimelineWeekInfo(CURRENT_WEEK_NUM || 39);
+        topMonthBadge.textContent = `${wInfo.month_num}월 실적 연동`;
       }
 
       // 2. 고객사 드롭다운들 채우기 (127개사)
@@ -3063,36 +3164,33 @@
         <!-- 사진 양식: 주간보고 -->
         <div class="photo-doc-title">주간보고</div>
 
-        <!-- 1. Report 생산 주기 & 월간/주차/담당 선택 (첨부 사진 규격) -->
+        <!-- 1. Report 생산 주기: 일주일 (단일 주차 타임라인 연동 규격) -->
         <div class="photo-layout-section">
           <div class="photo-section-title">1. Report 생산 주기: 일주일</div>
           <div class="photo-indent">
             <table class="photo-table photo-table-meta">
               <tbody>
                 <tr>
-                  <th class="photo-th photo-th-meta" style="width:110px;">Report 월간</th>
-                  <td class="photo-td photo-td-meta">
-                    <select class="select-dropdown-red" id="cardMonthSelect" onchange="changeReportMonth(this.value)" style="font-size:13px; font-weight:800; padding:4px 10px; text-align:center; text-align-last:center; width:100%;">
-                      <option value="2026-01" ${SELECTED_MONTH === '2026-01' ? 'selected' : ''}>2026년 1월 (마감)</option>
-                      <option value="2026-02" ${SELECTED_MONTH === '2026-02' ? 'selected' : ''}>2026년 2월 (마감)</option>
-                      <option value="2026-03" ${SELECTED_MONTH === '2026-03' ? 'selected' : ''}>2026년 3월 (마감)</option>
-                      <option value="2026-04" ${SELECTED_MONTH === '2026-04' ? 'selected' : ''}>2026년 4월 (마감)</option>
-                      <option value="2026-05" ${SELECTED_MONTH === '2026-05' ? 'selected' : ''}>2026년 5월 (마감)</option>
-                      <option value="2026-06" ${SELECTED_MONTH === '2026-06' ? 'selected' : ''}>2026년 6월 (마감)</option>
-                      <option value="2026-07" ${SELECTED_MONTH === '2026-07' ? 'selected' : ''}>2026년 7월 (마감)</option>
-                      <option value="2026-08" ${SELECTED_MONTH === '2026-08' ? 'selected' : ''}>2026년 8월 (마감)</option>
-                      <option value="2026-09" ${SELECTED_MONTH === '2026-09' ? 'selected' : ''}>2026년 9월 [현재]</option>
-                    </select>
+                  <th class="photo-th photo-th-meta" style="width:130px;">Report 주차 (기간)</th>
+                  <td class="photo-td photo-td-meta" style="min-width:340px;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <button type="button" class="btn-timeline-nav" onclick="navigateWeek(-1)" title="이전 주차 (1주일 전)" style="padding:4px 9px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.22); color:#fff; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">&lt; 이전</button>
+                      <select class="select-dropdown-red" id="cardWeekSelect" onchange="selectTimelineWeek(this.value)" style="flex:1; font-size:12.5px; font-weight:700; padding:4px 8px; text-align:left; color:#fff;">
+                        ${getTimelineWeekOptionsHtml(CURRENT_WEEK_NUM || 39)}
+                      </select>
+                      <button type="button" class="btn-timeline-nav" onclick="navigateWeek(1)" title="다음 주차 (1주일 후)" style="padding:4px 9px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.22); color:#fff; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">다음 &gt;</button>
+                      <button type="button" class="btn-timeline-nav" onclick="selectTimelineWeek(getTodayWeekNum())" title="현재 주차로 즉시 이동" style="padding:4px 9px; background:rgba(37,99,235,0.25); border:1px solid #3b82f6; color:#93c5fd; border-radius:4px; font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap;">이번주</button>
+                    </div>
                   </td>
-                  <th class="photo-th photo-th-meta" style="width:110px;">Report 주차</th>
-                  <td class="photo-td photo-td-meta">
-                    <select class="select-dropdown-red" id="cardWeekSelect" onchange="changeReportWeekNum(this.value)" style="font-size:13px; font-weight:800; padding:4px 10px; text-align:center; text-align-last:center; width:100%;">
-                      ${getWeekScheduleOptionsHtml(CURRENT_WEEK_NUM || 39)}
-                    </select>
+                  <th class="photo-th photo-th-meta" style="width:110px;">해당 월 (자동)</th>
+                  <td class="photo-td photo-td-meta" style="width:130px; text-align:center;">
+                    <span id="cardMonthBadge" style="display:inline-block; font-size:13px; font-weight:800; color:#38bdf8; background:rgba(56, 189, 248, 0.12); border:1px solid rgba(56, 189, 248, 0.3); padding:4px 12px; border-radius:4px;">
+                      ${monthNum}월 실적
+                    </span>
                   </td>
-                  <th class="photo-th photo-th-meta" style="width:110px;">조회 대상</th>
-                  <td class="photo-td photo-td-meta">
-                    <select class="select-dropdown-red" id="cardMemberSelect" onchange="selectMember(this.value)" style="font-size:13px; font-weight:800; padding:4px 10px; text-align:center; text-align-last:center; width:100%;">
+                  <th class="photo-th photo-th-meta" style="width:100px;">조회 대상</th>
+                  <td class="photo-td photo-td-meta" style="min-width:180px;">
+                    <select class="select-dropdown-red" id="cardMemberSelect" onchange="selectMember(this.value)" style="font-size:12.5px; font-weight:700; padding:4px 8px; text-align:center; text-align-last:center; width:100%; color:#fff;">
                       <option value="ALL" ${ACTIVE_MEMBER_ID === 'ALL' ? 'selected' : ''}>전체 해외영업 (11개 거점 종합)</option>
                       <option value="hjh" ${ACTIVE_MEMBER_ID === 'hjh' ? 'selected' : ''}>한준희 책임 (미국, 유럽)</option>
                       <option value="ksm" ${ACTIVE_MEMBER_ID === 'ksm' ? 'selected' : ''}>김샘물 선임 (말레이시아, 홍콩)</option>
