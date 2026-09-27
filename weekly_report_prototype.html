@@ -1582,11 +1582,11 @@
       border: 1px solid rgba(245, 158, 11, 0.35);
     }
 
-    /* 빨간색 표시 Drop-Down 스타일 (image.png 규격) */
+    /* 드롭다운 스타일 (화이트 텍스트 규격) */
     .select-dropdown-red {
-      background: transparent;
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #ef4444 !important;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff !important;
       font-weight: 700 !important;
       font-size: 13px !important;
       border-radius: 4px;
@@ -1596,8 +1596,9 @@
       transition: all 0.15s ease;
     }
     .select-dropdown-red:hover, .select-dropdown-red:focus {
-      border-color: #f87171 !important;
-      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+      border-color: #60a5fa !important;
+      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
+      background: rgba(255, 255, 255, 0.08);
     }
     .select-dropdown-red option {
       background: #1e293b;
@@ -1713,7 +1714,7 @@
         <div class="period-nav-group" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
           <span style="font-size:11.5px; color:var(--text-muted); font-weight:700;">1. Report 생산 주기: 일주일</span>
           <span style="color:var(--border-light);">|</span>
-          <span style="font-size:11.5px; color:#ef4444; font-weight:700;">월간:</span>
+          <span style="font-size:11.5px; color:#ffffff; font-weight:700;">월간:</span>
           <select class="select-dropdown-red" id="monthScheduleSelect" onchange="changeReportMonth(this.value)" title="2026년 월간 선택 (Drop-Down)" style="max-width:130px; font-weight:700;">
             <option value="2026-01">2026년 1월</option>
             <option value="2026-02">2026년 2월</option>
@@ -1726,7 +1727,7 @@
             <option value="2026-09" selected>2026년 9월 [현재]</option>
           </select>
           <span style="color:var(--border-light);">|</span>
-          <span style="font-size:11.5px; color:#ef4444; font-weight:700;">주차:</span>
+          <span style="font-size:11.5px; color:#ffffff; font-weight:700;">주차:</span>
           <select class="select-dropdown-red" id="weekScheduleSelect" onchange="changeWeeklySchedule(this.value)" title="2026년 주차 선택 (Drop-Down)" style="max-width:210px; font-weight:700;">
             <!-- 54주차 동적 렌더링 -->
           </select>
@@ -1848,10 +1849,10 @@
             <table class="biz-table">
               <thead>
                 <tr>
-                  <th style="color:#ef4444;">고객사</th>
-                  <th style="color:#ef4444;">아이템</th>
+                  <th style="color:#ffffff;">고객사</th>
+                  <th style="color:#ffffff;">아이템</th>
                   <th>Kostat PN</th>
-                  <th style="color:#ef4444;">진행 Type</th>
+                  <th style="color:#ffffff;">진행 Type</th>
                   <th>PO NO</th>
                   <th>예상 출하일정</th>
                   <th style="text-align:center;">관리</th>
@@ -1874,10 +1875,10 @@
             <table class="biz-table">
               <thead>
                 <tr>
-                  <th style="color:#ef4444;">고객사</th>
-                  <th style="color:#ef4444;">아이템</th>
+                  <th style="color:#ffffff;">고객사</th>
+                  <th style="color:#ffffff;">아이템</th>
                   <th>Kostat PN</th>
-                  <th style="color:#ef4444;">불량유형</th>
+                  <th style="color:#ffffff;">불량유형</th>
                   <th>코멘트사항</th>
                   <th style="text-align:center;">관리</th>
                 </tr>
@@ -1893,7 +1894,7 @@
         <div id="bizPanelReport" style="flex:1; display:none; flex-direction:column; overflow-y:auto; max-height:510px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:var(--bg-card-sub); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color); flex-wrap:wrap; gap:8px;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:11.5px; color:#ef4444; font-weight:700;">고객사:</span>
+              <span style="font-size:11.5px; color:#ffffff; font-weight:700;">고객사:</span>
               <select id="salesReportCustSelect" class="select-dropdown-red" onchange="filterIssuesByCustomer(this.value)">
                 <!-- 127개 고객사 동적 렌더링 -->
               </select>
@@ -2094,13 +2095,13 @@
       <div class="modal-body" style="padding:16px 20px;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">고객사 (Customer) *</label>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">고객사 (Customer) *</label>
             <select id="modalPrjCustomer" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
               <!-- 127개사 -->
             </select>
           </div>
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">아이템 (Item) *</label>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">아이템 (Item) *</label>
             <select id="modalPrjItem" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
               <!-- 9개 품목 -->
             </select>
@@ -2113,7 +2114,7 @@
             <input type="text" id="modalPrjPn" placeholder="예: KS-880220" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
           </div>
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">진행 Type (Tool Type) *</label>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">진행 Type (Tool Type) *</label>
             <select id="modalPrjToolType" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
               <option value="Close">Close</option>
               <option value="Open">Open</option>
@@ -2161,13 +2162,13 @@
       <div class="modal-body" style="padding:16px 20px;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">고객사 (Customer) *</label>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">고객사 (Customer) *</label>
             <select id="modalQualCustomer" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
               <!-- 127개사 -->
             </select>
           </div>
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">아이템 (Item) *</label>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">아이템 (Item) *</label>
             <select id="modalQualItem" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
               <!-- 9개 품목 -->
             </select>
@@ -2180,7 +2181,7 @@
             <input type="text" id="modalQualPn" placeholder="예: KS-880220" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
           </div>
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:#ef4444; margin-bottom:4px;">불량유형 *</label>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">불량유형 *</label>
             <select id="modalQualDefectType" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
               <!-- 불량유형 목록 -->
             </select>
@@ -2979,7 +2980,7 @@
           tableHtml += `
             <tr>
               <td class="photo-td">
-                <span style="font-weight:800; color:#ef4444;">[${escapeAttr(item.country || 'US')}]</span>
+                <span style="font-weight:800; color:#ffffff;">[${escapeAttr(item.country || 'US')}]</span>
                 <strong>${escapeAttr(item.site)}</strong>
               </td>
               <td class="photo-td" style="text-align:right;">$ ${Math.round(tgt).toLocaleString()}</td>
@@ -3647,7 +3648,7 @@
           <div class="issue-item-card" style="border-left: 3px solid #eab308; background:var(--bg-card-sub); border:1px solid var(--border-color); border-left:3px solid #eab308; border-radius:6px; padding:12px; margin-bottom:12px;">
             <div class="issue-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                <span class="issue-customer-badge" style="border-color:#ef4444; color:#ef4444; font-weight:800; background:rgba(239, 68, 68, 0.08); padding:2px 8px; border-radius:4px; border:1px solid #ef4444; font-size:11px;">${escapeAttr(custDisplay)}</span>
+                <span class="issue-customer-badge" style="border-color:rgba(255, 255, 255, 0.25); color:#ffffff; font-weight:800; background:rgba(255, 255, 255, 0.08); padding:2px 8px; border-radius:4px; border:1px solid rgba(255, 255, 255, 0.25); font-size:11px;">${escapeAttr(custDisplay)}</span>
                 <span class="issue-tag-badge" style="background:#2563eb; color:#fff; font-size:11px; font-weight:700; padding:2px 6px; border-radius:4px;">${escapeAttr(iss.tag || '진행중')}</span>
                 ${iss.item ? `<span class="issue-item-badge" style="background:var(--bg-card); color:var(--text-muted); font-size:11px; padding:2px 6px; border-radius:4px; border:1px solid var(--border-color);">${escapeAttr(iss.item)}</span>` : ''}
               </div>
