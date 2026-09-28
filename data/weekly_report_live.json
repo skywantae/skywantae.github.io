@@ -77,8 +77,8 @@
   "members": [
     {
       "id": "hjh",
-      "name": "한준희 책임",
-      "role": "책임",
+      "name": "한준희",
+      "role": "",
       "short_name": "한준희",
       "regions": "미국 (USA)",
       "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
@@ -307,8 +307,8 @@
     },
     {
       "id": "ksm",
-      "name": "김샘물 선임",
-      "role": "선임",
+      "name": "김샘물",
+      "role": "",
       "short_name": "김샘물",
       "regions": "말레이시아 (Malaysia)",
       "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
@@ -443,8 +443,8 @@
     },
     {
       "id": "lgj",
-      "name": "이가진 선임",
-      "role": "선임",
+      "name": "이가진",
+      "role": "",
       "short_name": "이가진",
       "regions": "대만 (Taiwan)",
       "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
@@ -610,8 +610,8 @@
     },
     {
       "id": "lsc",
-      "name": "이상철 선임",
-      "role": "선임",
+      "name": "이상철",
+      "role": "",
       "short_name": "이상철",
       "regions": "싱가포르 & 태국 (Singapore & Thailand)",
       "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
@@ -808,8 +808,8 @@
     },
     {
       "id": "kwt",
-      "name": "김완태 사원",
-      "role": "사원",
+      "name": "김완태",
+      "role": "",
       "short_name": "김완태",
       "regions": "일본 & 필리핀 (Japan & Philippines)",
       "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
