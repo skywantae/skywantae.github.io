@@ -1725,10 +1725,8 @@
       <div class="title-group">
         <h1 class="app-title">주간보고서</h1>
 
-        <!-- 1. Report 생산 주기: 단일 주차 타임라인 선택기 (Single Unified Week Selector) -->
+        <!-- 단일 주차 타임라인 선택기 (Single Unified Week Selector) -->
         <div class="period-nav-group" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-          <span style="font-size:11.5px; color:var(--text-muted); font-weight:700;">1. Report 생산 주기: 일주일</span>
-          <span style="color:var(--border-light);">|</span>
           <button type="button" class="btn-timeline-top" onclick="navigateWeek(-1)" title="이전 주차 (1주일 전)" style="padding:4px 9px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.22); color:#ffffff; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">&lt; 이전주</button>
           <select class="select-dropdown-red" id="weekScheduleSelect" onchange="selectTimelineWeek(this.value)" title="2026년 주차 및 월간 타임라인 선택" style="max-width:340px; font-weight:700; color:#ffffff;">
             <!-- 53개 주차 타임라인 옵션 동적 렌더링 -->
@@ -1832,15 +1830,16 @@
         <div class="column-header" style="margin-bottom:8px;">
           <div class="column-title" style="display:flex; align-items:center; gap:8px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <span style="font-weight:800; color:#fff;">3. 영업사항</span>
+            <span style="font-weight:800; color:#fff;">영업사항</span>
           </div>
         </div>
 
-        <!-- 영업사항 서브탭: 1) 프로젝트 / 2) Quality Issue / 3) 영업현황보고 -->
+        <!-- 영업사항 서브탭: 1) 프로젝트 / 2) Quality Issue / 3) 영업현황보고 / 4) 샘플 리스트 -->
         <div class="biz-subtab-nav">
           <button class="biz-subtab-btn active" id="btnSubtabProject" onclick="switchBizSubtab('project', this)">1) 프로젝트</button>
           <button class="biz-subtab-btn" id="btnSubtabQuality" onclick="switchBizSubtab('quality', this)">2) Quality Issue</button>
           <button class="biz-subtab-btn" id="btnSubtabReport" onclick="switchBizSubtab('report', this)">3) 영업현황보고</button>
+          <button class="biz-subtab-btn" id="btnSubtabSample" onclick="switchBizSubtab('sample', this)">4) 샘플 리스트</button>
         </div>
 
         <!-- 3-1. 프로젝트 패널 -->
@@ -1911,6 +1910,71 @@
           </div>
           <div id="panelIssuesContainer" style="flex:1; overflow-y:auto;">
             <!-- 동적 렌더링 -->
+          </div>
+        </div>
+        
+        <!-- 3-4. 샘플 리스트 패널 -->
+        <div id="bizPanelSample" style="flex:1; display:none; flex-direction:column; overflow-y:auto; max-height:560px;">
+          <!-- 상단 필터 및 검색 바 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; flex:1;">
+              <input type="text" id="sampleSearchInput" placeholder="고객사, 품번(P/N), 규격, PO 검색..." oninput="onSampleSearchInput()"
+                     style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); color:#fff; border-radius:4px; padding:4px 10px; font-size:12px; min-width:200px;">
+              <select class="select-dropdown-red" id="sampleYearFilter" onchange="onSampleFilterChange()" style="font-size:12px; font-weight:700; padding:4px 8px; color:#fff;">
+                <option value="2026" selected>2026년</option>
+                <option value="ALL">전체 연도</option>
+                <option value="2025">2025년</option>
+                <option value="2024">2024년</option>
+                <option value="2023">2023년</option>
+              </select>
+              <select class="select-dropdown-red" id="sampleStatusFilter" onchange="onSampleFilterChange()" style="font-size:12px; font-weight:700; padding:4px 8px; color:#fff;">
+                <option value="ALL">전체 승인상태</option>
+                <option value="승인">승인</option>
+                <option value="미승인">미승인</option>
+                <option value="진행중">진행중</option>
+              </select>
+              <select class="select-dropdown-red" id="sampleFactoryFilter" onchange="onSampleFilterChange()" style="font-size:12px; font-weight:700; padding:4px 8px; color:#fff;">
+                <option value="ALL">전체 공장</option>
+                <option value="김포">김포</option>
+                <option value="혜주">혜주</option>
+                <option value="중동">중동</option>
+                <option value="베트남">베트남</option>
+                <option value="태창">태창</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span id="sampleCountBadge" style="font-size:11.5px; color:#38bdf8; font-weight:700; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:4px;">총 0건</span>
+              <button class="btn-action-xs primary" onclick="openAddSampleModal()">+ 샘플 등록</button>
+            </div>
+          </div>
+
+          <!-- 샘플 핵심 통계 스트립 -->
+          <div id="sampleKpiStrip" style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+            <!-- 동적 렌더링 -->
+          </div>
+
+          <!-- 샘플 데이터 테이블 -->
+          <div class="biz-table-wrap">
+            <table class="biz-table">
+              <thead>
+                <tr>
+                  <th style="color:#ffffff; width:80px; text-align:center;">담당자</th>
+                  <th style="color:#ffffff; width:130px;">고객사</th>
+                  <th style="color:#ffffff; width:130px;">Kostat P/N</th>
+                  <th style="color:#ffffff;">규격 / Package</th>
+                  <th style="text-align:right; width:55px;">수량</th>
+                  <th style="text-align:center; width:85px;">요청일</th>
+                  <th style="text-align:center; width:85px;">발송일</th>
+                  <th style="text-align:center; width:75px;">승인여부</th>
+                  <th style="width:120px;">진행사항</th>
+                  <th style="text-align:center; width:65px;">공장</th>
+                  <th style="text-align:center; width:50px;">상세</th>
+                </tr>
+              </thead>
+              <tbody id="sampleTableTbody">
+                <!-- 동적 렌더링 -->
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -2346,9 +2410,145 @@
     </div>
   </div>
 
+  
+  <!-- 샘플 상세 조회 모달 -->
+  <div class="modal-overlay" id="sampleDetailModal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box modal-md" style="max-width:640px;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border-color); padding:14px 20px;">
+        <div class="modal-title" id="sampleDetailModalTitle" style="font-size:15px; font-weight:700; color:#ffffff;">샘플 상세 내역</div>
+        <button class="modal-close-btn" onclick="closeSampleDetailModal()" title="닫기">&times;</button>
+      </div>
+      <div class="modal-body" id="sampleDetailModalBody" style="padding:16px 20px; font-size:12.5px; max-height:480px; overflow-y:auto;">
+        <!-- 동적 렌더링 -->
+      </div>
+      <div class="modal-footer" style="padding:12px 20px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid var(--border-color); background:var(--bg-card-sub);">
+        <button class="btn-action primary" onclick="closeSampleDetailModal()">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 신규 샘플 등록 모달 -->
+  <div class="modal-overlay" id="addSampleModal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box modal-md" style="max-width:620px;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border-color); padding:14px 20px;">
+        <div class="modal-title" style="font-size:15px; font-weight:700; color:#ffffff;">신규 영업 샘플 등록</div>
+        <button class="modal-close-btn" onclick="closeAddSampleModal()" title="닫기">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">담당자 *</label>
+            <select id="modalSampleManager" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;">
+              <option value="한준희">한준희 책임 (미국/유럽)</option>
+              <option value="김샘물">김샘물 선임 (말레이시아/홍콩)</option>
+              <option value="이가진">이가진 선임 (대만)</option>
+              <option value="이상철">이상철 선임 (싱가포르/태국/베트남)</option>
+              <option value="김완태">김완태 사원 (필리핀/일본/한국)</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">국가 (Country) *</label>
+            <select id="modalSampleCountry" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;">
+              <option value="US">US (미국)</option>
+              <option value="MY">MY (말레이시아)</option>
+              <option value="TW">TW (대만)</option>
+              <option value="TH">TH (태국)</option>
+              <option value="PH">PH (필리핀)</option>
+              <option value="JP">JP (일본)</option>
+              <option value="SG">SG (싱가포르)</option>
+              <option value="VN">VN (베트남)</option>
+              <option value="KR">KR (한국)</option>
+              <option value="EU">EU (유럽)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--primary-light); margin-bottom:4px;">고객사 *</label>
+            <input type="text" id="modalSampleCustomer" placeholder="예: SKYWORKS, ASE, INTEL" style="width:100%; padding:8px 10px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">품목 (ITEM)</label>
+            <select id="modalSampleItem" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;">
+              <option value="T-TOOL">T-TOOL</option>
+              <option value="CT-TOOL">CT-TOOL</option>
+              <option value="PC-TOOL">PC-TOOL</option>
+              <option value="COVER">COVER</option>
+              <option value="TRAY">TRAY</option>
+              <option value="COMP">COMP</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Kostat P/N *</label>
+            <input type="text" id="modalSamplePartNo" placeholder="예: KS-881850" style="width:100%; padding:8px 10px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">수량 (Q'ty)</label>
+            <input type="number" id="modalSampleQty" value="10" min="1" style="width:100%; padding:8px 10px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;" />
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">규격 / Package</label>
+          <input type="text" id="modalSamplePackage" placeholder="예: BGA 12.0X12.0mm, MPSU 150도" style="width:100%; padding:8px 10px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;" />
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">샘플 요청일</label>
+            <input type="date" id="modalSampleReqDate" style="width:100%; padding:7px 8px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12px; outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">샘플 발송일</label>
+            <input type="date" id="modalSampleShipDate" style="width:100%; padding:7px 8px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12px; outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">공장</label>
+            <select id="modalSampleFactory" style="width:100%; padding:7px 8px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12px; outline:none;">
+              <option value="김포">김포</option>
+              <option value="혜주">혜주</option>
+              <option value="중동">중동</option>
+              <option value="베트남">베트남</option>
+              <option value="태창">태창</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">고객 승인 여부</label>
+            <select id="modalSampleApproval" style="width:100%; padding:8px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;">
+              <option value="진행중" selected>진행중</option>
+              <option value="승인">승인</option>
+              <option value="미승인">미승인</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">PO NO</label>
+            <input type="text" id="modalSamplePoNo" placeholder="PO 번호 (선택)" style="width:100%; padding:8px 10px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;" />
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">진행사항 / 비고</label>
+          <input type="text" id="modalSampleProgress" placeholder="진행 상황 및 세부 특이사항" style="width:100%; padding:8px 10px; background:var(--bg-base); border:1px solid var(--border-light); border-radius:6px; color:#ffffff; font-size:12.5px; outline:none;" />
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:12px 20px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid var(--border-color); background:var(--bg-card-sub);">
+        <button class="btn-modal-cancel" onclick="closeAddSampleModal()">취소</button>
+        <button class="btn-action primary" onclick="submitAddSampleModal()">등록 및 저장</button>
+      </div>
+    </div>
+  </div>
+
   <script src="data/weekly_report_live.js?v=1.0.173_w39"></script>
   <script src="data/overseas_sales_targets_2026.js?v=1.0.173_w39"></script>
   <script src="data/overseas_monthly_actuals_2026.js?v=1.0.173_w39"></script>
+  <script src="data/overseas_samples_2026.js?v=1.0.173_w39"></script>
   <script>
     // 공식 담당 국가 및 고객사 규격 강제 매핑 테이블
     const OFFICIAL_REGIONS = {
@@ -2414,7 +2614,33 @@
 
     function getSiteForecast(item, weekNum) {
       if (!item) return { target: 0, current: 0, additional: 0, expected: 0, note: '' };
-      const wKey = 'W' + (weekNum || CURRENT_WEEK_NUM || 39);
+      const targetWeek = parseInt(weekNum, 10) || CURRENT_WEEK_NUM || 39;
+      const activeWeek = (typeof getTodayWeekNum === 'function') ? getTodayWeekNum() : 39;
+      const isFutureWeek = (targetWeek > activeWeek);
+      const wKey = 'W' + targetWeek;
+
+      // 다음주차들은 현재까지 달성금액이나 예상달성 금액을 0원으로 표기 (사용자 오버라이드가 없을 경우)
+      if (isFutureWeek) {
+        if (item.weekly_forecasts && item.weekly_forecasts[wKey]) {
+          const wf = item.weekly_forecasts[wKey];
+          return {
+            target: parseFloat(wf.target) || parseFloat(item.target) || 0,
+            current: parseFloat(wf.current) || 0,
+            additional: parseFloat(wf.additional) || 0,
+            expected: parseFloat(wf.expected) || 0,
+            note: wf.note || ''
+          };
+        }
+        const t = (item.target !== undefined && item.target !== null) ? parseFloat(item.target) : 0;
+        return {
+          target: isNaN(t) ? 0 : t,
+          current: 0,
+          additional: 0,
+          expected: 0,
+          note: ''
+        };
+      }
+
       if (item.weekly_forecasts && item.weekly_forecasts[wKey]) {
         return item.weekly_forecasts[wKey];
       }
@@ -2981,6 +3207,78 @@
         };
       }
 
+      // 미래 월(10월, 11월, 12월)인 경우 2026 경영목표 기준 달성금액 0원 데이터셋 동적 구축
+      if (mNum > 9) {
+        const title = `2026년 ${mNum}월 해외영업부 주간보고서 (계획)`;
+        const builtMembers = [
+          { id: 'hjh', name: '한준희 책임', role: '책임', short_name: '한준희', regions: '미국 (USA)', accounts: 'Skyworks (US), Renesas (US), Broadcom (US)', sales: [] },
+          { id: 'ksm', name: '김샘물 선임', role: '선임', short_name: '김샘물', regions: '말레이시아 (Malaysia)', accounts: 'Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)', sales: [] },
+          { id: 'lgj', name: '이가진 선임', role: '선임', short_name: '이가진', regions: '대만 (Taiwan)', accounts: 'Amkor (TW), SPIL (TW), KYEC, Sigurd', sales: [] },
+          { id: 'lsc', name: '이상철 선임', role: '선임', short_name: '이상철', regions: '싱가포르 & 태국 (Singapore & Thailand)', accounts: 'Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)', sales: [] },
+          { id: 'kwt', name: '김완태 사원', role: '사원', short_name: '김완태', regions: '일본 & 필리핀 (Japan & Philippines)', accounts: 'Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)', sales: [] }
+        ];
+
+        const memLookup = {};
+        builtMembers.forEach(bm => { memLookup[bm.id] = bm; });
+
+        const countryOrder = ['US', 'EU', 'JP', 'TW', 'HK', 'MY', 'PH', 'SG', 'TH', 'VN', 'KR'];
+        const targetsObj = (typeof window.KOSTAT_SALES_TARGETS_2026 !== 'undefined' && window.KOSTAT_SALES_TARGETS_2026.management_targets_2026) ? window.KOSTAT_SALES_TARGETS_2026.management_targets_2026.by_country : {};
+        
+        let calcTargetSum = 0;
+        countryOrder.forEach(cCode => {
+          const memId = COUNTRY_TO_MEMBER[cCode] || 'kwt';
+          const mem = memLookup[memId];
+          const countryKey = (cCode === 'US') ? 'USA' : cCode;
+          const countryTgtData = targetsObj[countryKey];
+          let tgt = 0;
+          if (countryTgtData && countryTgtData.months && countryTgtData.months[String(mNum)]) {
+            tgt = parseFloat(countryTgtData.months[String(mNum)]) || 0;
+          }
+
+          // 사용자 직접 수정값 우선
+          const userOver = (USER_MONTHLY_OVERRIDES[mKey] && USER_MONTHLY_OVERRIDES[mKey][cCode]) ? USER_MONTHLY_OVERRIDES[mKey][cCode] : {};
+          if (userOver.target !== undefined) tgt = userOver.target;
+          const cur = (userOver.current !== undefined) ? userOver.current : 0;
+          const exp = (userOver.expected !== undefined) ? userOver.expected : 0;
+
+          calcTargetSum += tgt;
+
+          mem.sales.push({
+            site: COUNTRY_NAMES_MAP[cCode] || cCode,
+            country: cCode,
+            target: tgt,
+            current: cur,
+            additional: 0,
+            expected: exp,
+            note: '경영계획 수립 및 정기 납품 예정',
+            weekly_forecasts: {}
+          });
+        });
+
+        builtMembers.forEach(bm => {
+          const orig = (LIVE_DB.members || []).find(x => x.id === bm.id);
+          if (orig) {
+            bm.issues = orig.issues || [];
+            bm.samples = orig.samples || [];
+            bm.projects = orig.projects || [];
+            bm.quality_issues = orig.quality_issues || [];
+          }
+        });
+
+        return {
+          title: title,
+          month_label: `${mNum}월`,
+          kpi: {
+            target: calcTargetSum,
+            current: 0,
+            additional: 0,
+            expected: 0,
+            rate: 0
+          },
+          members: builtMembers
+        };
+      }
+
       // Fallback: LIVE_DB history_archives or LIVE_DB
       if (SELECTED_MONTH !== '2026-09' && LIVE_DB.history_archives && LIVE_DB.history_archives[SELECTED_MONTH]) {
         return LIVE_DB.history_archives[SELECTED_MONTH];
@@ -3002,6 +3300,7 @@
       renderProjectTable(isAll, m, currentData);
       renderQualityTable(isAll, m, currentData);
       renderIssuesPanel(isAll, m, currentData);
+      renderSampleTable(isAll, m, currentData);
 
       // 팀 전체 KPI 및 차트 동기화
       recalculateTeamKpi();
@@ -3017,10 +3316,20 @@
       const pPrj = document.getElementById('bizPanelProject');
       const pQual = document.getElementById('bizPanelQuality');
       const pRep = document.getElementById('bizPanelReport');
+      const pSample = document.getElementById('bizPanelSample');
 
       if (pPrj) pPrj.style.display = (subtab === 'project') ? 'flex' : 'none';
       if (pQual) pQual.style.display = (subtab === 'quality') ? 'flex' : 'none';
       if (pRep) pRep.style.display = (subtab === 'report') ? 'flex' : 'none';
+      if (pSample) {
+        pSample.style.display = (subtab === 'sample') ? 'flex' : 'none';
+        if (subtab === 'sample') {
+          const currentData = getActiveDataset();
+          const isAll = (ACTIVE_MEMBER_ID === 'ALL');
+          const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
+          renderSampleTable(isAll, m, currentData);
+        }
+      }
     }
 
     // --- (A) 2. 매출 패널 렌더링 (국가 Drop-Down 탑재) ---
@@ -3100,6 +3409,9 @@
       }
 
       // (뷰 2) 첨부 사진 규격 완벽 일치 주간보고 & 매출 테이블
+      const activeWeek = (typeof getTodayWeekNum === 'function') ? getTodayWeekNum() : 39;
+      const isFutureWeek = (CURRENT_WEEK_NUM > activeWeek);
+
       let totalTgt = 0;
       let totalCur = 0;
       let totalExp = 0;
@@ -3108,8 +3420,11 @@
       sitesList.forEach(item => {
         const wf = getSiteForecast(item, CURRENT_WEEK_NUM);
         const tgt = parseFloat(wf.target || item.target) || 0;
-        const cur = parseFloat(wf.current || item.current) || 0;
-        const exp = parseFloat(wf.expected || item.expected || (cur + (parseFloat(wf.additional) || 0))) || 0;
+
+        // 다음주차들은 현재까지 달성금액이나 예상달성 금액을 0원으로 표기
+        const userOver = (USER_MONTHLY_OVERRIDES[SELECTED_MONTH] && USER_MONTHLY_OVERRIDES[SELECTED_MONTH][item.country]);
+        const cur = (userOver && userOver.current !== undefined) ? userOver.current : (isFutureWeek ? 0 : (parseFloat(wf.current || item.current) || 0));
+        const exp = (userOver && userOver.expected !== undefined) ? userOver.expected : (isFutureWeek ? 0 : (parseFloat(wf.expected || item.expected || (cur + (parseFloat(wf.additional) || 0))) || 0));
         const rate = tgt > 0 ? ((exp / tgt) * 100) : 0;
         const isPass = rate >= 100;
         const currentCountry = item.country || (item.memberId === 'hjh' ? 'US' : item.memberId === 'ksm' ? 'MY' : item.memberId === 'lgj' ? 'TW' : item.memberId === 'lsc' ? 'SG' : 'PH');
@@ -3164,9 +3479,8 @@
         <!-- 사진 양식: 주간보고 -->
         <div class="photo-doc-title">주간보고</div>
 
-        <!-- 1. Report 생산 주기: 일주일 (단일 주차 타임라인 연동 규격) -->
+        <!-- 주간보고 메타 정보 (단일 주차 타임라인 연동 규격) -->
         <div class="photo-layout-section">
-          <div class="photo-section-title">1. Report 생산 주기: 일주일</div>
           <div class="photo-indent">
             <table class="photo-table photo-table-meta">
               <tbody>
@@ -3207,7 +3521,7 @@
 
         <!-- 2. 매출 (첨부 사진 규격) -->
         <div class="photo-layout-section" style="margin-top:22px;">
-          <div class="photo-section-title">2. 매출</div>
+          <div class="photo-section-title">매출</div>
           <div class="photo-indent">
             <div style="overflow-x:auto;">
               <table class="photo-table photo-table-sales" id="salesTable">
@@ -3312,11 +3626,19 @@
       const isAll = (ACTIVE_MEMBER_ID === 'ALL');
       const targetMembers = isAll ? (currentData.members || []) : (currentData.members || []).filter(x => x.id === ACTIVE_MEMBER_ID);
 
+      const activeWeek = (typeof getTodayWeekNum === 'function') ? getTodayWeekNum() : 39;
+      const isFutureWeek = (CURRENT_WEEK_NUM > activeWeek);
+
       targetMembers.forEach(mem => {
         (mem.sales || []).forEach(s => {
-          totalTgt += (parseFloat(s.target) || 0);
-          totalCur += (parseFloat(s.current) || 0);
-          totalExp += (parseFloat(s.expected) || 0);
+          const wf = getSiteForecast(s, CURRENT_WEEK_NUM);
+          const tgt = parseFloat(wf.target || s.target) || 0;
+          const userOver = (USER_MONTHLY_OVERRIDES[SELECTED_MONTH] && USER_MONTHLY_OVERRIDES[SELECTED_MONTH][s.country]);
+          const cur = (userOver && userOver.current !== undefined) ? userOver.current : (isFutureWeek ? 0 : (parseFloat(wf.current || s.current) || 0));
+          const exp = (userOver && userOver.expected !== undefined) ? userOver.expected : (isFutureWeek ? 0 : (parseFloat(wf.expected || s.expected) || 0));
+          totalTgt += tgt;
+          totalCur += cur;
+          totalExp += exp;
         });
       });
 
@@ -4361,15 +4683,18 @@
       let totalExpected = 0;
       let totalOpenSamples = 0;
 
+      const activeWeekNum = (typeof getTodayWeekNum === 'function') ? getTodayWeekNum() : 39;
+      const isFutureKpiWeek = (CURRENT_WEEK_NUM > activeWeekNum);
+
       (currentData.members || []).forEach(m => {
         (m.sales || []).forEach(s => {
-          const wf = (s.weekly_forecasts && s.weekly_forecasts[SELECTED_WEEK]) ? s.weekly_forecasts[SELECTED_WEEK] : s;
+          const wf = getSiteForecast(s, CURRENT_WEEK_NUM);
           totalTargetSum += (parseFloat(wf.target || s.target) || 0);
-          const c = (parseFloat(wf.current) || 0);
-          const a = (parseFloat(wf.additional) || 0);
+          const c = isFutureKpiWeek ? 0 : (parseFloat(wf.current) || 0);
+          const a = isFutureKpiWeek ? 0 : (parseFloat(wf.additional) || 0);
           totalCurrent += c;
           totalAdditional += a;
-          totalExpected += (c + a);
+          totalExpected += isFutureKpiWeek ? 0 : (c + a);
         });
 
         (m.samples || []).forEach(smp => {
@@ -5488,6 +5813,373 @@
     }
 
     // 초기 실행
+    
+    // ==================================================== //
+    // 4. 샘플 리스트 (Sample List) 엔진 & 모달 컨트롤러     //
+    // ==================================================== //
+
+    let SAMPLE_ACTIVE_YEAR = '2026';
+    let SAMPLE_ACTIVE_STATUS = 'ALL';
+    let SAMPLE_ACTIVE_FACTORY = 'ALL';
+    let SAMPLE_SEARCH_QUERY = '';
+    window.USER_ADDED_SAMPLES = [];
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function onSampleFilterChange() {
+      const yEl = document.getElementById('sampleYearFilter');
+      if (yEl) SAMPLE_ACTIVE_YEAR = yEl.value;
+      const sEl = document.getElementById('sampleStatusFilter');
+      if (sEl) SAMPLE_ACTIVE_STATUS = sEl.value;
+      const fEl = document.getElementById('sampleFactoryFilter');
+      if (fEl) SAMPLE_ACTIVE_FACTORY = fEl.value;
+
+      const currentData = getActiveDataset();
+      const isAll = (ACTIVE_MEMBER_ID === 'ALL');
+      const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
+      renderSampleTable(isAll, m, currentData);
+    }
+
+    function onSampleSearchInput() {
+      const input = document.getElementById('sampleSearchInput');
+      SAMPLE_SEARCH_QUERY = input ? input.value : '';
+      const currentData = getActiveDataset();
+      const isAll = (ACTIVE_MEMBER_ID === 'ALL');
+      const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
+      renderSampleTable(isAll, m, currentData);
+    }
+
+    function renderSampleTable(isAll, member, dataContext) {
+      const tbody = document.getElementById('sampleTableTbody');
+      if (!tbody) return;
+
+      let allSamples = [];
+      if (typeof window.KOSTAT_OVERSEAS_SAMPLES_DATA !== 'undefined' && Array.isArray(window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples)) {
+        allSamples = window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples;
+      }
+      if (Array.isArray(window.USER_ADDED_SAMPLES)) {
+        allSamples = [...window.USER_ADDED_SAMPLES, ...allSamples];
+      }
+
+      // 1. 담당자 필터 (상단 조회 대상이 특정 담당자면 해당 담당자 우선)
+      let filtered = allSamples;
+      if (!isAll && member) {
+        filtered = filtered.filter(s => s.member_id === member.id || (s.manager && s.manager.includes(member.short_name)));
+      }
+
+      // 2. 연도 필터
+      const yrFilter = document.getElementById('sampleYearFilter');
+      const selectedYear = yrFilter ? yrFilter.value : SAMPLE_ACTIVE_YEAR;
+      if (selectedYear !== 'ALL') {
+        filtered = filtered.filter(s => s.year === selectedYear);
+      }
+
+      // 3. 승인 상태 필터
+      const stFilter = document.getElementById('sampleStatusFilter');
+      const selectedStatus = stFilter ? stFilter.value : SAMPLE_ACTIVE_STATUS;
+      if (selectedStatus !== 'ALL') {
+        if (selectedStatus === '승인') {
+          filtered = filtered.filter(s => s.approval && s.approval.includes('승인') && !s.approval.includes('미승인'));
+        } else if (selectedStatus === '미승인') {
+          filtered = filtered.filter(s => s.approval && s.approval.includes('미승인'));
+        } else if (selectedStatus === '진행중') {
+          filtered = filtered.filter(s => s.is_ongoing || !s.approval || s.approval === '-' || s.approval.includes('진행'));
+        }
+      }
+
+      // 4. 공장 필터
+      const facFilter = document.getElementById('sampleFactoryFilter');
+      const selectedFactory = facFilter ? facFilter.value : SAMPLE_ACTIVE_FACTORY;
+      if (selectedFactory !== 'ALL') {
+        filtered = filtered.filter(s => s.factory && s.factory.includes(selectedFactory));
+      }
+
+      // 5. 실시간 검색어 필터
+      const q = SAMPLE_SEARCH_QUERY.trim().toLowerCase();
+      if (q) {
+        filtered = filtered.filter(s => {
+          return (s.customer && s.customer.toLowerCase().includes(q)) ||
+                 (s.part_no && s.part_no.toLowerCase().includes(q)) ||
+                 (s.package && s.package.toLowerCase().includes(q)) ||
+                 (s.po_no && s.po_no.toLowerCase().includes(q)) ||
+                 (s.invoice_no && s.invoice_no.toLowerCase().includes(q)) ||
+                 (s.manager && s.manager.toLowerCase().includes(q));
+        });
+      }
+
+      // 카운트 배지 갱신
+      const countBadge = document.getElementById('sampleCountBadge');
+      if (countBadge) {
+        countBadge.textContent = `총 ${filtered.length.toLocaleString()}건`;
+      }
+
+      // KPI 스트립 갱신
+      const kpiStrip = document.getElementById('sampleKpiStrip');
+      if (kpiStrip) {
+        const totalCount = filtered.length;
+        const approvedCount = filtered.filter(s => s.approval && s.approval.includes('승인') && !s.approval.includes('미승인')).length;
+        const rejectedCount = filtered.filter(s => s.approval && s.approval.includes('미승인')).length;
+        const ongoingCount = filtered.filter(s => s.is_ongoing || (!s.approval || s.approval === '-' || s.approval.includes('진행'))).length;
+        const shippedCount = filtered.filter(s => s.sample_ship_date && s.sample_ship_date.length > 0).length;
+
+        kpiStrip.innerHTML = `
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:6px 12px; font-size:11.5px;">
+            <span style="color:var(--text-muted);">총 샘플:</span> <strong style="color:#ffffff;">${totalCount.toLocaleString()}건</strong>
+          </div>
+          <div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); border-radius:4px; padding:6px 12px; font-size:11.5px;">
+            <span style="color:#86efac;">승인완료:</span> <strong style="color:#4ade80;">${approvedCount.toLocaleString()}건</strong>
+          </div>
+          <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); border-radius:4px; padding:6px 12px; font-size:11.5px;">
+            <span style="color:#fca5a5;">미승인:</span> <strong style="color:#f87171;">${rejectedCount.toLocaleString()}건</strong>
+          </div>
+          <div style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.25); border-radius:4px; padding:6px 12px; font-size:11.5px;">
+            <span style="color:#93c5fd;">진행중:</span> <strong style="color:#60a5fa;">${ongoingCount.toLocaleString()}건</strong>
+          </div>
+          <div style="background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.25); border-radius:4px; padding:6px 12px; font-size:11.5px;">
+            <span style="color:#d8b4fe;">발송완료:</span> <strong style="color:#c084fc;">${shippedCount.toLocaleString()}건</strong>
+          </div>
+        `;
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:24px; color:var(--text-dim);">일치하는 샘플 내역이 없습니다.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(s => {
+        let appBadgeStyle = 'background:rgba(59,130,246,0.2); color:#93c5fd; border:1px solid rgba(59,130,246,0.4);';
+        let appText = s.approval || '진행중';
+        if (appText.includes('승인') && !appText.includes('미승인')) {
+          appBadgeStyle = 'background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.4);';
+          appText = '승인';
+        } else if (appText.includes('미승인') || appText.includes('FAIL')) {
+          appBadgeStyle = 'background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4);';
+          appText = '미승인';
+        } else {
+          if (!appText || appText === '-') appText = '진행중';
+        }
+
+        const safeManager = escapeHtml(s.manager || '-');
+        const safeCust = escapeHtml(s.customer || '-');
+        const safeCtr = s.country ? `[${escapeHtml(s.country)}]` : '';
+        const safePn = escapeHtml(s.part_no || '-');
+        const safePkg = escapeHtml(s.package || s.temp || '-');
+        const safeQty = s.qty ? Number(s.qty).toLocaleString() : '-';
+        const safeReq = escapeHtml(s.sample_req_date || '-');
+        const safeShip = escapeHtml(s.sample_ship_date || '-');
+        const safeProg = escapeHtml(s.progress || '-');
+        const safeFac = escapeHtml(s.factory || '-');
+
+        return `
+          <tr style="cursor:pointer;" onclick="openSampleDetailModal('${s.id}')">
+            <td style="text-align:center;"><span style="font-weight:700; color:#38bdf8;">${safeManager}</span></td>
+            <td><strong>${safeCust}</strong> <span style="font-size:10.5px; color:var(--text-muted);">${safeCtr}</span></td>
+            <td style="font-weight:700; color:#ffffff;">${safePn}</td>
+            <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${safePkg}">${safePkg}</td>
+            <td style="text-align:right;">${safeQty}</td>
+            <td style="text-align:center; font-size:11px; color:var(--text-muted);">${safeReq}</td>
+            <td style="text-align:center; font-size:11px; color:var(--text-muted);">${safeShip}</td>
+            <td style="text-align:center;"><span style="font-size:10px; font-weight:800; padding:2px 6px; border-radius:3px; display:inline-block; ${appBadgeStyle}">${appText}</span></td>
+            <td style="max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px;" title="${safeProg}">${safeProg}</td>
+            <td style="text-align:center; font-size:11px;">${safeFac}</td>
+            <td style="text-align:center;">
+              <button type="button" class="btn-action-xs" onclick="event.stopPropagation(); openSampleDetailModal('${s.id}')" style="padding:2px 6px; font-size:10.5px;">상세</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openSampleDetailModal(sampleId) {
+      let allSamples = [];
+      if (typeof window.KOSTAT_OVERSEAS_SAMPLES_DATA !== 'undefined' && Array.isArray(window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples)) {
+        allSamples = window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples;
+      }
+      if (Array.isArray(window.USER_ADDED_SAMPLES)) {
+        allSamples = [...window.USER_ADDED_SAMPLES, ...allSamples];
+      }
+      const s = allSamples.find(x => x.id === sampleId);
+      if (!s) return;
+
+      const titleEl = document.getElementById('sampleDetailModalTitle');
+      if (titleEl) titleEl.textContent = `샘플 상세 정보: [${s.customer}] ${s.part_no}`;
+
+      const bodyEl = document.getElementById('sampleDetailModalBody');
+      if (bodyEl) {
+        bodyEl.innerHTML = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">샘플 ID / 연도</div>
+              <div style="font-weight:700; color:#38bdf8;">${escapeHtml(s.id)} (${escapeHtml(s.year)}년)</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">담당자 / 국가</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.manager || '-')} / [${escapeHtml(s.country || '-')}]</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">고객사 / 고객사명</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.customer || '-')} <span style="font-size:11px; color:var(--text-dim);">${escapeHtml(s.customer_name || '')}</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">품목 (ITEM) / Tool Type</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.item || '-')} (${escapeHtml(s.tool_type || '-')})</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Kostat P/N</div>
+              <div style="font-weight:700; color:#38bdf8; font-size:14px;">${escapeHtml(s.part_no || '-')}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">TEMP. / Package 규격</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.temp || '-')} / ${escapeHtml(s.package || '-')}</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:8px 10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:2px;">수량 (Q'ty)</div>
+              <div style="font-weight:700; color:#ffffff;">${s.qty ? Number(s.qty).toLocaleString() : '-'}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:8px 10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:2px;">단가 (U/P)</div>
+              <div style="font-weight:700; color:#ffffff;">${s.unit_price ? '$ ' + Number(s.unit_price).toLocaleString() : '-'}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:8px 10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:2px;">금액 (Amount)</div>
+              <div style="font-weight:700; color:#4ade80;">${s.amount ? '$ ' + Number(s.amount).toLocaleString() : '-'}</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">PO 번호 / PO 접수일</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.po_no || '-')} / ${escapeHtml(s.po_date || '-')}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Invoice No / ERP Code</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.invoice_no || '-')} / ${escapeHtml(s.erp_code || '-')}</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">샘플 요청일 / 발송일</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.sample_req_date || '-')} / ${escapeHtml(s.sample_ship_date || '-')}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">고객 승인 상태 / 공장</div>
+              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.approval || '진행중')} / ${escapeHtml(s.factory || '-')}</div>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">진행사항 및 특이 메모</div>
+            <div style="color:#ffffff; line-height:1.5;">${escapeHtml(s.progress || '등록된 추가 메모 없음')}</div>
+          </div>
+        `;
+      }
+
+      const modal = document.getElementById('sampleDetailModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeSampleDetailModal() {
+      const modal = document.getElementById('sampleDetailModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function openAddSampleModal() {
+      const today = new Date().toISOString().substring(0, 10);
+      const reqEl = document.getElementById('modalSampleReqDate');
+      if (reqEl) reqEl.value = today;
+
+      const modal = document.getElementById('addSampleModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAddSampleModal() {
+      const modal = document.getElementById('addSampleModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function submitAddSampleModal() {
+      const man = document.getElementById('modalSampleManager').value;
+      const ctr = document.getElementById('modalSampleCountry').value;
+      const cust = (document.getElementById('modalSampleCustomer').value || '').trim();
+      const item = document.getElementById('modalSampleItem').value;
+      const pn = (document.getElementById('modalSamplePartNo').value || '').trim();
+      const qty = parseFloat(document.getElementById('modalSampleQty').value) || 0;
+      const pkg = (document.getElementById('modalSamplePackage').value || '').trim();
+      const reqD = document.getElementById('modalSampleReqDate').value || '';
+      const shipD = document.getElementById('modalSampleShipDate').value || '';
+      const fac = document.getElementById('modalSampleFactory').value || '';
+      const app = document.getElementById('modalSampleApproval').value || '진행중';
+      const poNo = (document.getElementById('modalSamplePoNo').value || '').trim();
+      const prog = (document.getElementById('modalSampleProgress').value || '').trim();
+
+      if (!cust || !pn) {
+        showToast('고객사명과 Kostat P/N은 필수 입력 항목입니다.');
+        return;
+      }
+
+      const memberMap = { '한준희': 'hjh', '김샘물': 'ksm', '이가진': 'lgj', '이상철': 'lsc', '김완태': 'kwt' };
+      const newSample = {
+        id: `SMP-${Date.now().toString().slice(-4)}`,
+        year: '2026',
+        item: item,
+        tool_type: 'OPEN',
+        manager: man,
+        member_id: memberMap[man] || '',
+        customer: cust,
+        country: ctr,
+        customer_name: cust,
+        type: 'TR',
+        part_no: pn,
+        temp: pkg,
+        package: pkg,
+        po_no: poNo,
+        qty: qty,
+        unit_price: 0,
+        amount: 0,
+        invoice_no: '',
+        erp_code: '',
+        po_date: '',
+        contract_date: '',
+        sample_req_date: reqD,
+        sample_ship_date: shipD,
+        approval: app,
+        progress: prog || '신규 등록 샘플',
+        revenue_rec: '',
+        collection: '',
+        factory: fac,
+        category: '',
+        is_ongoing: true
+      };
+
+      window.USER_ADDED_SAMPLES.unshift(newSample);
+      closeAddSampleModal();
+      showToast(`신규 샘플 [${pn}]이 등록되었습니다.`);
+
+      const currentData = getActiveDataset();
+      const isAll = (ACTIVE_MEMBER_ID === 'ALL');
+      const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
+      renderSampleTable(isAll, m, currentData);
+    }
+
+
     window.addEventListener('DOMContentLoaded', () => {
       initWeeklyMasterData();
       ACTIVE_MEMBER_ID = 'ALL';
