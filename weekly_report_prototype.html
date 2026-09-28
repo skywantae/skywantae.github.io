@@ -1976,7 +1976,10 @@
         <div id="bizPanelProject" style="flex:1; display:flex; flex-direction:column; overflow-y:auto; max-height:510px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">진행 중인 프로젝트 및 금형 개발 현황</span>
-            <button class="btn-action-xs primary" onclick="openAddProjectModal()">+ 프로젝트 등록</button>
+            <button type="button" class="btn-sample-register-hero" onclick="openAddProjectModal()" title="신규 프로젝트 등록">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              프로젝트 등록
+            </button>
           </div>
           <div class="biz-table-wrap">
             <table class="biz-table">
@@ -2002,7 +2005,10 @@
         <div id="bizPanelQuality" style="flex:1; display:none; flex-direction:column; overflow-y:auto; max-height:510px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">고객사 품질 불량 현황 및 조치 코멘트</span>
-            <button class="btn-action-xs primary" onclick="openAddQualityModal()">+ Quality Issue 등록</button>
+            <button type="button" class="btn-sample-register-hero" onclick="openAddQualityModal()" title="신규 Quality Issue 등록">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Quality Issue 등록
+            </button>
           </div>
           <div class="biz-table-wrap">
             <table class="biz-table">
@@ -2032,10 +2038,10 @@
                 <!-- 127개 고객사 동적 렌더링 -->
               </select>
             </div>
-            <!-- 노란색 강조 [내용등록] 버튼 -->
-            <button class="btn-submit-yellow" onclick="openAddIssueModal()">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              내용등록
+            <!-- 개선된 프리미엄 내용등록 버튼 -->
+            <button type="button" class="btn-sample-register-hero" onclick="openAddIssueModal()" title="신규 영업현황 내용 등록">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              내용 등록
             </button>
           </div>
           <div id="panelIssuesContainer" style="flex:1; overflow-y:auto;">
