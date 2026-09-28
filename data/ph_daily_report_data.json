@@ -1,6 +1,6 @@
 {
   "source_file": "PH Weekly Report WW39 rev. 03.xlsx",
-  "extracted_at": "2026-09-28 18:18:07",
+  "extracted_at": "2026-09-28 18:59:29",
   "summary": {
     "daily_report_count": 404,
     "customer_count": 21,
@@ -378,7 +378,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-09-22: 총 14건 업무 보고 (KWE, ATP) - 주요안건: Tray Recycling Pre-Bidding Meeting ATP"
+      "day_summary_ko": "2026-09-22: 총 14건 업무 보고 (ATP, KWE) - 주요안건: Tray Recycling Pre-Bidding Meeting ATP"
     },
     {
       "date": "2026-09-21",
@@ -6623,7 +6623,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-07-01: 총 18건 업무 보고 (KWE, ATP) - 주요안건: Vivere Hotel - airport pick up"
+      "day_summary_ko": "2026-07-01: 총 18건 업무 보고 (ATP, KWE) - 주요안건: Vivere Hotel - airport pick up"
     },
     {
       "date": "2026-06-30",
@@ -9356,7 +9356,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-05-25: 총 14건 업무 보고 (Device Design, SFA) - 주요안건: LA69-01468A DDR4 CAP Fitting Test Fail S"
+      "day_summary_ko": "2026-05-25: 총 14건 업무 보고 (SFA, Device Design) - 주요안건: LA69-01468A DDR4 CAP Fitting Test Fail S"
     },
     {
       "date": "2026-05-21",
@@ -10112,7 +10112,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATEC, ATP3) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
+      "day_summary_ko": "2026-05-14: 총 8건 업무 보고 (ATP3, ATEC) - 주요안건: Drawing Request- Tray 48L QFN 6x6x0.9mm "
     },
     {
       "date": "2026-05-13",
@@ -12616,7 +12616,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (Olffice, ATP1) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
+      "day_summary_ko": "2026-04-08: 총 15건 업무 보고 (ATP1, Olffice) - 주요안건: KOSTAT - COVER TAPE HAZINESS ATP"
     },
     {
       "date": "2026-04-07",
@@ -13056,7 +13056,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (Device Dynamics, SFA) - 주요안건: Attendees:"
+      "day_summary_ko": "2026-03-27: 총 9건 업무 보고 (SFA, Device Dynamics) - 주요안건: Attendees:"
     },
     {
       "date": "2026-03-26",
@@ -23727,7 +23727,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (KWE, TongHsing) - 주요안건: Kostat Tray KS-8603 Microchip"
+      "day_summary_ko": "2025-11-13: 총 7건 업무 보고 (TongHsing, KWE) - 주요안건: Kostat Tray KS-8603 Microchip"
     },
     {
       "date": "2025-11-12",
@@ -29083,7 +29083,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (KWE, TongHsing) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
+      "day_summary_ko": "2025-09-16: 총 8건 업무 보고 (TongHsing, KWE) - 주요안건: TRAY - 58Z627S9BC01 INQUIRY ATP"
     },
     {
       "date": "2025-09-15",
@@ -31278,7 +31278,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ATP4, ASE) - 주요안건: MLF 5x6"
+      "day_summary_ko": "2025-08-20: 총 12건 업무 보고 (ASE, ATP4) - 주요안건: MLF 5x6"
     },
     {
       "date": "2025-08-19",
@@ -36758,7 +36758,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (KWE, ATP3) - 주요안건: PLY ★ Important! Request for securing pa"
+      "day_summary_ko": "2025-06-24: 총 15건 업무 보고 (ATP3, KWE) - 주요안건: PLY ★ Important! Request for securing pa"
     },
     {
       "date": "2025-06-23",
@@ -40310,7 +40310,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (KWE, Microship) - 주요안건: PCN request Rohm"
+      "day_summary_ko": "2025-05-20: 총 15건 업무 보고 (Microship, KWE) - 주요안건: PCN request Rohm"
     },
     {
       "date": "2025-05-19",
@@ -40784,7 +40784,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-05-14: 총 8건 업무 보고 (KWE, TICL) - 주요안건: Purchase Order #4502525252 STMicroelectr"
+      "day_summary_ko": "2025-05-14: 총 8건 업무 보고 (TICL, KWE) - 주요안건: Purchase Order #4502525252 STMicroelectr"
     },
     {
       "date": "2025-05-13",
@@ -42028,7 +42028,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (STMicro, TICL) - 주요안건: REEL INQUIRY H:7&4 ATP"
+      "day_summary_ko": "2025-04-29: 총 24건 업무 보고 (TICL, STMicro) - 주요안건: REEL INQUIRY H:7&4 ATP"
     },
     {
       "date": "2025-04-28",
@@ -42144,7 +42144,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-28: 총 11건 업무 보고 (ATP4, TICL) - 주요안건: KAH7-093500 TS&DS sample shipment 250424"
+      "day_summary_ko": "2025-04-28: 총 11건 업무 보고 (TICL, ATP4) - 주요안건: KAH7-093500 TS&DS sample shipment 250424"
     },
     {
       "date": "2025-04-25",
@@ -43003,7 +43003,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-04-16: 총 13건 업무 보고 (ATP4, TongHsing) - 주요안건: 8 X 7 X 1.85MM JEDEC TRAY"
+      "day_summary_ko": "2025-04-16: 총 13건 업무 보고 (TongHsing, ATP4) - 주요안건: 8 X 7 X 1.85MM JEDEC TRAY"
     },
     {
       "date": "2025-04-15",
@@ -45136,7 +45136,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-03-19: 총 10건 업무 보고 (KWE, ATP) - 주요안건: For Supplier verification_PBIN Color KS-"
+      "day_summary_ko": "2025-03-19: 총 10건 업무 보고 (ATP, KWE) - 주요안건: For Supplier verification_PBIN Color KS-"
     },
     {
       "date": "2025-03-18",
@@ -47842,7 +47842,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-02-18: 총 15건 업무 보고 (KWE, Analog) - 주요안건: MRB - KOSTAT TRAY ATP"
+      "day_summary_ko": "2025-02-18: 총 15건 업무 보고 (Analog, KWE) - 주요안건: MRB - KOSTAT TRAY ATP"
     },
     {
       "date": "2025-02-17",
@@ -49671,7 +49671,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (ATP1, TongHsing) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-22: 총 15건 업무 보고 (TongHsing, ATP1) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-21",
@@ -49943,7 +49943,7 @@
           "pending_ko": ""
         }
       ],
-      "day_summary_ko": "2025-01-20: 총 7건 업무 보고 (Kenner, Analog) - 주요안건: Bryan and Jun visit"
+      "day_summary_ko": "2025-01-20: 총 7건 업무 보고 (Analog, Kenner) - 주요안건: Bryan and Jun visit"
     },
     {
       "date": "2025-01-16",
