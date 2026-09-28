@@ -233,7 +233,7 @@ const DOM = {
   modalContractBody: document.getElementById('modalContractBody'),
   btnCloseContractModal: document.getElementById('btnCloseContractModal'),
   btnModalCloseContract: document.getElementById('btnModalCloseContract'),
-  btnModalCopyContractText: document.getElementById('btnModalCopyContractText'),
+  btnModalPrintContract: document.getElementById('btnModalPrintContract'),
 
   // IC Tray 도면 DOM
   viewDrawings: document.getElementById('viewDrawings'),
@@ -1478,8 +1478,12 @@ function initUI() {
   if (DOM.btnModalCloseContract) {
     DOM.btnModalCloseContract.addEventListener('click', () => DOM.contractDetailModal.classList.remove('show'));
   }
-  if (DOM.btnModalCopyContractText) {
-    DOM.btnModalCopyContractText.addEventListener('click', copyCurrentContractReviewSummary);
+  if (DOM.btnModalPrintContract) {
+    DOM.btnModalPrintContract.addEventListener('click', () => {
+      if (AppState.selectedContractProjectNo) {
+        printContractReview(AppState.selectedContractProjectNo);
+      }
+    });
   }
 
   // IC Tray 도면 검색 & 필터 & 페이지 크기 & 모달 이벤트
@@ -2691,35 +2695,7 @@ function switchContractSubTab(tabName) {
 }
 window.switchContractSubTab = switchContractSubTab;
 
-function copyCurrentContractReviewSummary() {
-  if (!AppState.selectedContractProjectNo) return;
-  const found = (AppState.contractReviewsData || []).find(r => r.project_no === AppState.selectedContractProjectNo);
-  if (!found) return;
 
-  let text = `[계약검토서 (Project Review)]\n`;
-  text += `• Project No: ${found.project_no}\n`;
-  text += `• Date: ${found.date} | Status: ${found.status} | Priority: ${found.priority}\n`;
-  text += `• Customer: ${found.customer} (${found.country}) | Related: ${found.related_custom || '-'}\n`;
-  text += `• Item: ${found.item} | Tool Type: ${found.tool_type}\n`;
-  text += `• Part No: ${found.part_no} | Temp: ${found.temp || '-'}\n`;
-  text += `• Material: ${found.material || '-'} | Qty: ${found.qty || '-'}\n`;
-  text += `• Tooling PO: ${found.tooling_po_no || '-'} | Cost: ${found.tooling_cost || '-'}\n`;
-  text += `• Update: ${found.update} | Username: ${found.username} (${found.deptno})\n`;
-  text += `• Finish: ${found.finish}\n\n`;
-  text += `[Written Request / 의뢰 상세]\n`;
-  text += `• 의뢰여부: ${found.req_set}\n`;
-  text += `• 의뢰부서: ${found.req_dept}\n`;
-  text += `• 검토안건: ${found.req_head}\n\n`;
-  text += `[의뢰내용]\n${found.req_memo}\n`;
-
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('계약검토서 전체 요약이 복사되었습니다.');
-    });
-  } else {
-    showToast('클립보드 복사 완료');
-  }
-}
 
 // --- 7-1. IC Tray 도면 뷰어 & 보안 PIN(0404) 다운로드 엔진 ---
 
@@ -3164,28 +3140,216 @@ function copyDrawingSummaryText() {
 
 function printQuotation(quotNo) {
   const printContainer = document.getElementById('printContainer');
-  const printableQuotation = document.getElementById('printableQuotation');
-  
   if (!printContainer) return;
-  
+
+  const printableQuotation = document.getElementById('printableQuotation');
   if (printableQuotation) {
-    // If the modal is already open and rendering this quote, just use its HTML
+    // 모달이 열려 있는 경우 해당 견적서 시트 복제
     printContainer.innerHTML = printableQuotation.outerHTML;
   } else {
+    // 모달이 닫혀 있더라도 데이터에서 직접 생성
+    const found = (AppState.quotationsData || []).filter(r => r.quot_no === quotNo);
+    if (found.length === 0) {
+      showToast('출력할 견적서 상세 데이터를 찾을 수 없습니다.', 'error');
+      return;
+    }
+    openQuotationDetail(quotNo);
+    const renderedSheet = document.getElementById('printableQuotation');
+    if (renderedSheet) {
+      printContainer.innerHTML = renderedSheet.outerHTML;
+    }
+  }
+
+  // PDF 저장 시 파일명이 깔끔하게 지정되도록 문서 제목 설정 (브라우저 PDF 저장 기본 파일명)
+  const originalTitle = document.title;
+  document.title = `견적서_${quotNo}_KOSTAT`;
+
+  // 브라우저 네이티브 인쇄 / PDF 다이얼로그 호출
+  window.print();
+
+  // 인쇄 완료 후(afterprint) 또는 타이머로 제목 복원 (주의: printContainer.innerHTML을 비우지 않음으로써 빈 페이지 버그 원천 해결)
+  const restoreTitle = () => {
+    document.title = originalTitle;
+    window.removeEventListener('afterprint', restoreTitle);
+  };
+  window.addEventListener('afterprint', restoreTitle);
+  setTimeout(restoreTitle, 20000);
+}
+window.printQuotation = printQuotation;
+
+function printContractReview(projectNo) {
+  const printContainer = document.getElementById('printContainer');
+  if (!printContainer) return;
+
+  const found = (AppState.contractReviewsData || []).find(r => r.project_no === projectNo);
+  if (!found) {
+    showToast('출력할 계약검토서 데이터를 찾을 수 없습니다.', 'error');
     return;
   }
 
-  // 브라우저 기본 머리글(제목/날짜) 및 바닥글(URL/페이지) 출력을 원천 차단
-  const originalTitle = document.title;
-  document.title = '';
+  // Action Items HTML 생성
+  let actionRows = '';
+  if (found.action_items && found.action_items.length > 0) {
+    actionRows = found.action_items.map(a => `
+      <tr>
+        <td>${escapeHtml(a.date || '-')}</td>
+        <td>${escapeHtml(a.status || '-')}</td>
+        <td>${escapeHtml(a.drawing || '-')}</td>
+        <td>${escapeHtml(a.simulation || '-')}</td>
+        <td>${escapeHtml(a.pod || '-')}</td>
+      </tr>
+    `).join('');
+  }
 
+  // Sample Deliveries HTML 생성
+  let sampleRows = '';
+  if (found.sample_deliveries && found.sample_deliveries.length > 0) {
+    sampleRows = found.sample_deliveries.map(s => `
+      <tr>
+        <td>${escapeHtml(s.date || '-')}</td>
+        <td>${escapeHtml(s.invoice || '-')}</td>
+        <td>${escapeHtml(s.qty || '-')}</td>
+        <td>${escapeHtml(s.due_date || '-')}</td>
+        <td>${escapeHtml(s.shipped_date || '-')}</td>
+        <td>${escapeHtml(s.description || '-')}</td>
+        <td>${escapeHtml(s.courier_tracking || '-')}</td>
+      </tr>
+    `).join('');
+  }
+
+  // 계약검토서 공식 A4 규격 인쇄 서식 렌더링
+  printContainer.innerHTML = `
+    <div class="kostat-contract-print-sheet">
+      <!-- 1. 헤더 (KOSTAT 공식 결재선 포함) -->
+      <div class="kostat-print-header">
+        <div class="kostat-logo-area">
+          <div class="kostat-red-title">KOSTAT, INC</div>
+          <div class="kostat-address-text" style="font-size:8.5px; line-height:1.35; color:#000; margin-top:4px; font-weight:600;">
+            60, GOGANG-RO 154BEON-GIL, BUCHON-CITY, KYONG KI-DO, KOREA<br>
+            TEL : 82-32-671-8100(REP) / FAX : 82-32-671-0259
+          </div>
+        </div>
+        <div class="kostat-doc-title">
+          <span style="font-size:16px; font-weight:800; letter-spacing:1px; border-bottom:2px solid #000; padding-bottom:2px;">계약검토서 (PROJECT REVIEW)</span>
+        </div>
+        <div class="kostat-approval-box">
+          <table class="kostat-approval-table">
+            <thead>
+              <tr>
+                <th style="width:33%;">작 성</th>
+                <th style="width:33%;">검 토</th>
+                <th style="width:34%;">승 인</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="height:34px;">
+                <td>//</td><td>//</td><td>//</td>
+              </tr>
+              <tr style="height:15px;font-size:9px;border-top:1px solid #000;">
+                <td>${escapeHtml(found.date || '')}</td>
+                <td>${escapeHtml(found.date || '')}</td>
+                <td>//</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. 메타 정보 3단 그리드 -->
+      <div class="print-meta-grid">
+        <div class="print-meta-col">
+          <div class="print-meta-row"><span class="print-meta-label">Project No :</span><span class="print-meta-val" style="font-weight:700;color:#1e3a8a;">${escapeHtml(found.project_no)}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Date :</span><span class="print-meta-val">${escapeHtml(found.date || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Status :</span><span class="print-meta-val">${escapeHtml(found.status || 'Document')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Priority :</span><span class="print-meta-val">${escapeHtml(found.priority || '1')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Item :</span><span class="print-meta-val">${escapeHtml(found.item || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Tool Type :</span><span class="print-meta-val">${escapeHtml(found.tool_type || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Country :</span><span class="print-meta-val">${escapeHtml(found.country || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Customer :</span><span class="print-meta-val" style="font-weight:700;">${escapeHtml(found.customer || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Material :</span><span class="print-meta-val">${escapeHtml(found.material || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Q'ty :</span><span class="print-meta-val">${escapeHtml(found.qty || '-')}</span></div>
+        </div>
+
+        <div class="print-meta-col">
+          <div class="print-meta-row"><span class="print-meta-label">Part No :</span><span class="print-meta-val" style="font-weight:700;color:#0b7a28;">${escapeHtml(found.part_no || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Temp(Length) :</span><span class="print-meta-val">${escapeHtml(found.temp || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">ERP Code :</span><span class="print-meta-val">${escapeHtml(found.erp_code || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Monthly Amt :</span><span class="print-meta-val">${escapeHtml(found.monthly_amount || '.000')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Exp PO YYMM :</span><span class="print-meta-val">${escapeHtml(found.exp_po_yymm || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Tooling PO :</span><span class="print-meta-val">${escapeHtml(found.tooling_po_no || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Tooling Cost :</span><span class="print-meta-val">${escapeHtml(found.tooling_cost || '.000')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Mass Date :</span><span class="print-meta-val">${escapeHtml(found.mass_date || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Mass Amount :</span><span class="print-meta-val">${escapeHtml(found.mass_amount || '.000')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Due Date :</span><span class="print-meta-val">${escapeHtml(found.due_date || '-')}</span></div>
+        </div>
+
+        <div class="print-meta-col">
+          <div class="print-meta-row"><span class="print-meta-label">Update :</span><span class="print-meta-val">${escapeHtml(found.update || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Username :</span><span class="print-meta-val">${escapeHtml(found.username || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Dept No :</span><span class="print-meta-val">${escapeHtml(found.deptno || '-')}</span></div>
+          <div class="print-meta-row"><span class="print-meta-label">Finish :</span><span class="print-meta-val">${escapeHtml(found.finish || '미결재')}</span></div>
+          <div style="margin-top:6px;">
+            <div style="font-weight:700;font-size:10.5px;color:#334155;margin-bottom:2px;">Descript (비고)</div>
+            <div style="border:1px solid #7f9db9;background:#fff;padding:4px 6px;min-height:90px;font-size:10.5px;white-space:pre-wrap;word-break:break-all;">${escapeHtml(found.descript || '-')}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 의뢰 상세 정보 (Written Request) -->
+      <div class="print-section-title">의뢰 상세 정보 (Written Request)</div>
+      <div class="print-written-box">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;">
+          <tr>
+            <td style="width:18%;font-weight:700;background:#f1f5f9;padding:4px 8px;border:1px solid #cbd5e1;">의뢰구분</td>
+            <td style="width:32%;padding:4px 8px;border:1px solid #cbd5e1;">${escapeHtml(found.req_set || '검토')}</td>
+            <td style="width:18%;font-weight:700;background:#f1f5f9;padding:4px 8px;border:1px solid #cbd5e1;">의뢰부서</td>
+            <td style="width:32%;padding:4px 8px;border:1px solid #cbd5e1;">${escapeHtml(found.req_dept || '-')}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;background:#f1f5f9;padding:4px 8px;border:1px solid #cbd5e1;">검토안건</td>
+            <td colspan="3" style="padding:4px 8px;border:1px solid #cbd5e1;font-weight:700;">${escapeHtml(found.req_head || '-')}</td>
+          </tr>
+        </table>
+        <div style="font-weight:700;font-size:11px;margin:6px 0 2px 0;">의뢰내용 (상세)</div>
+        <div style="border:1px solid #cbd5e1;background:#fafafa;padding:8px 10px;min-height:100px;font-size:11px;line-height:1.6;white-space:pre-wrap;word-break:break-word;">${escapeHtml(found.req_memo || '등록된 상세 의뢰 내용이 없습니다.')}</div>
+      </div>
+
+      ${actionRows ? `
+        <!-- 4. Action Items -->
+        <div class="print-section-title" style="margin-top:12px;">Action Items</div>
+        <table class="print-table">
+          <thead><tr><th>일자</th><th>상태</th><th>도면(Drawing)</th><th>시뮬레이션</th><th>POD</th></tr></thead>
+          <tbody>${actionRows}</tbody>
+        </table>
+      ` : ''}
+
+      ${sampleRows ? `
+        <!-- 5. Sample Delivery -->
+        <div class="print-section-title" style="margin-top:12px;">Sample Delivery</div>
+        <table class="print-table">
+          <thead><tr><th>일자</th><th>Invoice</th><th>수량</th><th>예정일</th><th>발송일</th><th>설명</th><th>배송추적</th></tr></thead>
+          <tbody>${sampleRows}</tbody>
+        </table>
+      ` : ''}
+    </div>
+  `;
+
+  // PDF 저장 시 파일명이 깔끔하게 지정되도록 문서 제목 설정 (브라우저 PDF 저장 기본 파일명)
+  const originalTitle = document.title;
+  document.title = `계약검토서_${projectNo}_KOSTAT`;
+
+  // 브라우저 네이티브 인쇄 / PDF 다이얼로그 호출
   window.print();
 
-  setTimeout(() => {
+  // 인쇄 완료 후 제목 복원
+  const restoreTitle = () => {
     document.title = originalTitle;
-    printContainer.innerHTML = '';
-  }, 1000);
+    window.removeEventListener('afterprint', restoreTitle);
+  };
+  window.addEventListener('afterprint', restoreTitle);
+  setTimeout(restoreTitle, 20000);
 }
+window.printContractReview = printContractReview;
 
 function switchMobileTab(tab) {
   AppState.activeTab = tab;

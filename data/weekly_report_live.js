@@ -1,8 +1,8 @@
 window.KOSTAT_WEEKLY_REPORT_LIVE = {
   "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서",
   "week_label": "9월 4주차 (0921-0925)",
-  "last_updated_at": "2026-09-28 02:44:30",
-  "last_updated_by": "김완태 사원",
+  "last_updated_at": "2026-09-28 06:31:36",
+  "last_updated_by": "한준희 책임",
   "kpi": {
     "target": 2404602,
     "current": 937933,
@@ -133,6 +133,22 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
         }
       ],
       "issues": [
+        {
+          "id": "iss_1790577010313",
+          "customer": "SKYWORKS",
+          "item": "IC Tray",
+          "tag": "진행중",
+          "topic": "3M Filter Project 유지 관련 Promotion 진행",
+          "bullets": [
+            "- 3M Filter Project 유지 관련 Promotion 진행",
+            ": 3M Filter SG 이전관련 Project 유지 작업 진행",
+            "> Skyworks SG, Skyworks Irvine에 3M 관련 독립적 진행 요청",
+            ">> 해영, Skyworks MX를 통한 당사 진행 Tool 사용 지속 압박",
+            "당사, MX뿐만 아니라 W/Wide Project Line Contact 진행",
+            "> Skyworks SG, Cost Saving 관련 MY 업체 추천 확인",
+            ">> 해영, Skyworks MX를 통해 MY 업체관련 구체적인 정보 파악 중"
+          ]
+        },
         {
           "id": "iss-hjh-1",
           "title": "Skyworks NPI Project 진행 현황 (WLCSP 9종 및 Filter Conversion)",
@@ -278,7 +294,16 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
           "status": "Close"
         }
       ],
-      "quality_issues": []
+      "quality_issues": [
+        {
+          "id": "qual_1790577091023",
+          "customer": "BROADCOM",
+          "item": "IC Tray",
+          "pn": "KS-881490",
+          "defect_type": "이물/오염",
+          "comment": "불량상황에 대한 설명 및 조치 대책"
+        }
+      ]
     },
     {
       "id": "ksm",
