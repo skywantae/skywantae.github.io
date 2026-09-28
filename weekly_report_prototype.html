@@ -1738,6 +1738,17 @@
       box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
       transform: translateY(-1px);
     }
+    
+    /* Hide number input spinners everywhere */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none !important;
+      margin: 0 !important;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield !important;
+    }
+    
     .sample-cell-input {
       width: 100%;
       background: transparent;
@@ -2047,27 +2058,26 @@
             <!-- 동적 렌더링 -->
           </div>
 
-          <!-- 첨부 사진 규격 완벽 일치 상단바 & 데이터 기입 테이블 (15개 컬럼) -->
+          <!-- 첨부 사진 규격 완벽 일치 상단바 & 데이터 기입 테이블 (구분 제외 14개 항목 + 관리) -->
           <div class="biz-table-wrap">
-            <table class="biz-table" id="sampleMainTable" style="min-width:1380px;">
+            <table class="biz-table" id="sampleMainTable" style="min-width:1350px;">
               <thead>
                 <tr>
                   <th style="color:#ffffff; width:85px; text-align:center;">ITEM</th>
                   <th style="color:#ffffff; width:85px; text-align:center;">TOOL TYPE</th>
-                  <th style="color:#ffffff; width:80px; text-align:center;">담당자</th>
-                  <th style="color:#ffffff; width:125px;">CUSTOMER</th>
+                  <th style="color:#ffffff; width:105px; text-align:center;">담당자</th>
+                  <th style="color:#ffffff; width:135px;">CUSTOMER</th>
                   <th style="color:#ffffff; width:65px; text-align:center;">CTR</th>
                   <th style="color:#ffffff; width:65px; text-align:center;">TYPE</th>
-                  <th style="color:#ffffff; width:135px;">KOSTAT P/N</th>
+                  <th style="color:#ffffff; width:140px;">KOSTAT P/N</th>
                   <th style="color:#ffffff; width:95px;">TEMP.</th>
-                  <th style="color:#ffffff; width:65px; text-align:right;">Q'TY</th>
+                  <th style="color:#ffffff; width:80px; text-align:right;">Q'TY</th>
                   <th style="color:#ffffff; width:100px; text-align:center;">샘플 요청일</th>
                   <th style="color:#ffffff; width:100px; text-align:center;">샘플 발송일</th>
-                  <th style="color:#ffffff; width:95px; text-align:center;">고객 승인 여부</th>
+                  <th style="color:#ffffff; width:100px; text-align:center;">고객 승인 여부</th>
                   <th style="color:#ffffff; min-width:140px;">진행사항</th>
                   <th style="color:#ffffff; width:80px; text-align:center;">공장</th>
-                  <th style="color:#ffffff; width:80px; text-align:center;">구분</th>
-                  <th style="color:#ffffff; width:45px; text-align:center;">관리</th>
+                  <th style="color:#ffffff; width:50px; text-align:center;">관리</th>
                 </tr>
               </thead>
               <tbody id="sampleQuickAddTbody">
@@ -2093,12 +2103,16 @@
                     </select>
                   </td>
                   <td>
-                    <select id="qa_manager" style="color:#38bdf8; font-weight:800;">
+                    <select id="qa_manager" style="color:#38bdf8; font-weight:800; min-width:88px;">
                       <option value="한준희">한준희</option>
                       <option value="김샘물">김샘물</option>
                       <option value="이가진">이가진</option>
                       <option value="이상철">이상철</option>
                       <option value="김완태">김완태</option>
+                      <option value="신경섭">신경섭</option>
+                      <option value="류태규">류태규</option>
+                      <option value="이유석">이유석</option>
+                      <option value="황승현">황승현</option>
                     </select>
                   </td>
                   <td>
@@ -2128,7 +2142,7 @@
                     <input type="text" id="qa_temp" placeholder="125/150" />
                   </td>
                   <td>
-                    <input type="number" id="qa_qty" placeholder="수량" style="text-align:right;" />
+                    <input type="text" inputmode="numeric" id="qa_qty" placeholder="수량" style="text-align:right; font-weight:700;" />
                   </td>
                   <td>
                     <input type="date" id="qa_req_date" />
@@ -2154,9 +2168,6 @@
                       <option value="베트남">베트남</option>
                       <option value="태창">태창</option>
                     </select>
-                  </td>
-                  <td>
-                    <input type="text" id="qa_category" placeholder="신규/양산" style="text-align:center;" />
                   </td>
                   <td style="text-align:center;">
                     <button type="button" class="btn-action-xs primary" onclick="submitQuickAddSample()" title="새로운 샘플 기입 등록" style="font-weight:800; padding:4px 8px; font-size:11px; white-space:nowrap;">+ 등록</button>
@@ -6279,13 +6290,14 @@
       const type = (document.getElementById('qa_type').value || 'TR').trim();
       const pn = (document.getElementById('qa_part_no').value || '').trim();
       const temp = (document.getElementById('qa_temp').value || '').trim();
-      const qty = parseFloat(document.getElementById('qa_qty').value) || 0;
+      const qtyRaw = (document.getElementById('qa_qty').value || '').trim();
+      const qty = qtyRaw ? (parseFloat(qtyRaw.replace(/,/g, '')) || qtyRaw) : 0;
       const reqD = document.getElementById('qa_req_date').value || '';
       const shipD = document.getElementById('qa_ship_date').value || '';
       const app = document.getElementById('qa_approval').value || '진행중';
       const prog = (document.getElementById('qa_progress').value || '').trim();
       const fac = document.getElementById('qa_factory').value || '';
-      const cat = (document.getElementById('qa_category').value || '').trim();
+      const cat = '';
 
       if (!cust || !pn) {
         showToast('고객사명(CUSTOMER)과 KOSTAT P/N은 필수 입력 항목입니다.');
@@ -6351,12 +6363,22 @@
     function updateSampleField(sampleId, field, val) {
       if (!window.USER_SAMPLE_EDITS) window.USER_SAMPLE_EDITS = {};
       if (!window.USER_SAMPLE_EDITS[sampleId]) window.USER_SAMPLE_EDITS[sampleId] = {};
-      window.USER_SAMPLE_EDITS[sampleId][field] = val;
+      
+      let processedVal = val;
+      if (field === 'qty') {
+        if (typeof val === 'string') {
+          const clean = val.trim().replace(/,/g, '');
+          if (clean === '') processedVal = '';
+          else if (!isNaN(Number(clean))) processedVal = Number(clean);
+          else processedVal = clean;
+        }
+      }
+      window.USER_SAMPLE_EDITS[sampleId][field] = processedVal;
 
       // Also update in USER_ADDED_SAMPLES if it exists there
       if (Array.isArray(window.USER_ADDED_SAMPLES)) {
         const found = window.USER_ADDED_SAMPLES.find(x => x.id === sampleId);
-        if (found) found[field] = val;
+        if (found) found[field] = processedVal;
       }
 
       saveSamplesToStorage();
@@ -6500,7 +6522,7 @@
       }
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="16" style="text-align:center; padding:24px; color:var(--text-dim);">일치하는 샘플 내역이 없습니다.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="15" style="text-align:center; padding:24px; color:var(--text-dim);">일치하는 샘플 내역이 없습니다.</td></tr>`;
         return;
       }
 
@@ -6511,7 +6533,7 @@
 
       const itemOptions = ['T-TOOL', 'CT-TOOL', 'PC-TOOL', 'COVER', 'TRAY', 'COMP', 'OTHERS'];
       const toolOptions = ['CLOSE', 'OPEN', 'MODIFY', 'EXISTING'];
-      const manOptions = ['한준희', '김샘물', '이가진', '이상철', '김완태'];
+      const manOptions = ['한준희', '김샘물', '이가진', '이상철', '김완태', '신경섭', '류태규', '이유석', '황승현'];
       const ctrOptions = ['US', 'MY', 'TW', 'TH', 'PH', 'JP', 'SG', 'VN', 'KR', 'EU'];
       const appOptions = ['진행중', '승인', '미승인', 'FAIL'];
       const facOptions = ['김포', '혜주', '중동', '베트남', '태창', '나노연구소'];
@@ -6527,6 +6549,11 @@
         let appSelectColor = '#93c5fd';
         if (appVal === '승인') appSelectColor = '#4ade80';
         else if (appVal === '미승인' || appVal === 'FAIL') appSelectColor = '#f87171';
+
+        const currentManOptions = manOptions.includes(manVal) ? manOptions : [manVal, ...manOptions];
+        const displayQty = (s.qty !== undefined && s.qty !== null && s.qty !== '') 
+          ? (Number.isInteger(Number(s.qty)) ? Number(s.qty) : s.qty) 
+          : '';
 
         return `
           <tr id="sampleRow_${s.id}">
@@ -6544,10 +6571,10 @@
               </select>
             </td>
 
-            <!-- 3. 담당자 -->
+            <!-- 3. 담당자 (이름 잘림 방지 105px 공간 & 전체 담당자 목록) -->
             <td>
-              <select class="sample-cell-select" style="color:#38bdf8; font-weight:800;" onchange="updateSampleField('${s.id}', 'manager', this.value)">
-                ${optHtml(manOptions, manVal)}
+              <select class="sample-cell-select" style="color:#38bdf8; font-weight:800; min-width:88px;" onchange="updateSampleField('${s.id}', 'manager', this.value)">
+                ${optHtml(currentManOptions, manVal)}
               </select>
             </td>
 
@@ -6582,10 +6609,10 @@
                      oninput="updateSampleField('${s.id}', 'temp', this.value)" placeholder="125/150" />
             </td>
 
-            <!-- 9. Q'TY -->
+            <!-- 9. Q'TY (자유로운 타이핑 지원 & 스피너 오버레이 제거) -->
             <td>
-              <input type="number" class="sample-cell-input" style="text-align:right;" value="${s.qty !== undefined && s.qty !== null ? s.qty : ''}"
-                     oninput="updateSampleField('${s.id}', 'qty', parseFloat(this.value)||0)" placeholder="0" />
+              <input type="text" inputmode="numeric" class="sample-cell-input" style="text-align:right; font-weight:700;" value="${displayQty}"
+                     oninput="updateSampleField('${s.id}', 'qty', this.value)" placeholder="0" />
             </td>
 
             <!-- 10. 샘플 요청일 -->
@@ -6621,13 +6648,7 @@
               </select>
             </td>
 
-            <!-- 15. 구분 -->
-            <td>
-              <input type="text" class="sample-cell-input" style="text-align:center;" value="${escapeAttr(s.category || '')}"
-                     oninput="updateSampleField('${s.id}', 'category', this.value)" placeholder="신규/양산" />
-            </td>
-
-            <!-- 16. 관리 (삭제) -->
+            <!-- 15. 관리 (삭제) -->
             <td style="text-align:center;">
               <button type="button" class="bullet-del-btn" title="해당 샘플 삭제" onclick="deleteSample('${s.id}')">&times;</button>
             </td>
