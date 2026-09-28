@@ -1715,6 +1715,96 @@
       border-color: var(--primary);
     }
     
+  
+    /* 샘플 리스트 개선 스타일 */
+    .btn-sample-register-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      color: #ffffff !important;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-sample-register-hero:hover {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
+      transform: translateY(-1px);
+    }
+    .sample-cell-input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 11.5px;
+      padding: 3px 5px;
+      outline: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .sample-cell-input:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .sample-cell-input:focus {
+      background: var(--bg-card-sub);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+    }
+    .sample-cell-select {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 2px 4px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-sizing: border-box;
+    }
+    .sample-cell-select:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .sample-cell-select:focus {
+      background: var(--bg-card-sub);
+      border-color: #3b82f6;
+    }
+    .sample-quick-add-tr {
+      background: rgba(37, 99, 235, 0.12) !important;
+      border-bottom: 2px solid rgba(59, 130, 246, 0.5) !important;
+    }
+    .sample-quick-add-tr td {
+      padding: 6px 4px !important;
+      vertical-align: middle;
+    }
+    .sample-quick-add-tr input, .sample-quick-add-tr select {
+      background: var(--bg-base) !important;
+      border: 1px solid rgba(59, 130, 246, 0.4) !important;
+      color: #ffffff !important;
+      border-radius: 4px;
+      font-size: 11px;
+      padding: 4px 5px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .sample-quick-add-tr input:focus, .sample-quick-add-tr select:focus {
+      border-color: #60a5fa !important;
+      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3) !important;
+    }
+
   </style>
 </head>
 <body>
@@ -1918,8 +2008,8 @@
           <!-- 상단 필터 및 검색 바 -->
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
             <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; flex:1;">
-              <input type="text" id="sampleSearchInput" placeholder="고객사, 품번(P/N), 규격, PO 검색..." oninput="onSampleSearchInput()"
-                     style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); color:#fff; border-radius:4px; padding:4px 10px; font-size:12px; min-width:200px;">
+              <input type="text" id="sampleSearchInput" placeholder="고객사, P/N, 규격, PO 검색..." oninput="onSampleSearchInput()"
+                     style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); color:#fff; border-radius:4px; padding:5px 10px; font-size:12px; min-width:180px;">
               <select class="select-dropdown-red" id="sampleYearFilter" onchange="onSampleFilterChange()" style="font-size:12px; font-weight:700; padding:4px 8px; color:#fff;">
                 <option value="2026" selected>2026년</option>
                 <option value="ALL">전체 연도</option>
@@ -1942,9 +2032,13 @@
                 <option value="태창">태창</option>
               </select>
             </div>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span id="sampleCountBadge" style="font-size:11.5px; color:#38bdf8; font-weight:700; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:4px;">총 0건</span>
-              <button class="btn-action-xs primary" onclick="openAddSampleModal()">+ 샘플 등록</button>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="sampleCountBadge" style="font-size:11.5px; color:#38bdf8; font-weight:700; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); padding:4px 10px; border-radius:4px;">총 0건</span>
+              <!-- 개선된 프리미엄 샘플 등록 버튼 -->
+              <button type="button" class="btn-sample-register-hero" onclick="focusQuickAddSampleRow()" title="신규 샘플 정보 직접 기입">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                샘플 기입 등록
+              </button>
             </div>
           </div>
 
@@ -1953,24 +2047,122 @@
             <!-- 동적 렌더링 -->
           </div>
 
-          <!-- 샘플 데이터 테이블 -->
+          <!-- 첨부 사진 규격 완벽 일치 상단바 & 데이터 기입 테이블 (15개 컬럼) -->
           <div class="biz-table-wrap">
-            <table class="biz-table">
+            <table class="biz-table" id="sampleMainTable" style="min-width:1380px;">
               <thead>
                 <tr>
+                  <th style="color:#ffffff; width:85px; text-align:center;">ITEM</th>
+                  <th style="color:#ffffff; width:85px; text-align:center;">TOOL TYPE</th>
                   <th style="color:#ffffff; width:80px; text-align:center;">담당자</th>
-                  <th style="color:#ffffff; width:130px;">고객사</th>
-                  <th style="color:#ffffff; width:130px;">Kostat P/N</th>
-                  <th style="color:#ffffff;">규격 / Package</th>
-                  <th style="text-align:right; width:55px;">수량</th>
-                  <th style="text-align:center; width:85px;">요청일</th>
-                  <th style="text-align:center; width:85px;">발송일</th>
-                  <th style="text-align:center; width:75px;">승인여부</th>
-                  <th style="width:120px;">진행사항</th>
-                  <th style="text-align:center; width:65px;">공장</th>
-                  <th style="text-align:center; width:50px;">상세</th>
+                  <th style="color:#ffffff; width:125px;">CUSTOMER</th>
+                  <th style="color:#ffffff; width:65px; text-align:center;">CTR</th>
+                  <th style="color:#ffffff; width:65px; text-align:center;">TYPE</th>
+                  <th style="color:#ffffff; width:135px;">KOSTAT P/N</th>
+                  <th style="color:#ffffff; width:95px;">TEMP.</th>
+                  <th style="color:#ffffff; width:65px; text-align:right;">Q'TY</th>
+                  <th style="color:#ffffff; width:100px; text-align:center;">샘플 요청일</th>
+                  <th style="color:#ffffff; width:100px; text-align:center;">샘플 발송일</th>
+                  <th style="color:#ffffff; width:95px; text-align:center;">고객 승인 여부</th>
+                  <th style="color:#ffffff; min-width:140px;">진행사항</th>
+                  <th style="color:#ffffff; width:80px; text-align:center;">공장</th>
+                  <th style="color:#ffffff; width:80px; text-align:center;">구분</th>
+                  <th style="color:#ffffff; width:45px; text-align:center;">관리</th>
                 </tr>
               </thead>
+              <tbody id="sampleQuickAddTbody">
+                <!-- 신규 샘플 빠른 기입 행 (Top Input Bar) -->
+                <tr id="sampleQuickAddRow" class="sample-quick-add-tr">
+                  <td>
+                    <select id="qa_item">
+                      <option value="T-TOOL" selected>T-TOOL</option>
+                      <option value="CT-TOOL">CT-TOOL</option>
+                      <option value="PC-TOOL">PC-TOOL</option>
+                      <option value="COVER">COVER</option>
+                      <option value="TRAY">TRAY</option>
+                      <option value="COMP">COMP</option>
+                      <option value="OTHERS">OTHERS</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select id="qa_tool">
+                      <option value="CLOSE" selected>CLOSE</option>
+                      <option value="OPEN">OPEN</option>
+                      <option value="MODIFY">MODIFY</option>
+                      <option value="EXISTING">EXISTING</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select id="qa_manager" style="color:#38bdf8; font-weight:800;">
+                      <option value="한준희">한준희</option>
+                      <option value="김샘물">김샘물</option>
+                      <option value="이가진">이가진</option>
+                      <option value="이상철">이상철</option>
+                      <option value="김완태">김완태</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="text" id="qa_customer" placeholder="고객사명" />
+                  </td>
+                  <td>
+                    <select id="qa_country" style="text-align:center;">
+                      <option value="US" selected>US</option>
+                      <option value="MY">MY</option>
+                      <option value="TW">TW</option>
+                      <option value="TH">TH</option>
+                      <option value="PH">PH</option>
+                      <option value="JP">JP</option>
+                      <option value="SG">SG</option>
+                      <option value="VN">VN</option>
+                      <option value="KR">KR</option>
+                      <option value="EU">EU</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="text" id="qa_type" placeholder="TR" style="text-align:center;" />
+                  </td>
+                  <td>
+                    <input type="text" id="qa_part_no" placeholder="KS-XXXXXX" style="font-weight:700; color:#38bdf8;" />
+                  </td>
+                  <td>
+                    <input type="text" id="qa_temp" placeholder="125/150" />
+                  </td>
+                  <td>
+                    <input type="number" id="qa_qty" placeholder="수량" style="text-align:right;" />
+                  </td>
+                  <td>
+                    <input type="date" id="qa_req_date" />
+                  </td>
+                  <td>
+                    <input type="date" id="qa_ship_date" />
+                  </td>
+                  <td>
+                    <select id="qa_approval" style="text-align:center;">
+                      <option value="진행중" selected>진행중</option>
+                      <option value="승인">승인</option>
+                      <option value="미승인">미승인</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="text" id="qa_progress" placeholder="진행사항 기입" />
+                  </td>
+                  <td>
+                    <select id="qa_factory" style="text-align:center;">
+                      <option value="김포" selected>김포</option>
+                      <option value="혜주">혜주</option>
+                      <option value="중동">중동</option>
+                      <option value="베트남">베트남</option>
+                      <option value="태창">태창</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="text" id="qa_category" placeholder="신규/양산" style="text-align:center;" />
+                  </td>
+                  <td style="text-align:center;">
+                    <button type="button" class="btn-action-xs primary" onclick="submitQuickAddSample()" title="새로운 샘플 기입 등록" style="font-weight:800; padding:4px 8px; font-size:11px; white-space:nowrap;">+ 등록</button>
+                  </td>
+                </tr>
+              </tbody>
               <tbody id="sampleTableTbody">
                 <!-- 동적 렌더링 -->
               </tbody>
@@ -4961,7 +5153,97 @@
             .badge { font-size: 8pt; font-weight: bold; padding: 2px 6px; border-radius: 3px; background: #e0f2fe; color: #0369a1; }
             ul { margin: 6px 0; padding-left: 20px; }
             li { margin-bottom: 4px; font-size: 9.5pt; }
-          </style>
+          
+    /* 샘플 리스트 개선 스타일 */
+    .btn-sample-register-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      color: #ffffff !important;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-sample-register-hero:hover {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
+      transform: translateY(-1px);
+    }
+    .sample-cell-input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 11.5px;
+      padding: 3px 5px;
+      outline: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .sample-cell-input:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .sample-cell-input:focus {
+      background: var(--bg-card-sub);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+    }
+    .sample-cell-select {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 2px 4px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-sizing: border-box;
+    }
+    .sample-cell-select:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .sample-cell-select:focus {
+      background: var(--bg-card-sub);
+      border-color: #3b82f6;
+    }
+    .sample-quick-add-tr {
+      background: rgba(37, 99, 235, 0.12) !important;
+      border-bottom: 2px solid rgba(59, 130, 246, 0.5) !important;
+    }
+    .sample-quick-add-tr td {
+      padding: 6px 4px !important;
+      vertical-align: middle;
+    }
+    .sample-quick-add-tr input, .sample-quick-add-tr select {
+      background: var(--bg-base) !important;
+      border: 1px solid rgba(59, 130, 246, 0.4) !important;
+      color: #ffffff !important;
+      border-radius: 4px;
+      font-size: 11px;
+      padding: 4px 5px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .sample-quick-add-tr input:focus, .sample-quick-add-tr select:focus {
+      border-color: #60a5fa !important;
+      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3) !important;
+    }
+
+  </style>
         </head>
         <body>
           <h1>해외영업부 주간보고서 (${SELECTED_MONTH} ${SELECTED_WEEK} 기준)</h1>
@@ -5086,7 +5368,97 @@
               body { background: #fff; color: #000; }
               .slide { box-shadow: none; border: 1px solid #ccc; width: 100%; height: 100vh; margin: 0; }
             }
-          </style>
+          
+    /* 샘플 리스트 개선 스타일 */
+    .btn-sample-register-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      color: #ffffff !important;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-sample-register-hero:hover {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
+      transform: translateY(-1px);
+    }
+    .sample-cell-input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 11.5px;
+      padding: 3px 5px;
+      outline: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .sample-cell-input:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .sample-cell-input:focus {
+      background: var(--bg-card-sub);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+    }
+    .sample-cell-select {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 2px 4px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-sizing: border-box;
+    }
+    .sample-cell-select:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .sample-cell-select:focus {
+      background: var(--bg-card-sub);
+      border-color: #3b82f6;
+    }
+    .sample-quick-add-tr {
+      background: rgba(37, 99, 235, 0.12) !important;
+      border-bottom: 2px solid rgba(59, 130, 246, 0.5) !important;
+    }
+    .sample-quick-add-tr td {
+      padding: 6px 4px !important;
+      vertical-align: middle;
+    }
+    .sample-quick-add-tr input, .sample-quick-add-tr select {
+      background: var(--bg-base) !important;
+      border: 1px solid rgba(59, 130, 246, 0.4) !important;
+      color: #ffffff !important;
+      border-radius: 4px;
+      font-size: 11px;
+      padding: 4px 5px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .sample-quick-add-tr input:focus, .sample-quick-add-tr select:focus {
+      border-color: #60a5fa !important;
+      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3) !important;
+    }
+
+  </style>
         </head>
         <body>
           <!-- 슬라이드 1: 표지 -->
@@ -5815,7 +6187,8 @@
     // 초기 실행
     
     // ==================================================== //
-    // 4. 샘플 리스트 (Sample List) 엔진 & 모달 컨트롤러     //
+        // ==================================================== //
+    // 4. 샘플 리스트 (Sample List) 엔진 & 인라인 기입 컨트롤러 //
     // ==================================================== //
 
     let SAMPLE_ACTIVE_YEAR = '2026';
@@ -5823,6 +6196,29 @@
     let SAMPLE_ACTIVE_FACTORY = 'ALL';
     let SAMPLE_SEARCH_QUERY = '';
     window.USER_ADDED_SAMPLES = [];
+    window.USER_SAMPLE_EDITS = {};
+
+    function loadStoredSamples() {
+      try {
+        const rawAdded = localStorage.getItem('KOSTAT_USER_ADDED_SAMPLES');
+        if (rawAdded) {
+          const parsed = JSON.parse(rawAdded);
+          if (Array.isArray(parsed)) window.USER_ADDED_SAMPLES = parsed;
+        }
+        const rawEdits = localStorage.getItem('KOSTAT_USER_SAMPLE_EDITS');
+        if (rawEdits) {
+          const parsed = JSON.parse(rawEdits);
+          if (parsed && typeof parsed === 'object') window.USER_SAMPLE_EDITS = parsed;
+        }
+      } catch (_) {}
+    }
+
+    function saveSamplesToStorage() {
+      try {
+        localStorage.setItem('KOSTAT_USER_ADDED_SAMPLES', JSON.stringify(window.USER_ADDED_SAMPLES || []));
+        localStorage.setItem('KOSTAT_USER_SAMPLE_EDITS', JSON.stringify(window.USER_SAMPLE_EDITS || {}));
+      } catch (_) {}
+    }
 
     function escapeHtml(str) {
       if (str === null || str === undefined) return '';
@@ -5857,17 +6253,170 @@
       renderSampleTable(isAll, m, currentData);
     }
 
+    function focusQuickAddSampleRow() {
+      const row = document.getElementById('sampleQuickAddRow');
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const custInput = document.getElementById('qa_customer');
+        if (custInput) {
+          custInput.focus();
+          custInput.style.borderColor = '#60a5fa';
+          custInput.style.boxShadow = '0 0 0 3px rgba(96, 165, 250, 0.4)';
+          setTimeout(() => {
+            custInput.style.borderColor = '';
+            custInput.style.boxShadow = '';
+          }, 1500);
+        }
+      }
+    }
+
+    function submitQuickAddSample() {
+      const item = document.getElementById('qa_item').value;
+      const tool = document.getElementById('qa_tool').value;
+      const man = document.getElementById('qa_manager').value;
+      const cust = (document.getElementById('qa_customer').value || '').trim();
+      const ctr = document.getElementById('qa_country').value;
+      const type = (document.getElementById('qa_type').value || 'TR').trim();
+      const pn = (document.getElementById('qa_part_no').value || '').trim();
+      const temp = (document.getElementById('qa_temp').value || '').trim();
+      const qty = parseFloat(document.getElementById('qa_qty').value) || 0;
+      const reqD = document.getElementById('qa_req_date').value || '';
+      const shipD = document.getElementById('qa_ship_date').value || '';
+      const app = document.getElementById('qa_approval').value || '진행중';
+      const prog = (document.getElementById('qa_progress').value || '').trim();
+      const fac = document.getElementById('qa_factory').value || '';
+      const cat = (document.getElementById('qa_category').value || '').trim();
+
+      if (!cust || !pn) {
+        showToast('고객사명(CUSTOMER)과 KOSTAT P/N은 필수 입력 항목입니다.');
+        if (!cust) document.getElementById('qa_customer').focus();
+        else document.getElementById('qa_part_no').focus();
+        return;
+      }
+
+      const memberMap = { '한준희': 'hjh', '김샘물': 'ksm', '이가진': 'lgj', '이상철': 'lsc', '김완태': 'kwt' };
+      const newSample = {
+        id: `SMP-${Date.now().toString().slice(-5)}`,
+        year: '2026',
+        item: item,
+        tool_type: tool,
+        manager: man,
+        member_id: memberMap[man] || '',
+        customer: cust,
+        country: ctr,
+        customer_name: cust,
+        type: type,
+        part_no: pn,
+        temp: temp,
+        package: temp,
+        po_no: '',
+        qty: qty,
+        unit_price: 0,
+        amount: 0,
+        invoice_no: '',
+        erp_code: '',
+        po_date: '',
+        contract_date: '',
+        sample_req_date: reqD,
+        sample_ship_date: shipD,
+        approval: app,
+        progress: prog || '신규 기입 등록',
+        revenue_rec: '',
+        collection: '',
+        factory: fac,
+        category: cat,
+        is_ongoing: true
+      };
+
+      if (!Array.isArray(window.USER_ADDED_SAMPLES)) window.USER_ADDED_SAMPLES = [];
+      window.USER_ADDED_SAMPLES.unshift(newSample);
+      saveSamplesToStorage();
+
+      // Clear input fields
+      document.getElementById('qa_customer').value = '';
+      document.getElementById('qa_part_no').value = '';
+      document.getElementById('qa_qty').value = '';
+      document.getElementById('qa_progress').value = '';
+      document.getElementById('qa_temp').value = '';
+
+      showToast(`신규 샘플 [${pn}]이 등록되었습니다.`);
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 신규 샘플 [${cust}] ${pn}을 기입 등록했습니다.`);
+
+      const currentData = getActiveDataset();
+      const isAll = (ACTIVE_MEMBER_ID === 'ALL');
+      const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
+      renderSampleTable(isAll, m, currentData);
+    }
+
+    function updateSampleField(sampleId, field, val) {
+      if (!window.USER_SAMPLE_EDITS) window.USER_SAMPLE_EDITS = {};
+      if (!window.USER_SAMPLE_EDITS[sampleId]) window.USER_SAMPLE_EDITS[sampleId] = {};
+      window.USER_SAMPLE_EDITS[sampleId][field] = val;
+
+      // Also update in USER_ADDED_SAMPLES if it exists there
+      if (Array.isArray(window.USER_ADDED_SAMPLES)) {
+        const found = window.USER_ADDED_SAMPLES.find(x => x.id === sampleId);
+        if (found) found[field] = val;
+      }
+
+      saveSamplesToStorage();
+
+      clearTimeout(DEBOUNCE_TIMER);
+      DEBOUNCE_TIMER = setTimeout(() => {
+        triggerAutoSave(`${CURRENT_USER_NAME}님이 샘플 [${sampleId}] ${field} 항목을 수정했습니다.`);
+      }, 500);
+    }
+
+    function deleteSample(sampleId) {
+      if (!confirm('해당 샘플 항목을 삭제하시겠습니까?')) return;
+      
+      // If user added, remove from array
+      if (Array.isArray(window.USER_ADDED_SAMPLES)) {
+        window.USER_ADDED_SAMPLES = window.USER_ADDED_SAMPLES.filter(x => x.id !== sampleId);
+      }
+      // Mark as deleted in edits
+      if (!window.USER_SAMPLE_EDITS) window.USER_SAMPLE_EDITS = {};
+      window.USER_SAMPLE_EDITS[sampleId] = { deleted: true };
+      saveSamplesToStorage();
+
+      showToast('샘플 항목이 삭제되었습니다.');
+      triggerAutoSave(`${CURRENT_USER_NAME}님이 샘플 [${sampleId}] 항목을 삭제했습니다.`);
+
+      const currentData = getActiveDataset();
+      const isAll = (ACTIVE_MEMBER_ID === 'ALL');
+      const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
+      renderSampleTable(isAll, m, currentData);
+    }
+
     function renderSampleTable(isAll, member, dataContext) {
       const tbody = document.getElementById('sampleTableTbody');
       if (!tbody) return;
 
-      let allSamples = [];
+      loadStoredSamples();
+
+      let baseList = [];
       if (typeof window.KOSTAT_OVERSEAS_SAMPLES_DATA !== 'undefined' && Array.isArray(window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples)) {
-        allSamples = window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples;
+        baseList = window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples;
       }
+
+      // Combine user added samples and apply user edits
+      let allSamples = [];
       if (Array.isArray(window.USER_ADDED_SAMPLES)) {
-        allSamples = [...window.USER_ADDED_SAMPLES, ...allSamples];
+        allSamples = [...window.USER_ADDED_SAMPLES];
       }
+      baseList.forEach(s => {
+        allSamples.push({ ...s });
+      });
+
+      // Apply overrides and filter out deleted
+      const edits = window.USER_SAMPLE_EDITS || {};
+      allSamples = allSamples.filter(s => {
+        if (edits[s.id] && edits[s.id].deleted) return false;
+        if (edits[s.id]) {
+          Object.assign(s, edits[s.id]);
+        }
+        return true;
+      });
 
       // 1. 담당자 필터 (상단 조회 대상이 특정 담당자면 해당 담당자 우선)
       let filtered = allSamples;
@@ -5909,9 +6458,10 @@
           return (s.customer && s.customer.toLowerCase().includes(q)) ||
                  (s.part_no && s.part_no.toLowerCase().includes(q)) ||
                  (s.package && s.package.toLowerCase().includes(q)) ||
+                 (s.temp && s.temp.toLowerCase().includes(q)) ||
                  (s.po_no && s.po_no.toLowerCase().includes(q)) ||
-                 (s.invoice_no && s.invoice_no.toLowerCase().includes(q)) ||
-                 (s.manager && s.manager.toLowerCase().includes(q));
+                 (s.manager && s.manager.toLowerCase().includes(q)) ||
+                 (s.category && s.category.toLowerCase().includes(q));
         });
       }
 
@@ -5935,7 +6485,7 @@
             <span style="color:var(--text-muted);">총 샘플:</span> <strong style="color:#ffffff;">${totalCount.toLocaleString()}건</strong>
           </div>
           <div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); border-radius:4px; padding:6px 12px; font-size:11.5px;">
-            <span style="color:#86efac;">승인완료:</span> <strong style="color:#4ade80;">${approvedCount.toLocaleString()}건</strong>
+            <span style="color:#86efac;">고객 승인:</span> <strong style="color:#4ade80;">${approvedCount.toLocaleString()}건</strong>
           </div>
           <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); border-radius:4px; padding:6px 12px; font-size:11.5px;">
             <span style="color:#fca5a5;">미승인:</span> <strong style="color:#f87171;">${rejectedCount.toLocaleString()}건</strong>
@@ -5950,233 +6500,140 @@
       }
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:24px; color:var(--text-dim);">일치하는 샘플 내역이 없습니다.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="16" style="text-align:center; padding:24px; color:var(--text-dim);">일치하는 샘플 내역이 없습니다.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = filtered.map(s => {
-        let appBadgeStyle = 'background:rgba(59,130,246,0.2); color:#93c5fd; border:1px solid rgba(59,130,246,0.4);';
-        let appText = s.approval || '진행중';
-        if (appText.includes('승인') && !appText.includes('미승인')) {
-          appBadgeStyle = 'background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.4);';
-          appText = '승인';
-        } else if (appText.includes('미승인') || appText.includes('FAIL')) {
-          appBadgeStyle = 'background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4);';
-          appText = '미승인';
-        } else {
-          if (!appText || appText === '-') appText = '진행중';
-        }
+      // 옵션 헬퍼 함수
+      function optHtml(valList, selVal) {
+        return valList.map(v => `<option value="${v}" ${v === selVal ? 'selected' : ''}>${v}</option>`).join('');
+      }
 
-        const safeManager = escapeHtml(s.manager || '-');
-        const safeCust = escapeHtml(s.customer || '-');
-        const safeCtr = s.country ? `[${escapeHtml(s.country)}]` : '';
-        const safePn = escapeHtml(s.part_no || '-');
-        const safePkg = escapeHtml(s.package || s.temp || '-');
-        const safeQty = s.qty ? Number(s.qty).toLocaleString() : '-';
-        const safeReq = escapeHtml(s.sample_req_date || '-');
-        const safeShip = escapeHtml(s.sample_ship_date || '-');
-        const safeProg = escapeHtml(s.progress || '-');
-        const safeFac = escapeHtml(s.factory || '-');
+      const itemOptions = ['T-TOOL', 'CT-TOOL', 'PC-TOOL', 'COVER', 'TRAY', 'COMP', 'OTHERS'];
+      const toolOptions = ['CLOSE', 'OPEN', 'MODIFY', 'EXISTING'];
+      const manOptions = ['한준희', '김샘물', '이가진', '이상철', '김완태'];
+      const ctrOptions = ['US', 'MY', 'TW', 'TH', 'PH', 'JP', 'SG', 'VN', 'KR', 'EU'];
+      const appOptions = ['진행중', '승인', '미승인', 'FAIL'];
+      const facOptions = ['김포', '혜주', '중동', '베트남', '태창', '나노연구소'];
+
+      tbody.innerHTML = filtered.map(s => {
+        const itemVal = s.item || 'T-TOOL';
+        const toolVal = s.tool_type || 'CLOSE';
+        const manVal = s.manager || '한준희';
+        const ctrVal = s.country || 'US';
+        const appVal = (s.approval && s.approval.includes('승인') && !s.approval.includes('미승인')) ? '승인' : ((s.approval && s.approval.includes('미승인')) ? '미승인' : (s.approval || '진행중'));
+        const facVal = s.factory || '김포';
+
+        let appSelectColor = '#93c5fd';
+        if (appVal === '승인') appSelectColor = '#4ade80';
+        else if (appVal === '미승인' || appVal === 'FAIL') appSelectColor = '#f87171';
 
         return `
-          <tr style="cursor:pointer;" onclick="openSampleDetailModal('${s.id}')">
-            <td style="text-align:center;"><span style="font-weight:700; color:#38bdf8;">${safeManager}</span></td>
-            <td><strong>${safeCust}</strong> <span style="font-size:10.5px; color:var(--text-muted);">${safeCtr}</span></td>
-            <td style="font-weight:700; color:#ffffff;">${safePn}</td>
-            <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${safePkg}">${safePkg}</td>
-            <td style="text-align:right;">${safeQty}</td>
-            <td style="text-align:center; font-size:11px; color:var(--text-muted);">${safeReq}</td>
-            <td style="text-align:center; font-size:11px; color:var(--text-muted);">${safeShip}</td>
-            <td style="text-align:center;"><span style="font-size:10px; font-weight:800; padding:2px 6px; border-radius:3px; display:inline-block; ${appBadgeStyle}">${appText}</span></td>
-            <td style="max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px;" title="${safeProg}">${safeProg}</td>
-            <td style="text-align:center; font-size:11px;">${safeFac}</td>
+          <tr id="sampleRow_${s.id}">
+            <!-- 1. ITEM -->
+            <td>
+              <select class="sample-cell-select" onchange="updateSampleField('${s.id}', 'item', this.value)">
+                ${optHtml(itemOptions, itemVal)}
+              </select>
+            </td>
+
+            <!-- 2. TOOL TYPE -->
+            <td>
+              <select class="sample-cell-select" onchange="updateSampleField('${s.id}', 'tool_type', this.value)">
+                ${optHtml(toolOptions, toolVal)}
+              </select>
+            </td>
+
+            <!-- 3. 담당자 -->
+            <td>
+              <select class="sample-cell-select" style="color:#38bdf8; font-weight:800;" onchange="updateSampleField('${s.id}', 'manager', this.value)">
+                ${optHtml(manOptions, manVal)}
+              </select>
+            </td>
+
+            <!-- 4. CUSTOMER -->
+            <td>
+              <input type="text" class="sample-cell-input" style="font-weight:700;" value="${escapeAttr(s.customer || '')}"
+                     oninput="updateSampleField('${s.id}', 'customer', this.value)" placeholder="고객사" />
+            </td>
+
+            <!-- 5. CTR -->
+            <td>
+              <select class="sample-cell-select" style="text-align:center;" onchange="updateSampleField('${s.id}', 'country', this.value)">
+                ${optHtml(ctrOptions, ctrVal)}
+              </select>
+            </td>
+
+            <!-- 6. TYPE -->
+            <td>
+              <input type="text" class="sample-cell-input" style="text-align:center;" value="${escapeAttr(s.type || '')}"
+                     oninput="updateSampleField('${s.id}', 'type', this.value)" placeholder="TR" />
+            </td>
+
+            <!-- 7. KOSTAT P/N -->
+            <td>
+              <input type="text" class="sample-cell-input" style="font-weight:700; color:#38bdf8;" value="${escapeAttr(s.part_no || '')}"
+                     oninput="updateSampleField('${s.id}', 'part_no', this.value)" placeholder="KS-XXXXXX" />
+            </td>
+
+            <!-- 8. TEMP. -->
+            <td>
+              <input type="text" class="sample-cell-input" value="${escapeAttr(s.temp || s.package || '')}"
+                     oninput="updateSampleField('${s.id}', 'temp', this.value)" placeholder="125/150" />
+            </td>
+
+            <!-- 9. Q'TY -->
+            <td>
+              <input type="number" class="sample-cell-input" style="text-align:right;" value="${s.qty !== undefined && s.qty !== null ? s.qty : ''}"
+                     oninput="updateSampleField('${s.id}', 'qty', parseFloat(this.value)||0)" placeholder="0" />
+            </td>
+
+            <!-- 10. 샘플 요청일 -->
+            <td>
+              <input type="text" class="sample-cell-input" style="text-align:center; font-size:11px;" value="${escapeAttr(s.sample_req_date || '')}"
+                     oninput="updateSampleField('${s.id}', 'sample_req_date', this.value)" placeholder="YYYY-MM-DD" />
+            </td>
+
+            <!-- 11. 샘플 발송일 -->
+            <td>
+              <input type="text" class="sample-cell-input" style="text-align:center; font-size:11px;" value="${escapeAttr(s.sample_ship_date || '')}"
+                     oninput="updateSampleField('${s.id}', 'sample_ship_date', this.value)" placeholder="YYYY-MM-DD" />
+            </td>
+
+            <!-- 12. 고객 승인 여부 -->
+            <td>
+              <select class="sample-cell-select" style="text-align:center; font-weight:800; color:${appSelectColor};"
+                      onchange="updateSampleField('${s.id}', 'approval', this.value); this.style.color = (this.value==='승인'?'#4ade80':(this.value==='미승인'||this.value==='FAIL'?'#f87171':'#93c5fd'));">
+                ${optHtml(appOptions, appVal)}
+              </select>
+            </td>
+
+            <!-- 13. 진행사항 -->
+            <td>
+              <input type="text" class="sample-cell-input" value="${escapeAttr(s.progress || '')}"
+                     oninput="updateSampleField('${s.id}', 'progress', this.value)" placeholder="진행사항 기입" />
+            </td>
+
+            <!-- 14. 공장 -->
+            <td>
+              <select class="sample-cell-select" style="text-align:center;" onchange="updateSampleField('${s.id}', 'factory', this.value)">
+                ${optHtml(facOptions, facVal)}
+              </select>
+            </td>
+
+            <!-- 15. 구분 -->
+            <td>
+              <input type="text" class="sample-cell-input" style="text-align:center;" value="${escapeAttr(s.category || '')}"
+                     oninput="updateSampleField('${s.id}', 'category', this.value)" placeholder="신규/양산" />
+            </td>
+
+            <!-- 16. 관리 (삭제) -->
             <td style="text-align:center;">
-              <button type="button" class="btn-action-xs" onclick="event.stopPropagation(); openSampleDetailModal('${s.id}')" style="padding:2px 6px; font-size:10.5px;">상세</button>
+              <button type="button" class="bullet-del-btn" title="해당 샘플 삭제" onclick="deleteSample('${s.id}')">&times;</button>
             </td>
           </tr>
         `;
       }).join('');
-    }
-
-    function openSampleDetailModal(sampleId) {
-      let allSamples = [];
-      if (typeof window.KOSTAT_OVERSEAS_SAMPLES_DATA !== 'undefined' && Array.isArray(window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples)) {
-        allSamples = window.KOSTAT_OVERSEAS_SAMPLES_DATA.samples;
-      }
-      if (Array.isArray(window.USER_ADDED_SAMPLES)) {
-        allSamples = [...window.USER_ADDED_SAMPLES, ...allSamples];
-      }
-      const s = allSamples.find(x => x.id === sampleId);
-      if (!s) return;
-
-      const titleEl = document.getElementById('sampleDetailModalTitle');
-      if (titleEl) titleEl.textContent = `샘플 상세 정보: [${s.customer}] ${s.part_no}`;
-
-      const bodyEl = document.getElementById('sampleDetailModalBody');
-      if (bodyEl) {
-        bodyEl.innerHTML = `
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">샘플 ID / 연도</div>
-              <div style="font-weight:700; color:#38bdf8;">${escapeHtml(s.id)} (${escapeHtml(s.year)}년)</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">담당자 / 국가</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.manager || '-')} / [${escapeHtml(s.country || '-')}]</div>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">고객사 / 고객사명</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.customer || '-')} <span style="font-size:11px; color:var(--text-dim);">${escapeHtml(s.customer_name || '')}</span></div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">품목 (ITEM) / Tool Type</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.item || '-')} (${escapeHtml(s.tool_type || '-')})</div>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Kostat P/N</div>
-              <div style="font-weight:700; color:#38bdf8; font-size:14px;">${escapeHtml(s.part_no || '-')}</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">TEMP. / Package 규격</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.temp || '-')} / ${escapeHtml(s.package || '-')}</div>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:8px 10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:2px;">수량 (Q'ty)</div>
-              <div style="font-weight:700; color:#ffffff;">${s.qty ? Number(s.qty).toLocaleString() : '-'}</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:8px 10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:2px;">단가 (U/P)</div>
-              <div style="font-weight:700; color:#ffffff;">${s.unit_price ? '$ ' + Number(s.unit_price).toLocaleString() : '-'}</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:8px 10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:2px;">금액 (Amount)</div>
-              <div style="font-weight:700; color:#4ade80;">${s.amount ? '$ ' + Number(s.amount).toLocaleString() : '-'}</div>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">PO 번호 / PO 접수일</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.po_no || '-')} / ${escapeHtml(s.po_date || '-')}</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Invoice No / ERP Code</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.invoice_no || '-')} / ${escapeHtml(s.erp_code || '-')}</div>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">샘플 요청일 / 발송일</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.sample_req_date || '-')} / ${escapeHtml(s.sample_ship_date || '-')}</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-              <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">고객 승인 상태 / 공장</div>
-              <div style="font-weight:700; color:#ffffff;">${escapeHtml(s.approval || '진행중')} / ${escapeHtml(s.factory || '-')}</div>
-            </div>
-          </div>
-
-          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px;">
-            <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">진행사항 및 특이 메모</div>
-            <div style="color:#ffffff; line-height:1.5;">${escapeHtml(s.progress || '등록된 추가 메모 없음')}</div>
-          </div>
-        `;
-      }
-
-      const modal = document.getElementById('sampleDetailModal');
-      if (modal) modal.classList.add('active');
-    }
-
-    function closeSampleDetailModal() {
-      const modal = document.getElementById('sampleDetailModal');
-      if (modal) modal.classList.remove('active');
-    }
-
-    function openAddSampleModal() {
-      const today = new Date().toISOString().substring(0, 10);
-      const reqEl = document.getElementById('modalSampleReqDate');
-      if (reqEl) reqEl.value = today;
-
-      const modal = document.getElementById('addSampleModal');
-      if (modal) modal.classList.add('active');
-    }
-
-    function closeAddSampleModal() {
-      const modal = document.getElementById('addSampleModal');
-      if (modal) modal.classList.remove('active');
-    }
-
-    function submitAddSampleModal() {
-      const man = document.getElementById('modalSampleManager').value;
-      const ctr = document.getElementById('modalSampleCountry').value;
-      const cust = (document.getElementById('modalSampleCustomer').value || '').trim();
-      const item = document.getElementById('modalSampleItem').value;
-      const pn = (document.getElementById('modalSamplePartNo').value || '').trim();
-      const qty = parseFloat(document.getElementById('modalSampleQty').value) || 0;
-      const pkg = (document.getElementById('modalSamplePackage').value || '').trim();
-      const reqD = document.getElementById('modalSampleReqDate').value || '';
-      const shipD = document.getElementById('modalSampleShipDate').value || '';
-      const fac = document.getElementById('modalSampleFactory').value || '';
-      const app = document.getElementById('modalSampleApproval').value || '진행중';
-      const poNo = (document.getElementById('modalSamplePoNo').value || '').trim();
-      const prog = (document.getElementById('modalSampleProgress').value || '').trim();
-
-      if (!cust || !pn) {
-        showToast('고객사명과 Kostat P/N은 필수 입력 항목입니다.');
-        return;
-      }
-
-      const memberMap = { '한준희': 'hjh', '김샘물': 'ksm', '이가진': 'lgj', '이상철': 'lsc', '김완태': 'kwt' };
-      const newSample = {
-        id: `SMP-${Date.now().toString().slice(-4)}`,
-        year: '2026',
-        item: item,
-        tool_type: 'OPEN',
-        manager: man,
-        member_id: memberMap[man] || '',
-        customer: cust,
-        country: ctr,
-        customer_name: cust,
-        type: 'TR',
-        part_no: pn,
-        temp: pkg,
-        package: pkg,
-        po_no: poNo,
-        qty: qty,
-        unit_price: 0,
-        amount: 0,
-        invoice_no: '',
-        erp_code: '',
-        po_date: '',
-        contract_date: '',
-        sample_req_date: reqD,
-        sample_ship_date: shipD,
-        approval: app,
-        progress: prog || '신규 등록 샘플',
-        revenue_rec: '',
-        collection: '',
-        factory: fac,
-        category: '',
-        is_ongoing: true
-      };
-
-      window.USER_ADDED_SAMPLES.unshift(newSample);
-      closeAddSampleModal();
-      showToast(`신규 샘플 [${pn}]이 등록되었습니다.`);
-
-      const currentData = getActiveDataset();
-      const isAll = (ACTIVE_MEMBER_ID === 'ALL');
-      const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
-      renderSampleTable(isAll, m, currentData);
     }
 
 
