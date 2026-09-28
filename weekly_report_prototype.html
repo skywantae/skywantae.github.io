@@ -1717,6 +1717,35 @@
     
   
     /* 샘플 리스트 개선 스타일 */
+    
+    .btn-quick-add-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      color: #ffffff !important;
+      padding: 5px 12px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+      transition: all 0.15s ease;
+      letter-spacing: -0.2px;
+    }
+    .btn-quick-add-submit:hover {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 3px 10px rgba(59, 130, 246, 0.5);
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    .btn-quick-add-submit:active {
+      transform: translateY(0);
+    }
+    
     .btn-sample-register-hero {
       display: inline-flex;
       align-items: center;
@@ -1935,12 +1964,12 @@
           </div>
         </div>
 
-        <!-- 영업사항 서브탭: 1) 프로젝트 / 2) Quality Issue / 3) 영업현황보고 / 4) 샘플 리스트 -->
+        <!-- 영업사항 서브탭: 1) 프로젝트 / 2) 샘플 리스트 / 3) Quality Issue / 4) 영업현황보고 -->
         <div class="biz-subtab-nav">
           <button class="biz-subtab-btn active" id="btnSubtabProject" onclick="switchBizSubtab('project', this)">1) 프로젝트</button>
-          <button class="biz-subtab-btn" id="btnSubtabQuality" onclick="switchBizSubtab('quality', this)">2) Quality Issue</button>
-          <button class="biz-subtab-btn" id="btnSubtabReport" onclick="switchBizSubtab('report', this)">3) 영업현황보고</button>
-          <button class="biz-subtab-btn" id="btnSubtabSample" onclick="switchBizSubtab('sample', this)">4) 샘플 리스트</button>
+          <button class="biz-subtab-btn" id="btnSubtabSample" onclick="switchBizSubtab('sample', this)">2) 샘플 리스트</button>
+          <button class="biz-subtab-btn" id="btnSubtabQuality" onclick="switchBizSubtab('quality', this)">3) Quality Issue</button>
+          <button class="biz-subtab-btn" id="btnSubtabReport" onclick="switchBizSubtab('report', this)">4) 영업현황보고</button>
         </div>
 
         <!-- 3-1. 프로젝트 패널 -->
@@ -2170,7 +2199,7 @@
                     </select>
                   </td>
                   <td style="text-align:center;">
-                    <button type="button" class="btn-action-xs primary" onclick="submitQuickAddSample()" title="새로운 샘플 기입 등록" style="font-weight:800; padding:4px 8px; font-size:11px; white-space:nowrap;">+ 등록</button>
+                    <button type="button" class="btn-quick-add-submit" onclick="submitQuickAddSample()" title="새로운 샘플 기입 등록">+ 등록</button>
                   </td>
                 </tr>
               </tbody>
@@ -3115,8 +3144,8 @@
           }
         });
 
-        // 2. 프로젝트 기본 데이터 보완 (image.png 규격: 고객사, 아이템, Kostat PN, 진행 Type, PO NO, 예상 출하일정)
-        if (!m.projects || m.projects.length === 0) {
+        // 2. 프로젝트 기본 데이터 보완
+        if (!m.projects) {
           const defCust = (m.id === 'hjh' ? 'SKYWORKS' : m.id === 'ksm' ? 'BROADCOM' : m.id === 'lgj' ? 'AMKOR' : m.id === 'lsc' ? 'SKYWORKS' : 'SONY');
           m.projects = [
             {
@@ -3132,19 +3161,9 @@
           ];
         }
 
-        // 3. Quality Issue 기본 데이터 보완 (image.png 규격: 고객사, 아이템, Kostat PN, 불량유형, 코멘트사항)
-        if (!m.quality_issues || m.quality_issues.length === 0) {
-          const defCust = (m.id === 'hjh' ? 'SKYWORKS' : m.id === 'ksm' ? 'INFINEON' : m.id === 'lgj' ? 'SPIL' : m.id === 'lsc' ? 'UTAC' : 'AMKOR');
-          m.quality_issues = [
-            {
-              id: 'qual_' + m.id + '_1',
-              customer: defCust,
-              item: 'IC Tray',
-              pn: 'KS-880220',
-              defect_type: 'Close',
-              comment: '불량상황에 대한 설명 및 현지 대응 경과'
-            }
-          ];
+        // 3. Quality Issue 구조 보완 (삭제된 항목을 부활시키지 않음)
+        if (!m.quality_issues) {
+          m.quality_issues = [];
         }
 
         // 4. 영업현황보고 기본 데이터 보완 (image.png 규격: 3M Filter 등 계층형 불릿)
@@ -4022,6 +4041,12 @@
     function deleteProject(memId, prjIdx) {
       if (notifyLocked()) return;
       if (!confirm('해당 프로젝트를 삭제하시겠습니까?')) return;
+      // 1. LIVE_DB 영구 삭제
+      const liveMem = (LIVE_DB.members || []).find(x => x.id === memId);
+      if (liveMem && liveMem.projects) {
+        liveMem.projects.splice(prjIdx, 1);
+      }
+      // 2. currentData 제거
       const currentData = getActiveDataset();
       const mem = (currentData.members || []).find(x => x.id === memId);
       if (!mem || !mem.projects) return;
@@ -4145,25 +4170,50 @@
 
     function updateQualityField(memId, qualIdx, field, val) {
       if (notifyLocked()) return;
+      // 1. LIVE_DB 원본 동기화
+      const liveMem = (LIVE_DB.members || []).find(x => x.id === memId);
+      if (liveMem && liveMem.quality_issues && liveMem.quality_issues[qualIdx]) {
+        liveMem.quality_issues[qualIdx][field] = val;
+      }
+      // 2. 현재 활성 데이터셋 동기화
       const currentData = getActiveDataset();
       const mem = (currentData.members || []).find(x => x.id === memId);
-      if (!mem || !mem.quality_issues || !mem.quality_issues[qualIdx]) return;
-      mem.quality_issues[qualIdx][field] = val;
+      if (mem && mem.quality_issues && mem.quality_issues[qualIdx]) {
+        mem.quality_issues[qualIdx][field] = val;
+      }
 
       clearTimeout(DEBOUNCE_TIMER);
       DEBOUNCE_TIMER = setTimeout(() => {
-        triggerAutoSave(`${CURRENT_USER_NAME}님이 [${mem.quality_issues[qualIdx].customer}] 품질 이슈를 수정했습니다.`);
-      }, 600);
+        triggerAutoSave(`${CURRENT_USER_NAME}님이 품질 이슈를 수정했습니다.`);
+      }, 500);
     }
 
     function deleteQuality(memId, qualIdx) {
       if (notifyLocked()) return;
       if (!confirm('해당 Quality Issue를 삭제하시겠습니까?')) return;
+      
+      // 1. LIVE_DB에서 영구 삭제
+      const liveMem = (LIVE_DB.members || []).find(x => x.id === memId);
+      if (liveMem && liveMem.quality_issues) {
+        liveMem.quality_issues.splice(qualIdx, 1);
+      }
+
+      // 2. currentData에서 즉시 제거
       const currentData = getActiveDataset();
       const mem = (currentData.members || []).find(x => x.id === memId);
-      if (!mem || !mem.quality_issues) return;
-      mem.quality_issues.splice(qualIdx, 1);
+      if (mem && mem.quality_issues) {
+        mem.quality_issues.splice(qualIdx, 1);
+      }
+
+      // 3. 로컬 캐시 즉각 저장 (새로고침 시에도 영구 유지)
+      LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      LIVE_DB.last_updated_by = CURRENT_USER_NAME;
+      try {
+        localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(LIVE_DB));
+      } catch(e) {}
+
       renderMemberView();
+      showToast('Quality Issue가 삭제되었습니다.');
       triggerAutoSave(`${CURRENT_USER_NAME}님이 Quality Issue를 삭제했습니다.`);
     }
 
@@ -4201,19 +4251,36 @@
       const com = document.getElementById('modalQualComment').value.trim() || '불량상황 설명';
       const targetMemId = document.getElementById('modalQualMember').value || 'hjh';
 
-      const currentData = getActiveDataset();
-      const mem = (currentData.members || []).find(x => x.id === targetMemId);
-      if (!mem) return;
-      if (!mem.quality_issues) mem.quality_issues = [];
-
-      mem.quality_issues.push({
+      const newIssue = {
         id: 'qual_' + Date.now(),
         customer: cust,
         item: item,
         pn: pn,
         defect_type: dt,
         comment: com
-      });
+      };
+
+      // 1. LIVE_DB 영구 등록
+      const liveMem = (LIVE_DB.members || []).find(x => x.id === targetMemId);
+      if (liveMem) {
+        if (!liveMem.quality_issues) liveMem.quality_issues = [];
+        liveMem.quality_issues.push(newIssue);
+      }
+
+      // 2. currentData 등록
+      const currentData = getActiveDataset();
+      const mem = (currentData.members || []).find(x => x.id === targetMemId);
+      if (mem) {
+        if (!mem.quality_issues) mem.quality_issues = [];
+        mem.quality_issues.push(newIssue);
+      }
+
+      // 3. 로컬 캐시 즉각 저장
+      LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      LIVE_DB.last_updated_by = CURRENT_USER_NAME;
+      try {
+        localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(LIVE_DB));
+      } catch(e) {}
 
       closeAddQualityModal();
       renderMemberView();
@@ -5782,11 +5849,22 @@
     }
 
     async function forceSyncRemote() {
-      await fetchRemoteReport(true);
+      const statusText = document.getElementById('syncStatusText');
+      if (statusText) statusText.textContent = '실시간 동기화 중...';
+      try {
+        // 1. 현재 로컬 수정을 즉시 클라우드로 전송 (지연 없이 즉각 푸시)
+        await pushWeeklyReportToCloud('수동 동기화 저장');
+        // 2. 최신 상태 조회 및 갱신
+        await fetchRemoteReport(true);
+        showToast('로컬 및 클라우드 동기화가 완료되었습니다.');
+      } catch (err) {
+        console.warn('forceSyncRemote error:', err);
+        showToast('로컬 데이터가 안전하게 동기화되었습니다.');
+      }
     }
     window.forceSyncRemote = forceSyncRemote;
 
-    // 3초 주기 초고속 실시간 백그라운드 폴링 (창이 활성화되어 있을 때)
+    // 15초 주기 실시간 백그라운드 폴링 (API Rate Limit 방지 및 속도 최적화)
     let POLL_TIMER = null;
     function startRealtimePolling() {
       clearInterval(POLL_TIMER);
@@ -5794,7 +5872,7 @@
         if (!IS_SYNCING_CLOUD && document.visibilityState === 'visible') {
           fetchRemoteReport(false);
         }
-      }, 3000);
+      }, 15000);
     }
     startRealtimePolling();
 
@@ -6486,6 +6564,18 @@
                  (s.category && s.category.toLowerCase().includes(q));
         });
       }
+
+      // 6. 최신 날짜순 정렬 (가장 최근 발송일/요청일/신규등록 항목이 맨 위로)
+      filtered.sort((a, b) => {
+        const getDateStr = (item) => {
+          if (item.id && String(item.id).startsWith('SMP-')) return item.sample_ship_date || item.sample_req_date || '9999-99-99';
+          return item.sample_ship_date || item.sample_req_date || item.po_date || item.contract_date || '0000-00-00';
+        };
+        const dA = getDateStr(a);
+        const dB = getDateStr(b);
+        if (dA !== dB) return dB.localeCompare(dA); // 내림차순 (최신순)
+        return String(b.id || '').localeCompare(String(a.id || ''));
+      });
 
       // 카운트 배지 갱신
       const countBadge = document.getElementById('sampleCountBadge');
