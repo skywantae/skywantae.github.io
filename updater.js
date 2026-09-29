@@ -66,7 +66,7 @@ async function applyWebUpdate() {
 async function checkForAppUpdates(isManualCheck = false) {
   const statusMsgEl = document.getElementById('updateStatusMsg');
   const currentVerEl = document.getElementById('currentAppVersion');
-  const currentVer = currentVerEl ? currentVerEl.textContent.trim().replace(/^v/, '') : '1.0.174';
+  const currentVer = currentVerEl ? currentVerEl.textContent.trim().replace(/^v/, '') : '1.0.175';
 
   if (statusMsgEl) {
     statusMsgEl.innerHTML = '<span style="color:#60a5fa;font-size:12px;">최신 버전을 확인하는 중...</span>';
