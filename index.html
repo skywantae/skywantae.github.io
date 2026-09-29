@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.175" />
+  <link rel="stylesheet" href="app.css?v=1.0.176" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,6 +53,7 @@
         <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
         <button class="viewer-tab-btn" data-target="viewContractReviews">계약검토서</button>
         <button class="viewer-tab-btn" data-target="viewDrawings">도면</button>
+        <button class="viewer-tab-btn" data-target="viewStock" id="tabBtnStock">재고 현황리스트</button>
         <button class="viewer-tab-btn" data-target="viewFeedback">기능 요청</button>
         <button class="viewer-tab-btn" data-target="viewChatbot" id="tabBtnChatbot">FAQ 챗봇</button>
         <button class="viewer-tab-btn" data-target="viewFaq">사내 FAQ</button>
@@ -257,6 +258,377 @@
         </div>
       </div>
 
+      <!-- 3-1. 재고 현황리스트 (김포, 베트남, 태창, 혜주 4대 공장) -->
+      <div class="viewer-content-card" id="viewStock" style="display:none; flex-direction:column;">
+        <!-- 상단 공장별 서브탭 바 -->
+        <div class="stock-subtab-bar" style="display:flex; gap:8px; padding:10px 16px; background:var(--bg-card); border-bottom:1px solid var(--border-color); flex-wrap:wrap; flex-shrink:0;">
+          <button class="stock-tab-btn active" id="btnStockTabGimpo" onclick="switchStockSubTab('stockSubGimpo', this)">김포 공장 재고 현황리스트</button>
+          <button class="stock-tab-btn" id="btnStockTabVietnam" onclick="switchStockSubTab('stockSubVietnam', this)">베트남 공장 재고 현황리스트</button>
+          <button class="stock-tab-btn" id="btnStockTabTaichang" onclick="switchStockSubTab('stockSubTaichang', this)">태창 공장 재고 현황리스트</button>
+          <button class="stock-tab-btn" id="btnStockTabHuizhou" onclick="switchStockSubTab('stockSubHuizhou', this)">혜주 공장 재고 현황리스트</button>
+        </div>
+
+        <!-- 1) 김포 공장 재고 패널 -->
+        <div class="stock-factory-panel" id="stockSubGimpo">
+          <div style="padding:14px 16px;">
+            <!-- 헤더 및 도구 모음 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;">김포 공장 Tray 재고 현황리스트</h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="gimpoAsOfDate">기준일 로딩중...</span>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                <button class="action-btn-sm primary" id="btnGimpoRefresh" onclick="fetchLatestStock('gimpo', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
+                <a class="action-btn-sm success" id="btnDownloadGimpoExcel" href="data/stock_sources/gimpo/gimpo_tray_stock_latest.xlsx" download="김포공장_TRAY_재고현황_원본.xlsx" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>엑셀 원본 다운로드</span>
+                </a>
+                <button class="action-btn-sm secondary" onclick="showGimpoAccessGuide()" style="font-size:11px; padding:6px 10px; cursor:pointer;">외부 접속 안내</button>
+                <button class="action-btn-sm secondary" onclick="document.getElementById('gimpoStockFileInput').click()" style="font-size:11px; padding:6px 10px; cursor:pointer;">수동 업로드</button>
+                <input type="file" id="gimpoStockFileInput" accept=".xlsx,.xls" style="display:none;" />
+              </div>
+            </div>
+
+            <!-- 외부 접속 계정 안내 패널 -->
+            <div id="gimpoAccessGuidePanel" style="display:none; background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px; margin-bottom:12px; font-size:11.5px; line-height:1.6;">
+              <div style="font-weight:700; color:var(--text-primary); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>외부망 Z: 드라이브 접속 계정 안내</span>
+                <button onclick="document.getElementById('gimpoAccessGuidePanel').style.display='none'" style="background:none; border:none; color:var(--text-dim); font-size:12px; cursor:pointer;">닫기</button>
+              </div>
+              <div style="color:var(--text-secondary);">
+                - 서버 경로: <code style="color:var(--primary); font-family:monospace;">Z:\TRAY공장\Tray관련부서 공통서류</code><br>
+                - 외부 WebDAV 주소: <code style="color:var(--primary); font-family:monospace;">\\kostat-nas.myds.me@SSL@5006\DavWWWRoot</code><br>
+                - 접속 계정: <span style="font-weight:600; color:var(--text-primary);">ID: teokim</span> / <span style="font-weight:600; color:var(--text-primary);">PW: kim2606!!##</span>
+              </div>
+              <div style="margin-top:8px; display:flex; gap:6px;">
+                <button onclick="copyGimpoNetUseCmd()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">접속 명령어 복사</button>
+                <button onclick="copyGimpoPassword()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">비밀번호 복사</button>
+              </div>
+            </div>
+
+            <!-- 지표 요약 카드 그리드 -->
+            <div class="stock-metrics-grid" id="gimpoMetricsGrid">
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">총 재고 수량</div>
+                <div class="stock-metric-val highlight" id="gimpoMetricTotal">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">실보유 품목수</div>
+                <div class="stock-metric-val" id="gimpoMetricActive">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">생산부 재고</div>
+                <div class="stock-metric-val" id="gimpoMetricProd">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">자재부 재고</div>
+                <div class="stock-metric-val" id="gimpoMetricMat">-</div>
+              </div>
+            </div>
+
+            <!-- 검색 바 -->
+            <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
+              <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>김포 검색</span>
+              </div>
+              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." oninput="filterGimpoStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnGimpoSearchClear" onclick="clearGimpoSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
+              <span id="gimpoResultCount">검색 결과: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);">실시간 다중 키워드 필터링 지원</span>
+            </div>
+
+            <!-- 재고 테이블 -->
+            <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 300px); min-height:420px;">
+              <table id="gimpoStockTable" class="modern-table" style="font-size:11px; width:100%;">
+                <thead>
+                  <tr>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">자재코드</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">Temp</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">규격</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">거래처</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">특이사항</th>
+                    <th id="thGimpoProd" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">생산부</th>
+                    <th id="thGimpoMat" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">자재부</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">합계</th>
+                  </tr>
+                </thead>
+                <tbody id="gimpoStockTbody">
+                  <tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2) 베트남 공장 재고 패널 -->
+        <div class="stock-factory-panel" id="stockSubVietnam" style="display:none;">
+          <div style="padding:14px 16px;">
+            <!-- 헤더 및 도구 모음 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;">베트남 공장 Tray 재고 현황리스트</h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="vietnamAsOfDate">기준일 로딩중...</span>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                <button class="action-btn-sm primary" id="btnVietnamRefresh" onclick="fetchLatestStock('vietnam', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
+                <a class="action-btn-sm success" id="btnDownloadVietnamExcel" href="data/stock_sources/vietnam/vietnam_tray_stock_latest.xlsx" download="베트남공장_TRAY_재고현황_원본.xlsx" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>엑셀 원본 다운로드</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 지표 요약 카드 그리드 -->
+            <div class="stock-metrics-grid" id="vietnamMetricsGrid">
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">총 양품 재고</div>
+                <div class="stock-metric-val highlight" id="vietnamMetricTotal">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">실보유 품목수</div>
+                <div class="stock-metric-val" id="vietnamMetricActive">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">전월 재고</div>
+                <div class="stock-metric-val" id="vietnamMetricPrev">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">당월 입고</div>
+                <div class="stock-metric-val" id="vietnamMetricIn">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">당월 출고</div>
+                <div class="stock-metric-val" id="vietnamMetricOut">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">출하 대기</div>
+                <div class="stock-metric-val" id="vietnamMetricWait">-</div>
+              </div>
+            </div>
+
+            <!-- 검색 바 -->
+            <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
+              <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>베트남 검색</span>
+              </div>
+              <input type="text" id="vietnamSearchInput" placeholder="전산코드, PART NO, 모델명, 고객사, 온도, Rev 검색..." oninput="filterVietnamStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnVietnamSearchClear" onclick="clearVietnamSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
+              <span id="vietnamResultCount">검색 결과: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);">실시간 다중 키워드 필터링 지원</span>
+            </div>
+
+            <!-- 재고 테이블 -->
+            <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 300px); min-height:420px;">
+              <table id="vietnamStockTable" class="modern-table" style="font-size:11px; width:100%;">
+                <thead>
+                  <tr>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">전산코드</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (모델명)</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">고객사</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">온도</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">박스단위</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">Rev</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">전월재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">입고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출하대기</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">양품재고</th>
+                  </tr>
+                </thead>
+                <tbody id="vietnamStockTbody">
+                  <tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3) 태창 공장 재고 패널 -->
+        <div class="stock-factory-panel" id="stockSubTaichang" style="display:none;">
+          <div style="padding:14px 16px;">
+            <!-- 헤더 및 도구 모음 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;">태창 공장 Tray 재고 현황리스트</h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="taichangAsOfDate">기준일 로딩중...</span>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                <button class="action-btn-sm primary" id="btnTaichangRefresh" onclick="fetchLatestStock('taichang', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
+                <a class="action-btn-sm success" id="btnDownloadTaichangExcel" href="data/stock_sources/taichang/taichang_tray_stock_latest.xls" download="태창공장_TRAY_재고현황_원본.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>엑셀 원본 다운로드</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 지표 요약 카드 그리드 -->
+            <div class="stock-metrics-grid" id="taichangMetricsGrid">
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">총 현재고 (EOH)</div>
+                <div class="stock-metric-val highlight" id="taichangMetricTotal">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">실보유 품목수</div>
+                <div class="stock-metric-val" id="taichangMetricActive">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">전재고</div>
+                <div class="stock-metric-val" id="taichangMetricPrev">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">입고</div>
+                <div class="stock-metric-val" id="taichangMetricIn">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">출고</div>
+                <div class="stock-metric-val" id="taichangMetricOut">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">보류품</div>
+                <div class="stock-metric-val" id="taichangMetricHold">-</div>
+              </div>
+            </div>
+
+            <!-- 검색 바 -->
+            <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
+              <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>태창 검색</span>
+              </div>
+              <input type="text" id="taichangSearchInput" placeholder="전산코드, PART NO, 규격, 고객사, 무역방식 검색..." oninput="filterTaichangStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnTaichangSearchClear" onclick="clearTaichangSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
+              <span id="taichangResultCount">검색 결과: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);">실시간 다중 키워드 필터링 지원</span>
+            </div>
+
+            <!-- 재고 테이블 -->
+            <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 300px); min-height:420px;">
+              <table id="taichangStockTable" class="modern-table" style="font-size:11px; width:100%;">
+                <thead>
+                  <tr>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">전산코드</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">고객사</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (품명)</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">전재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">입고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">장기재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">보류품</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">무역방식</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">현재고</th>
+                  </tr>
+                </thead>
+                <tbody id="taichangStockTbody">
+                  <tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4) 혜주 공장 재고 패널 -->
+        <div class="stock-factory-panel" id="stockSubHuizhou" style="display:none;">
+          <div style="padding:14px 16px;">
+            <!-- 헤더 및 도구 모음 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;">혜주 공장 Tray 재고 현황리스트</h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="huizhouAsOfDate">기준일 로딩중...</span>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                <button class="action-btn-sm primary" id="btnHuizhouRefresh" onclick="fetchLatestStock('huizhou', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
+                <a class="action-btn-sm success" id="btnDownloadHuizhouExcel" href="data/stock_sources/huizhou/huizhou_tray_stock_latest.xls" download="혜주공장_TRAY_재고현황_원본.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>엑셀 원본 다운로드</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 지표 요약 카드 그리드 -->
+            <div class="stock-metrics-grid" id="huizhouMetricsGrid">
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">총 현재고 (EOH)</div>
+                <div class="stock-metric-val highlight" id="huizhouMetricTotal">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">실보유 품목수</div>
+                <div class="stock-metric-val" id="huizhouMetricActive">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">전재고</div>
+                <div class="stock-metric-val" id="huizhouMetricPrev">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">입고</div>
+                <div class="stock-metric-val" id="huizhouMetricIn">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">출고</div>
+                <div class="stock-metric-val" id="huizhouMetricOut">-</div>
+              </div>
+              <div class="stock-metric-card">
+                <div class="stock-metric-label">출하 계획</div>
+                <div class="stock-metric-val" id="huizhouMetricPlan">-</div>
+              </div>
+            </div>
+
+            <!-- 검색 바 -->
+            <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
+              <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>혜주 검색</span>
+              </div>
+              <input type="text" id="huizhouSearchInput" placeholder="전산코드, PART NO, 규격, 고객사, 무역방식 검색..." oninput="filterHuizhouStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnHuizhouSearchClear" onclick="clearHuizhouSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
+              <span id="huizhouResultCount">검색 결과: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);">실시간 다중 키워드 필터링 지원</span>
+            </div>
+
+            <!-- 재고 테이블 -->
+            <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 300px); min-height:420px;">
+              <table id="huizhouStockTable" class="modern-table" style="font-size:11px; width:100%;">
+                <thead>
+                  <tr>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">전산코드</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">고객사</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (품명)</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">전재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">입고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">공정재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출하계획</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">무역방식</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">현재고</th>
+                  </tr>
+                </thead>
+                <tbody id="huizhouStockTbody">
+                  <tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
       <!-- 4. 기능 추가 및 제안 게시판 뷰 -->
       <div class="viewer-content-card" id="viewFeedback" style="display:none;">
@@ -442,7 +814,6 @@
         <!-- 최상위 세그먼트 서브탭 바 -->
         <div class="lab-main-segment-bar" style="display:flex; gap:8px; padding:10px 16px; background:var(--bg-card); border-bottom:1px solid var(--border-color); flex-wrap:wrap; flex-shrink:0;">
           <button class="lab-main-tab-btn active" id="btnLabTabTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">업무 자동화 도구</button>
-          <button class="lab-main-tab-btn" id="btnLabTabGimpo" onclick="switchLabSubTab('labSubGimpo', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">김포공장 Tray 재고</button>
           <button class="lab-main-tab-btn" id="btnLabTabPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">필리핀 지사 리포트 & 프로젝트</button>
           <button class="lab-main-tab-btn" id="btnLabTabWeekly" onclick="switchLabSubTab('labSubWeekly', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">주간보고서</button>
         </div>
@@ -551,88 +922,7 @@
           </div>
         </div>
 
-        <!-- ===== 서브탭 2: 김포공장 Tray 재고 현황 ===== -->
-        <div class="lab-sub-panel" id="labSubGimpo" style="display:none;">
-          <div style="padding:14px 16px;">
-            <!-- 기준일자 헤더 -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-              <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary);">김포공장 Tray 재고 현황</h4>
-                <span style="font-size:11px; color:var(--text-secondary);" id="gimpoAsOfDate">기준일 로딩중...</span>
-              </div>
-              <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <button class="action-btn-sm primary" id="btnGimpoRefresh" onclick="fetchLatestGimpoStock(true)" style="font-size:11px; padding:5px 10px; cursor:pointer;">최신 재고 새로고침</button>
-                <button class="action-btn-sm secondary" onclick="showGimpoAccessGuide()" style="font-size:11px; padding:5px 10px; cursor:pointer;">외부 접속 계정 안내</button>
-                <button class="action-btn-sm secondary" onclick="document.getElementById('gimpoStockFileInput').click()" style="font-size:11px; padding:5px 10px; cursor:pointer;">엑셀 수동 업로드</button>
-                <input type="file" id="gimpoStockFileInput" accept=".xlsx,.xls" style="display:none;" />
-              </div>
-            </div>
-
-            <!-- 외부 접속 계정 안내 패널 -->
-            <div id="gimpoAccessGuidePanel" style="display:none; background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px; margin-bottom:12px; font-size:11.5px; line-height:1.6;">
-              <div style="font-weight:700; color:var(--text-primary); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
-                <span>외부망 Z: 드라이브 접속 계정 안내</span>
-                <button onclick="document.getElementById('gimpoAccessGuidePanel').style.display='none'" style="background:none; border:none; color:var(--text-dim); font-size:12px; cursor:pointer;">닫기</button>
-              </div>
-              <div style="color:var(--text-secondary);">
-                - 서버 경로: <code style="color:var(--primary); font-family:monospace;">Z:\TRAY공장\Tray관련부서 공통서류</code><br>
-                - 외부 WebDAV 주소: <code style="color:var(--primary); font-family:monospace;">\\kostat-nas.myds.me@SSL@5006\DavWWWRoot</code><br>
-                - 접속 계정: <span style="font-weight:600; color:var(--text-primary);">ID: teokim</span> / <span style="font-weight:600; color:var(--text-primary);">PW: kim2606!!##</span>
-              </div>
-              <div style="margin-top:8px; display:flex; gap:6px;">
-                <button onclick="copyGimpoNetUseCmd()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">접속 명령어 복사</button>
-                <button onclick="copyGimpoPassword()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">비밀번호 복사</button>
-              </div>
-            </div>
-
-            <!-- 검색 바 (고대비 가시성 개선: 명확한 블루 테두리, 검색 뱃지, 슬레이트 배경 적용) -->
-            <div class="gimpo-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; box-shadow:0 0 0 3px rgba(59,130,246,0.25), 0 3px 12px rgba(0,0,0,0.4); padding:3px 6px; transition:all 0.2s ease;">
-              <div id="gimpoSearchBadge" style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0; letter-spacing:0.5px;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <span id="gimpoSearchBadgeText">검색</span>
-              </div>
-              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." oninput="filterGimpoStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0; font-family:inherit;" />
-              <button id="btnGimpoSearchClear" onclick="clearGimpoSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="검색어 초기화">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-
-            <!-- 결과 카운트 및 검색 안내 -->
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary); margin-bottom:8px; padding:0 2px;">
-              <span id="gimpoResultCount">-</span>
-              <span style="font-size:10.5px; color:var(--text-dim);" id="gimpoSearchHint">실시간 다중 키워드 필터링 지원</span>
-            </div>
-
-            <!-- 재고 데이터 테이블 -->
-            <div class="table-responsive-wrapper gimpo-stock-table-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 240px); min-height:450px;">
-              <table id="gimpoStockTable" class="modern-table" style="font-size:11px; width:100%;">
-                <thead>
-                  <tr>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">Temp</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">규격</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">거래처</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">특이사항</th>
-                    <th id="thGimpoProd" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">생산부</th>
-                    <th id="thGimpoMat" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">자재부</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">합계</th>
-                  </tr>
-                </thead>
-                <tbody id="gimpoStockTbody">
-                  <tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- ===== 서브탭 3: 필리핀 지사 리포트 & 프로젝트 (RAG 스마트 검색 & 요약 중심 뷰) ===== -->
+        <!-- ===== 서브탭 2: 필리핀 지사 리포트 & 프로젝트 (RAG 스마트 검색 & 요약 중심 뷰) ===== -->
         <div class="lab-sub-panel" id="labSubPH" style="display:none;">
           <div style="padding:14px 16px;">
             <!-- 상단 헤더 -->
@@ -968,7 +1258,7 @@
                     <h4>주간보고서</h4>
                   </div>
                   <div style="display:flex; gap:8px; align-items:center;">
-                    <a href="weekly_report_prototype.html?v=1.0.175_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+                    <a href="weekly_report_prototype.html?v=1.0.176_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
                       전체화면 새 창 열기
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
@@ -981,7 +1271,7 @@
                   
                   <!-- 워크스페이스 임베드 컨테이너 -->
                   <div style="width:100%; height:840px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                    <iframe src="weekly_report_prototype.html?v=1.0.175_w39" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
+                    <iframe src="weekly_report_prototype.html?v=1.0.176_w39" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
                   </div>
                 </div>
               </div>
@@ -1057,7 +1347,7 @@
         <div class="setting-item">
           <label id="lblSettingVer">앱 버전 정보:</label>
           <div class="version-box">
-            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.175</strong></span>
+            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.176</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -1596,27 +1886,30 @@
   </div>
 
   <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/shipplan_data.js?v=1.0.175"></script>
-  <script src="data/quotations_data.js?v=1.0.175"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.175"></script>
-  <script src="data/drawings_data.js?v=1.0.175"></script>
-  <script src="data/knowledge_data.js?v=1.0.175"></script>
-  <script src="data/faq_db.js?v=1.0.175"></script>
-  <script src="data/feedback_board.js?v=1.0.175"></script>
-  <script src="data/archive_data.js?v=1.0.175"></script>
-  <script src="data/gimpo_tray_stock_data.js?v=1.0.175"></script>
-  <script src="data/ph_daily_report_data.js?v=1.0.175"></script>
-  <script src="data/ph_weekly_forecast_data.js?v=1.0.175"></script>
-  <script src="data/overseas_sales_targets_2026.js?v=1.0.175"></script>
-  <script src="data/overseas_monthly_actuals_2026.js?v=1.0.175"></script>
-  <script src="data/weekly_report_live.js?v=1.0.175"></script>
-  <script src="data/overseas_samples_2026.js?v=1.0.175"></script>
-  <script src="data/weekly_master_meta.js?v=1.0.175"></script>
+  <script src="data/shipplan_data.js?v=1.0.176"></script>
+  <script src="data/quotations_data.js?v=1.0.176"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.176"></script>
+  <script src="data/drawings_data.js?v=1.0.176"></script>
+  <script src="data/knowledge_data.js?v=1.0.176"></script>
+  <script src="data/faq_db.js?v=1.0.176"></script>
+  <script src="data/feedback_board.js?v=1.0.176"></script>
+  <script src="data/archive_data.js?v=1.0.176"></script>
+  <script src="data/gimpo_tray_stock_data.js?v=1.0.176"></script>
+  <script src="data/vietnam_tray_stock_data.js?v=1.0.176"></script>
+  <script src="data/taichang_tray_stock_data.js?v=1.0.176"></script>
+  <script src="data/huizhou_tray_stock_data.js?v=1.0.176"></script>
+  <script src="data/ph_daily_report_data.js?v=1.0.176"></script>
+  <script src="data/ph_weekly_forecast_data.js?v=1.0.176"></script>
+  <script src="data/overseas_sales_targets_2026.js?v=1.0.176"></script>
+  <script src="data/overseas_monthly_actuals_2026.js?v=1.0.176"></script>
+  <script src="data/weekly_report_live.js?v=1.0.176"></script>
+  <script src="data/overseas_samples_2026.js?v=1.0.176"></script>
+  <script src="data/weekly_master_meta.js?v=1.0.176"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.175"></script>
-  <script src="exceljs.min.js?v=1.0.175"></script>
-  <script src="updater.js?v=1.0.175"></script>
-  <script src="app.js?v=1.0.175"></script>
+  <script src="xlsx.full.min.js?v=1.0.176"></script>
+  <script src="exceljs.min.js?v=1.0.176"></script>
+  <script src="updater.js?v=1.0.176"></script>
+  <script src="app.js?v=1.0.176"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

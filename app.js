@@ -249,6 +249,10 @@ const DOM = {
   drawingsPageInfo: document.getElementById('drawingsPageInfo'),
   drawingsPageControls: document.getElementById('drawingsPageControls'),
 
+  // 재고 현황리스트 DOM
+  tabBtnStock: document.getElementById('tabBtnStock'),
+  viewStock: document.getElementById('viewStock'),
+
   // 도면 보안 PIN 모달 DOM
   drawingPinModal: document.getElementById('drawingPinModal'),
   drawingPinInput: document.getElementById('drawingPinInput'),
@@ -797,6 +801,7 @@ const APP_I18N = {
     tab_quotations: '견적서',
     tab_contract: '계약검토서',
     tab_drawings: '도면 관리',
+    tab_stock: '재고 현황리스트',
     tab_feedback: '기능 요청',
     tab_chatbot: 'FAQ 챗봇',
     tab_faq: '사내 FAQ',
@@ -812,6 +817,8 @@ const APP_I18N = {
     contract_sub: '프로젝트 및 계약 검토 이력',
     drawings_title: '연구소 도면 관리',
     drawings_sub: 'Tray / Carrier Tape 승인 도면',
+    stock_title: '재고 현황리스트',
+    stock_sub: '김포, 베트남, 태창, 혜주 4대 공장 실시간 Tray 재고 현황',
     feedback_title: '기능 요청 게시판',
     feedback_sub: '모바일 웹앱 개선 의견 및 버그 제보',
     chatbot_title: '사내 규정 & FAQ 지식 챗봇',
@@ -930,6 +937,7 @@ const APP_I18N = {
     tab_quotations: 'Quotations',
     tab_contract: 'Project',
     tab_drawings: 'Drawings',
+    tab_stock: 'Stock Status',
     tab_feedback: 'Feature Requests',
     tab_chatbot: 'FAQ Chatbot',
     tab_faq: 'Regulations & FAQ',
@@ -945,6 +953,8 @@ const APP_I18N = {
     contract_sub: 'Project & Contract Review History',
     drawings_title: 'R&D Drawing Management',
     drawings_sub: 'Tray / Carrier Tape Approved Drawings',
+    stock_title: 'Stock Status List',
+    stock_sub: 'Real-time Tray inventory for Gimpo, Vietnam, Taichang, Huizhou factories',
     feedback_title: 'Feature Request Board',
     feedback_sub: 'Web App Feedback & Feature Requests',
     chatbot_title: 'Regulations & FAQ Chatbot',
@@ -3453,6 +3463,10 @@ function switchViewerCard(targetId) {
       AppState.drawingsFilteredRows = AppState.drawingsData || [];
     }
     renderDrawingsPage(AppState.drawingsCurrentPage || 1);
+  } else if (targetId === 'viewStock') {
+    if (typeof initStockViewer === 'function') {
+      initStockViewer();
+    }
   } else if (targetId === 'viewFeedback') {
     renderFeedbackBoard();
     fetchRemoteFeedback(true); // 탭 진입 시 클라우드 최신 글 자동 동기화
@@ -7335,15 +7349,8 @@ function switchLabSubTab(tabId, btn) {
   if (badge) {
     const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
     if (tabId === 'labSubTools') badge.textContent = t.lab_tab_tools;
-    else if (tabId === 'labSubGimpo') badge.textContent = t.lab_tab_gimpo;
     else if (tabId === 'labSubPH') badge.textContent = t.lab_tab_ph;
     else if (tabId === 'labSubWeekly') badge.textContent = t.lab_tab_weekly;
-  }
-  if (tabId === 'labSubGimpo') {
-    if (!_gimpoStockData) initGimpoStock();
-    if (typeof fetchLatestGimpoStock === 'function') {
-      fetchLatestGimpoStock(false);
-    }
   }
 }
 window.switchLabSubTab = switchLabSubTab;
@@ -7403,155 +7410,234 @@ window.switchPhInnerTab = switchPhInnerTab;
 
 
 // =====================================================
-// 김포공장 Tray 재고 현황 렌더링 엔진
+// 전사 4대 공장 Tray 재고 현황리스트 엔진
+// (김포공장, 베트남공장, 태창공장, 혜주공장)
 // =====================================================
+
+let _activeStockSubTab = 'stockSubGimpo';
 let _gimpoStockData = null;
 let _gimpoFilteredItems = [];
-let _isGimpoFetching = false;
+let _vietnamStockData = null;
+let _vietnamFilteredItems = [];
+let _taichangStockData = null;
+let _taichangFilteredItems = [];
+let _huizhouStockData = null;
+let _huizhouFilteredItems = [];
+let _stockFetchingMap = {};
 
-async function fetchLatestGimpoStock(isManual = false) {
-  if (_isGimpoFetching) return;
-  _isGimpoFetching = true;
-  const btn = document.getElementById('btnGimpoRefresh');
-  const lang = AppState.currentLang || 'ko';
-  const t = APP_I18N[lang] || APP_I18N.ko;
+function formatNum(n) {
+  if (n === undefined || n === null || isNaN(n)) return '-';
+  return Number(n).toLocaleString('ko-KR');
+}
+
+function switchStockSubTab(tabId, btn) {
+  _activeStockSubTab = tabId;
+  document.querySelectorAll('.stock-factory-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.stock-tab-btn').forEach(b => b.classList.remove('active'));
+
+  const panel = document.getElementById(tabId);
+  if (panel) panel.style.display = 'block';
+
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    const defaultBtn = document.querySelector(`.stock-tab-btn[onclick*="${tabId}"]`);
+    if (defaultBtn) defaultBtn.classList.add('active');
+  }
+
+  // 각 공장별 데이터 렌더링 호출
+  if (tabId === 'stockSubGimpo') {
+    if (!_gimpoStockData) initGimpoStock();
+    else renderGimpoStock();
+  } else if (tabId === 'stockSubVietnam') {
+    if (!_vietnamStockData) initVietnamStock();
+    else renderVietnamStock();
+  } else if (tabId === 'stockSubTaichang') {
+    if (!_taichangStockData) initTaichangStock();
+    else renderTaichangStock();
+  } else if (tabId === 'stockSubHuizhou') {
+    if (!_huizhouStockData) initHuizhouStock();
+    else renderHuizhouStock();
+  }
+}
+window.switchStockSubTab = switchStockSubTab;
+
+function initStockViewer() {
+  initGimpoStock();
+  initVietnamStock();
+  initTaichangStock();
+  initHuizhouStock();
+
+  // 현재 활성 서브탭 표시
+  switchStockSubTab(_activeStockSubTab || 'stockSubGimpo');
+  setupGimpoFileUpload();
+}
+window.initStockViewer = initStockViewer;
+
+// --- 공통 실시간 최신 재고 fetch 함수 ---
+async function fetchLatestStock(factoryKey, isManual = false) {
+  if (_stockFetchingMap[factoryKey]) return;
+  _stockFetchingMap[factoryKey] = true;
+
+  const btnMap = {
+    'gimpo': 'btnGimpoRefresh',
+    'vietnam': 'btnVietnamRefresh',
+    'taichang': 'btnTaichangRefresh',
+    'huizhou': 'btnHuizhouRefresh'
+  };
+  const fileMap = {
+    'gimpo': 'gimpo_tray_stock_data.json',
+    'vietnam': 'vietnam_tray_stock_data.json',
+    'taichang': 'taichang_tray_stock_data.json',
+    'huizhou': 'huizhou_tray_stock_data.json'
+  };
+  const nameMap = {
+    'gimpo': '김포 공장',
+    'vietnam': '베트남 공장',
+    'taichang': '태창 공장',
+    'huizhou': '혜주 공장'
+  };
+
+  const btnId = btnMap[factoryKey];
+  const btn = btnId ? document.getElementById(btnId) : null;
   const origText = btn ? btn.textContent : '';
   if (btn && isManual) {
     btn.disabled = true;
-    btn.textContent = lang === 'en' ? 'Updating...' : '동기화 중...';
+    btn.textContent = '동기화 중...';
   }
 
   try {
-    const resp = await fetch('data/gimpo_tray_stock_data.json?t=' + Date.now(), {
+    const fileName = fileMap[factoryKey] || `${factoryKey}_tray_stock_data.json`;
+    const resp = await fetch(`data/${fileName}?t=${Date.now()}`, {
       cache: 'no-store',
       headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
     });
     if (resp.ok) {
       const data = await resp.json();
       if (data && data.items && Array.isArray(data.items)) {
-        window.KOSTAT_GIMPO_TRAY_STOCK = data;
-        _gimpoStockData = data;
-        
-        const qInput = document.getElementById('gimpoSearchInput');
-        const hasQuery = qInput && qInput.value.trim().length > 0;
-        if (hasQuery) {
+        if (factoryKey === 'gimpo') {
+          window.KOSTAT_GIMPO_TRAY_STOCK = data;
+          _gimpoStockData = data;
           filterGimpoStock();
-        } else {
-          _gimpoFilteredItems = data.items;
-          renderGimpoStock();
-        }
-
-        const asOfEl = document.getElementById('gimpoAsOfDate');
-        if (asOfEl) {
-          asOfEl.textContent = t.gimpo_as_of + ': ' + data.as_of_date + ' ' + (data.as_of_time || '') +
-            ' / ' + (data.source_file || '');
+          updateGimpoHeaderAndMetrics(data);
+        } else if (factoryKey === 'vietnam') {
+          window.KOSTAT_VIETNAM_TRAY_STOCK = data;
+          _vietnamStockData = data;
+          filterVietnamStock();
+          updateVietnamHeaderAndMetrics(data);
+        } else if (factoryKey === 'taichang') {
+          window.KOSTAT_TAICHANG_TRAY_STOCK = data;
+          _taichangStockData = data;
+          filterTaichangStock();
+          updateTaichangHeaderAndMetrics(data);
+        } else if (factoryKey === 'huizhou') {
+          window.KOSTAT_HUIZHOU_TRAY_STOCK = data;
+          _huizhouStockData = data;
+          filterHuizhouStock();
+          updateHuizhouHeaderAndMetrics(data);
         }
 
         if (isManual) {
-          const msg = lang === 'en'
-            ? `Stock data updated (As of: ${data.as_of_date} ${data.as_of_time || ''})`
-            : `최신 재고 데이터가 반영되었습니다. (기준: ${data.as_of_date} ${data.as_of_time || ''})`;
-          showToast(msg, 'success');
+          const dateStr = data.as_of_date || '';
+          showToast(`${nameMap[factoryKey]} 최신 재고가 반영되었습니다. (기준: ${dateStr})`, 'success');
         }
       }
     } else if (isManual) {
-      showToast(lang === 'en' ? 'Failed to fetch latest stock' : '최신 재고를 불러오지 못했습니다.', 'error');
+      showToast(`${nameMap[factoryKey]} 최신 재고를 불러오지 못했습니다.`, 'error');
     }
   } catch (err) {
-    console.warn('[GimpoStock] Fetch error:', err);
+    console.warn(`[StockViewer] ${factoryKey} Fetch error:`, err);
     if (isManual) {
-      showToast(lang === 'en' ? 'Network error checking stock' : '재고 데이터 조회 중 네트워크 오류가 발생했습니다.', 'error');
+      showToast(`${nameMap[factoryKey]} 재고 조회 중 네트워크 오류가 발생했습니다.`, 'error');
     }
   } finally {
-    _isGimpoFetching = false;
+    _stockFetchingMap[factoryKey] = false;
     if (btn && isManual) {
       btn.disabled = false;
-      btn.textContent = origText || t.gimpo_refresh_btn || '최신 재고 새로고침';
+      btn.textContent = origText || '최신 재고 새로고침';
     }
   }
 }
-window.fetchLatestGimpoStock = fetchLatestGimpoStock;
+window.fetchLatestStock = fetchLatestStock;
+window.fetchLatestGimpoStock = (isManual) => fetchLatestStock('gimpo', isManual);
+window.fetchLatestVietnamStock = (isManual) => fetchLatestStock('vietnam', isManual);
+window.fetchLatestTaichangStock = (isManual) => fetchLatestStock('taichang', isManual);
+window.fetchLatestHuizhouStock = (isManual) => fetchLatestStock('huizhou', isManual);
 
+// =====================================================
+// 1. 김포 공장 재고 함수군
+// =====================================================
 function initGimpoStock() {
   _gimpoStockData = window.KOSTAT_GIMPO_TRAY_STOCK || null;
-  if (!_gimpoStockData || !_gimpoStockData.items) {
-    const asOfEl = document.getElementById('gimpoAsOfDate');
-    if (asOfEl) {
-      const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
-      asOfEl.textContent = t.gimpo_as_of + ': N/A';
-    }
-    // 내장 번들이 없더라도 원격 최신본 fetch 시도
-    fetchLatestGimpoStock(false);
-    return;
+  if (_gimpoStockData && _gimpoStockData.items) {
+    _gimpoFilteredItems = _gimpoStockData.items;
+    updateGimpoHeaderAndMetrics(_gimpoStockData);
+    renderGimpoStock();
   }
-  const asOfEl = document.getElementById('gimpoAsOfDate');
-  if (asOfEl) {
-    const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
-    asOfEl.textContent = t.gimpo_as_of + ': ' + _gimpoStockData.as_of_date + ' ' + (_gimpoStockData.as_of_time || '') +
-      ' / ' + (_gimpoStockData.source_file || '');
-  }
-
-  _gimpoFilteredItems = _gimpoStockData.items;
-  renderGimpoStock();
-
-  // 백그라운드 최신 재고 fetch
-  fetchLatestGimpoStock(false);
+  fetchLatestStock('gimpo', false);
 }
 
-function formatNum(n) {
-  if (n === undefined || n === null) return '-';
-  return Number(n).toLocaleString('ko-KR');
+function updateGimpoHeaderAndMetrics(data) {
+  const asOfEl = document.getElementById('gimpoAsOfDate');
+  if (asOfEl) {
+    asOfEl.textContent = `기준: ${data.as_of_date || ''} ${data.as_of_time || ''} / 출처: ${data.source_file || ''}`;
+  }
+  const dlBtn = document.getElementById('btnDownloadGimpoExcel');
+  if (dlBtn && (data.download_url || data.download_url_latest)) {
+    dlBtn.href = data.download_url || data.download_url_latest;
+    if (data.source_file) dlBtn.setAttribute('download', data.source_file);
+  }
+  const summary = data.summary || {};
+  const elTotal = document.getElementById('gimpoMetricTotal');
+  const elActive = document.getElementById('gimpoMetricActive');
+  const elProd = document.getElementById('gimpoMetricProd');
+  const elMat = document.getElementById('gimpoMetricMat');
+  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
+  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
+  if (elProd) elProd.textContent = `${formatNum(summary.prod_total)} EA`;
+  if (elMat) elMat.textContent = `${formatNum(summary.mat_total)} EA`;
 }
 
 function renderGimpoStock() {
   const tbody = document.getElementById('gimpoStockTbody');
   if (!tbody) return;
 
-  const lang = AppState.currentLang || 'ko';
-  const t = APP_I18N[lang] || APP_I18N.ko;
-
-  // 헤더 언어 무조건 동기화 (Warehouse / 자재부, Production / 생산부)
-  const thMat = document.getElementById('thGimpoMat') || document.querySelector('#gimpoStockTable thead th:nth-child(7)');
-  if (thMat && t.th_gimpo_mat) thMat.textContent = t.th_gimpo_mat;
-  const thProd = document.getElementById('thGimpoProd') || document.querySelector('#gimpoStockTable thead th:nth-child(6)');
-  if (thProd && t.th_gimpo_prod) thProd.textContent = t.th_gimpo_prod;
-
-  const items = _gimpoFilteredItems;
+  const items = _gimpoFilteredItems || [];
   const count = document.getElementById('gimpoResultCount');
-  if (count) count.textContent = t.gimpo_result_count + ': ' + items.length + ' ' + t.gimpo_unit;
+  if (count) {
+    const masterLen = (_gimpoStockData && _gimpoStockData.items) ? _gimpoStockData.items.length : items.length;
+    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+  }
 
   if (items.length === 0) {
-    const noMsg = lang === 'en' ? 'No results found' : '검색 결과 없음';
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-dim);">' + noMsg + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
     return;
   }
 
-  // 성능 최적화: 최대 200건 렌더
   const displayItems = items.slice(0, 200);
   let html = '';
   for (const item of displayItems) {
-    const ptClass = item.pt > 0 ? 'color:var(--success)' : 'color:var(--text-dim)';
-    const mtClass = item.mt > 0 ? 'color:var(--warning)' : 'color:var(--text-dim)';
-    const ttClass = 'color:var(--primary); font-weight:700';
+    const ptClass = item.pt > 0 ? 'color:var(--success); font-weight:600;' : 'color:var(--text-dim);';
+    const mtClass = item.mt > 0 ? 'color:var(--warning); font-weight:600;' : 'color:var(--text-dim);';
+    const ttClass = item.tt > 0 ? 'color:var(--primary); font-weight:700;' : 'color:var(--text-dim);';
     const tempVal = item.t ? escapeHtml(item.t) : '-';
-    const remarkVal = item.r ? escapeHtml(item.r) : '';
-    const remarkStyle = item.r ? 'font-size:10px;color:var(--accent);font-weight:600;' : 'font-size:10px;color:var(--text-dim);';
+    const remarkVal = item.r ? escapeHtml(item.r) : '-';
+    const remarkStyle = item.r ? 'font-size:10.5px;color:var(--accent);font-weight:600;' : 'font-size:10.5px;color:var(--text-dim);';
+
     html += '<tr style="border-bottom:1px solid var(--border-color);">' +
-      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td style="padding:6px;font-size:10.5px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.m || '') + '</td>' +
       '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + tempVal + '</td>' +
-      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.s || '') + '">' + escapeHtml(item.s || '') + '</td>' +
-      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
-      '<td style="padding:6px;' + remarkStyle + 'max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.r || '') + '">' + remarkVal + '</td>' +
-      '<td style="padding:6px;text-align:right;font-size:11px;' + ptClass + ';">' + formatNum(item.pt) + '</td>' +
-      '<td style="padding:6px;text-align:right;font-size:11px;' + mtClass + ';">' + formatNum(item.mt) + '</td>' +
-      '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + ';">' + formatNum(item.tt) + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.s || '') + '">' + escapeHtml(item.s || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;' + remarkStyle + 'max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.r || '') + '">' + remarkVal + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ptClass + '">' + formatNum(item.pt) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + mtClass + '">' + formatNum(item.mt) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + '">' + formatNum(item.tt) + '</td>' +
       '</tr>';
   }
   if (items.length > 200) {
-    const moreMsg = lang === 'en'
-      ? `+ ${items.length - 200} more (narrow your search)`
-      : `외 ${items.length - 200}건 (검색어를 좁혀주세요)`;
-    html += '<tr><td colspan="8" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">' + moreMsg + '</td></tr>';
+    html += '<tr><td colspan="9" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
   }
   tbody.innerHTML = html;
 }
@@ -7561,15 +7647,14 @@ function filterGimpoStock() {
   const qInput = document.getElementById('gimpoSearchInput');
   const q = (qInput ? qInput.value : '').trim().toLowerCase();
   const clearBtn = document.getElementById('btnGimpoSearchClear');
-  if (clearBtn) {
-    clearBtn.style.display = q ? 'inline-flex' : 'none';
-  }
+  if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
+
   if (!q) {
     _gimpoFilteredItems = _gimpoStockData.items;
   } else {
     const terms = q.split(/\s+/);
     _gimpoFilteredItems = _gimpoStockData.items.filter(item => {
-      const target = (item.p + ' ' + item.m + ' ' + item.s + ' ' + item.t + ' ' + item.c + ' ' + item.r).toLowerCase();
+      const target = `${item.p || ''} ${item.m || ''} ${item.s || ''} ${item.t || ''} ${item.c || ''} ${item.r || ''}`.toLowerCase();
       return terms.every(t => target.includes(t));
     });
   }
@@ -7580,19 +7665,357 @@ window.filterGimpoStock = filterGimpoStock;
 function clearGimpoSearch() {
   const qInput = document.getElementById('gimpoSearchInput');
   const clearBtn = document.getElementById('btnGimpoSearchClear');
-  if (qInput) {
-    qInput.value = '';
-    qInput.focus();
-  }
-  if (clearBtn) {
-    clearBtn.style.display = 'none';
-  }
+  if (qInput) { qInput.value = ''; qInput.focus(); }
+  if (clearBtn) clearBtn.style.display = 'none';
   if (_gimpoStockData) {
     _gimpoFilteredItems = _gimpoStockData.items;
     renderGimpoStock();
   }
 }
 window.clearGimpoSearch = clearGimpoSearch;
+
+
+// =====================================================
+// 2. 베트남 공장 재고 함수군
+// =====================================================
+function initVietnamStock() {
+  _vietnamStockData = window.KOSTAT_VIETNAM_TRAY_STOCK || null;
+  if (_vietnamStockData && _vietnamStockData.items) {
+    _vietnamFilteredItems = _vietnamStockData.items;
+    updateVietnamHeaderAndMetrics(_vietnamStockData);
+    renderVietnamStock();
+  }
+  fetchLatestStock('vietnam', false);
+}
+
+function updateVietnamHeaderAndMetrics(data) {
+  const asOfEl = document.getElementById('vietnamAsOfDate');
+  if (asOfEl) {
+    asOfEl.textContent = `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+  }
+  const dlBtn = document.getElementById('btnDownloadVietnamExcel');
+  if (dlBtn && (data.download_url || data.download_url_latest)) {
+    dlBtn.href = data.download_url || data.download_url_latest;
+    if (data.source_file) dlBtn.setAttribute('download', data.source_file);
+  }
+  const summary = data.summary || {};
+  const elTotal = document.getElementById('vietnamMetricTotal');
+  const elActive = document.getElementById('vietnamMetricActive');
+  const elPrev = document.getElementById('vietnamMetricPrev');
+  const elIn = document.getElementById('vietnamMetricIn');
+  const elOut = document.getElementById('vietnamMetricOut');
+  const elWait = document.getElementById('vietnamMetricWait');
+  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
+  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
+  if (elPrev) elPrev.textContent = `${formatNum(summary.prev_stock)} EA`;
+  if (elIn) elIn.textContent = `${formatNum(summary.total_in)} EA`;
+  if (elOut) elOut.textContent = `${formatNum(summary.total_out)} EA`;
+  if (elWait) elWait.textContent = `${formatNum(summary.wait_shipment)} EA`;
+}
+
+function renderVietnamStock() {
+  const tbody = document.getElementById('vietnamStockTbody');
+  if (!tbody) return;
+
+  const items = _vietnamFilteredItems || [];
+  const count = document.getElementById('vietnamResultCount');
+  if (count) {
+    const masterLen = (_vietnamStockData && _vietnamStockData.items) ? _vietnamStockData.items.length : items.length;
+    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+  }
+
+  if (items.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    return;
+  }
+
+  const displayItems = items.slice(0, 200);
+  let html = '';
+  for (const item of displayItems) {
+    const ttClass = item.tt > 0 ? 'color:var(--primary); font-weight:700;' : 'color:var(--text-dim);';
+    const inClass = item.in > 0 ? 'color:var(--success);' : 'color:var(--text-dim);';
+    const outClass = item.out > 0 ? 'color:var(--danger);' : 'color:var(--text-dim);';
+    const waitClass = item.wait > 0 ? 'color:var(--warning); font-weight:600;' : 'color:var(--text-dim);';
+
+    html += '<tr style="border-bottom:1px solid var(--border-color);">' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.m || '') + '</td>' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.t || '-') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.pkg || '-') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.r || '-') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;color:var(--text-secondary);">' + formatNum(item.ps) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + inClass + '">' + formatNum(item.in) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + outClass + '">' + formatNum(item.out) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + waitClass + '">' + formatNum(item.wait) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + '">' + formatNum(item.tt) + '</td>' +
+      '</tr>';
+  }
+  if (items.length > 200) {
+    html += '<tr><td colspan="11" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function filterVietnamStock() {
+  if (!_vietnamStockData) return;
+  const qInput = document.getElementById('vietnamSearchInput');
+  const q = (qInput ? qInput.value : '').trim().toLowerCase();
+  const clearBtn = document.getElementById('btnVietnamSearchClear');
+  if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
+
+  if (!q) {
+    _vietnamFilteredItems = _vietnamStockData.items;
+  } else {
+    const terms = q.split(/\s+/);
+    _vietnamFilteredItems = _vietnamStockData.items.filter(item => {
+      const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.t || ''} ${item.pkg || ''} ${item.r || ''}`.toLowerCase();
+      return terms.every(t => target.includes(t));
+    });
+  }
+  renderVietnamStock();
+}
+window.filterVietnamStock = filterVietnamStock;
+
+function clearVietnamSearch() {
+  const qInput = document.getElementById('vietnamSearchInput');
+  const clearBtn = document.getElementById('btnVietnamSearchClear');
+  if (qInput) { qInput.value = ''; qInput.focus(); }
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (_vietnamStockData) {
+    _vietnamFilteredItems = _vietnamStockData.items;
+    renderVietnamStock();
+  }
+}
+window.clearVietnamSearch = clearVietnamSearch;
+
+
+// =====================================================
+// 3. 태창 공장 재고 함수군
+// =====================================================
+function initTaichangStock() {
+  _taichangStockData = window.KOSTAT_TAICHANG_TRAY_STOCK || null;
+  if (_taichangStockData && _taichangStockData.items) {
+    _taichangFilteredItems = _taichangStockData.items;
+    updateTaichangHeaderAndMetrics(_taichangStockData);
+    renderTaichangStock();
+  }
+  fetchLatestStock('taichang', false);
+}
+
+function updateTaichangHeaderAndMetrics(data) {
+  const asOfEl = document.getElementById('taichangAsOfDate');
+  if (asOfEl) {
+    asOfEl.textContent = `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+  }
+  const dlBtn = document.getElementById('btnDownloadTaichangExcel');
+  if (dlBtn && (data.download_url || data.download_url_latest)) {
+    dlBtn.href = data.download_url || data.download_url_latest;
+    if (data.source_file) dlBtn.setAttribute('download', data.source_file);
+  }
+  const summary = data.summary || {};
+  const elTotal = document.getElementById('taichangMetricTotal');
+  const elActive = document.getElementById('taichangMetricActive');
+  const elPrev = document.getElementById('taichangMetricPrev');
+  const elIn = document.getElementById('taichangMetricIn');
+  const elOut = document.getElementById('taichangMetricOut');
+  const elHold = document.getElementById('taichangMetricHold');
+  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
+  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
+  if (elPrev) elPrev.textContent = `${formatNum(summary.prev_stock)} EA`;
+  if (elIn) elIn.textContent = `${formatNum(summary.total_in)} EA`;
+  if (elOut) elOut.textContent = `${formatNum(summary.total_out)} EA`;
+  if (elHold) elHold.textContent = `${formatNum(summary.hold_stock)} EA`;
+}
+
+function renderTaichangStock() {
+  const tbody = document.getElementById('taichangStockTbody');
+  if (!tbody) return;
+
+  const items = _taichangFilteredItems || [];
+  const count = document.getElementById('taichangResultCount');
+  if (count) {
+    const masterLen = (_taichangStockData && _taichangStockData.items) ? _taichangStockData.items.length : items.length;
+    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+  }
+
+  if (items.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    return;
+  }
+
+  const displayItems = items.slice(0, 200);
+  let html = '';
+  for (const item of displayItems) {
+    const ttClass = item.tt > 0 ? 'color:var(--primary); font-weight:700;' : 'color:var(--text-dim);';
+    const inClass = item.in > 0 ? 'color:var(--success);' : 'color:var(--text-dim);';
+    const outClass = item.out > 0 ? 'color:var(--danger);' : 'color:var(--text-dim);';
+    const holdClass = item.hd > 0 ? 'color:var(--warning); font-weight:600;' : 'color:var(--text-dim);';
+
+    html += '<tr style="border-bottom:1px solid var(--border-color);">' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.m || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:85px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;color:var(--text-secondary);">' + formatNum(item.ps) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + inClass + '">' + formatNum(item.in) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + outClass + '">' + formatNum(item.out) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;color:var(--text-dim);">' + formatNum(item.lt) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + holdClass + '">' + formatNum(item.hd) + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.tm || '-') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + '">' + formatNum(item.tt) + '</td>' +
+      '</tr>';
+  }
+  if (items.length > 200) {
+    html += '<tr><td colspan="10" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function filterTaichangStock() {
+  if (!_taichangStockData) return;
+  const qInput = document.getElementById('taichangSearchInput');
+  const q = (qInput ? qInput.value : '').trim().toLowerCase();
+  const clearBtn = document.getElementById('btnTaichangSearchClear');
+  if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
+
+  if (!q) {
+    _taichangFilteredItems = _taichangStockData.items;
+  } else {
+    const terms = q.split(/\s+/);
+    _taichangFilteredItems = _taichangStockData.items.filter(item => {
+      const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''}`.toLowerCase();
+      return terms.every(t => target.includes(t));
+    });
+  }
+  renderTaichangStock();
+}
+window.filterTaichangStock = filterTaichangStock;
+
+function clearTaichangSearch() {
+  const qInput = document.getElementById('taichangSearchInput');
+  const clearBtn = document.getElementById('btnTaichangSearchClear');
+  if (qInput) { qInput.value = ''; qInput.focus(); }
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (_taichangStockData) {
+    _taichangFilteredItems = _taichangStockData.items;
+    renderTaichangStock();
+  }
+}
+window.clearTaichangSearch = clearTaichangSearch;
+
+
+// =====================================================
+// 4. 혜주 공장 재고 함수군
+// =====================================================
+function initHuizhouStock() {
+  _huizhouStockData = window.KOSTAT_HUIZHOU_TRAY_STOCK || null;
+  if (_huizhouStockData && _huizhouStockData.items) {
+    _huizhouFilteredItems = _huizhouStockData.items;
+    updateHuizhouHeaderAndMetrics(_huizhouStockData);
+    renderHuizhouStock();
+  }
+  fetchLatestStock('huizhou', false);
+}
+
+function updateHuizhouHeaderAndMetrics(data) {
+  const asOfEl = document.getElementById('huizhouAsOfDate');
+  if (asOfEl) {
+    asOfEl.textContent = `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+  }
+  const dlBtn = document.getElementById('btnDownloadHuizhouExcel');
+  if (dlBtn && (data.download_url || data.download_url_latest)) {
+    dlBtn.href = data.download_url || data.download_url_latest;
+    if (data.source_file) dlBtn.setAttribute('download', data.source_file);
+  }
+  const summary = data.summary || {};
+  const elTotal = document.getElementById('huizhouMetricTotal');
+  const elActive = document.getElementById('huizhouMetricActive');
+  const elPrev = document.getElementById('huizhouMetricPrev');
+  const elIn = document.getElementById('huizhouMetricIn');
+  const elOut = document.getElementById('huizhouMetricOut');
+  const elPlan = document.getElementById('huizhouMetricPlan');
+  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
+  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
+  if (elPrev) elPrev.textContent = `${formatNum(summary.prev_stock)} EA`;
+  if (elIn) elIn.textContent = `${formatNum(summary.total_in)} EA`;
+  if (elOut) elOut.textContent = `${formatNum(summary.total_out)} EA`;
+  if (elPlan) elPlan.textContent = `${formatNum(summary.ship_plan)} EA`;
+}
+
+function renderHuizhouStock() {
+  const tbody = document.getElementById('huizhouStockTbody');
+  if (!tbody) return;
+
+  const items = _huizhouFilteredItems || [];
+  const count = document.getElementById('huizhouResultCount');
+  if (count) {
+    const masterLen = (_huizhouStockData && _huizhouStockData.items) ? _huizhouStockData.items.length : items.length;
+    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+  }
+
+  if (items.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    return;
+  }
+
+  const displayItems = items.slice(0, 200);
+  let html = '';
+  for (const item of displayItems) {
+    const ttClass = item.tt > 0 ? 'color:var(--primary); font-weight:700;' : 'color:var(--text-dim);';
+    const inClass = item.in > 0 ? 'color:var(--success);' : 'color:var(--text-dim);';
+    const outClass = item.out > 0 ? 'color:var(--danger);' : 'color:var(--text-dim);';
+    const planClass = item.plan > 0 ? 'color:var(--warning); font-weight:600;' : 'color:var(--text-dim);';
+
+    html += '<tr style="border-bottom:1px solid var(--border-color);">' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.m || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:85px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;color:var(--text-secondary);">' + formatNum(item.ps) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + inClass + '">' + formatNum(item.in) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + outClass + '">' + formatNum(item.out) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;color:var(--text-dim);">' + formatNum(item.wip) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + planClass + '">' + formatNum(item.plan) + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.tm || '-') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + '">' + formatNum(item.tt) + '</td>' +
+      '</tr>';
+  }
+  if (items.length > 200) {
+    html += '<tr><td colspan="10" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function filterHuizhouStock() {
+  if (!_huizhouStockData) return;
+  const qInput = document.getElementById('huizhouSearchInput');
+  const q = (qInput ? qInput.value : '').trim().toLowerCase();
+  const clearBtn = document.getElementById('btnHuizhouSearchClear');
+  if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
+
+  if (!q) {
+    _huizhouFilteredItems = _huizhouStockData.items;
+  } else {
+    const terms = q.split(/\s+/);
+    _huizhouFilteredItems = _huizhouStockData.items.filter(item => {
+      const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''}`.toLowerCase();
+      return terms.every(t => target.includes(t));
+    });
+  }
+  renderHuizhouStock();
+}
+window.filterHuizhouStock = filterHuizhouStock;
+
+function clearHuizhouSearch() {
+  const qInput = document.getElementById('huizhouSearchInput');
+  const clearBtn = document.getElementById('btnHuizhouSearchClear');
+  if (qInput) { qInput.value = ''; qInput.focus(); }
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (_huizhouStockData) {
+    _huizhouFilteredItems = _huizhouStockData.items;
+    renderHuizhouStock();
+  }
+}
+window.clearHuizhouSearch = clearHuizhouSearch;
 
 function showGimpoAccessGuide() {
   const p = document.getElementById('gimpoAccessGuidePanel');

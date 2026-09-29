@@ -1,5 +1,14 @@
 window.KOSTAT_FEEDBACK_DATA = [
   {
+    "id": "req-1790664739341",
+    "title": "김포공장 Tray 재고현황 기능 개선 요청의 건",
+    "author": "해외영업부 이상철",
+    "content": "원본 Tray 재고현황 파일도 같이 업로드 하여 외부 인터넷에서도 재고현황 파악이 가능하도록 기능 개선 요청 드립니다.",
+    "created_at": "2026-09-29 15:52",
+    "status": "pending",
+    "reply": null
+  },
+  {
     "id": "req-1788738303833",
     "title": "계약검토서 검색기능",
     "author": "해외영업부 김샘물",

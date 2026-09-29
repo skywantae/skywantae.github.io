@@ -1,8 +1,8 @@
 {
   "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서",
   "week_label": "9월 4주차 (0921-0925)",
-  "last_updated_at": "2026-09-28 06:31:36",
-  "last_updated_by": "한준희 책임",
+  "last_updated_at": "2026-09-29 06:46:22",
+  "last_updated_by": "김완태 사원",
   "kpi": {
     "target": 2404602,
     "current": 937933,
@@ -301,6 +301,15 @@
           "item": "IC Tray",
           "pn": "KS-881490",
           "defect_type": "이물/오염",
+          "comment": "불량상황에 대한 설명 및 조치 대책"
+        },
+        {
+          "id": "qual_1790664375586",
+          "customer": "SKYWORKS",
+          "country": "US",
+          "item": "IC Tray",
+          "pn": "KS-880220",
+          "defect_type": "Close",
           "comment": "불량상황에 대한 설명 및 조치 대책"
         }
       ]

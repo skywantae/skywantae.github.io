@@ -3494,6 +3494,132 @@ html, body {
   font-size: 12.5px !important;
 }
 
+/* =====================================================
+   재고 현황리스트 전용 스타일 (4대 공장 통합)
+   ===================================================== */
+.stock-subtab-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.stock-tab-btn {
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card-sub);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.stock-tab-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color-hover);
+}
+
+.stock-tab-btn.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+.stock-factory-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.stock-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stock-metric-card {
+  background: var(--bg-card-sub);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.stock-metric-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.stock-metric-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stock-metric-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: 'Inter', monospace;
+}
+
+.stock-metric-val.highlight {
+  color: #3b82f6;
+  font-size: 17px;
+}
+
+.stock-search-wrapper {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  background: #0f172a;
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 3px 12px rgba(0, 0, 0, 0.4);
+  padding: 3px 6px;
+  transition: all 0.2s ease;
+}
+
+.stock-search-wrapper:focus-within {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.45), 0 4px 16px rgba(0, 0, 0, 0.5);
+  background: #1e293b;
+}
+
+.stock-search-wrapper input {
+  flex: 1;
+  padding: 9px 8px;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  min-width: 0;
+}
+
+.stock-search-wrapper input::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+  font-weight: 400;
+  font-size: 12.5px;
+}
+
+
 
 
 
