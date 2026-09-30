@@ -1,6 +1,6 @@
 window.KOSTAT_OVERSEAS_SAMPLES_DATA = {
   "source_file": "26년 해영 샘플 리스트 0923 김샘물 김완태 이상철.xlsx",
-  "extracted_at": "2026-09-30 16:17:03",
+  "extracted_at": "2026-09-30 16:27:17",
   "total_count": 682,
   "summary": {
     "by_year": {

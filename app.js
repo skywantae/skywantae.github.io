@@ -1115,11 +1115,11 @@ const APP_I18N = {
 
     // Viewer Tabs
     tab_shipplan: 'Ship Plan',
-    tab_quotations: 'Quotations',
+    tab_quotations: 'Quotation',
     tab_contract: 'Project',
-    tab_drawings: 'Drawings',
+    tab_drawings: 'Drawing',
     tab_stock: 'Stocklists',
-    tab_feedback: 'Feature Requests',
+    tab_feedback: 'Feature Request',
     tab_chatbot: 'FAQ Chatbot',
     tab_faq: 'Regulations & FAQ',
     tab_archive: 'Archive',
@@ -1137,7 +1137,7 @@ const APP_I18N = {
     stock_title: 'Stocklists',
     stock_sub: 'Real-time Tray inventory for Gimpo, Vietnam, Taichang, Huizhou factories',
     feedback_title: 'Feature Request Board',
-    feedback_sub: 'Web App Feedback & Feature Requests',
+    feedback_sub: 'Web App Feedback & Feature Request',
     chatbot_title: 'Regulations & FAQ Chatbot',
     chatbot_status_live: 'Live Knowledge Q&A',
     btn_clear_chat: 'Clear Chat',
@@ -5116,7 +5116,7 @@ function renderFeedbackPage(page) {
   if (totalRows === 0) {
     DOM.feedbackBoardList.innerHTML = `
       <div class="feedback-empty-state">
-        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">${isEn ? 'No feature requests found.' : '등록된 기능 요청이 없습니다.'}</div>
+        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">${isEn ? 'No feature request found.' : '등록된 기능 요청이 없습니다.'}</div>
         <div style="font-size:12px;color:#94a3b8;">${isEn ? 'Click [New Request] to suggest new features or ideas.' : '새로운 아이디어나 필요한 기능이 있다면 [새 요청 등록] 버튼을 눌러보세요.'}</div>
       </div>
     `;
