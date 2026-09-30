@@ -22,15 +22,6 @@ const AppState = {
   contractFilteredRows: [],
   selectedContractProjectNo: null,
 
-  // IC Tray 도면 상태
-  drawingsData: [],
-  drawingsFilteredRows: [],
-  drawingsCurrentPage: 1,
-  drawingsPageSize: 15,
-  isDrawingAuthenticated: false,
-  pendingDrawingIndex: null,
-  selectedDrawingModel: null,
-
   // 출하 계획 페이징 상태
   shipPlanCurrentPage: 1,
   shipPlanPageSize: 50,
@@ -235,42 +226,9 @@ const DOM = {
   btnModalCloseContract: document.getElementById('btnModalCloseContract'),
   btnModalPrintContract: document.getElementById('btnModalPrintContract'),
 
-  // IC Tray 도면 DOM
-  viewDrawings: document.getElementById('viewDrawings'),
-  drawingsCountBadge: document.getElementById('drawingsCountBadge'),
-  drawingsSearchInput: document.getElementById('drawingsSearchInput'),
-  drawingsSeriesSelect: document.getElementById('drawingsSeriesSelect'),
-  drawingsPageSizeSelect: document.getElementById('drawingsPageSizeSelect'),
-  btnSearchDrawings: document.getElementById('btnSearchDrawings'),
-  btnReloadDrawings: document.getElementById('btnReloadDrawings'),
-  drawingsTable: document.getElementById('drawingsTable'),
-  drawingsTbody: document.getElementById('drawingsTbody'),
-  drawingsPagination: document.getElementById('drawingsPagination'),
-  drawingsPageInfo: document.getElementById('drawingsPageInfo'),
-  drawingsPageControls: document.getElementById('drawingsPageControls'),
-
   // 재고 현황리스트 DOM
   tabBtnStock: document.getElementById('tabBtnStock'),
   viewStock: document.getElementById('viewStock'),
-
-  // 도면 보안 PIN 모달 DOM
-  drawingPinModal: document.getElementById('drawingPinModal'),
-  drawingPinInput: document.getElementById('drawingPinInput'),
-  drawingPinTargetIndex: document.getElementById('drawingPinTargetIndex'),
-  drawingPinError: document.getElementById('drawingPinError'),
-  btnVerifyDrawingPin: document.getElementById('btnVerifyDrawingPin'),
-  btnCancelDrawingPin: document.getElementById('btnCancelDrawingPin'),
-  btnCloseDrawingPinModal: document.getElementById('btnCloseDrawingPinModal'),
-
-  // 도면 상세 모달 DOM
-  drawingDetailModal: document.getElementById('drawingDetailModal'),
-  drawingDetailTitle: document.getElementById('drawingDetailTitle'),
-  btnCopyDrawingSummary: document.getElementById('btnCopyDrawingSummary'),
-  btnCloseDrawingDetailModal: document.getElementById('btnCloseDrawingDetailModal'),
-  drawingDetailSpecArea: document.getElementById('drawingDetailSpecArea'),
-  drawingDetailFileCount: document.getElementById('drawingDetailFileCount'),
-  drawingDetailFileList: document.getElementById('drawingDetailFileList'),
-  btnCloseDrawingDetail: document.getElementById('btnCloseDrawingDetail'),
 
   // Settings & Refresh
   btnSettings: document.getElementById('btnSettings'),
@@ -551,9 +509,6 @@ async function loadInitialDatabases() {
     if (window.KOSTAT_CONTRACT_REVIEWS_DATA && window.KOSTAT_CONTRACT_REVIEWS_DATA.length > 0) {
       AppState.contractReviewsData = window.KOSTAT_CONTRACT_REVIEWS_DATA;
     }
-    if (window.KOSTAT_DRAWINGS_DATA && window.KOSTAT_DRAWINGS_DATA.length > 0) {
-      AppState.drawingsData = window.KOSTAT_DRAWINGS_DATA;
-    }
     // FAQ 지식 데이터 우선 바인딩 (전용 DB > 번들 객체)
     if (window.KOSTAT_FAQ_DB && window.KOSTAT_FAQ_DB.length > 0) {
       AppState.knowledgeData = window.KOSTAT_FAQ_DB;
@@ -682,12 +637,11 @@ async function loadInitialDatabases() {
     // UI 초기 렌더링
     renderQuotHistory();
     renderContractReviews();
-    renderDrawingsHistory();
     renderShipPlanHistory();
     renderFeedbackBoard();
     renderFaqList();
 
-    console.log(`[DB Ready] ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}, Drawings: ${AppState.drawingsData.length}`);
+    console.log(`[DB Ready] ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}`);
   } catch (err) {
     console.error('DB Load Error:', err);
     updateStatus(true, getDataDateStatusText());
@@ -779,7 +733,7 @@ async function syncLiveDatabases(isManual = false) {
 function updateStatus(isOnline, text) {
   DOM.statusDot.className = isOnline ? 'status-dot online' : 'status-dot';
   DOM.statusText.textContent = text;
-  const total = (AppState.shipPlanData?.length || 0) + (AppState.quotationsData?.length || 0) + (AppState.contractReviewsData?.length || 0) + (AppState.drawingsData?.length || 0);
+  const total = (AppState.shipPlanData?.length || 0) + (AppState.quotationsData?.length || 0) + (AppState.contractReviewsData?.length || 0);
   if (DOM.connStatusPill && total > 0) {
     DOM.connStatusPill.setAttribute('title', `총 ${total.toLocaleString()}건 ERP 데이터 탑재`);
   }
@@ -800,7 +754,6 @@ const APP_I18N = {
     tab_shipplan: '출하 계획',
     tab_quotations: '견적서',
     tab_contract: '계약검토서',
-    tab_drawings: '도면 관리',
     tab_stock: '재고 현황리스트',
     tab_feedback: '기능 요청',
     tab_chatbot: 'FAQ 챗봇',
@@ -815,8 +768,6 @@ const APP_I18N = {
     quotations_sub: '견적 번호 및 고객사 검색',
     contract_title: '계약검토서 관리 현황',
     contract_sub: '프로젝트 및 계약 검토 이력',
-    drawings_title: '연구소 도면 관리',
-    drawings_sub: 'Tray / Carrier Tape 승인 도면',
     stock_title: '재고 현황리스트',
     stock_sub: '김포, 베트남, 태창, 혜주 4대 공장 실시간 Tray 재고 현황',
     feedback_title: '기능 요청 게시판',
@@ -923,7 +874,6 @@ const APP_I18N = {
     ship_holder_inv: 'Invoice No 입력...',
     quot_holder: '견적 번호(Q...), 고객사, 작성자 검색...',
     contract_holder: '프로젝트명, 고객사, 품목 검색...',
-    drawing_holder: 'KS 번호, 도면명, 고객사 검색...',
     feedback_holder: '요청 제목, 작성자, 내용 검색...',
     faq_holder: '규정 키워드 검색 (예: EXW, 위탁재고, 출하)...',
     archive_holder: '문서명, 분류, 등록자, 파일명 검색...',
@@ -972,7 +922,6 @@ const APP_I18N = {
     opt_applied: '반영 완료',
     opt_in_progress: '진행중',
     opt_completed: '완료',
-    opt_all_series: '전체 시리즈',
     opt_show_all: '전체보기',
 
     // Modals
@@ -988,10 +937,6 @@ const APP_I18N = {
     modal_board_pin_desc: '기능 요청 게시판 답변 작성 및 관리 권한을 활성화하려면 관리자 PIN 번호를 입력하세요.',
     modal_board_pin_holder: '관리자 PIN 입력',
     modal_feedback_del_title: '게시글 삭제 확인',
-    modal_drawing_pin_title: '사내 도면 보안 인증',
-    modal_drawing_pin_desc: 'IC Tray 도면은 회사의 중요한 핵심 기술 자산입니다.<br>도면 열람 및 다운로드를 위해 <strong>4자리 보안 PIN</strong>을 입력해 주세요.',
-    modal_drawing_pin_holder: '보안 PIN 4자리 입력',
-    modal_drawing_detail_title: '도면 상세 정보',
     modal_faq_edit_title: '사내 FAQ 지식 등록 / 수정',
     modal_faq_question_holder: '예: 위탁재고(Consignment) 거래 방식과 정산 주기',
     modal_faq_category_holder: '예: 인코텀즈, 위탁재고, 출하요청, 해외영업',
@@ -1048,7 +993,7 @@ const APP_I18N = {
     settings_lang_label: '언어 설정 (Language):',
     settings_lang_desc: '모바일 웹앱의 모든 메뉴, 검색 필터, 탭 헤더가 선택한 언어로 즉시 전환됩니다.',
     settings_env_label: '동작 환경 (오프라인 지원):',
-    settings_env_desc: '• <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>• <strong>탑재 데이터</strong>: 출하 계획 110,000+건, 견적서 22,000+건, 계약검토서(Project) 2,300+건, 도면 2,900+건, 사내 FAQ 내장.',
+    settings_env_desc: '• <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>• <strong>탑재 데이터</strong>: 출하 계획 110,000+건, 견적서 22,000+건, 계약검토서(Project) 2,300+건, 사내 FAQ 내장.',
     settings_ver_label: '앱 버전 정보:',
     settings_cur_ver_prefix: '현재 버전:',
     settings_admin_label: '관리자 전용 메뉴:',
@@ -1088,20 +1033,6 @@ const APP_I18N = {
     th_contract_mat: '소재',
     th_status: '상태',
 
-    // Table Headers (Drawings)
-    th_ks_no: 'KS 번호',
-    th_drawing_name: '도면명',
-    th_category: '구분',
-    th_rev_date: '개정일자',
-    th_draw_no: 'No',
-    th_draw_part_model: '품번 / 모델',
-    th_draw_cust_pn: '고객사 P/N',
-    th_draw_spec: '규격 (Package Type)',
-    th_draw_temp: '내열온도',
-    th_draw_material: '재질',
-    th_draw_files: '도면 파일수',
-    th_draw_updated: '최종 수정일',
-    th_download: '도면 다운로드',
     th_region: '지역',
     th_amount: '금액',
 
@@ -1117,7 +1048,6 @@ const APP_I18N = {
     tab_shipplan: 'Ship Plan',
     tab_quotations: 'Quotation',
     tab_contract: 'Project',
-    tab_drawings: 'Drawing',
     tab_stock: 'Stocklists',
     tab_feedback: 'Feature Request',
     tab_chatbot: 'FAQ Chatbot',
@@ -1132,8 +1062,6 @@ const APP_I18N = {
     quotations_sub: 'Search Quotations by Number & Customer',
     contract_title: 'Contract Review Management',
     contract_sub: 'Project & Contract Review History',
-    drawings_title: 'R&D Drawing Management',
-    drawings_sub: 'Tray / Carrier Tape Approved Drawings',
     stock_title: 'Stocklists',
     stock_sub: 'Real-time Tray inventory for Gimpo, Vietnam, Taichang, Huizhou factories',
     feedback_title: 'Feature Request Board',
@@ -1240,7 +1168,6 @@ const APP_I18N = {
     ship_holder_inv: 'Search Invoice No...',
     quot_holder: 'Search Quote No(Q...), Customer, Author...',
     contract_holder: 'Search Project, Customer, Item...',
-    drawing_holder: 'Search KS No, Drawing Name, Customer...',
     feedback_holder: 'Search Title, Author, Content...',
     faq_holder: 'Search regulations (e.g. EXW, Consignment, Shipment)...',
     archive_holder: 'Search Document, Category, Author, File...',
@@ -1289,7 +1216,6 @@ const APP_I18N = {
     opt_applied: 'Applied',
     opt_in_progress: 'In Progress',
     opt_completed: 'Completed',
-    opt_all_series: 'All Series',
     opt_show_all: 'Show All',
 
     // Modals
@@ -1305,10 +1231,6 @@ const APP_I18N = {
     modal_board_pin_desc: 'Enter Admin PIN to enable reply and management permissions.',
     modal_board_pin_holder: 'Enter Admin PIN',
     modal_feedback_del_title: 'Confirm Post Deletion',
-    modal_drawing_pin_title: 'Drawing Security Authentication',
-    modal_drawing_pin_desc: 'IC Tray drawings are proprietary technical assets.<br>Please enter the <strong>4-digit security PIN</strong> to view and download drawings.',
-    modal_drawing_pin_holder: 'Enter 4-digit PIN',
-    modal_drawing_detail_title: 'Drawing Details',
     modal_faq_edit_title: 'Register / Edit FAQ Knowledge',
     modal_faq_question_holder: 'e.g. Consignment trade terms and settlement cycle',
     modal_faq_category_holder: 'e.g. Incoterms, Consignment, Shipment, Sales',
@@ -1365,7 +1287,7 @@ const APP_I18N = {
     settings_lang_label: 'Language Settings:',
     settings_lang_desc: 'All navigation menus, search filters, and table headers will immediately switch to the selected language.',
     settings_env_label: 'Operating Environment (Offline Support):',
-    settings_env_desc: '• <strong>Standalone Mode</strong>: Operates fully offline on mobile without internal Wi-Fi or PC connection.<br>• <strong>Embedded Data</strong>: Shipment Plans 110,000+, Quotes 22,000+, Projects 2,300+, Drawings 2,900+, Built-in Regulations FAQ.',
+    settings_env_desc: '• <strong>Standalone Mode</strong>: Operates fully offline on mobile without internal Wi-Fi or PC connection.<br>• <strong>Embedded Data</strong>: Shipment Plans 110,000+, Quotes 22,000+, Projects 2,300+, Built-in Regulations FAQ.',
     settings_ver_label: 'App Version Info:',
     settings_cur_ver_prefix: 'Current Version:',
     settings_admin_label: 'Admin Menu:',
@@ -1405,20 +1327,6 @@ const APP_I18N = {
     th_contract_mat: 'Material',
     th_status: 'Status',
 
-    // Table Headers (Drawings)
-    th_ks_no: 'KS No',
-    th_drawing_name: 'Drawing Name',
-    th_category: 'Category',
-    th_rev_date: 'Rev Date',
-    th_draw_no: 'No',
-    th_draw_part_model: 'Part / Model',
-    th_draw_cust_pn: 'Customer P/N',
-    th_draw_spec: 'Spec (Package Type)',
-    th_draw_temp: 'Temp',
-    th_draw_material: 'Material',
-    th_draw_files: 'Drawing Files',
-    th_draw_updated: 'Last Modified',
-    th_download: 'Download',
     th_region: 'Region',
     th_amount: 'Amount',
 
@@ -1522,7 +1430,6 @@ function applyAppLanguage(lang) {
     viewShipPlan: t.tab_shipplan,
     viewQuotations: t.tab_quotations,
     viewContractReviews: t.tab_contract,
-    viewDrawings: t.tab_drawings,
     viewStock: t.tab_stock,
     viewFeedback: t.tab_feedback,
     viewChatbot: t.tab_chatbot,
@@ -1600,9 +1507,6 @@ function applyAppLanguage(lang) {
   const contractSearchInput = document.getElementById('contractSearchInput');
   if (contractSearchInput) contractSearchInput.placeholder = t.contract_holder;
 
-  const drawingSearchInput = document.getElementById('drawingsSearchInput') || document.getElementById('drawingSearchInput');
-  if (drawingSearchInput) drawingSearchInput.placeholder = t.drawing_holder;
-
   const feedbackSearchInput = document.getElementById('feedbackSearchInput');
   if (feedbackSearchInput) feedbackSearchInput.placeholder = t.feedback_holder;
   const faqSearchInput = document.getElementById('faqSearchInput');
@@ -1615,7 +1519,6 @@ function applyAppLanguage(lang) {
     { selector: '#viewShipPlan .viewer-title-group h3', title: t.shipplan_title, subSel: '#viewShipPlan .viewer-tools span', sub: t.shipplan_sub },
     { selector: '#viewQuotations .viewer-title-group h3', title: t.quotations_title, subSel: '#viewQuotations .viewer-tools span', sub: t.quotations_sub },
     { selector: '#viewContractReviews .viewer-title-group h3', title: t.contract_title, subSel: '#viewContractReviews .viewer-tools span', sub: t.contract_sub },
-    { selector: '#viewDrawings .viewer-title-group h3', title: t.drawings_title, subSel: '#viewDrawings .viewer-tools span', sub: t.drawings_sub },
     { selector: '#viewStock .viewer-title-group h3', title: t.stock_title, subSel: '#viewStock .viewer-tools span', sub: t.stock_sub },
     { selector: '#viewFeedback .viewer-title-group h3', title: t.feedback_title, subSel: '#viewFeedback .viewer-tools span', sub: t.feedback_sub },
     { selector: '#viewChatbot .viewer-title-group h3', title: t.chatbot_title, subSel: '#chatbotStatusBadge', sub: t.chatbot_status_live },
@@ -1656,12 +1559,6 @@ function applyAppLanguage(lang) {
   if (btnSearchContract) btnSearchContract.textContent = t.btn_search;
   const btnReloadContract = document.getElementById('btnReloadContract');
   if (btnReloadContract) btnReloadContract.textContent = t.btn_reload;
-
-  // 도면 관리
-  const btnSearchDrawings = document.getElementById('btnSearchDrawings');
-  if (btnSearchDrawings) btnSearchDrawings.textContent = t.btn_search;
-  const btnReloadDrawings = document.getElementById('btnReloadDrawings');
-  if (btnReloadDrawings) btnReloadDrawings.textContent = t.btn_reload;
 
   // 기능 요청 게시판 (정확한 ID 바인딩)
   const btnOpenNewFeedbackModal = document.getElementById('btnOpenNewFeedbackModal');
@@ -1715,7 +1612,6 @@ function applyAppLanguage(lang) {
   translateOptions('shipPlanPageSizeSelect', pageOptionMap);
   translateOptions('quotPageSizeSelect', pageOptionMap);
   translateOptions('contractPageSizeSelect', pageOptionMap);
-  translateOptions('drawingsPageSizeSelect', pageOptionMap);
   translateOptions('feedbackPageSizeSelect', pageOptionMap);
   translateOptions('faqPageSizeSelect', { ...pageOptionMap, '100': t.opt_show_all });
   translateOptions('archivePageSizeSelect', pageOptionMap);
@@ -1724,10 +1620,6 @@ function applyAppLanguage(lang) {
     '': t.opt_all_status,
     '진행중': t.opt_in_progress,
     '완료': t.opt_completed
-  });
-
-  translateOptions('drawingsSeriesSelect', {
-    'all': t.opt_all_series
   });
 
   translateOptions('feedbackStatusFilter', {
@@ -1760,12 +1652,6 @@ function applyAppLanguage(lang) {
   if (contractThs && contractThs.length >= 10) {
     const headers = [t.th_contract_proj_no, t.th_contract_date, t.th_customer, t.th_contract_country, t.th_contract_item, t.th_contract_mold, t.th_part_no, t.th_contract_mat, t.th_qty, t.th_status];
     contractThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
-  }
-
-  const drawingThs = document.querySelectorAll('#drawingsTable thead th');
-  if (drawingThs && drawingThs.length >= 10) {
-    const headers = [t.th_draw_no, t.th_draw_part_model, t.th_customer, t.th_draw_cust_pn, t.th_draw_spec, t.th_draw_temp, t.th_draw_material, t.th_draw_files, t.th_draw_updated, t.th_download];
-    drawingThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
   }
 
   const sspcThs = document.querySelectorAll('#sspcPreviewTable thead th');
@@ -1835,25 +1721,6 @@ function applyAppLanguage(lang) {
   if (btnConfirmDeleteFeedback) btnConfirmDeleteFeedback.textContent = t.btn_delete_confirm;
   const btnCancelDeleteFeedback = document.getElementById('btnCancelDeleteFeedback');
   if (btnCancelDeleteFeedback) btnCancelDeleteFeedback.textContent = t.btn_cancel;
-
-  // 도면 보안 PIN 및 상세 모달
-  const drawingPinTitle = document.querySelector('#drawingPinModal .modal-header h3');
-  if (drawingPinTitle) drawingPinTitle.textContent = t.modal_drawing_pin_title;
-  const drawingPinBody = document.querySelector('#drawingPinModal .modal-body div');
-  if (drawingPinBody) drawingPinBody.innerHTML = t.modal_drawing_pin_desc;
-  const drawingPinInput = document.getElementById('drawingPinInput');
-  if (drawingPinInput) drawingPinInput.placeholder = t.modal_drawing_pin_holder;
-  const btnVerifyDrawingPin = document.getElementById('btnVerifyDrawingPin');
-  if (btnVerifyDrawingPin) btnVerifyDrawingPin.textContent = t.btn_verify_confirm;
-  const btnCancelDrawingPin = document.getElementById('btnCancelDrawingPin');
-  if (btnCancelDrawingPin) btnCancelDrawingPin.textContent = t.btn_cancel;
-
-  const drawingDetailTitle = document.getElementById('drawingDetailTitle');
-  if (drawingDetailTitle) drawingDetailTitle.textContent = t.modal_drawing_detail_title;
-  const btnCopyDrawingSummary = document.getElementById('btnCopyDrawingSummary');
-  if (btnCopyDrawingSummary) btnCopyDrawingSummary.textContent = t.btn_copy_summary;
-  const btnCloseDrawingDetail = document.getElementById('btnCloseDrawingDetail');
-  if (btnCloseDrawingDetail) btnCloseDrawingDetail.textContent = t.btn_close;
 
   // FAQ 모달
   const faqModalTitle = document.getElementById('faqModalTitle');
@@ -2116,7 +1983,6 @@ function applyAppLanguage(lang) {
   if (AppState.shipPlanData && typeof renderShipPlanPage === 'function') renderShipPlanPage(AppState.shipPlanCurrentPage || 1);
   if (AppState.quotationsData && typeof renderQuotationsPage === 'function') renderQuotationsPage(AppState.quotCurrentPage || 1);
   if (AppState.contractReviewsData && typeof renderContractReviewsPage === 'function') renderContractReviewsPage(AppState.contractCurrentPage || 1);
-  if (AppState.drawingsData && typeof renderDrawingsPage === 'function') renderDrawingsPage(AppState.drawingsCurrentPage || 1);
   if (AppState.feedbackData && typeof renderFeedbackPage === 'function') renderFeedbackPage(AppState.feedbackCurrentPage || 1);
   if (AppState.knowledgeData && typeof renderFaqPage === 'function') renderFaqPage(AppState.faqCurrentPage || 1);
   if (AppState.archiveData && typeof renderArchivePage === 'function') renderArchivePage(AppState.archiveCurrentPage || 1);
@@ -2314,64 +2180,6 @@ function initUI() {
         printContractReview(AppState.selectedContractProjectNo);
       }
     });
-  }
-
-  // IC Tray 도면 검색 & 필터 & 페이지 크기 & 모달 이벤트
-  if (DOM.drawingsSearchInput) {
-    DOM.drawingsSearchInput.addEventListener('input', debounce(filterDrawingsTable, 200));
-    DOM.drawingsSearchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') filterDrawingsTable();
-    });
-  }
-  if (DOM.drawingsSeriesSelect) {
-    DOM.drawingsSeriesSelect.addEventListener('change', filterDrawingsTable);
-  }
-  if (DOM.drawingsPageSizeSelect) {
-    DOM.drawingsPageSizeSelect.addEventListener('change', () => {
-      AppState.drawingsPageSize = parseInt(DOM.drawingsPageSizeSelect.value, 10) || 15;
-      AppState.drawingsCurrentPage = 1;
-      renderDrawingsPage(1);
-    });
-  }
-  if (DOM.btnSearchDrawings) {
-    DOM.btnSearchDrawings.addEventListener('click', filterDrawingsTable);
-  }
-  if (DOM.btnReloadDrawings) {
-    DOM.btnReloadDrawings.addEventListener('click', () => {
-      if (DOM.drawingsSearchInput) DOM.drawingsSearchInput.value = '';
-      if (DOM.drawingsSeriesSelect) DOM.drawingsSeriesSelect.value = 'all';
-      renderDrawingsHistory();
-    });
-  }
-
-  // 사내 도면 보안 PIN 모달 이벤트 (암호: 0404)
-  if (DOM.btnVerifyDrawingPin) {
-    DOM.btnVerifyDrawingPin.addEventListener('click', verifyDrawingPin);
-  }
-  if (DOM.drawingPinInput) {
-    DOM.drawingPinInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        verifyDrawingPin();
-      }
-    });
-  }
-  if (DOM.btnCancelDrawingPin) {
-    DOM.btnCancelDrawingPin.addEventListener('click', closeDrawingPinModal);
-  }
-  if (DOM.btnCloseDrawingPinModal) {
-    DOM.btnCloseDrawingPinModal.addEventListener('click', closeDrawingPinModal);
-  }
-
-  // 도면 상세 모달 이벤트
-  if (DOM.btnCloseDrawingDetailModal) {
-    DOM.btnCloseDrawingDetailModal.addEventListener('click', closeDrawingDetailModal);
-  }
-  if (DOM.btnCloseDrawingDetail) {
-    DOM.btnCloseDrawingDetail.addEventListener('click', closeDrawingDetailModal);
-  }
-  if (DOM.btnCopyDrawingSummary) {
-    DOM.btnCopyDrawingSummary.addEventListener('click', copyDrawingSummaryText);
   }
 
   // 설정 모달
@@ -3557,455 +3365,6 @@ window.switchContractSubTab = switchContractSubTab;
 
 
 
-// --- 7-1. IC Tray 도면 뷰어 & 보안 PIN(0404) 다운로드 엔진 ---
-
-function renderDrawingsHistory() {
-  if (DOM.drawingsSearchInput) DOM.drawingsSearchInput.value = '';
-  if (DOM.drawingsSeriesSelect) DOM.drawingsSeriesSelect.value = 'all';
-  AppState.drawingsFilteredRows = AppState.drawingsData || [];
-  AppState.drawingsCurrentPage = 1;
-  renderDrawingsPage(1);
-}
-
-function filterDrawingsTable() {
-  const search = DOM.drawingsSearchInput ? DOM.drawingsSearchInput.value.toLowerCase().trim() : '';
-  const searchNorm = search.replace(/[-_\s]/g, '');
-  const series = DOM.drawingsSeriesSelect ? DOM.drawingsSeriesSelect.value : 'all';
-
-  AppState.drawingsFilteredRows = (AppState.drawingsData || []).filter(r => {
-    // 1. 시리즈 필터
-    if (series && series !== 'all') {
-      if (series === 'KS-80XX, 81XX') {
-        if (r.series !== 'KS-80XX, 81XX' && r.series !== 'KS-80XX' && r.series !== 'KS-81XX') {
-          return false;
-        }
-      } else if (r.series !== series) {
-        return false;
-      }
-    }
-
-    // 2. 품번/고객사/규격/재질/온도 및 파일명 통합 검색
-    if (!search) return true;
-
-    const m = (r.model || '').toLowerCase();
-    const c = (r.customer || '').toLowerCase();
-    const cpn = (r.customer_pn || '').toLowerCase();
-    const pkg = (r.pkg_type || '').toLowerCase();
-    const mat = (r.material || '').toLowerCase();
-    const temp = (r.temp || '').toLowerCase();
-    const s = (r.series || '').toLowerCase();
-
-    if (m.includes(search) || c.includes(search) || cpn.includes(search) ||
-        pkg.includes(search) || mat.includes(search) || temp.includes(search) || s.includes(search)) {
-      return true;
-    }
-
-    // 하이픈/공백 제거 정규화 검색
-    if (searchNorm.length >= 2) {
-      if (m.replace(/[-_\s]/g, '').includes(searchNorm) ||
-          cpn.replace(/[-_\s]/g, '').includes(searchNorm) ||
-          c.replace(/[-_\s]/g, '').includes(searchNorm)) {
-        return true;
-      }
-    }
-
-    // 도면 파일명 내부 검색
-    if (r.files && r.files.length > 0) {
-      for (let i = 0; i < r.files.length; i++) {
-        const fn = (r.files[i].filename || '').toLowerCase();
-        if (fn.includes(search)) return true;
-        if (searchNorm.length >= 2 && fn.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
-      }
-    }
-
-    return false;
-  });
-
-  AppState.drawingsCurrentPage = 1;
-  renderDrawingsPage(1);
-}
-
-function renderDrawingsPage(page) {
-  const rows = AppState.drawingsFilteredRows || [];
-  const totalRows = rows.length;
-  const pageSize = AppState.drawingsPageSize || 15;
-  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
-
-  page = Math.max(1, Math.min(page, totalPages));
-  AppState.drawingsCurrentPage = page;
-
-  // 카운트 배지 & 페이지 인포
-  const isEn = AppState.currentLang === 'en';
-  if (DOM.drawingsCountBadge) {
-    DOM.drawingsCountBadge.textContent = isEn ? `${totalRows.toLocaleString()} items` : `${totalRows.toLocaleString()}건`;
-  }
-  if (DOM.drawingsPageInfo) {
-    DOM.drawingsPageInfo.textContent = isEn
-      ? `Page ${page.toLocaleString()} of ${totalPages.toLocaleString()} (${totalRows.toLocaleString()} items total)`
-      : `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
-  }
-
-  if (!DOM.drawingsTbody) return;
-
-  if (totalRows === 0) {
-    DOM.drawingsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">${isEn ? 'No matching drawing data found.' : '일치하는 도면 데이터가 없습니다.'}</td></tr>`;
-    if (DOM.drawingsPageControls) DOM.drawingsPageControls.innerHTML = '';
-    return;
-  }
-
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
-  const pageRows = rows.slice(start, end);
-
-  DOM.drawingsTbody.innerHTML = pageRows.map((r, i) => {
-    const rowNo = start + i + 1;
-    // 최신 수정일 계산
-    let latestDate = '-';
-    if (r.files && r.files.length > 0) {
-      const dates = r.files.map(f => f.mtime).filter(Boolean).sort().reverse();
-      if (dates.length > 0) latestDate = dates[0].substring(0, 10);
-    }
-    const fileCount = r.files ? r.files.length : (r.file_count || 0);
-
-    return `
-      <tr onclick="handleDrawingModelClick('${escapeHtml(r.model)}')" style="cursor:pointer;" class="erp-copyable-cell" title="도면 상세 및 다운로드 (클릭)">
-        <td style="text-align:center;color:#94a3b8;font-size:12px;">${rowNo}</td>
-        <td style="font-weight:700;color:#38bdf8;">${escapeHtml(r.model)}</td>
-        <td style="font-weight:600;color:#f8fafc;">${escapeHtml(r.customer || '-')}</td>
-        <td style="color:#a5b4fc;">${escapeHtml(r.customer_pn || '-')}</td>
-        <td style="color:#cbd5e1;">${escapeHtml(r.pkg_type || '-')}</td>
-        <td style="text-align:center;color:#e2e8f0;">${escapeHtml(r.temp || '-')}</td>
-        <td style="text-align:center;color:#cbd5e1;">${escapeHtml(r.material || '-')}</td>
-        <td style="text-align:center;"><span class="count-badge" style="background:rgba(14,165,233,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-size:11px;">PDF ${fileCount}개</span></td>
-        <td style="text-align:center;color:#94a3b8;font-size:12px;">${escapeHtml(latestDate)}</td>
-        <td style="text-align:center;">
-          <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 10px;" onclick="event.stopPropagation(); handleDrawingModelClick('${escapeHtml(r.model)}');">열람/다운로드</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  // 페이지네이션 컨트롤러 렌더링
-  renderDrawingsPaginationControls(page, totalPages);
-}
-
-function renderDrawingsPaginationControls(currentPage, totalPages) {
-  if (!DOM.drawingsPageControls) return;
-
-  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
-  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
-  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
-  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
-
-  let btnsHtml = '';
-
-  // 처음으로
-  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToDrawingsPage(1)" title="첫 페이지">${svgChevronFirst}</button>`;
-  
-  // 이전
-  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToDrawingsPage(${currentPage - 1})" title="이전 페이지">${svgChevronPrev}</button>`;
-
-  // 슬라이딩 윈도우 페이지 번호
-  const delta = 2;
-  const range = [];
-  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
-    range.push(i);
-  }
-
-  // 1페이지 버튼
-  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToDrawingsPage(1)">1</button>`;
-
-  if (range.length > 0 && range[0] > 2) {
-    btnsHtml += `<span class="page-ellipsis">...</span>`;
-  }
-
-  range.forEach(p => {
-    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToDrawingsPage(${p})">${p}</button>`;
-  });
-
-  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
-    btnsHtml += `<span class="page-ellipsis">...</span>`;
-  }
-
-  // 마지막 페이지
-  if (totalPages > 1) {
-    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToDrawingsPage(${totalPages})">${totalPages}</button>`;
-  }
-
-  // 다음
-  btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToDrawingsPage(${currentPage + 1})" title="다음 페이지">${svgChevronNext}</button>`;
-
-  // 마지막으로
-  btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToDrawingsPage(${totalPages})" title="마지막 페이지">${svgChevronLast}</button>`;
-
-  DOM.drawingsPageControls.innerHTML = btnsHtml;
-}
-
-window.goToDrawingsPage = function(page) {
-  renderDrawingsPage(page);
-  const wrapper = document.querySelector('#viewDrawings .table-responsive-wrapper');
-  if (wrapper) wrapper.scrollTop = 0;
-};
-
-function handleDrawingModelClick(modelName) {
-  AppState.selectedDrawingModel = modelName;
-  if (!AppState.isDrawingAuthenticated) {
-    openDrawingPinModal(modelName);
-  } else {
-    openDrawingDetailModal(modelName);
-  }
-}
-window.handleDrawingModelClick = handleDrawingModelClick;
-
-// --- 보안 PIN 모달 제어 (비밀번호: 0404) ---
-function openDrawingPinModal(modelName) {
-  if (DOM.drawingPinTargetIndex) DOM.drawingPinTargetIndex.value = modelName || '';
-  if (DOM.drawingPinInput) DOM.drawingPinInput.value = '';
-  if (DOM.drawingPinError) DOM.drawingPinError.style.display = 'none';
-  if (DOM.drawingPinModal) DOM.drawingPinModal.classList.add('show');
-  setTimeout(() => {
-    if (DOM.drawingPinInput) DOM.drawingPinInput.focus();
-  }, 150);
-}
-
-function closeDrawingPinModal() {
-  if (DOM.drawingPinModal) DOM.drawingPinModal.classList.remove('show');
-  if (DOM.drawingPinInput) DOM.drawingPinInput.value = '';
-  if (DOM.drawingPinError) DOM.drawingPinError.style.display = 'none';
-}
-
-function verifyDrawingPin() {
-  const pin = DOM.drawingPinInput ? DOM.drawingPinInput.value.trim() : '';
-  const isEn = AppState.currentLang === 'en';
-  if (pin === '0404') {
-    AppState.isDrawingAuthenticated = true;
-    AppState.drawingPin = pin;
-    closeDrawingPinModal();
-    showToast(isEn ? 'Security PIN verified: Drawing view & download permission granted.' : '보안 PIN 인증 성공: 도면 열람 및 다운로드 권한이 활성화되었습니다.', 'success');
-    const target = (DOM.drawingPinTargetIndex ? DOM.drawingPinTargetIndex.value : '') || AppState.selectedDrawingModel;
-    if (target) {
-      openDrawingDetailModal(target);
-    }
-  } else {
-    if (DOM.drawingPinError) {
-      DOM.drawingPinError.textContent = isEn ? 'Security PIN (4 digits) does not match.' : '보안 PIN 번호(4자리)가 일치하지 않습니다.';
-      DOM.drawingPinError.style.display = 'block';
-    }
-    if (DOM.drawingPinInput) {
-      DOM.drawingPinInput.value = '';
-      DOM.drawingPinInput.focus();
-    }
-  }
-}
-
-// --- 도면 상세 모달 제어 ---
-function openDrawingDetailModal(modelName) {
-  AppState.selectedDrawingModel = modelName;
-  if (!DOM.drawingDetailModal) return;
-
-  const isEn = AppState.currentLang === 'en';
-  const item = (AppState.drawingsData || []).find(d => d.model === modelName);
-  if (!item) {
-    if (DOM.drawingDetailTitle) DOM.drawingDetailTitle.textContent = isEn ? `Drawing Detail [${modelName}]` : `도면 상세 [${modelName}]`;
-    if (DOM.drawingDetailSpecArea) DOM.drawingDetailSpecArea.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">${isEn ? `'${escapeHtml(modelName)}' drawing data not found.` : `'${escapeHtml(modelName)}' 도면 데이터를 찾을 수 없습니다.`}</div>`;
-    if (DOM.drawingDetailFileList) DOM.drawingDetailFileList.innerHTML = '';
-    DOM.drawingDetailModal.classList.add('show');
-    return;
-  }
-
-  if (DOM.drawingDetailTitle) {
-    DOM.drawingDetailTitle.textContent = isEn ? `IC Tray Drawing Details [${item.model}]` : `IC Tray 도면 상세 [${item.model}]`;
-  }
-  if (DOM.drawingDetailFileCount) {
-    DOM.drawingDetailFileCount.textContent = isEn
-      ? `${(item.files ? item.files.length : 0)} PDF drawings registered`
-      : `총 ${(item.files ? item.files.length : 0)}개 PDF 도면 등록`;
-  }
-
-  // 상단 스펙 요약 그리드 렌더링
-  if (DOM.drawingDetailSpecArea) {
-    DOM.drawingDetailSpecArea.innerHTML = `
-      <div style="background:rgba(30,41,59,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-md);padding:14px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;">
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Part / Model' : '품번 / 모델'}</span><strong style="color:#38bdf8;font-size:15px;">${escapeHtml(item.model)}</strong></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Series' : '시리즈'}</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.series || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Customer' : '고객사'}</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.customer || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Customer P/N' : '고객사 P/N'}</span><span style="color:#a5b4fc;font-weight:600;">${escapeHtml(item.customer_pn || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Package Type' : '패키지 규격 (Package Type)'}</span><span style="color:#e2e8f0;">${escapeHtml(item.pkg_type || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Temp / Material' : '내열온도 / 재질'}</span><span style="color:#e2e8f0;">${escapeHtml(item.temp || '-')} / ${escapeHtml(item.material || '-')}</span></div>
-      </div>
-    `;
-  }
-
-  // 등록 도면 파일 목록 렌더링
-  if (DOM.drawingDetailFileList) {
-    if (!item.files || item.files.length === 0) {
-      DOM.drawingDetailFileList.innerHTML = `<div style="text-align:center;padding:20px;color:#94a3b8;">${isEn ? 'No registered PDF drawing files.' : '등록된 PDF 도면 파일이 없습니다.'}</div>`;
-    } else {
-      DOM.drawingDetailFileList.innerHTML = item.files.map((f, idx) => {
-        const sizeKb = (f.size / 1024).toFixed(1);
-        const dateStr = f.mtime ? f.mtime.substring(0, 10) : '-';
-        return `
-          <div style="background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:10px;min-width:240px;flex:1;">
-              <span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700;">PDF</span>
-              <div>
-                <div style="font-size:13px;font-weight:600;color:#f8fafc;word-break:break-all;">${escapeHtml(f.filename)}</div>
-                <div style="font-size:11px;color:#94a3b8;">${isEn ? `Size: ${sizeKb} KB | Modified: ${dateStr}` : `크기: ${sizeKb} KB | 수정일: ${dateStr}`}</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center;">
-              <button type="button" class="action-btn-sm secondary" style="font-size:11px;padding:3px 8px;" onclick="copyDrawingPath('${escapeHtml(f.rel_path)}')">${isEn ? 'Copy Path' : '경로 복사'}</button>
-              <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 12px;" onclick="downloadDrawingFile('${escapeHtml(item.model)}', '${escapeHtml(f.filename)}', '${escapeHtml(f.rel_path)}', this)">${isEn ? 'Download' : '다운로드'}</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-  }
-
-  DOM.drawingDetailModal.classList.add('show');
-}
-window.openDrawingDetailModal = openDrawingDetailModal;
-
-function closeDrawingDetailModal() {
-  if (DOM.drawingDetailModal) DOM.drawingDetailModal.classList.remove('show');
-}
-
-function copyDrawingPath(relPath) {
-  const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
-  const isEn = AppState.currentLang === 'en';
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(fullPath).then(() => {
-      showToast(isEn ? 'Internal network path copied: ' + fullPath : '사내 네트워크 경로가 복사되었습니다: ' + fullPath, 'success');
-    }).catch(() => {
-      showToast(isEn ? 'Internal path: ' + fullPath : '사내 경로 복사: ' + fullPath, 'info');
-    });
-  } else {
-    showToast(isEn ? 'Internal path: ' + fullPath : '사내 경로 복사: ' + fullPath, 'info');
-  }
-}
-window.copyDrawingPath = copyDrawingPath;
-
-const DRAWING_AUTH_CIPHER = 'PfDlQ4CqhAesc39QyDrWqHU5yAi39qawYW7ymLTIEkKi+Gkj8sBdW9omUkrMr+3C84UbQ+nDVbL/lR0osbgj+sYpjj8=';
-const DRAWING_AUTH_SALT = 'kostat_drawing_auth_salt_2026';
-
-async function getDrawingAuthToken(pin) {
-  if (AppState.drawingAuthToken) return AppState.drawingAuthToken;
-  try {
-    const rawBytes = Uint8Array.from(atob(DRAWING_AUTH_CIPHER), c => c.charCodeAt(0));
-    const nonce = rawBytes.subarray(0, 12);
-    const ct = rawBytes.subarray(12);
-    const enc = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin || '0404'), { name: 'PBKDF2' }, false, ['deriveKey']);
-    const key = await crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt: enc.encode(DRAWING_AUTH_SALT), iterations: 50000, hash: 'SHA-256' },
-      keyMaterial,
-      { name: 'AES-GCM', length: 256 },
-      false,
-      ['decrypt']
-    );
-    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, ct);
-    AppState.drawingAuthToken = new TextDecoder().decode(decrypted);
-    return AppState.drawingAuthToken;
-  } catch (e) {
-    console.warn('[DrawingAuth] 토큰 복호화 실패:', e);
-    return null;
-  }
-}
-
-async function downloadDrawingFile(model, filename, relPath, btnEl) {
-  const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
-  const isEn = AppState.currentLang === 'en';
-  
-  // 사내 경로를 클립보드에 우선 자동 복사
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(fullPath).catch(() => {});
-  }
-
-  showToast(isEn ? `Requesting drawing download: ${filename}` : `도면 다운로드 요청 중: ${filename}`, 'info');
-  const originalText = btnEl ? btnEl.textContent : (isEn ? 'Download' : '다운로드');
-  if (btnEl) {
-    btnEl.disabled = true;
-    btnEl.textContent = isEn ? 'Downloading...' : '다운로드 중...';
-  }
-
-  try {
-    const token = await getDrawingAuthToken(AppState.drawingPin || '0404');
-    if (!token) throw new Error(isEn ? 'Failed to obtain auth token' : '인증 토큰 획득 실패');
-
-    // GitHub API로 보안 전용 저장소(kostat-drawings)에서 바이너리 원본 스트림 획득
-    const encodedPath = (relPath || '').split('/').map(encodeURIComponent).join('/');
-    const apiUrl = `https://api.github.com/repos/skywantae/kostat-drawings/contents/${encodedPath}`;
-
-    const res = await fetch(apiUrl, {
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3.raw'
-      }
-    });
-
-    if (!res.ok) {
-      throw new Error(`파일 서버 응답 코드: ${res.status}`);
-    }
-
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
-
-    showToast(isEn ? `Drawing download complete: ${filename}` : `도면 다운로드 완료: ${filename}`, 'success');
-  } catch (err) {
-    console.warn('[DrawingDownload] 다운로드 안내:', err);
-    showToast(isEn ? `Internal path copied: ${fullPath} (Paste in File Explorer to open)` : `사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창 또는 실행창에 붙여넣어 열어보실 수 있습니다)`, 'info');
-  } finally {
-    if (btnEl) {
-      btnEl.disabled = false;
-      btnEl.textContent = originalText;
-    }
-  }
-}
-window.downloadDrawingFile = downloadDrawingFile;
-
-function copyDrawingSummaryText() {
-  if (!AppState.selectedDrawingModel) return;
-  const item = (AppState.drawingsData || []).find(d => d.model === AppState.selectedDrawingModel);
-  if (!item) return;
-
-  const isEn = AppState.currentLang === 'en';
-  let text = isEn ? `[IC Tray Drawing Details]\n` : `[IC Tray 도면 상세 정보]\n`;
-  text += isEn ? `• Part / Model: ${item.model}\n` : `• 품번 / 모델: ${item.model}\n`;
-  text += isEn ? `• Series: ${item.series || '-'}\n` : `• 시리즈: ${item.series || '-'}\n`;
-  text += isEn ? `• Customer: ${item.customer || '-'}\n` : `• 고객사: ${item.customer || '-'}\n`;
-  text += isEn ? `• Customer P/N: ${item.customer_pn || '-'}\n` : `• 고객사 P/N: ${item.customer_pn || '-'}\n`;
-  text += isEn ? `• Package Type: ${item.pkg_type || '-'}\n` : `• 패키지 규격: ${item.pkg_type || '-'}\n`;
-  text += isEn ? `• Temp / Material: ${item.temp || '-'} / ${item.material || '-'}\n` : `• 내열온도 / 재질: ${item.temp || '-'} / ${item.material || '-'}\n`;
-  text += isEn ? `• Drawing Count: ${item.files ? item.files.length : 0} files\n\n` : `• 등록 도면 수: ${item.files ? item.files.length : 0}개 파일\n\n`;
-
-  text += isEn ? `[Registered Drawing Files]\n` : `[등록 도면 파일 목록]\n`;
-  if (item.files && item.files.length > 0) {
-    item.files.forEach((f, idx) => {
-      const sizeKb = (f.size / 1024).toFixed(1);
-      const dateStr = f.mtime ? f.mtime.substring(0, 10) : '-';
-      text += `${idx + 1}. ${f.filename} (${sizeKb} KB, ${dateStr})\n   - ${isEn ? 'Path' : '경로'}: Z:\\KQC\\IC TRAY DRAWING\\${f.rel_path.replace(/\//g, '\\')}\n`;
-    });
-  } else {
-    text += isEn ? `No drawing files registered\n` : `등록된 도면 파일 없음\n`;
-  }
-
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast(isEn ? 'Drawing summary and file list copied.' : '도면 상세 정보 및 파일 목록이 복사되었습니다.');
-    });
-  } else {
-    showToast(isEn ? 'Copied to clipboard.' : '클립보드 복사 완료');
-  }
-}
-
 // --- 8. 탭 및 네비게이션 ---
 
 function printQuotation(quotNo) {
@@ -4227,7 +3586,6 @@ function switchMobileTab(tab) {
     'shipplan': 'viewShipPlan',
     'quotations': 'viewQuotations',
     'contract_reviews': 'viewContractReviews',
-    'drawings': 'viewDrawings',
   };
   if (tabTargetMap[tab]) {
     switchViewerCard(tabTargetMap[tab]);
@@ -4318,11 +3676,7 @@ function switchViewerCard(targetId) {
       AppState.contractFilteredRows = AppState.contractReviewsData || [];
     }
     renderContractReviewsPage(AppState.contractCurrentPage || 1);
-  } else if (targetId === 'viewDrawings') {
-    if (!AppState.drawingsFilteredRows || AppState.drawingsFilteredRows.length === 0) {
-      AppState.drawingsFilteredRows = AppState.drawingsData || [];
-    }
-    renderDrawingsPage(AppState.drawingsCurrentPage || 1);
+
   } else if (targetId === 'viewStock') {
     if (typeof initStockViewer === 'function') {
       initStockViewer();

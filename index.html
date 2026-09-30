@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#12141a" />
-  <meta name="description" content="KOSTAT ERP Registrar 챗봇 및 원격 업무 지원 모바일 시스템" />
-  <title>KOSTAT ERP 모바일 챗봇</title>
+  <meta name="description" content="KOSTAT ERP Registrar 梨쀫큸 諛??먭꺽 ?낅Т 吏??紐⑤컮???쒖뒪?? />
+  <title>KOSTAT ERP 紐⑤컮??梨쀫큸</title>
   <link rel="manifest" href="manifest.json" />
   
   <!-- iOS PWA (Progressive Web App) Native Support -->
@@ -14,14 +14,14 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.182" />
+  <link rel="stylesheet" href="app.css?v=1.0.183" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="dark-theme">
-  <!-- 최상단 상태바 및 헤더 -->
+  <!-- 理쒖긽???곹깭諛?諛??ㅻ뜑 -->
   <header class="app-header">
     <div class="header-left">
       <div class="brand-logo">
@@ -31,554 +31,489 @@
     </div>
     
     <div class="header-right">
-      <button class="icon-btn" id="btnToggleLang" onclick="toggleAppLanguage()" title="Language Switch (한국어 / English)" style="width:auto; min-width:38px; height:34px; padding:0 8px; font-size:11.5px; font-weight:700; border-radius:6px; color:var(--primary-light); background:var(--bg-card-sub); border:1px solid var(--border-accent); display:inline-flex; align-items:center; justify-content:center; cursor:pointer;">EN</button>
-      <button class="icon-btn" id="btnRefresh" title="새로고침">
+      <button class="icon-btn" id="btnToggleLang" onclick="toggleAppLanguage()" title="Language Switch (?쒓뎅??/ English)" style="width:auto; min-width:38px; height:34px; padding:0 8px; font-size:11.5px; font-weight:700; border-radius:6px; color:var(--primary-light); background:var(--bg-card-sub); border:1px solid var(--border-accent); display:inline-flex; align-items:center; justify-content:center; cursor:pointer;">EN</button>
+      <button class="icon-btn" id="btnRefresh" title="?덈줈怨좎묠">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
       </button>
-      <button class="icon-btn" id="btnSettings" title="설정/업데이트">
+      <button class="icon-btn" id="btnSettings" title="?ㅼ젙/?낅뜲?댄듃">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
     </div>
   </header>
 
-  <!-- 메인 레이아웃 컨테이너 (전체 화면 통합 뷰어) -->
+  <!-- 硫붿씤 ?덉씠?꾩썐 而⑦뀒?대꼫 (?꾩껜 ?붾㈃ ?듯빀 酉곗뼱) -->
   <main class="app-layout" id="appLayout">
     
-    <!-- 데이터 뷰어 (전체 화면 탭 시스템) -->
+    <!-- ?곗씠??酉곗뼱 (?꾩껜 ?붾㈃ ???쒖뒪?? -->
     <section class="panel-viewer full-width" id="panelViewer">
       
-      <!-- 서브 뷰 네비게이션 헤더 -->
+      <!-- ?쒕툕 酉??ㅻ퉬寃뚯씠???ㅻ뜑 -->
       <div class="viewer-nav-bar">
-        <button class="viewer-tab-btn active" data-target="viewShipPlan">출하 계획</button>
-        <button class="viewer-tab-btn" data-target="viewQuotations">견적서</button>
-        <button class="viewer-tab-btn" data-target="viewContractReviews">계약검토서</button>
-        <button class="viewer-tab-btn" data-target="viewDrawings">도면</button>
-        <button class="viewer-tab-btn" data-target="viewStock" id="tabBtnStock">재고 현황리스트</button>
-        <button class="viewer-tab-btn" data-target="viewFeedback">기능 요청</button>
-        <button class="viewer-tab-btn" data-target="viewChatbot" id="tabBtnChatbot">FAQ 챗봇</button>
-        <button class="viewer-tab-btn" data-target="viewFaq">사내 FAQ</button>
-        <button class="viewer-tab-btn" data-target="viewArchive">자료실</button>
-        <button class="viewer-tab-btn" data-target="viewLab">실험실</button>
+        <button class="viewer-tab-btn active" data-target="viewShipPlan">異쒗븯 怨꾪쉷</button>
+        <button class="viewer-tab-btn" data-target="viewQuotations">寃ъ쟻??/button>
+        <button class="viewer-tab-btn" data-target="viewContractReviews">怨꾩빟寃?좎꽌</button>
+        <button class="viewer-tab-btn" data-target="viewStock" id="tabBtnStock">?ш퀬 ?꾪솴由ъ뒪??/button>
+        <button class="viewer-tab-btn" data-target="viewFeedback">湲곕뒫 ?붿껌</button>
+        <button class="viewer-tab-btn" data-target="viewChatbot" id="tabBtnChatbot">FAQ 梨쀫큸</button>
+        <button class="viewer-tab-btn" data-target="viewFaq">?щ궡 FAQ</button>
+        <button class="viewer-tab-btn" data-target="viewArchive">?먮즺??/button>
+        <button class="viewer-tab-btn" data-target="viewLab">?ㅽ뿕??/button>
       </div>
 
-      <!-- 1. 출하 계획 뷰 (기본 활성) -->
+      <!-- 1. 異쒗븯 怨꾪쉷 酉?(湲곕낯 ?쒖꽦) -->
       <div class="viewer-content-card active" id="viewShipPlan">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>출하 계획 (Ship Plan)</h3>
-            <span class="count-badge" id="shipPlanStatusBadge">0건</span>
+            <h3>異쒗븯 怨꾪쉷 (Ship Plan)</h3>
+            <span class="count-badge" id="shipPlanStatusBadge">0嫄?/span>
             <div class="connection-pill" id="connStatusPill" style="display:inline-flex; align-items:center;">
               <span class="status-dot online" id="statusDot"></span>
-              <span class="status-text" id="statusText">2026년 9월 15일 자 데이터 적용 중</span>
+              <span class="status-text" id="statusText">2026??9??15?????곗씠???곸슜 以?/span>
             </div>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="shipPlanCustomerInput" class="compact-search" placeholder="고객사 검색..." style="width: 130px;" />
-            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="부품명/PO/인보이스..." />
-            <select id="shipPlanPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="50">50개씩</option>
-              <option value="100">100개씩</option>
-              <option value="150">150개씩</option>
-              <option value="200">200개씩</option>
+            <input type="text" id="shipPlanCustomerInput" class="compact-search" placeholder="怨좉컼??寃??.." style="width: 130px;" />
+            <input type="text" id="shipPlanPartInput" class="compact-search" placeholder="遺?덈챸/PO/?몃낫?댁뒪..." />
+            <select id="shipPlanPageSizeSelect" class="compact-select" title="?섏씠吏???쒖떆 嫄댁닔">
+              <option value="50">50媛쒖뵫</option>
+              <option value="100">100媛쒖뵫</option>
+              <option value="150">150媛쒖뵫</option>
+              <option value="200">200媛쒖뵫</option>
             </select>
-            <button class="action-btn-sm primary" id="btnSearchShipPlan">조회</button>
-            <button class="action-btn-sm" id="btnReloadShipPlan">새로고침</button>
-            <button class="action-btn-sm warning" id="btnOpenAdminDbModal" title="관리자 전용 출하 엑셀 DB 업데이트">DB 업데이트</button>
+            <button class="action-btn-sm primary" id="btnSearchShipPlan">議고쉶</button>
+            <button class="action-btn-sm" id="btnReloadShipPlan">?덈줈怨좎묠</button>
+            <button class="action-btn-sm warning" id="btnOpenAdminDbModal" title="愿由ъ옄 ?꾩슜 異쒗븯 ?묒? DB ?낅뜲?댄듃">DB ?낅뜲?댄듃</button>
           </div>
         </div>
         <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
           <table class="modern-table" id="shipPlanTable">
             <thead>
               <tr>
-                <th>출고일</th><th>선적일</th><th>고객사</th><th>PO번호</th><th>부품번호</th><th>수량</th><th>잔여</th><th>Invoice No</th>
+                <th>異쒓퀬??/th><th>?좎쟻??/th><th>怨좉컼??/th><th>PO踰덊샇</th><th>遺?덈쾲??/th><th>?섎웾</th><th>?붿뿬</th><th>Invoice No</th>
               </tr>
             </thead>
             <tbody id="shipPlanTbody">
-              <tr><td colspan="8" class="text-center py-4">출하 계획 데이터를 불러오는 중입니다...</td></tr>
+              <tr><td colspan="8" class="text-center py-4">異쒗븯 怨꾪쉷 ?곗씠?곕? 遺덈윭?ㅻ뒗 以묒엯?덈떎...</td></tr>
             </tbody>
           </table>
         </div>
-        <!-- 출하 계획 하단 페이지네이션 컨트롤러 -->
+        <!-- 異쒗븯 怨꾪쉷 ?섎떒 ?섏씠吏?ㅼ씠??而⑦듃濡ㅻ윭 -->
         <div class="pagination-container" id="shipPlanPagination">
-          <div class="pagination-info" id="shipPlanPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-info" id="shipPlanPageInfo">0 / 0 ?섏씠吏 (珥?0嫄?</div>
           <div class="pagination-controls" id="shipPlanPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
+            <!-- ?숈쟻 ?섏씠吏 踰덊샇 踰꾪듉 ?앹꽦 -->
           </div>
         </div>
       </div>
 
-      <!-- 2. 견적서 뷰어 -->
+      <!-- 2. 寃ъ쟻??酉곗뼱 -->
       <div class="viewer-content-card" id="viewQuotations">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>견적서</h3>
-            <span class="count-badge" id="quotHistoryCount">0건</span>
+            <h3>寃ъ쟻??/h3>
+            <span class="count-badge" id="quotHistoryCount">0嫄?/span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="quotCustomerInput" class="compact-search" placeholder="고객사 검색 (직접 입력)..." style="width: 160px;" />
-            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="부품명/견적번호..." />
-            <select id="quotPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="50">50개씩</option>
-              <option value="100">100개씩</option>
-              <option value="150">150개씩</option>
+            <input type="text" id="quotCustomerInput" class="compact-search" placeholder="怨좉컼??寃??(吏곸젒 ?낅젰)..." style="width: 160px;" />
+            <input type="text" id="quotationSearchInput" class="compact-search" placeholder="遺?덈챸/寃ъ쟻踰덊샇..." />
+            <select id="quotPageSizeSelect" class="compact-select" title="?섏씠吏???쒖떆 嫄댁닔">
+              <option value="50">50媛쒖뵫</option>
+              <option value="100">100媛쒖뵫</option>
+              <option value="150">150媛쒖뵫</option>
             </select>
-            <button class="action-btn-sm primary" id="btnSearchQuotations">조회</button>
-            <button class="action-btn-sm" id="btnReloadQuotHistory">새로고침</button>
-            <button class="action-btn-sm warning" id="btnPrintQuotation" style="display: none;">PDF 인쇄</button>
+            <button class="action-btn-sm primary" id="btnSearchQuotations">議고쉶</button>
+            <button class="action-btn-sm" id="btnReloadQuotHistory">?덈줈怨좎묠</button>
+            <button class="action-btn-sm warning" id="btnPrintQuotation" style="display: none;">PDF ?몄뇙</button>
           </div>
         </div>
         <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
           <table class="modern-table" id="quotationsTable">
             <thead>
               <tr>
-                <th>견적번호</th><th>견적일</th><th>고객사</th><th>부품번호</th><th>규격/설명</th><th>단가</th><th>비고</th>
+                <th>寃ъ쟻踰덊샇</th><th>寃ъ쟻??/th><th>怨좉컼??/th><th>遺?덈쾲??/th><th>洹쒓꺽/?ㅻ챸</th><th>?④?</th><th>鍮꾧퀬</th>
               </tr>
             </thead>
             <tbody id="quotationsTbody">
-              <tr><td colspan="7" class="text-center py-4">견적서 데이터를 불러오는 중입니다...</td></tr>
+              <tr><td colspan="7" class="text-center py-4">寃ъ쟻???곗씠?곕? 遺덈윭?ㅻ뒗 以묒엯?덈떎...</td></tr>
             </tbody>
           </table>
         </div>
-        <!-- 견적서 하단 페이지네이션 컨트롤러 -->
+        <!-- 寃ъ쟻???섎떒 ?섏씠吏?ㅼ씠??而⑦듃濡ㅻ윭 -->
         <div class="pagination-container" id="quotPagination">
-          <div class="pagination-info" id="quotPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-info" id="quotPageInfo">0 / 0 ?섏씠吏 (珥?0嫄?</div>
           <div class="pagination-controls" id="quotPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
+            <!-- ?숈쟻 ?섏씠吏 踰덊샇 踰꾪듉 ?앹꽦 -->
           </div>
         </div>
       </div>
 
-      <!-- 2-1. 계약검토서 뷰어 -->
+      <!-- 2-1. 怨꾩빟寃?좎꽌 酉곗뼱 -->
       <div class="viewer-content-card" id="viewContractReviews">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>계약검토서 (Project)</h3>
-            <span class="count-badge" id="contractReviewsCount">0건</span>
+            <h3>怨꾩빟寃?좎꽌 (Project)</h3>
+            <span class="count-badge" id="contractReviewsCount">0嫄?/span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="contractCustomerInput" class="compact-search" placeholder="고객사 검색..." style="width: 130px;" />
-            <input type="text" id="contractSearchInput" class="compact-search" placeholder="부품명/프로젝트번호/소재..." />
-            <select id="contractStatusSelect" class="compact-select" title="진행상태 필터">
-              <option value="">전체 상태</option>
-              <option value="진행중">진행중</option>
-              <option value="완료">완료</option>
+            <input type="text" id="contractCustomerInput" class="compact-search" placeholder="怨좉컼??寃??.." style="width: 130px;" />
+            <input type="text" id="contractSearchInput" class="compact-search" placeholder="遺?덈챸/?꾨줈?앺듃踰덊샇/?뚯옱..." />
+            <select id="contractStatusSelect" class="compact-select" title="吏꾪뻾?곹깭 ?꾪꽣">
+              <option value="">?꾩껜 ?곹깭</option>
+              <option value="吏꾪뻾以?>吏꾪뻾以?/option>
+              <option value="?꾨즺">?꾨즺</option>
             </select>
-            <select id="contractPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="50">50개씩</option>
-              <option value="100">100개씩</option>
-              <option value="150">150개씩</option>
-              <option value="200">200개씩</option>
+            <select id="contractPageSizeSelect" class="compact-select" title="?섏씠吏???쒖떆 嫄댁닔">
+              <option value="50">50媛쒖뵫</option>
+              <option value="100">100媛쒖뵫</option>
+              <option value="150">150媛쒖뵫</option>
+              <option value="200">200媛쒖뵫</option>
             </select>
-            <button class="action-btn-sm primary" id="btnSearchContract">조회</button>
-            <button class="action-btn-sm" id="btnReloadContract">새로고침</button>
+            <button class="action-btn-sm primary" id="btnSearchContract">議고쉶</button>
+            <button class="action-btn-sm" id="btnReloadContract">?덈줈怨좎묠</button>
           </div>
         </div>
         <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
           <table class="modern-table" id="contractReviewsTable">
             <thead>
               <tr>
-                <th>프로젝트번호</th><th>등록일</th><th>고객사</th><th>국가</th><th>품목</th><th>금형</th><th>부품번호</th><th>소재</th><th>수량</th><th>상태</th>
+                <th>?꾨줈?앺듃踰덊샇</th><th>?깅줉??/th><th>怨좉컼??/th><th>援??</th><th>?덈ぉ</th><th>湲덊삎</th><th>遺?덈쾲??/th><th>?뚯옱</th><th>?섎웾</th><th>?곹깭</th>
               </tr>
             </thead>
             <tbody id="contractReviewsTbody">
-              <tr><td colspan="10" class="text-center py-4">계약검토서 데이터를 불러오는 중입니다...</td></tr>
+              <tr><td colspan="10" class="text-center py-4">怨꾩빟寃?좎꽌 ?곗씠?곕? 遺덈윭?ㅻ뒗 以묒엯?덈떎...</td></tr>
             </tbody>
           </table>
         </div>
-        <!-- 계약검토서 하단 페이지네이션 컨트롤러 -->
+        <!-- 怨꾩빟寃?좎꽌 ?섎떒 ?섏씠吏?ㅼ씠??而⑦듃濡ㅻ윭 -->
         <div class="pagination-container" id="contractPagination">
-          <div class="pagination-info" id="contractPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-info" id="contractPageInfo">0 / 0 ?섏씠吏 (珥?0嫄?</div>
           <div class="pagination-controls" id="contractPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
+            <!-- ?숈쟻 ?섏씠吏 踰덊샇 踰꾪듉 ?앹꽦 -->
           </div>
         </div>
       </div>
 
-      <!-- 3. IC Tray 도면 뷰 -->
-      <div class="viewer-content-card" id="viewDrawings" style="display:none;">
-        <div class="viewer-card-header">
-          <div class="viewer-title-group">
-            <h3>IC Tray 도면 현황</h3>
-            <span class="count-badge" id="drawingsCountBadge">0건</span>
-          </div>
-          <div class="viewer-tools">
-            <input type="text" id="drawingsSearchInput" class="compact-search" placeholder="품번/고객사/규격 검색..." style="width: 170px;" />
-            <select id="drawingsSeriesSelect" class="compact-select">
-              <option value="all">전체 시리즈</option>
-              <option value="KS-80XX, 81XX">KS-80XX/81XX</option>
-              <option value="KS-82XX">KS-82XX</option>
-              <option value="KS-83XX">KS-83XX</option>
-              <option value="KS-84XX">KS-84XX</option>
-              <option value="KS-85XX">KS-85XX</option>
-              <option value="KS-86XX">KS-86XX</option>
-              <option value="KS-87XX">KS-87XX</option>
-              <option value="KS-88XX">KS-88XX</option>
-              <option value="KS-89XX">KS-89XX</option>
-              <option value="KS-RFA">KS-RFA</option>
-            </select>
-            <select id="drawingsPageSizeSelect" class="compact-select">
-              <option value="15">15개씩</option>
-              <option value="30">30개씩</option>
-              <option value="50">50개씩</option>
-              <option value="100">100개씩</option>
-            </select>
-            <button class="action-btn-sm primary" id="btnSearchDrawings">조회</button>
-            <button class="action-btn-sm" id="btnReloadDrawings">새로고침</button>
-          </div>
-        </div>
-
-        <div class="table-responsive-wrapper" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
-          <table class="modern-table" id="drawingsTable">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>품번 / 모델</th>
-                <th>고객사</th>
-                <th>고객사 P/N</th>
-                <th>규격 (Package Type)</th>
-                <th>내열온도</th>
-                <th>재질</th>
-                <th>도면 파일수</th>
-                <th>최종 수정일</th>
-                <th>도면 다운로드</th>
-              </tr>
-            </thead>
-            <tbody id="drawingsTbody">
-              <tr><td colspan="10" class="text-center py-4">도면 데이터를 불러오는 중입니다...</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 도면 하단 페이지네이션 컨트롤러 -->
-        <div class="pagination-container" id="drawingsPagination">
-          <div class="pagination-info" id="drawingsPageInfo">0 / 0 페이지 (총 0건)</div>
-          <div class="pagination-controls" id="drawingsPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
-          </div>
-        </div>
-      </div>
-
-      <!-- 3-1. 재고 현황리스트 (김포, 베트남, 태창, 혜주 4대 공장) -->
+      <!-- 3. ?ш퀬 ?꾪솴由ъ뒪??(源?? 踰좏듃?? ?쒖갹, ?쒖＜ 4? 怨듭옣) -->
       <div class="viewer-content-card" id="viewStock" style="display:none; flex-direction:column;">
-        <!-- 상단 공장별 서브탭 바 -->
+        <!-- ?곷떒 怨듭옣蹂??쒕툕??諛?-->
         <div class="stock-subtab-bar" style="display:flex; gap:8px; padding:10px 16px; background:var(--bg-card); border-bottom:1px solid var(--border-color); flex-wrap:wrap; flex-shrink:0;">
-          <button class="stock-tab-btn active" id="btnStockTabGimpo" onclick="switchStockSubTab('stockSubGimpo', this)">김포 공장 재고 현황리스트</button>
-          <button class="stock-tab-btn" id="btnStockTabVietnam" onclick="switchStockSubTab('stockSubVietnam', this)">베트남 공장 재고 현황리스트</button>
-          <button class="stock-tab-btn" id="btnStockTabTaichang" onclick="switchStockSubTab('stockSubTaichang', this)">태창 공장 재고 현황리스트</button>
-          <button class="stock-tab-btn" id="btnStockTabTaichangCt" onclick="switchStockSubTab('stockSubTaichangCt', this)">태창 C/T 공장 재고 현황리스트</button>
-          <button class="stock-tab-btn" id="btnStockTabHuizhou" onclick="switchStockSubTab('stockSubHuizhou', this)">혜주 공장 재고 현황리스트</button>
+          <button class="stock-tab-btn active" id="btnStockTabGimpo" onclick="switchStockSubTab('stockSubGimpo', this)">源??怨듭옣 ?ш퀬 ?꾪솴由ъ뒪??/button>
+          <button class="stock-tab-btn" id="btnStockTabVietnam" onclick="switchStockSubTab('stockSubVietnam', this)">踰좏듃??怨듭옣 ?ш퀬 ?꾪솴由ъ뒪??/button>
+          <button class="stock-tab-btn" id="btnStockTabTaichang" onclick="switchStockSubTab('stockSubTaichang', this)">?쒖갹 怨듭옣 ?ш퀬 ?꾪솴由ъ뒪??/button>
+          <button class="stock-tab-btn" id="btnStockTabTaichangCt" onclick="switchStockSubTab('stockSubTaichangCt', this)">?쒖갹 C/T 怨듭옣 ?ш퀬 ?꾪솴由ъ뒪??/button>
+          <button class="stock-tab-btn" id="btnStockTabHuizhou" onclick="switchStockSubTab('stockSubHuizhou', this)">?쒖＜ 怨듭옣 ?ш퀬 ?꾪솴由ъ뒪??/button>
         </div>
 
-        <!-- 1) 김포 공장 재고 패널 -->
+        <!-- 1) 源??怨듭옣 ?ш퀬 ?⑤꼸 -->
         <div class="stock-factory-panel" id="stockSubGimpo">
           <div style="padding:14px 16px;">
-            <!-- 헤더 및 도구 모음 -->
+            <!-- ?ㅻ뜑 諛??꾧뎄 紐⑥쓬 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleGimpoStock">김포 공장 Tray 재고 현황리스트</h4>
-                <span style="font-size:11px; color:var(--text-secondary);" id="gimpoAsOfDate">기준일 로딩중...</span>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleGimpoStock">源??怨듭옣 Tray ?ш퀬 ?꾪솴由ъ뒪??/h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="gimpoAsOfDate">湲곗???濡쒕뵫以?..</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                <button class="action-btn-sm primary" id="btnGimpoRefresh" onclick="fetchLatestStock('gimpo', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
-                <a class="action-btn-sm success" id="btnDownloadGimpoExcel" href="data/stock_sources/gimpo/gimpo_tray_stock_latest.xlsx" download="김포공장_TRAY_재고현황_원본.xlsx" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                <button class="action-btn-sm primary" id="btnGimpoRefresh" onclick="fetchLatestStock('gimpo', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">理쒖떊 ?ш퀬 ?덈줈怨좎묠</button>
+                <a class="action-btn-sm success" id="btnDownloadGimpoExcel" href="data/stock_sources/gimpo/gimpo_tray_stock_latest.xlsx" download="源?ш났??TRAY_?ш퀬?꾪솴_?먮낯.xlsx" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  <span id="gimpoDownloadBtnText">엑셀 원본 다운로드</span>
+                  <span id="gimpoDownloadBtnText">?묒? ?먮낯 ?ㅼ슫濡쒕뱶</span>
                 </a>
-                <button class="action-btn-sm secondary" id="btnGimpoGuide" onclick="showGimpoAccessGuide()" style="font-size:11px; padding:6px 10px; cursor:pointer;">외부 접속 안내</button>
-                <button class="action-btn-sm secondary" id="btnGimpoUpload" onclick="document.getElementById('gimpoStockFileInput').click()" style="font-size:11px; padding:6px 10px; cursor:pointer;">수동 업로드</button>
+                <button class="action-btn-sm secondary" id="btnGimpoGuide" onclick="showGimpoAccessGuide()" style="font-size:11px; padding:6px 10px; cursor:pointer;">?몃? ?묒냽 ?덈궡</button>
+                <button class="action-btn-sm secondary" id="btnGimpoUpload" onclick="document.getElementById('gimpoStockFileInput').click()" style="font-size:11px; padding:6px 10px; cursor:pointer;">?섎룞 ?낅줈??/button>
                 <input type="file" id="gimpoStockFileInput" accept=".xlsx,.xls" style="display:none;" />
               </div>
             </div>
 
-            <!-- 외부 접속 계정 안내 패널 -->
+            <!-- ?몃? ?묒냽 怨꾩젙 ?덈궡 ?⑤꼸 -->
             <div id="gimpoAccessGuidePanel" style="display:none; background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px; margin-bottom:12px; font-size:11.5px; line-height:1.6;">
               <div style="font-weight:700; color:var(--text-primary); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
-                <span>외부망 Z: 드라이브 접속 계정 안내</span>
-                <button onclick="document.getElementById('gimpoAccessGuidePanel').style.display='none'" style="background:none; border:none; color:var(--text-dim); font-size:12px; cursor:pointer;">닫기</button>
+                <span>?몃?留?Z: ?쒕씪?대툕 ?묒냽 怨꾩젙 ?덈궡</span>
+                <button onclick="document.getElementById('gimpoAccessGuidePanel').style.display='none'" style="background:none; border:none; color:var(--text-dim); font-size:12px; cursor:pointer;">?リ린</button>
               </div>
               <div style="color:var(--text-secondary);">
-                - 서버 경로: <code style="color:var(--primary); font-family:monospace;">Z:\TRAY공장\Tray관련부서 공통서류</code><br>
-                - 외부 WebDAV 주소: <code style="color:var(--primary); font-family:monospace;">\\kostat-nas.myds.me@SSL@5006\DavWWWRoot</code><br>
-                - 접속 계정: <span style="font-weight:600; color:var(--text-primary);">ID: teokim</span> / <span style="font-weight:600; color:var(--text-primary);">PW: kim2606!!##</span>
+                - ?쒕쾭 寃쎈줈: <code style="color:var(--primary); font-family:monospace;">Z:\TRAY怨듭옣\Tray愿?⑤???怨듯넻?쒕쪟</code><br>
+                - ?몃? WebDAV 二쇱냼: <code style="color:var(--primary); font-family:monospace;">\\kostat-nas.myds.me@SSL@5006\DavWWWRoot</code><br>
+                - ?묒냽 怨꾩젙: <span style="font-weight:600; color:var(--text-primary);">ID: teokim</span> / <span style="font-weight:600; color:var(--text-primary);">PW: kim2606!!##</span>
               </div>
               <div style="margin-top:8px; display:flex; gap:6px;">
-                <button onclick="copyGimpoNetUseCmd()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">접속 명령어 복사</button>
-                <button onclick="copyGimpoPassword()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">비밀번호 복사</button>
+                <button onclick="copyGimpoNetUseCmd()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">?묒냽 紐낅졊??蹂듭궗</button>
+                <button onclick="copyGimpoPassword()" style="padding:4px 10px; font-size:11px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); cursor:pointer;">鍮꾨?踰덊샇 蹂듭궗</button>
               </div>
             </div>
 
-            <!-- 검색 바 -->
+            <!-- 寃??諛?-->
             <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
               <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <span id="gimpoSearchBadgeText">김포 검색</span>
+                <span id="gimpoSearchBadgeText">源??寃??/span>
               </div>
-              <input type="text" id="gimpoSearchInput" placeholder="PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색..." oninput="filterGimpoStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
-              <button id="btnGimpoSearchClear" onclick="clearGimpoSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+              <input type="text" id="gimpoSearchInput" placeholder="PART NO, ?먯옱肄붾뱶, 洹쒓꺽, 嫄곕옒泥? Temp, ?뱀씠?ы빆 寃??.." oninput="filterGimpoStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnGimpoSearchClear" onclick="clearGimpoSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="珥덇린??>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
-              <span id="gimpoResultCount">검색 결과: -</span>
-              <span style="font-size:10.5px; color:var(--text-dim);" id="gimpoSearchHint">실시간 다중 키워드 필터링 지원</span>
+              <span id="gimpoResultCount">寃??寃곌낵: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);" id="gimpoSearchHint">?ㅼ떆媛??ㅼ쨷 ?ㅼ썙???꾪꽣留?吏??/span>
             </div>
 
-            <!-- 재고 테이블 -->
+            <!-- ?ш퀬 ?뚯씠釉?-->
             <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 220px); min-height:480px;">
               <table id="gimpoStockTable" class="modern-table" style="font-size:11px; width:100%;">
                 <thead>
                   <tr>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">자재코드</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">?먯옱肄붾뱶</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">Temp</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">규격</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">거래처</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">특이사항</th>
-                    <th id="thGimpoProd" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">생산부</th>
-                    <th id="thGimpoMat" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">자재부</th>
-                    <th id="thGimpoTotal" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">합계</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">洹쒓꺽</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">嫄곕옒泥?/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">?뱀씠?ы빆</th>
+                    <th id="thGimpoProd" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?앹궛遺</th>
+                    <th id="thGimpoMat" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?먯옱遺</th>
+                    <th id="thGimpoTotal" style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">?⑷퀎</th>
                   </tr>
                 </thead>
                 <tbody id="gimpoStockTbody">
-                  <tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                  <tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-dim);">?곗씠??濡쒕뵫以?..</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- 2) 베트남 공장 재고 패널 -->
+        <!-- 2) 踰좏듃??怨듭옣 ?ш퀬 ?⑤꼸 -->
         <div class="stock-factory-panel" id="stockSubVietnam" style="display:none;">
           <div style="padding:14px 16px;">
-            <!-- 헤더 및 도구 모음 -->
+            <!-- ?ㅻ뜑 諛??꾧뎄 紐⑥쓬 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleVietnamStock">베트남 공장 Tray 재고 현황리스트</h4>
-                <span style="font-size:11px; color:var(--text-secondary);" id="vietnamAsOfDate">기준일 로딩중...</span>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleVietnamStock">踰좏듃??怨듭옣 Tray ?ш퀬 ?꾪솴由ъ뒪??/h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="vietnamAsOfDate">湲곗???濡쒕뵫以?..</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                <button class="action-btn-sm primary" id="btnVietnamRefresh" onclick="fetchLatestStock('vietnam', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
-                <a class="action-btn-sm success" id="btnDownloadVietnamExcel" href="data/stock_sources/vietnam/vietnam_tray_stock_latest.xlsx" download="베트남공장_TRAY_재고현황_원본.xlsx" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                <button class="action-btn-sm primary" id="btnVietnamRefresh" onclick="fetchLatestStock('vietnam', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">理쒖떊 ?ш퀬 ?덈줈怨좎묠</button>
+                <a class="action-btn-sm success" id="btnDownloadVietnamExcel" href="data/stock_sources/vietnam/vietnam_tray_stock_latest.xlsx" download="踰좏듃?④났??TRAY_?ш퀬?꾪솴_?먮낯.xlsx" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  <span id="vietnamDownloadBtnText">엑셀 원본 다운로드</span>
+                  <span id="vietnamDownloadBtnText">?묒? ?먮낯 ?ㅼ슫濡쒕뱶</span>
                 </a>
               </div>
             </div>
 
-            <!-- 검색 바 -->
+            <!-- 寃??諛?-->
             <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
               <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <span id="vietnamSearchBadgeText">베트남 검색</span>
+                <span id="vietnamSearchBadgeText">踰좏듃??寃??/span>
               </div>
-              <input type="text" id="vietnamSearchInput" placeholder="전산코드, PART NO, 모델명, 고객사, 온도, Rev 검색..." oninput="filterVietnamStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
-              <button id="btnVietnamSearchClear" onclick="clearVietnamSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+              <input type="text" id="vietnamSearchInput" placeholder="?꾩궛肄붾뱶, PART NO, 紐⑤뜽紐? 怨좉컼?? ?⑤룄, Rev 寃??.." oninput="filterVietnamStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnVietnamSearchClear" onclick="clearVietnamSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="珥덇린??>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
-              <span id="vietnamResultCount">검색 결과: -</span>
-              <span style="font-size:10.5px; color:var(--text-dim);" id="vietnamSearchHint">실시간 다중 키워드 필터링 지원</span>
+              <span id="vietnamResultCount">寃??寃곌낵: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);" id="vietnamSearchHint">?ㅼ떆媛??ㅼ쨷 ?ㅼ썙???꾪꽣留?吏??/span>
             </div>
 
-            <!-- 재고 테이블 -->
+            <!-- ?ш퀬 ?뚯씠釉?-->
             <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 220px); min-height:480px;">
               <table id="vietnamStockTable" class="modern-table" style="font-size:11px; width:100%;">
                 <thead>
                   <tr>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">전산코드</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (모델명)</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">고객사</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">온도</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">박스단위</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">?꾩궛肄붾뱶</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (紐⑤뜽紐?</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">怨좉컼??/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">?⑤룄</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">諛뺤뒪?⑥쐞</th>
                     <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">Rev</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">전월재고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">입고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출하대기</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">양품재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?꾩썡?ш퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?낃퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">異쒓퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">異쒗븯?湲?/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">?묓뭹?ш퀬</th>
                   </tr>
                 </thead>
                 <tbody id="vietnamStockTbody">
-                  <tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                  <tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">?곗씠??濡쒕뵫以?..</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- 3) 태창 공장 재고 패널 -->
+        <!-- 3) ?쒖갹 怨듭옣 ?ш퀬 ?⑤꼸 -->
         <div class="stock-factory-panel" id="stockSubTaichang" style="display:none;">
           <div style="padding:14px 16px;">
-            <!-- 헤더 및 도구 모음 -->
+            <!-- ?ㅻ뜑 諛??꾧뎄 紐⑥쓬 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleTaichangStock">태창 공장 Tray 재고 현황리스트</h4>
-                <span style="font-size:11px; color:var(--text-secondary);" id="taichangAsOfDate">기준일 로딩중...</span>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleTaichangStock">?쒖갹 怨듭옣 Tray ?ш퀬 ?꾪솴由ъ뒪??/h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="taichangAsOfDate">湲곗???濡쒕뵫以?..</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                <button class="action-btn-sm primary" id="btnTaichangRefresh" onclick="fetchLatestStock('taichang', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
-                <a class="action-btn-sm success" id="btnDownloadTaichangExcel" href="data/stock_sources/taichang/taichang_tray_stock_latest.xls" download="태창공장_TRAY_재고현황_원본.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                <button class="action-btn-sm primary" id="btnTaichangRefresh" onclick="fetchLatestStock('taichang', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">理쒖떊 ?ш퀬 ?덈줈怨좎묠</button>
+                <a class="action-btn-sm success" id="btnDownloadTaichangExcel" href="data/stock_sources/taichang/taichang_tray_stock_latest.xls" download="?쒖갹怨듭옣_TRAY_?ш퀬?꾪솴_?먮낯.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  <span id="taichangDownloadBtnText">엑셀 원본 다운로드</span>
+                  <span id="taichangDownloadBtnText">?묒? ?먮낯 ?ㅼ슫濡쒕뱶</span>
                 </a>
               </div>
             </div>
 
-            <!-- 검색 바 -->
+            <!-- 寃??諛?-->
             <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
               <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <span id="taichangSearchBadgeText">태창 검색</span>
+                <span id="taichangSearchBadgeText">?쒖갹 寃??/span>
               </div>
-              <input type="text" id="taichangSearchInput" placeholder="전산코드, PART NO, 규격, 고객사, 무역방식 검색..." oninput="filterTaichangStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
-              <button id="btnTaichangSearchClear" onclick="clearTaichangSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+              <input type="text" id="taichangSearchInput" placeholder="?꾩궛肄붾뱶, PART NO, 洹쒓꺽, 怨좉컼?? 臾댁뿭諛⑹떇 寃??.." oninput="filterTaichangStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnTaichangSearchClear" onclick="clearTaichangSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="珥덇린??>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
-              <span id="taichangResultCount">검색 결과: -</span>
-              <span style="font-size:10.5px; color:var(--text-dim);" id="taichangSearchHint">실시간 다중 키워드 필터링 지원</span>
+              <span id="taichangResultCount">寃??寃곌낵: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);" id="taichangSearchHint">?ㅼ떆媛??ㅼ쨷 ?ㅼ썙???꾪꽣留?吏??/span>
             </div>
 
-            <!-- 재고 테이블 -->
+            <!-- ?ш퀬 ?뚯씠釉?-->
             <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 220px); min-height:480px;">
               <table id="taichangStockTable" class="modern-table" style="font-size:11px; width:100%;">
                 <thead>
                   <tr>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">전산코드</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">고객사</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (품명)</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">전재고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">입고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">장기재고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">보류품</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">무역방식</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">현재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">?꾩궛肄붾뱶</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">怨좉컼??/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (?덈챸)</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?꾩옱怨?/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?낃퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">異쒓퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?κ린?ш퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">蹂대쪟??/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">臾댁뿭諛⑹떇</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">?꾩옱怨?/th>
                   </tr>
                 </thead>
                 <tbody id="taichangStockTbody">
-                  <tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                  <tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">?곗씠??濡쒕뵫以?..</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- 3-2) 태창 C/T 공장 재고 패널 -->
+        <!-- 3-2) ?쒖갹 C/T 怨듭옣 ?ш퀬 ?⑤꼸 -->
         <div class="stock-factory-panel" id="stockSubTaichangCt" style="display:none;">
           <div style="padding:14px 16px;">
-            <!-- 헤더 및 도구 모음 -->
+            <!-- ?ㅻ뜑 諛??꾧뎄 紐⑥쓬 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleTaichangCtStock">태창 C/T 공장 재고 현황리스트</h4>
-                <span style="font-size:11px; color:var(--text-secondary);" id="taichangCtAsOfDate">기준일 로딩중...</span>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleTaichangCtStock">?쒖갹 C/T 怨듭옣 ?ш퀬 ?꾪솴由ъ뒪??/h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="taichangCtAsOfDate">湲곗???濡쒕뵫以?..</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                <button class="action-btn-sm primary" id="btnTaichangCtRefresh" onclick="fetchLatestStock('taichang_ct', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
-                <a class="action-btn-sm success" id="btnDownloadTaichangCtExcel" href="data/stock_sources/taichang_ct/taichang_ct_tray_stock_latest.xls" download="태창공장_CT_재고현황_원본.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                <button class="action-btn-sm primary" id="btnTaichangCtRefresh" onclick="fetchLatestStock('taichang_ct', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">理쒖떊 ?ш퀬 ?덈줈怨좎묠</button>
+                <a class="action-btn-sm success" id="btnDownloadTaichangCtExcel" href="data/stock_sources/taichang_ct/taichang_ct_tray_stock_latest.xls" download="?쒖갹怨듭옣_CT_?ш퀬?꾪솴_?먮낯.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  <span id="taichangCtDownloadBtnText">엑셀 원본 다운로드</span>
+                  <span id="taichangCtDownloadBtnText">?묒? ?먮낯 ?ㅼ슫濡쒕뱶</span>
                 </a>
               </div>
             </div>
 
-            <!-- 검색 바 -->
+            <!-- 寃??諛?-->
             <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
               <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <span id="taichangCtSearchBadgeText">태창 C/T 검색</span>
+                <span id="taichangCtSearchBadgeText">?쒖갹 C/T 寃??/span>
               </div>
-              <input type="text" id="taichangCtSearchInput" placeholder="전산코드, PART NO, 고객사, 무역방식, 출하처 검색..." oninput="filterTaichangCtStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
-              <button id="btnTaichangCtSearchClear" onclick="clearTaichangCtSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+              <input type="text" id="taichangCtSearchInput" placeholder="?꾩궛肄붾뱶, PART NO, 怨좉컼?? 臾댁뿭諛⑹떇, 異쒗븯泥?寃??.." oninput="filterTaichangCtStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnTaichangCtSearchClear" onclick="clearTaichangCtSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="珥덇린??>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
-              <span id="taichangCtResultCount">검색 결과: -</span>
-              <span style="font-size:10.5px; color:var(--text-dim);" id="taichangCtSearchHint">실시간 다중 키워드 필터링 지원</span>
+              <span id="taichangCtResultCount">寃??寃곌낵: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);" id="taichangCtSearchHint">?ㅼ떆媛??ㅼ쨷 ?ㅼ썙???꾪꽣留?吏??/span>
             </div>
 
-            <!-- 재고 테이블 -->
+            <!-- ?ш퀬 ?뚯씠釉?-->
             <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 220px); min-height:480px;">
               <table id="taichangCtStockTable" class="modern-table" style="font-size:11px; width:100%;">
                 <thead>
                   <tr>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">전산코드</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">고객사</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (품명)</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">전재고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">입고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">장기재고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">보류품</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">무역방식</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">출하처</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">현재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">?꾩궛肄붾뱶</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">怨좉컼??/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (?덈챸)</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?꾩옱怨?/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?낃퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">異쒓퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?κ린?ш퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">蹂대쪟??/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">臾댁뿭諛⑹떇</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">異쒗븯泥?/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">?꾩옱怨?/th>
                   </tr>
                 </thead>
                 <tbody id="taichangCtStockTbody">
-                  <tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                  <tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">?곗씠??濡쒕뵫以?..</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- 4) 혜주 공장 재고 패널 -->
+        <!-- 4) ?쒖＜ 怨듭옣 ?ш퀬 ?⑤꼸 -->
         <div class="stock-factory-panel" id="stockSubHuizhou" style="display:none;">
           <div style="padding:14px 16px;">
-            <!-- 헤더 및 도구 모음 -->
+            <!-- ?ㅻ뜑 諛??꾧뎄 紐⑥쓬 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleHuizhouStock">혜주 공장 Tray 재고 현황리스트</h4>
-                <span style="font-size:11px; color:var(--text-secondary);" id="huizhouAsOfDate">기준일 로딩중...</span>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary); font-weight:700;" id="titleHuizhouStock">?쒖＜ 怨듭옣 Tray ?ш퀬 ?꾪솴由ъ뒪??/h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="huizhouAsOfDate">湲곗???濡쒕뵫以?..</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                <button class="action-btn-sm primary" id="btnHuizhouRefresh" onclick="fetchLatestStock('huizhou', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">최신 재고 새로고침</button>
-                <a class="action-btn-sm success" id="btnDownloadHuizhouExcel" href="data/stock_sources/huizhou/huizhou_tray_stock_latest.xls" download="혜주공장_TRAY_재고현황_원본.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
+                <button class="action-btn-sm primary" id="btnHuizhouRefresh" onclick="fetchLatestStock('huizhou', true)" style="font-size:11px; padding:6px 12px; cursor:pointer;">理쒖떊 ?ш퀬 ?덈줈怨좎묠</button>
+                <a class="action-btn-sm success" id="btnDownloadHuizhouExcel" href="data/stock_sources/huizhou/huizhou_tray_stock_latest.xls" download="?쒖＜怨듭옣_TRAY_?ш퀬?꾪솴_?먮낯.xls" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:6px 12px; cursor:pointer; font-weight:600;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  <span id="huizhouDownloadBtnText">엑셀 원본 다운로드</span>
+                  <span id="huizhouDownloadBtnText">?묒? ?먮낯 ?ㅼ슫濡쒕뱶</span>
                 </a>
               </div>
             </div>
 
-            <!-- 검색 바 -->
+            <!-- 寃??諛?-->
             <div class="stock-search-wrapper" style="margin-bottom:10px; display:flex; align-items:center; background:#0f172a; border:2px solid #3b82f6; border-radius:8px; padding:3px 6px;">
               <div style="background:#2563eb; color:#ffffff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:5px; margin-right:8px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <span id="huizhouSearchBadgeText">혜주 검색</span>
+                <span id="huizhouSearchBadgeText">?쒖＜ 寃??/span>
               </div>
-              <input type="text" id="huizhouSearchInput" placeholder="전산코드, PART NO, 규격, 고객사, 무역방식 검색..." oninput="filterHuizhouStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
-              <button id="btnHuizhouSearchClear" onclick="clearHuizhouSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="초기화">
+              <input type="text" id="huizhouSearchInput" placeholder="?꾩궛肄붾뱶, PART NO, 洹쒓꺽, 怨좉컼?? 臾댁뿭諛⑹떇 寃??.." oninput="filterHuizhouStock()" style="flex:1; padding:9px 6px; border:none; background:transparent; color:#ffffff; font-size:13px; font-weight:500; outline:none; min-width:0;" />
+              <button id="btnHuizhouSearchClear" onclick="clearHuizhouSearch()" style="display:none; background:rgba(255,255,255,0.1); border:none; border-radius:50%; width:22px; height:22px; color:#e2e8f0; margin-right:6px; cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;" title="珥덇린??>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-secondary); padding:0 2px;">
-              <span id="huizhouResultCount">검색 결과: -</span>
-              <span style="font-size:10.5px; color:var(--text-dim);" id="huizhouSearchHint">실시간 다중 키워드 필터링 지원</span>
+              <span id="huizhouResultCount">寃??寃곌낵: -</span>
+              <span style="font-size:10.5px; color:var(--text-dim);" id="huizhouSearchHint">?ㅼ떆媛??ㅼ쨷 ?ㅼ썙???꾪꽣留?吏??/span>
             </div>
 
-            <!-- 재고 테이블 -->
+            <!-- ?ш퀬 ?뚯씠釉?-->
             <div class="table-responsive-wrapper" style="border-radius:10px; border:1px solid var(--border-color); max-height:calc(100vh - 220px); min-height:480px;">
               <table id="huizhouStockTable" class="modern-table" style="font-size:11px; width:100%;">
                 <thead>
                   <tr>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">전산코드</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">고객사</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (품명)</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">전재고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">입고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">공정재고</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">출하계획</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">무역방식</th>
-                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">현재고</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">?꾩궛肄붾뱶</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">怨좉컼??/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">PART NO (?덈챸)</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?꾩옱怨?/th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">?낃퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">異쒓퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">怨듭젙?ш퀬</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;">異쒗븯怨꾪쉷</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;">臾댁뿭諛⑹떇</th>
+                    <th style="position:sticky;top:0;z-index:2;background:var(--bg-card);padding:8px 6px;text-align:right;color:var(--primary);font-weight:700;">?꾩옱怨?/th>
                   </tr>
                 </thead>
                 <tbody id="huizhouStockTbody">
-                  <tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">데이터 로딩중...</td></tr>
+                  <tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">?곗씠??濡쒕뵫以?..</td></tr>
                 </tbody>
               </table>
             </div>
@@ -587,92 +522,92 @@
 
       </div>
 
-      <!-- 4. 기능 추가 및 제안 게시판 뷰 -->
+      <!-- 4. 湲곕뒫 異붽? 諛??쒖븞 寃뚯떆??酉?-->
       <div class="viewer-content-card" id="viewFeedback" style="display:none;">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>기능 요청 게시판</h3>
-            <span class="count-badge" id="feedbackCountBadge">0건</span>
+            <h3>湲곕뒫 ?붿껌 寃뚯떆??/h3>
+            <span class="count-badge" id="feedbackCountBadge">0嫄?/span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="feedbackSearchInput" class="compact-search" placeholder="제목/작성자 검색..." style="width: 140px;" />
-            <select id="feedbackStatusFilter" class="compact-select" title="상태 필터">
-              <option value="all">전체 상태</option>
-              <option value="pending">검토 중</option>
-              <option value="replied">답변 완료</option>
-              <option value="applied">반영 완료</option>
+            <input type="text" id="feedbackSearchInput" class="compact-search" placeholder="?쒕ぉ/?묒꽦??寃??.." style="width: 140px;" />
+            <select id="feedbackStatusFilter" class="compact-select" title="?곹깭 ?꾪꽣">
+              <option value="all">?꾩껜 ?곹깭</option>
+              <option value="pending">寃??以?/option>
+              <option value="replied">?듬? ?꾨즺</option>
+              <option value="applied">諛섏쁺 ?꾨즺</option>
             </select>
-            <select id="feedbackPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="10">10개씩</option>
-              <option value="20">20개씩</option>
-              <option value="30">30개씩</option>
-              <option value="50">50개씩</option>
+            <select id="feedbackPageSizeSelect" class="compact-select" title="?섏씠吏???쒖떆 嫄댁닔">
+              <option value="10">10媛쒖뵫</option>
+              <option value="20">20媛쒖뵫</option>
+              <option value="30">30媛쒖뵫</option>
+              <option value="50">50媛쒖뵫</option>
             </select>
-            <button class="action-btn-sm primary" id="btnOpenNewFeedbackModal">새 요청 등록</button>
-            <button class="action-btn-sm secondary" id="btnRefreshFeedback" title="클라우드 최신 글 동기화">새로고침</button>
-            <button class="action-btn-sm warning" id="btnToggleBoardAdmin" title="관리자 답변 및 관리 권한 인증">관리자 모드</button>
+            <button class="action-btn-sm primary" id="btnOpenNewFeedbackModal">???붿껌 ?깅줉</button>
+            <button class="action-btn-sm secondary" id="btnRefreshFeedback" title="?대씪?곕뱶 理쒖떊 湲 ?숆린??>?덈줈怨좎묠</button>
+            <button class="action-btn-sm warning" id="btnToggleBoardAdmin" title="愿由ъ옄 ?듬? 諛?愿由?沅뚰븳 ?몄쬆">愿由ъ옄 紐⑤뱶</button>
           </div>
         </div>
         
-        <!-- 게시판 게시글 카드 목록 컨테이너 -->
+        <!-- 寃뚯떆??寃뚯떆湲 移대뱶 紐⑸줉 而⑦뀒?대꼫 -->
         <div class="feedback-board-container" id="feedbackBoardList">
-          <div class="text-center py-4" style="color:#94a3b8;">게시글을 불러오는 중입니다...</div>
+          <div class="text-center py-4" style="color:#94a3b8;">寃뚯떆湲??遺덈윭?ㅻ뒗 以묒엯?덈떎...</div>
         </div>
-        <!-- 기능 요청 하단 페이지네이션 컨트롤러 -->
+        <!-- 湲곕뒫 ?붿껌 ?섎떒 ?섏씠吏?ㅼ씠??而⑦듃濡ㅻ윭 -->
         <div class="pagination-container" id="feedbackPagination">
-          <div class="pagination-info" id="feedbackPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-info" id="feedbackPageInfo">0 / 0 ?섏씠吏 (珥?0嫄?</div>
           <div class="pagination-controls" id="feedbackPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
+            <!-- ?숈쟻 ?섏씠吏 踰덊샇 踰꾪듉 ?앹꽦 -->
           </div>
         </div>
       </div>
 
-      <!-- 5. 사내 규정 & FAQ 지식 질의응답 챗봇 뷰 -->
+      <!-- 5. ?щ궡 洹쒖젙 & FAQ 吏??吏덉쓽?묐떟 梨쀫큸 酉?-->
       <div class="viewer-content-card" id="viewChatbot" style="display:none; flex-direction:column; padding:0; height:100%; overflow:hidden;">
-        <!-- 상단 헤더 바 -->
+        <!-- ?곷떒 ?ㅻ뜑 諛?-->
         <div class="viewer-card-header" style="padding:12px 16px; border-bottom:1px solid var(--border-subtle); flex-shrink:0;">
           <div class="viewer-title-group">
-            <h3 id="chatbotHeaderTitle">FAQ 지식 챗봇</h3>
-            <span class="count-badge" id="chatbotStatusBadge" style="background:rgba(16,185,129,0.15); color:#34d399; border-color:rgba(16,185,129,0.4);">실시간 지식 질의응답</span>
+            <h3 id="chatbotHeaderTitle">FAQ 吏??梨쀫큸</h3>
+            <span class="count-badge" id="chatbotStatusBadge" style="background:rgba(16,185,129,0.15); color:#34d399; border-color:rgba(16,185,129,0.4);">?ㅼ떆媛?吏??吏덉쓽?묐떟</span>
           </div>
           <div class="viewer-tools">
-            <button class="action-btn-sm secondary" id="btnClearChat" onclick="clearChatHistory()" style="font-size:11px; padding:4px 10px; cursor:pointer;">대화 초기화</button>
+            <button class="action-btn-sm secondary" id="btnClearChat" onclick="clearChatHistory()" style="font-size:11px; padding:4px 10px; cursor:pointer;">???珥덇린??/button>
           </div>
         </div>
 
-        <!-- 퀵 액션 칩 바 (자주 묻는 질문 바로가기) -->
+        <!-- ???≪뀡 移?諛?(?먯＜ 臾삳뒗 吏덈Ц 諛붾줈媛湲? -->
         <div class="quick-chips-bar" style="padding:8px 16px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border-subtle); display:flex; gap:6px; overflow-x:auto; flex-shrink:0; -webkit-overflow-scrolling:touch; scrollbar-width:none;">
-          <button class="quick-chip" data-cmd="EXW 조건">EXW 조건</button>
-          <button class="quick-chip" data-cmd="위탁재고">위탁재고</button>
-          <button class="quick-chip" data-cmd="견적 유효기간">견적 유효기간</button>
-          <button class="quick-chip" data-cmd="연차휴가 규정">연차휴가</button>
-          <button class="quick-chip" data-cmd="출장여비 규정">출장여비</button>
-          <button class="quick-chip" data-cmd="FOB 조건">FOB 조건</button>
+          <button class="quick-chip" data-cmd="EXW 議곌굔">EXW 議곌굔</button>
+          <button class="quick-chip" data-cmd="?꾪긽?ш퀬">?꾪긽?ш퀬</button>
+          <button class="quick-chip" data-cmd="寃ъ쟻 ?좏슚湲곌컙">寃ъ쟻 ?좏슚湲곌컙</button>
+          <button class="quick-chip" data-cmd="?곗감?닿? 洹쒖젙">?곗감?닿?</button>
+          <button class="quick-chip" data-cmd="異쒖옣?щ퉬 洹쒖젙">異쒖옣?щ퉬</button>
+          <button class="quick-chip" data-cmd="FOB 議곌굔">FOB 議곌굔</button>
         </div>
 
-        <!-- 채팅 메시지 스크롤 영역 -->
+        <!-- 梨꾪똿 硫붿떆吏 ?ㅽ겕濡??곸뿭 -->
         <div class="chat-messages-container" id="chatContainer" style="flex:1; overflow-y:auto; padding:16px; overscroll-behavior-y:contain;">
-          <!-- 초기 환영 메시지 -->
+          <!-- 珥덇린 ?섏쁺 硫붿떆吏 -->
           <div class="chat-bubble bot-msg">
             <div class="bubble-header">
-              <span class="bot-badge">KOSTAT 봇</span>
-              <span class="msg-time" id="welcomeTime">방금</span>
+              <span class="bot-badge">KOSTAT 遊?/span>
+              <span class="msg-time" id="welcomeTime">諛⑷툑</span>
             </div>
             <div class="bubble-content">
-              안녕하세요! <strong>KOSTAT 사내 규정 및 업무 지식(FAQ) 챗봇</strong>입니다.<br>
-              사내 규정, 인코텀즈 무역 조건, 위탁재고 등에 대해 자유롭게 질문해 주세요.
+              ?덈뀞?섏꽭?? <strong>KOSTAT ?щ궡 洹쒖젙 諛??낅Т 吏??FAQ) 梨쀫큸</strong>?낅땲??<br>
+              ?щ궡 洹쒖젙, ?몄퐫?利?臾댁뿭 議곌굔, ?꾪긽?ш퀬 ?깆뿉 ????먯쑀濡?쾶 吏덈Ц??二쇱꽭??
             </div>
           </div>
         </div>
 
-        <!-- 하단 메시지 입력 바 -->
+        <!-- ?섎떒 硫붿떆吏 ?낅젰 諛?-->
         <div class="chat-input-wrapper" style="flex-shrink:0; padding:12px 16px; background:rgba(18,22,32,0.98); border-top:1px solid var(--border-subtle);">
           <form class="chat-input-form" id="chatForm" style="display:flex; gap:8px; align-items:center; max-width:860px; margin:0 auto;">
             <input 
               type="text" 
               id="chatInput" 
               class="chat-input" 
-              placeholder="사내 규정 및 업무 지식 질문 입력... (예: EXW 조건, 위탁재고)" 
+              placeholder="?щ궡 洹쒖젙 諛??낅Т 吏??吏덈Ц ?낅젰... (?? EXW 議곌굔, ?꾪긽?ш퀬)" 
               autocomplete="off"
               style="flex:1; font-size:15px;"
             />
@@ -683,120 +618,120 @@
         </div>
       </div>
 
-      <!-- 6. 사내 FAQ 및 업무 지식베이스 뷰 -->
+      <!-- 6. ?щ궡 FAQ 諛??낅Т 吏?앸쿋?댁뒪 酉?-->
       <div class="viewer-content-card" id="viewFaq" style="display:none;">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>사내 FAQ 지식베이스</h3>
-            <span class="count-badge" id="faqCountBadge">0개</span>
+            <h3>?щ궡 FAQ 吏?앸쿋?댁뒪</h3>
+            <span class="count-badge" id="faqCountBadge">0媛?/span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="faqSearchInput" class="compact-search" placeholder="질문/답변/키워드 검색..." style="width: 140px;" />
-            <select id="faqPageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="10">10개씩</option>
-              <option value="20">20개씩</option>
-              <option value="30">30개씩</option>
-              <option value="50">50개씩</option>
-              <option value="100">전체보기</option>
+            <input type="text" id="faqSearchInput" class="compact-search" placeholder="吏덈Ц/?듬?/?ㅼ썙??寃??.." style="width: 140px;" />
+            <select id="faqPageSizeSelect" class="compact-select" title="?섏씠吏???쒖떆 嫄댁닔">
+              <option value="10">10媛쒖뵫</option>
+              <option value="20">20媛쒖뵫</option>
+              <option value="30">30媛쒖뵫</option>
+              <option value="50">50媛쒖뵫</option>
+              <option value="100">?꾩껜蹂닿린</option>
             </select>
-            <button class="action-btn-sm primary" id="btnOpenNewFaqModal">새 FAQ 등록</button>
-            <button class="action-btn-sm warning" id="btnToggleFaqAdmin" title="FAQ 추가/수정/삭제 관리자 모드">관리자 모드</button>
-            <button class="action-btn-sm" id="btnDeployFaq" style="display:none; background:#10b981; border-color:#10b981; color:#fff;" title="수정된 FAQ 전체 웹앱 및 깃허브 배포">배포 적용</button>
-            <button class="action-btn-sm secondary" id="btnExportFaqBackup" style="font-size:11px; padding:3px 8px;" title="전체 FAQ JSON 백업 파일 다운로드">백업</button>
-            <button class="action-btn-sm secondary" id="btnImportFaqBackup" style="font-size:11px; padding:3px 8px;" title="백업 파일에서 복원">복원</button>
+            <button class="action-btn-sm primary" id="btnOpenNewFaqModal">??FAQ ?깅줉</button>
+            <button class="action-btn-sm warning" id="btnToggleFaqAdmin" title="FAQ 異붽?/?섏젙/??젣 愿由ъ옄 紐⑤뱶">愿由ъ옄 紐⑤뱶</button>
+            <button class="action-btn-sm" id="btnDeployFaq" style="display:none; background:#10b981; border-color:#10b981; color:#fff;" title="?섏젙??FAQ ?꾩껜 ?뱀빋 諛?源껎뿀釉?諛고룷">諛고룷 ?곸슜</button>
+            <button class="action-btn-sm secondary" id="btnExportFaqBackup" style="font-size:11px; padding:3px 8px;" title="?꾩껜 FAQ JSON 諛깆뾽 ?뚯씪 ?ㅼ슫濡쒕뱶">諛깆뾽</button>
+            <button class="action-btn-sm secondary" id="btnImportFaqBackup" style="font-size:11px; padding:3px 8px;" title="諛깆뾽 ?뚯씪?먯꽌 蹂듭썝">蹂듭썝</button>
             <input type="file" id="faqBackupFileInput" accept=".json" style="display:none;" />
           </div>
         </div>
         
-        <!-- FAQ 목록 컨테이너 (스크롤 가능) -->
+        <!-- FAQ 紐⑸줉 而⑦뀒?대꼫 (?ㅽ겕濡?媛?? -->
         <div class="faq-list-container" id="faqListContainer">
-          <div class="text-center py-4" style="color:#94a3b8;">FAQ 지식 목록을 불러오는 중입니다...</div>
+          <div class="text-center py-4" style="color:#94a3b8;">FAQ 吏??紐⑸줉??遺덈윭?ㅻ뒗 以묒엯?덈떎...</div>
         </div>
-        <!-- FAQ 지식 하단 페이지네이션 컨트롤러 -->
+        <!-- FAQ 吏???섎떒 ?섏씠吏?ㅼ씠??而⑦듃濡ㅻ윭 -->
         <div class="pagination-container" id="faqPagination" style="flex-shrink:0;">
-          <div class="pagination-info" id="faqPageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-info" id="faqPageInfo">0 / 0 ?섏씠吏 (珥?0嫄?</div>
           <div class="pagination-controls" id="faqPageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
+            <!-- ?숈쟻 ?섏씠吏 踰덊샇 踰꾪듉 ?앹꽦 -->
           </div>
         </div>
       </div>
 
-      <!-- 6. 사내 자료실 및 프로그램 배포 뷰 -->
+      <!-- 6. ?щ궡 ?먮즺??諛??꾨줈洹몃옩 諛고룷 酉?-->
       <div class="viewer-content-card" id="viewArchive" style="display:none;">
         <div class="viewer-card-header">
           <div class="viewer-title-group">
-            <h3>사내 자료실</h3>
-            <span class="count-badge" id="archiveCountBadge">0건</span>
+            <h3>?щ궡 ?먮즺??/h3>
+            <span class="count-badge" id="archiveCountBadge">0嫄?/span>
           </div>
           <div class="viewer-tools">
-            <input type="text" id="archiveSearchInput" class="compact-search" placeholder="프로그램/자료 검색..." style="width: 160px;" />
-            <select id="archivePageSizeSelect" class="compact-select" title="페이지당 표시 건수">
-              <option value="10">10개씩</option>
-              <option value="20">20개씩</option>
-              <option value="30">30개씩</option>
-              <option value="50">50개씩</option>
+            <input type="text" id="archiveSearchInput" class="compact-search" placeholder="?꾨줈洹몃옩/?먮즺 寃??.." style="width: 160px;" />
+            <select id="archivePageSizeSelect" class="compact-select" title="?섏씠吏???쒖떆 嫄댁닔">
+              <option value="10">10媛쒖뵫</option>
+              <option value="20">20媛쒖뵫</option>
+              <option value="30">30媛쒖뵫</option>
+              <option value="50">50媛쒖뵫</option>
             </select>
-            <button class="action-btn-sm primary" id="btnOpenNewArchiveModal">새 자료 등록</button>
-            <button class="action-btn-sm secondary" id="btnRefreshArchive" title="클라우드 동기화">새로고침</button>
-            <button class="action-btn-sm warning" id="btnToggleArchiveAdmin" title="자료 관리 및 수정 권한">관리자 모드</button>
+            <button class="action-btn-sm primary" id="btnOpenNewArchiveModal">???먮즺 ?깅줉</button>
+            <button class="action-btn-sm secondary" id="btnRefreshArchive" title="?대씪?곕뱶 ?숆린??>?덈줈怨좎묠</button>
+            <button class="action-btn-sm warning" id="btnToggleArchiveAdmin" title="?먮즺 愿由?諛??섏젙 沅뚰븳">愿由ъ옄 紐⑤뱶</button>
           </div>
         </div>
         
-        <!-- 자료실 게시글 카드 목록 컨테이너 -->
+        <!-- ?먮즺??寃뚯떆湲 移대뱶 紐⑸줉 而⑦뀒?대꼫 -->
         <div class="archive-board-container" id="archiveCardListContainer">
-          <div class="text-center py-4" style="color:#94a3b8;">자료실 목록을 불러오는 중입니다...</div>
+          <div class="text-center py-4" style="color:#94a3b8;">?먮즺??紐⑸줉??遺덈윭?ㅻ뒗 以묒엯?덈떎...</div>
         </div>
 
-        <!-- 자료실 하단 페이지네이션 컨트롤러 -->
+        <!-- ?먮즺???섎떒 ?섏씠吏?ㅼ씠??而⑦듃濡ㅻ윭 -->
         <div class="pagination-container" id="archivePagination" style="flex-shrink:0;">
-          <div class="pagination-info" id="archivePageInfo">0 / 0 페이지 (총 0건)</div>
+          <div class="pagination-info" id="archivePageInfo">0 / 0 ?섏씠吏 (珥?0嫄?</div>
           <div class="pagination-controls" id="archivePageControls">
-            <!-- 동적 페이지 번호 버튼 생성 -->
+            <!-- ?숈쟻 ?섏씠吏 踰덊샇 踰꾪듉 ?앹꽦 -->
           </div>
         </div>
       </div>
 
-      <!-- 7. 실험실 (Lab) 뷰 -->
+      <!-- 7. ?ㅽ뿕??(Lab) 酉?-->
       <div class="viewer-content-card" id="viewLab" style="display:none; padding:0; height:100%; overflow:hidden;">
         <div class="viewer-card-header" style="padding:12px 16px 8px; margin-bottom:0; flex-shrink:0;">
           <div class="viewer-title-group">
-            <h3>실험실 (Lab)</h3>
-            <span class="count-badge" id="labStatusBadge">업무 자동화 도구</span>
+            <h3>?ㅽ뿕??(Lab)</h3>
+            <span class="count-badge" id="labStatusBadge">?낅Т ?먮룞???꾧뎄</span>
           </div>
           <div class="viewer-tools">
-            <span style="font-size:12px; color:var(--text-secondary);">사내 업무 자동화 및 글로벌 지사 현황</span>
+            <span style="font-size:12px; color:var(--text-secondary);">?щ궡 ?낅Т ?먮룞??諛?湲濡쒕쾶 吏???꾪솴</span>
           </div>
         </div>
 
-        <!-- 최상위 세그먼트 서브탭 바 -->
+        <!-- 理쒖긽???멸렇癒쇳듃 ?쒕툕??諛?-->
         <div class="lab-main-segment-bar" style="display:flex; gap:8px; padding:10px 16px; background:var(--bg-card); border-bottom:1px solid var(--border-color); flex-wrap:wrap; flex-shrink:0;">
-          <button class="lab-main-tab-btn active" id="btnLabTabTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">업무 자동화 도구</button>
-          <button class="lab-main-tab-btn" id="btnLabTabPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">필리핀 지사 리포트 & 프로젝트</button>
-          <button class="lab-main-tab-btn" id="btnLabTabWeekly" onclick="switchLabSubTab('labSubWeekly', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">주간보고서</button>
+          <button class="lab-main-tab-btn active" id="btnLabTabTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">?낅Т ?먮룞???꾧뎄</button>
+          <button class="lab-main-tab-btn" id="btnLabTabPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">?꾨━? 吏??由ы룷??& ?꾨줈?앺듃</button>
+          <button class="lab-main-tab-btn" id="btnLabTabWeekly" onclick="switchLabSubTab('labSubWeekly', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">二쇨컙蹂닿퀬??/button>
         </div>
 
-        <!-- ===== 서브탭 1: 업무 자동화 도구 (SSPC 매출 자료 변환기) ===== -->
+        <!-- ===== ?쒕툕??1: ?낅Т ?먮룞???꾧뎄 (SSPC 留ㅼ텧 ?먮즺 蹂?섍린) ===== -->
         <div class="lab-sub-panel" id="labSubTools">
           <div style="padding:14px 16px 8px;">
 
-            <!-- 도구 1: SSPC 매출 자료 변환기 -->
+            <!-- ?꾧뎄 1: SSPC 留ㅼ텧 ?먮즺 蹂?섍린 -->
             <div id="toolViewSspc">
               <div class="lab-container" style="padding:0;">
                 <div class="lab-card" style="margin-bottom:0;">
                   <div class="lab-card-header">
                     <div class="lab-card-title-box">
-                      <span class="lab-badge primary">자동화</span>
-                      <h4>SSPC 매출 자료 송부 - 강도균 수석님</h4>
+                      <span class="lab-badge primary">?먮룞??/span>
+                      <h4>SSPC 留ㅼ텧 ?먮즺 ?〓? - 媛뺣룄洹??섏꽍??/h4>
                     </div>
-                    <span class="lab-sub-badge">주간 보고 양식 변환기</span>
+                    <span class="lab-sub-badge">二쇨컙 蹂닿퀬 ?묒떇 蹂?섍린</span>
                   </div>
                   
                   <div class="lab-card-body">
                     <p class="lab-desc">
-                      Delivery List 엑셀 파일(.xls, .xlsx)을 첨부하면 당월 시트를 자동 감지하여 CUSTOMER가 <strong>SSPC</strong>인 주문 내역을 필터링하고, 공식 보고 규격 엑셀 파일(<code>SSPC 매출 YYMMDD.xlsx</code>)로 즉시 변환 및 생성합니다.
+                      Delivery List ?묒? ?뚯씪(.xls, .xlsx)??泥⑤??섎㈃ ?뱀썡 ?쒗듃瑜??먮룞 媛먯??섏뿬 CUSTOMER媛 <strong>SSPC</strong>??二쇰Ц ?댁뿭???꾪꽣留곹븯怨? 怨듭떇 蹂닿퀬 洹쒓꺽 ?묒? ?뚯씪(<code>SSPC 留ㅼ텧 YYMMDD.xlsx</code>)濡?利됱떆 蹂??諛??앹꽦?⑸땲??
                     </p>
                     
-                    <!-- 파일 드롭존 / 업로드 영역 -->
+                    <!-- ?뚯씪 ?쒕∼議?/ ?낅줈???곸뿭 -->
                     <div class="lab-dropzone" id="sspcDropzone">
                       <input type="file" id="sspcFileInput" accept=".xls,.xlsx" style="display:none;" />
                       <div class="lab-dropzone-content" id="sspcDropzoneContent">
@@ -806,13 +741,13 @@
                           <line x1="12" y1="3" x2="12" y2="15"></line>
                         </svg>
                         <div class="lab-dropzone-text">
-                          <strong style="color:var(--text-primary); font-size:14px;">Delivery List 엑셀 파일을 여기에 끌어다 놓거나 클릭하여 선택</strong>
-                          <span style="color:var(--text-secondary); font-size:12px; margin-top:4px;">지원 파일: .xls, .xlsx (예: Delivery List Kostat (2026) AS OF SEPT 15, 2026.xls)</span>
+                          <strong style="color:var(--text-primary); font-size:14px;">Delivery List ?묒? ?뚯씪???ш린???뚯뼱???볤굅???대┃?섏뿬 ?좏깮</strong>
+                          <span style="color:var(--text-secondary); font-size:12px; margin-top:4px;">吏???뚯씪: .xls, .xlsx (?? Delivery List Kostat (2026) AS OF SEPT 15, 2026.xls)</span>
                         </div>
                       </div>
                     </div>
 
-                    <!-- 파일 처리 결과 대시보드 (파일 로드 시 표시) -->
+                    <!-- ?뚯씪 泥섎━ 寃곌낵 ??쒕낫??(?뚯씪 濡쒕뱶 ???쒖떆) -->
                     <div class="lab-result-panel" id="sspcResultPanel" style="display:none;">
                       <div class="lab-file-info-bar">
                         <div class="lab-file-meta">
@@ -820,55 +755,55 @@
                           <span class="lab-file-size" id="sspcFileSize">-</span>
                         </div>
                         <div class="lab-sheet-selector-box">
-                          <label for="sspcSheetSelect" style="font-size:12px; font-weight:600; color:var(--text-secondary);">대상 시트:</label>
+                          <label for="sspcSheetSelect" style="font-size:12px; font-weight:600; color:var(--text-secondary);">????쒗듃:</label>
                           <select id="sspcSheetSelect" class="compact-select" style="min-width:140px; font-weight:600;"></select>
                         </div>
                       </div>
 
-                      <!-- 통계 지표 카드 그리드 -->
+                      <!-- ?듦퀎 吏??移대뱶 洹몃━??-->
                       <div class="lab-metrics-grid">
                         <div class="lab-metric-card">
-                          <div class="lab-metric-label">SSPC 오더 건수</div>
-                          <div class="lab-metric-val" id="sspcMetricCount">0건</div>
+                          <div class="lab-metric-label">SSPC ?ㅻ뜑 嫄댁닔</div>
+                          <div class="lab-metric-val" id="sspcMetricCount">0嫄?/div>
                         </div>
                         <div class="lab-metric-card">
-                          <div class="lab-metric-label">총 출하 수량 (Q'TY)</div>
+                          <div class="lab-metric-label">珥?異쒗븯 ?섎웾 (Q'TY)</div>
                           <div class="lab-metric-val" id="sspcMetricQty">0</div>
                         </div>
                         <div class="lab-metric-card">
-                          <div class="lab-metric-label">총 매출 합계 (AMOUNT)</div>
+                          <div class="lab-metric-label">珥?留ㅼ텧 ?⑷퀎 (AMOUNT)</div>
                           <div class="lab-metric-val highlight" id="sspcMetricAmount">$0.00</div>
                         </div>
                       </div>
 
-                      <!-- 데이터 미리보기 테이블 -->
+                      <!-- ?곗씠??誘몃━蹂닿린 ?뚯씠釉?-->
                       <div class="lab-preview-wrapper">
                         <div class="lab-preview-header">
-                          <span style="font-size:12px; font-weight:600; color:var(--text-primary);">데이터 미리보기</span>
-                          <span style="font-size:11px; color:var(--text-secondary);">공식 18개 열 매핑 및 합계 수식(=SUM) 적용 완료</span>
+                          <span style="font-size:12px; font-weight:600; color:var(--text-primary);">?곗씠??誘몃━蹂닿린</span>
+                          <span style="font-size:11px; color:var(--text-secondary);">怨듭떇 18媛???留ㅽ븨 諛??⑷퀎 ?섏떇(=SUM) ?곸슜 ?꾨즺</span>
                         </div>
                         <div class="table-responsive-wrapper" style="max-height:260px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
                           <table class="modern-table" id="sspcPreviewTable">
                             <thead>
                               <tr>
-                                <th>ITEM</th><th>Ship Date</th><th>고객사</th><th>지역</th><th>SHIP TO</th><th>CTR</th>
-                                <th>부품번호</th><th>Package/Description</th><th>CUSTOMER P/N</th><th>PO NO</th><th>수량</th>
-                                <th>단가</th><th>금액</th><th>INV NO</th>
+                                <th>ITEM</th><th>Ship Date</th><th>怨좉컼??/th><th>吏??/th><th>SHIP TO</th><th>CTR</th>
+                                <th>遺?덈쾲??/th><th>Package/Description</th><th>CUSTOMER P/N</th><th>PO NO</th><th>?섎웾</th>
+                                <th>?④?</th><th>湲덉븸</th><th>INV NO</th>
                               </tr>
                             </thead>
                             <tbody id="sspcPreviewTbody">
-                              <!-- 동적 렌더링 -->
+                              <!-- ?숈쟻 ?뚮뜑留?-->
                             </tbody>
                           </table>
                         </div>
                       </div>
 
-                      <!-- 하단 액션 버튼 -->
+                      <!-- ?섎떒 ?≪뀡 踰꾪듉 -->
                       <div class="lab-action-row">
                         <button class="action-btn-sm primary" id="btnDownloadSspcExcel" style="font-weight:600; padding:8px 18px; font-size:13px;">
-                          SSPC 매출 엑셀 파일 다운로드 (.xlsx)
+                          SSPC 留ㅼ텧 ?묒? ?뚯씪 ?ㅼ슫濡쒕뱶 (.xlsx)
                         </button>
-                        <button class="action-btn-sm secondary" id="btnResetSspc">다른 파일 선택</button>
+                        <button class="action-btn-sm secondary" id="btnResetSspc">?ㅻⅨ ?뚯씪 ?좏깮</button>
                       </div>
                     </div>
                   </div>
@@ -879,213 +814,213 @@
           </div>
         </div>
 
-        <!-- ===== 서브탭 2: 필리핀 지사 리포트 & 프로젝트 (RAG 스마트 검색 & 요약 중심 뷰) ===== -->
+        <!-- ===== ?쒕툕??2: ?꾨━? 吏??由ы룷??& ?꾨줈?앺듃 (RAG ?ㅻ쭏??寃??& ?붿빟 以묒떖 酉? ===== -->
         <div class="lab-sub-panel" id="labSubPH" style="display:none;">
           <div style="padding:14px 16px;">
-            <!-- 상단 헤더 -->
+            <!-- ?곷떒 ?ㅻ뜑 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0; font-size:15px; color:var(--text-primary);">필리핀 지사 리포트 & 프로젝트 스마트 현황</h4>
-                <span style="font-size:11px; color:var(--text-secondary);" id="phReportInfo">데이터 로딩중...</span>
+                <h4 style="margin:0; font-size:15px; color:var(--text-primary);">?꾨━? 吏??由ы룷??& ?꾨줈?앺듃 ?ㅻ쭏???꾪솴</h4>
+                <span style="font-size:11px; color:var(--text-secondary);" id="phReportInfo">?곗씠??濡쒕뵫以?..</span>
               </div>
               <div style="display:flex; gap:6px;">
-                <button class="action-btn-sm secondary" onclick="document.getElementById('phReportFileInput').click()" style="font-size:11px; padding:5px 10px;">엑셀 업데이트 업로드</button>
+                <button class="action-btn-sm secondary" onclick="document.getElementById('phReportFileInput').click()" style="font-size:11px; padding:5px 10px;">?묒? ?낅뜲?댄듃 ?낅줈??/button>
                 <input type="file" id="phReportFileInput" accept=".xlsx,.xls" style="display:none;" />
               </div>
             </div>
 
-            <!-- 필리핀 지사 리포트 대분류 스위처: Daily Report vs Weekly Report -->
+            <!-- ?꾨━? 吏??由ы룷???遺꾨쪟 ?ㅼ쐞泥? Daily Report vs Weekly Report -->
             <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
               <button class="ph-main-subtab-btn active" id="btnPhMainDaily" onclick="switchPhMainSubTab('daily', this)" style="padding:8px 18px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
-                Daily Report (일일 업무 보고 &amp; 프로젝트)
+                Daily Report (?쇱씪 ?낅Т 蹂닿퀬 &amp; ?꾨줈?앺듃)
               </button>
               <button class="ph-main-subtab-btn" id="btnPhMainWeekly" onclick="switchPhMainSubTab('weekly', this)" style="padding:8px 18px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
-                Weekly Report (주간 인벤토리 &amp; 9월 매출 예측)
+                Weekly Report (二쇨컙 ?몃깽?좊━ &amp; 9??留ㅼ텧 ?덉륫)
               </button>
             </div>
 
             <!-- ========================================================= -->
-            <!-- 1. Daily Report 컨테이너 (기존 기능 완전 보존 및 묶음)         -->
+            <!-- 1. Daily Report 而⑦뀒?대꼫 (湲곗〈 湲곕뒫 ?꾩쟾 蹂댁〈 諛?臾띠쓬)         -->
             <!-- ========================================================= -->
             <div id="phDailyContainer">
-              <!-- 내부 뷰 스위처: RAG 스마트 브리핑 | 고객사별 프로젝트 | 일일 업무 보고 | 주간 방문 일정 -->
+              <!-- ?대? 酉??ㅼ쐞泥? RAG ?ㅻ쭏??釉뚮━??| 怨좉컼?щ퀎 ?꾨줈?앺듃 | ?쇱씪 ?낅Т 蹂닿퀬 | 二쇨컙 諛⑸Ц ?쇱젙 -->
               <div style="display:flex; gap:4px; margin-bottom:12px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
-                <button class="ph-inner-tab active" data-ph-tab="phRagView" onclick="switchPhInnerTab('phRagView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:700; border:1px solid #2563eb; border-radius:6px; background:#2563eb; color:#fff; cursor:pointer; white-space:nowrap;">RAG 스마트 검색 & 브리핑</button>
-                <button class="ph-inner-tab" data-ph-tab="phProjectView" onclick="switchPhInnerTab('phProjectView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">고객사별 프로젝트 (요약본)</button>
-                <button class="ph-inner-tab" data-ph-tab="phDailyView" onclick="switchPhInnerTab('phDailyView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">일일 업무 보고 (번역 요약)</button>
-                <button class="ph-inner-tab" data-ph-tab="phVisitView" onclick="switchPhInnerTab('phVisitView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">주간 방문 일정</button>
+                <button class="ph-inner-tab active" data-ph-tab="phRagView" onclick="switchPhInnerTab('phRagView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:700; border:1px solid #2563eb; border-radius:6px; background:#2563eb; color:#fff; cursor:pointer; white-space:nowrap;">RAG ?ㅻ쭏??寃??& 釉뚮━??/button>
+                <button class="ph-inner-tab" data-ph-tab="phProjectView" onclick="switchPhInnerTab('phProjectView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">怨좉컼?щ퀎 ?꾨줈?앺듃 (?붿빟蹂?</button>
+                <button class="ph-inner-tab" data-ph-tab="phDailyView" onclick="switchPhInnerTab('phDailyView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">?쇱씪 ?낅Т 蹂닿퀬 (踰덉뿭 ?붿빟)</button>
+                <button class="ph-inner-tab" data-ph-tab="phVisitView" onclick="switchPhInnerTab('phVisitView', this)" style="padding:6px 12px; font-size:11.5px; font-weight:600; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-card); color:var(--text-secondary); cursor:pointer; white-space:nowrap;">二쇨컙 諛⑸Ц ?쇱젙</button>
               </div>
 
-              <!-- 1) RAG 스마트 검색 & 종합 브리핑 뷰 -->
+              <!-- 1) RAG ?ㅻ쭏??寃??& 醫낇빀 釉뚮━??酉?-->
               <div id="phRagView">
                 <div style="margin-bottom:8px;">
-                  <input type="text" id="phRagSearchInput" placeholder="고객사명(ATP, SSPC 등), 부품번호, 날짜(2026-09), 이슈 키워드 입력..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="onPhRagSearchInput()" />
+                  <input type="text" id="phRagSearchInput" placeholder="怨좉컼?щ챸(ATP, SSPC ??, 遺?덈쾲?? ?좎쭨(2026-09), ?댁뒋 ?ㅼ썙???낅젰..." style="width:100%; padding:9px 14px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:13px; outline:none;" oninput="onPhRagSearchInput()" />
                 </div>
                 <div style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px;">
-                  <span style="font-size:11px; color:var(--text-dim); align-self:center; white-space:nowrap;">빠른 질의:</span>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('ATP')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATP 현황</button>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('SSPC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">SSPC 현황</button>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('TIPI')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">TIPI 현황</button>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('ATEC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATEC 현황</button>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('진행중')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">진행중 프로젝트</button>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('단가')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">단가/견적 이슈</button>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('어닐링')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">어닐링 공정</button>
-                  <button class="action-btn-sm secondary" onclick="setPhRagChip('2026-09')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">2026년 9월 보고</button>
+                  <span style="font-size:11px; color:var(--text-dim); align-self:center; white-space:nowrap;">鍮좊Ⅸ 吏덉쓽:</span>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('ATP')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATP ?꾪솴</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('SSPC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">SSPC ?꾪솴</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('TIPI')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">TIPI ?꾪솴</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('ATEC')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">ATEC ?꾪솴</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('吏꾪뻾以?)" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">吏꾪뻾以??꾨줈?앺듃</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('?④?')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">?④?/寃ъ쟻 ?댁뒋</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('?대땺留?)" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">?대땺留?怨듭젙</button>
+                  <button class="action-btn-sm secondary" onclick="setPhRagChip('2026-09')" style="font-size:10.5px; padding:3px 8px; border-radius:12px; white-space:nowrap;">2026??9??蹂닿퀬</button>
                 </div>
                 <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
                   <select id="phRagCustomerFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px; min-width:110px;">
-                    <option value="ALL">전체 고객사 (21개사)</option>
+                    <option value="ALL">?꾩껜 怨좉컼??(21媛쒖궗)</option>
                   </select>
                   <select id="phRagStatusFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
-                    <option value="ALL">전체 상태</option>
-                    <option value="Ongoing">진행중 (Ongoing)</option>
-                    <option value="Done">완료 (Done)</option>
-                    <option value="Closed">종결 (Closed)</option>
-                    <option value="Dropped">드롭 (Dropped)</option>
+                    <option value="ALL">?꾩껜 ?곹깭</option>
+                    <option value="Ongoing">吏꾪뻾以?(Ongoing)</option>
+                    <option value="Done">?꾨즺 (Done)</option>
+                    <option value="Closed">醫낃껐 (Closed)</option>
+                    <option value="Dropped">?쒕∼ (Dropped)</option>
                   </select>
                   <select id="phRagPeriodFilter" onchange="renderPhRagResults()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px;">
-                    <option value="ALL">전체 기간</option>
-                    <option value="7d">최근 7일</option>
-                    <option value="30d">최근 30일</option>
-                    <option value="2026">2026년 전체</option>
-                    <option value="2025">2025년</option>
+                    <option value="ALL">?꾩껜 湲곌컙</option>
+                    <option value="7d">理쒓렐 7??/option>
+                    <option value="30d">理쒓렐 30??/option>
+                    <option value="2026">2026???꾩껜</option>
+                    <option value="2025">2025??/option>
                   </select>
                 </div>
                 <div id="phRagAiBriefCard" style="margin-bottom:12px; padding:12px 14px; background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-left:4px solid #2563eb; border-radius:8px;">
                   <div style="font-size:11px; font-weight:700; color:#2563eb; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>RAG 스마트 종합 브리핑</span>
+                    <span>RAG ?ㅻ쭏??醫낇빀 釉뚮━??/span>
                     <span id="phRagBriefStats" style="font-weight:600; color:var(--text-secondary); font-size:10px;"></span>
                   </div>
                   <div id="phRagBriefContent" style="font-size:12px; color:var(--text-primary); line-height:1.6;">
-                    상단 검색창에 고객사명이나 날짜, 키워드를 입력하시면 AI 종합 브리핑과 요약 카드가 자동 생성됩니다.
+                    ?곷떒 寃?됱갹??怨좉컼?щ챸?대굹 ?좎쭨, ?ㅼ썙?쒕? ?낅젰?섏떆硫?AI 醫낇빀 釉뚮━?묎낵 ?붿빟 移대뱶媛 ?먮룞 ?앹꽦?⑸땲??
                   </div>
                 </div>
                 <div id="phRagResultsList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;"></div>
               </div>
 
-              <!-- 2) 고객사별 프로젝트 뷰 (요약본 중심) -->
+              <!-- 2) 怨좉컼?щ퀎 ?꾨줈?앺듃 酉?(?붿빟蹂?以묒떖) -->
               <div id="phProjectView" style="display:none;">
                 <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
                   <select id="phCustomerFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; min-width:120px;">
-                    <option value="ALL">전체 고객사</option>
+                    <option value="ALL">?꾩껜 怨좉컼??/option>
                   </select>
                   <select id="phStatusFilter" onchange="renderPhProjects()" style="padding:7px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px;">
-                    <option value="ALL">전체 상태</option>
-                    <option value="Ongoing">진행중 (Ongoing)</option>
-                    <option value="Done">완료 (Done)</option>
-                    <option value="Closed">종결 (Closed)</option>
-                    <option value="Dropped">드롭 (Dropped)</option>
+                    <option value="ALL">?꾩껜 ?곹깭</option>
+                    <option value="Ongoing">吏꾪뻾以?(Ongoing)</option>
+                    <option value="Done">?꾨즺 (Done)</option>
+                    <option value="Closed">醫낃껐 (Closed)</option>
+                    <option value="Dropped">?쒕∼ (Dropped)</option>
                   </select>
                 </div>
                 <div id="phProjectList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">?곗씠??濡쒕뵫以?..</div>
                 </div>
               </div>
 
-              <!-- 3) 일일 업무 보고 뷰 (날짜별 총괄 요약 + 한국어 번역) -->
+              <!-- 3) ?쇱씪 ?낅Т 蹂닿퀬 酉?(?좎쭨蹂?珥앷큵 ?붿빟 + ?쒓뎅??踰덉뿭) -->
               <div id="phDailyView" style="display:none;">
                 <div style="margin-bottom:8px;">
-                  <input type="text" id="phDailySearchInput" placeholder="날짜(2026-09), 고객사, 업무내용 검색..." style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; outline:none;" oninput="filterPhDaily()" />
+                  <input type="text" id="phDailySearchInput" placeholder="?좎쭨(2026-09), 怨좉컼?? ?낅Т?댁슜 寃??.." style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:12px; outline:none;" oninput="filterPhDaily()" />
                 </div>
                 <div id="phDailyList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">?곗씠??濡쒕뵫以?..</div>
                 </div>
               </div>
 
-              <!-- 4) 주간 방문 일정 뷰 -->
+              <!-- 4) 二쇨컙 諛⑸Ц ?쇱젙 酉?-->
               <div id="phVisitView" style="display:none;">
                 <div id="phVisitList" style="max-height:60vh; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">데이터 로딩중...</div>
+                  <div style="text-align:center; padding:30px; color:var(--text-dim); font-size:12px;">?곗씠??濡쒕뵫以?..</div>
                 </div>
               </div>
             </div>
 
             <!-- ========================================================= -->
-            <!-- 2. Weekly Report 컨테이너 (인벤토리 & 9월 매출 유추 예측)     -->
+            <!-- 2. Weekly Report 而⑦뀒?대꼫 (?몃깽?좊━ & 9??留ㅼ텧 ?좎텛 ?덉륫)     -->
             <!-- ========================================================= -->
             <div id="phWeeklyContainer" style="display:none;">
 
-              <!-- (A) 상단 KPI 요약 배너 -->
+              <!-- (A) ?곷떒 KPI ?붿빟 諛곕꼫 -->
               <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:14px;">
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px;">
-                  <div style="font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;">8월 최종 출하 실적 (기준점)</div>
+                  <div style="font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;">8??理쒖쥌 異쒗븯 ?ㅼ쟻 (湲곗???</div>
                   <div style="font-size:18px; font-weight:800; color:#cbd5e1;" id="phWkAugFinalAmt">$325,361</div>
-                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">수량: 238,820 pcs (265건)</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">?섎웾: 238,820 pcs (265嫄?</div>
                 </div>
                 <div style="background:var(--bg-card); border:1px solid #2563eb; border-radius:8px; padding:12px 14px;">
-                  <div style="font-size:11px; color:#60a5fa; font-weight:700; margin-bottom:4px;">9월 18일 현재 실적 (MTD)</div>
+                  <div style="font-size:11px; color:#60a5fa; font-weight:700; margin-bottom:4px;">9??18???꾩옱 ?ㅼ쟻 (MTD)</div>
                   <div style="font-size:18px; font-weight:800; color:#3b82f6;" id="phWkSepMtdAmt">$227,905</div>
-                  <div style="font-size:11px; color:#22c55e; margin-top:2px;" id="phWkMtdGrowth">전월 동기(8/18) 대비 +27.9%</div>
+                  <div style="font-size:11px; color:#22c55e; margin-top:2px;" id="phWkMtdGrowth">?꾩썡 ?숆린(8/18) ?鍮?+27.9%</div>
                 </div>
                 <div style="background:rgba(37,99,235,0.08); border:1.5px solid #2563eb; border-radius:8px; padding:12px 14px;">
-                  <div style="font-size:11px; color:#38bdf8; font-weight:700; margin-bottom:4px;">9월 예상 매출 총액 (9/25 출하계획 기준)</div>
+                  <div style="font-size:11px; color:#38bdf8; font-weight:700; margin-bottom:4px;">9???덉긽 留ㅼ텧 珥앹븸 (9/25 異쒗븯怨꾪쉷 湲곗?)</div>
                   <div style="font-size:20px; font-weight:800; color:#38bdf8;" id="phWkConsensusAmt">$327,973</div>
-                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkConsensusGrowth">8월 대비 +$2,612 (+0.8% 9/25 확정출하 100% 기준)</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkConsensusGrowth">8???鍮?+$2,612 (+0.8% 9/25 ?뺤젙異쒗븯 100% 湲곗?)</div>
                 </div>
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:12px 14px;">
-                  <div style="font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;">KWE 창고 재고 &amp; Open PO 잔량</div>
+                  <div style="font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;">KWE 李쎄퀬 ?ш퀬 &amp; Open PO ?붾웾</div>
                   <div style="font-size:16px; font-weight:800; color:var(--text-primary);" id="phWkInventoryBalance">$642,508</div>
-                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkOpenPoTotal">고객사 Open PO: $729,435 (충분)</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;" id="phWkOpenPoTotal">怨좉컼??Open PO: $729,435 (異⑸텇)</div>
                 </div>
               </div>
 
-              <!-- (B) 고객사 Forecast & Open PO / 9.25 출하계획 기반 9월 예상 매출 분석 카드 -->
+              <!-- (B) 怨좉컼??Forecast & Open PO / 9.25 異쒗븯怨꾪쉷 湲곕컲 9???덉긽 留ㅼ텧 遺꾩꽍 移대뱶 -->
               <div style="background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
                   <div style="font-size:13.5px; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
-                    <span>고객사 Forecast &amp; Open PO 및 9/25 출하계획 기반 9월 매출 유추 모델</span>
+                    <span>怨좉컼??Forecast &amp; Open PO 諛?9/25 異쒗븯怨꾪쉷 湲곕컲 9??留ㅼ텧 ?좎텛 紐⑤뜽</span>
                   </div>
                   <div style="font-size:11px; color:#38bdf8; background:rgba(56,189,248,0.1); padding:2px 8px; border-radius:4px; border:1px solid rgba(56,189,248,0.2);">
-                    근거: Summary of Inventory 엑셀 Col 8(Open PO), Col 9(9주 Forecast), Col 65(9/25 출하계획)
+                    洹쇨굅: Summary of Inventory ?묒? Col 8(Open PO), Col 9(9二?Forecast), Col 65(9/25 異쒗븯怨꾪쉷)
                   </div>
                 </div>
 
-                <!-- 고객사 발주 및 출하계획 핵심 메트릭 바 -->
+                <!-- 怨좉컼??諛쒖＜ 諛?異쒗븯怨꾪쉷 ?듭떖 硫뷀듃由?諛?-->
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:8px; margin-bottom:12px; font-size:11.5px;">
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">8월 확정 출하 실적 (전월 기준)</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">8???뺤젙 異쒗븯 ?ㅼ쟻 (?꾩썡 湲곗?)</span>
                     <span style="font-weight:800; color:var(--text-primary); font-size:14px;">$325,361</span>
                   </div>
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">9/25 정기 출하계획 (Col 65)</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">9/25 ?뺢린 異쒗븯怨꾪쉷 (Col 65)</span>
                     <span style="font-weight:800; color:#3b82f6; font-size:14px;">$100,068</span>
                   </div>
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">고객사 주간 Forecast (Col 9)</span>
-                    <span style="font-weight:800; color:#10b981; font-size:14px;">$68,014 / 주</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">怨좉컼??二쇨컙 Forecast (Col 9)</span>
+                    <span style="font-weight:800; color:#10b981; font-size:14px;">$68,014 / 二?/span>
                   </div>
                   <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-light);">
-                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">고객사 총 Open PO 잔고 (Col 8)</span>
-                    <span style="font-weight:800; color:#8b5cf6; font-size:14px;">$729,435 (출하한도 충분)</span>
+                    <span style="color:var(--text-dim); display:block; font-size:10.5px;">怨좉컼??珥?Open PO ?붽퀬 (Col 8)</span>
+                    <span style="font-weight:800; color:#8b5cf6; font-size:14px;">$729,435 (異쒗븯?쒕룄 異⑸텇)</span>
                   </div>
                 </div>
 
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;" id="phProjectionModelsGrid">
-                  <!-- 동적 모델 4종 렌더링 -->
+                  <!-- ?숈쟻 紐⑤뜽 4醫??뚮뜑留?-->
                 </div>
               </div>
 
-              <!-- (C) 인터랙티브 유추 계산 시뮬레이터 -->
+              <!-- (C) ?명꽣?숉떚釉??좎텛 怨꾩궛 ?쒕??덉씠??-->
               <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
                 <div style="font-size:13px; font-weight:800; color:var(--text-primary); margin-bottom:10px;">
-                  실시간 조건별 9월 매출 시뮬레이터 (Interactive Forecast)
+                  ?ㅼ떆媛?議곌굔蹂?9??留ㅼ텧 ?쒕??덉씠??(Interactive Forecast)
                 </div>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
                   <div>
                     <label style="display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:4px;">
-                      9월 잔여 출하 영업일수: <span id="simDaysVal" style="font-weight:700; color:#3b82f6;">7일</span>
+                      9???붿뿬 異쒗븯 ?곸뾽?쇱닔: <span id="simDaysVal" style="font-weight:700; color:#3b82f6;">7??/span>
                     </label>
                     <input type="range" id="simDaysRange" min="0" max="10" step="1" value="7" style="width:100%; cursor:pointer;" oninput="runPhForecastSimulation()" />
                   </div>
                   <div>
                     <label style="display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:4px;">
-                      일평균 예상 출하액: <span id="simRateVal" style="font-weight:700; color:#3b82f6;">$16,280</span>
+                      ?쇳룊洹??덉긽 異쒗븯?? <span id="simRateVal" style="font-weight:700; color:#3b82f6;">$16,280</span>
                     </label>
                     <input type="range" id="simRateRange" min="5000" max="25000" step="500" value="16280" style="width:100%; cursor:pointer;" oninput="runPhForecastSimulation()" />
                   </div>
                   <div>
                     <label style="display:block; font-size:11.5px; color:var(--text-dim); margin-bottom:4px;">
-                      9/25 주차 출하계획 반영률: <span id="simPlanVal" style="font-weight:700; color:#3b82f6;">100%</span>
+                      9/25 二쇱감 異쒗븯怨꾪쉷 諛섏쁺瑜? <span id="simPlanVal" style="font-weight:700; color:#3b82f6;">100%</span>
                     </label>
                     <input type="range" id="simPlanRange" min="0" max="120" step="10" value="100" style="width:100%; cursor:pointer;" oninput="runPhForecastSimulation()" />
                   </div>
@@ -1093,108 +1028,108 @@
 
                 <div style="background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                   <div>
-                    <span style="font-size:12px; color:var(--text-secondary);">시뮬레이션 산출 9월 총 매출액:</span>
+                    <span style="font-size:12px; color:var(--text-secondary);">?쒕??덉씠???곗텧 9??珥?留ㅼ텧??</span>
                     <span style="font-size:18px; font-weight:800; color:#38bdf8; margin-left:8px;" id="simResultAmt">$341,857</span>
                   </div>
                   <div style="font-size:12px; font-weight:700;" id="simResultGrowth">
-                    8월($325,361) 대비 <span style="color:#22c55e;">+$16,496 (+5.1%)</span>
+                    8??$325,361) ?鍮?<span style="color:#22c55e;">+$16,496 (+5.1%)</span>
                   </div>
                 </div>
               </div>
 
-              <!-- (D) 8월 vs 9월 일자별 누적 매출 성장 추세 비교 SVG 차트 -->
+              <!-- (D) 8??vs 9???쇱옄蹂??꾩쟻 留ㅼ텧 ?깆옣 異붿꽭 鍮꾧탳 SVG 李⑦듃 -->
               <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <div style="font-size:13px; font-weight:800; color:var(--text-primary);">8월 vs 9월 일자별 누적 매출 성장 추세 비교</div>
+                  <div style="font-size:13px; font-weight:800; color:var(--text-primary);">8??vs 9???쇱옄蹂??꾩쟻 留ㅼ텧 ?깆옣 異붿꽭 鍮꾧탳</div>
                   <div style="display:flex; gap:12px; font-size:11px;">
-                    <span style="color:#94a3b8; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#64748b; border-radius:2px;"></span> 8월 실적 곡선</span>
-                    <span style="color:#3b82f6; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#3b82f6; border-radius:2px;"></span> 9월 실적 곡선</span>
-                    <span style="color:#38bdf8; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:2px;"></span> 월말 예상 궤적</span>
+                    <span style="color:#94a3b8; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#64748b; border-radius:2px;"></span> 8???ㅼ쟻 怨≪꽑</span>
+                    <span style="color:#3b82f6; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#3b82f6; border-radius:2px;"></span> 9???ㅼ쟻 怨≪꽑</span>
+                    <span style="color:#38bdf8; display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:2px;"></span> ?붾쭚 ?덉긽 沅ㅼ쟻</span>
                   </div>
                 </div>
                 <div id="phWeeklyTrendSvgContainer" style="width:100%; height:160px;">
-                  <!-- 동적 SVG 렌더링 -->
+                  <!-- ?숈쟻 SVG ?뚮뜑留?-->
                 </div>
               </div>
 
-              <!-- (E-1) 2026년 1~8월 월별 출하 실적 및 18일 진도율 학습 이력 현황 -->
+              <!-- (E-1) 2026??1~8???붾퀎 異쒗븯 ?ㅼ쟻 諛?18??吏꾨룄???숈뒿 ?대젰 ?꾪솴 -->
               <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
                   <div style="font-size:13px; font-weight:800; color:var(--text-primary);">
-                    2026년 월별 출하 실적 및 18일 기준 진도율 학습 이력 (1~8월)
+                    2026???붾퀎 異쒗븯 ?ㅼ쟻 諛?18??湲곗? 吏꾨룄???숈뒿 ?대젰 (1~8??
                   </div>
-                  <span style="font-size:11px; color:var(--text-dim);">단위: USD ($), PCS / 출처: Master Delivery List</span>
+                  <span style="font-size:11px; color:var(--text-dim);">?⑥쐞: USD ($), PCS / 異쒖쿂: Master Delivery List</span>
                 </div>
                 <div class="table-responsive-wrapper" style="overflow-x:auto;">
                   <table style="width:100%; border-collapse:collapse; font-size:11.5px; text-align:left;">
                     <thead>
                       <tr style="border-bottom:1px solid var(--border-color); color:var(--text-dim); background:var(--bg-card-sub);">
-                        <th style="padding:7px 10px;">기준월</th>
-                        <th style="padding:7px 10px; text-align:right;">월 총 출하액</th>
-                        <th style="padding:7px 10px; text-align:right;">출하 수량</th>
-                        <th style="padding:7px 10px; text-align:right; color:#60a5fa;">1~18일 누적 출하액</th>
-                        <th style="padding:7px 10px; text-align:right; color:#3b82f6;">18일 진도율</th>
-                        <th style="padding:7px 10px; text-align:right; color:#10b981;">19일~말일 잔여출하액</th>
+                        <th style="padding:7px 10px;">湲곗???/th>
+                        <th style="padding:7px 10px; text-align:right;">??珥?異쒗븯??/th>
+                        <th style="padding:7px 10px; text-align:right;">異쒗븯 ?섎웾</th>
+                        <th style="padding:7px 10px; text-align:right; color:#60a5fa;">1~18???꾩쟻 異쒗븯??/th>
+                        <th style="padding:7px 10px; text-align:right; color:#3b82f6;">18??吏꾨룄??/th>
+                        <th style="padding:7px 10px; text-align:right; color:#10b981;">19??留먯씪 ?붿뿬異쒗븯??/th>
                       </tr>
                     </thead>
                     <tbody id="phMonthlyHistoryTbody">
-                      <!-- 동적 렌더링 -->
+                      <!-- ?숈쟻 ?뚮뜑留?-->
                     </tbody>
                   </table>
                 </div>
               </div>
 
-              <!-- (E-2) 고객사별 8월 실적 vs 9월 현재 실적 vs Forecast 비교 테이블 -->
+              <!-- (E-2) 怨좉컼?щ퀎 8???ㅼ쟻 vs 9???꾩옱 ?ㅼ쟻 vs Forecast 鍮꾧탳 ?뚯씠釉?-->
               <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px; margin-bottom:14px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                  <div style="font-size:13px; font-weight:800; color:var(--text-primary);">주요 고객사별 실적 및 Forecast/재고 비교 현황</div>
-                  <span style="font-size:11px; color:var(--text-dim);">단위: USD ($)</span>
+                  <div style="font-size:13px; font-weight:800; color:var(--text-primary);">二쇱슂 怨좉컼?щ퀎 ?ㅼ쟻 諛?Forecast/?ш퀬 鍮꾧탳 ?꾪솴</div>
+                  <span style="font-size:11px; color:var(--text-dim);">?⑥쐞: USD ($)</span>
                 </div>
                 <div class="table-responsive-wrapper" style="overflow-x:auto;">
                   <table style="width:100%; border-collapse:collapse; font-size:11.5px; text-align:left;">
                     <thead>
                       <tr style="border-bottom:1px solid var(--border-color); color:var(--text-dim); background:var(--bg-card-sub);">
-                        <th style="padding:8px 10px;">고객사</th>
-                        <th style="padding:8px 10px; text-align:right;">8월 확정 실적</th>
-                        <th style="padding:8px 10px; text-align:right; color:#60a5fa;">9월 MTD 실적(9/18)</th>
-                        <th style="padding:8px 10px; text-align:right; color:#38bdf8;">9월 예상 출하</th>
-                        <th style="padding:8px 10px; text-align:right;">Open PO 잔량</th>
-                        <th style="padding:8px 10px; text-align:right;">KWE 창고 재고</th>
-                        <th style="padding:8px 10px; text-align:right;">9주 Forecast</th>
+                        <th style="padding:8px 10px;">怨좉컼??/th>
+                        <th style="padding:8px 10px; text-align:right;">8???뺤젙 ?ㅼ쟻</th>
+                        <th style="padding:8px 10px; text-align:right; color:#60a5fa;">9??MTD ?ㅼ쟻(9/18)</th>
+                        <th style="padding:8px 10px; text-align:right; color:#38bdf8;">9???덉긽 異쒗븯</th>
+                        <th style="padding:8px 10px; text-align:right;">Open PO ?붾웾</th>
+                        <th style="padding:8px 10px; text-align:right;">KWE 李쎄퀬 ?ш퀬</th>
+                        <th style="padding:8px 10px; text-align:right;">9二?Forecast</th>
                       </tr>
                     </thead>
                     <tbody id="phCustomerComparisonTbody">
-                      <!-- 동적 렌더링 -->
+                      <!-- ?숈쟻 ?뚮뜑留?-->
                     </tbody>
                   </table>
                 </div>
               </div>
 
-              <!-- (F) SUMMARY OF INVENTORY 주요 품목 상세 테이블 -->
+              <!-- (F) SUMMARY OF INVENTORY 二쇱슂 ?덈ぉ ?곸꽭 ?뚯씠釉?-->
               <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
                   <div style="font-size:13px; font-weight:800; color:var(--text-primary);">
-                    인벤토리 품목별 세부 지표 (Top 35 핵심 품목)
+                    ?몃깽?좊━ ?덈ぉ蹂??몃? 吏??(Top 35 ?듭떖 ?덈ぉ)
                   </div>
-                  <input type="text" id="phInvItemSearchInput" placeholder="품번(P/N), 고객사 검색..." style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px; outline:none; width:180px;" oninput="renderPhInventoryItemsTable()" />
+                  <input type="text" id="phInvItemSearchInput" placeholder="?덈쾲(P/N), 怨좉컼??寃??.." style="padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-primary); font-size:11.5px; outline:none; width:180px;" oninput="renderPhInventoryItemsTable()" />
                 </div>
                 <div class="table-responsive-wrapper" style="overflow-x:auto; max-height:420px;">
                   <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:left;">
                     <thead style="position:sticky; top:0; background:var(--bg-card-sub); z-index:1;">
                       <tr style="border-bottom:1px solid var(--border-color); color:var(--text-dim);">
                         <th style="padding:8px 8px;">Kostat P/N</th>
-                        <th style="padding:8px 8px;">고객사 P/N</th>
+                        <th style="padding:8px 8px;">怨좉컼??P/N</th>
                         <th style="padding:8px 8px;">End Customer</th>
-                        <th style="padding:8px 8px; text-align:right;">단가($)</th>
-                        <th style="padding:8px 8px; text-align:right;">월평균소비(AWU)</th>
+                        <th style="padding:8px 8px; text-align:right;">?④?($)</th>
+                        <th style="padding:8px 8px; text-align:right;">?뷀룊洹좎냼鍮?AWU)</th>
                         <th style="padding:8px 8px; text-align:right;">Open PO</th>
-                        <th style="padding:8px 8px; text-align:right;">KWE 재고</th>
-                        <th style="padding:8px 8px; text-align:right; color:#38bdf8;">9/25 출하계획</th>
-                        <th style="padding:8px 8px; text-align:right;">재고주수(Wks)</th>
+                        <th style="padding:8px 8px; text-align:right;">KWE ?ш퀬</th>
+                        <th style="padding:8px 8px; text-align:right; color:#38bdf8;">9/25 異쒗븯怨꾪쉷</th>
+                        <th style="padding:8px 8px; text-align:right;">?ш퀬二쇱닔(Wks)</th>
                       </tr>
                     </thead>
                     <tbody id="phInventoryItemsTbody">
-                      <!-- 동적 렌더링 -->
+                      <!-- ?숈쟻 ?뚮뜑留?-->
                     </tbody>
                   </table>
                 </div>
@@ -1205,30 +1140,30 @@
           </div>
         </div>
 
-        <!-- ===== 서브탭 4: 해외영업부 주간보고서 실시간 협업 워크스페이스 ===== -->
+        <!-- ===== ?쒕툕??4: ?댁쇅?곸뾽遺 二쇨컙蹂닿퀬???ㅼ떆媛??묒뾽 ?뚰겕?ㅽ럹?댁뒪 ===== -->
         <div class="lab-sub-panel" id="labSubWeekly" style="display:none;">
           <div style="padding:14px 16px;">
             <div class="lab-container" style="padding:0;">
               <div class="lab-card" id="weeklyReportLabCard" style="border-color: #3b82f6; margin-bottom:0;">
                 <div class="lab-card-header">
                   <div class="lab-card-title-box">
-                    <h4>주간보고서</h4>
+                    <h4>二쇨컙蹂닿퀬??/h4>
                   </div>
                   <div style="display:flex; gap:8px; align-items:center;">
-                    <a href="weekly_report_prototype.html?v=1.0.182_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
-                      전체화면 새 창 열기
+                    <a href="weekly_report_prototype.html?v=1.0.183_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+                      ?꾩껜?붾㈃ ??李??닿린
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                   </div>
                 </div>
                 <div class="lab-card-body" style="padding:12px;">
                   <p class="lab-desc" style="margin-bottom:12px;">
-                    해외영업부 팀원별 매출 실적 및 주차별 예상치, 샘플 진행 현황, 주간 특이사항 및 프로젝트 이슈를 공유하고 관리하는 시스템입니다. (담당 순서: 1. 한준희 책임 &gt; 2. 김샘물 선임 &gt; 3. 이가진 선임 &gt; 4. 이상철 선임 &gt; 5. 김완태 사원)
+                    ?댁쇅?곸뾽遺 ??먮퀎 留ㅼ텧 ?ㅼ쟻 諛?二쇱감蹂??덉긽移? ?섑뵆 吏꾪뻾 ?꾪솴, 二쇨컙 ?뱀씠?ы빆 諛??꾨줈?앺듃 ?댁뒋瑜?怨듭쑀?섍퀬 愿由ы븯???쒖뒪?쒖엯?덈떎. (?대떦 ?쒖꽌: 1. ?쒖???梨낆엫 &gt; 2. 源?섎Ъ ?좎엫 &gt; 3. ?닿?吏??좎엫 &gt; 4. ?댁긽泥??좎엫 &gt; 5. 源?꾪깭 ?ъ썝)
                   </p>
                   
-                  <!-- 워크스페이스 임베드 컨테이너 -->
+                  <!-- ?뚰겕?ㅽ럹?댁뒪 ?꾨쿋??而⑦뀒?대꼫 -->
                   <div style="width:100%; height:840px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                    <iframe src="weekly_report_prototype.html?v=1.0.182_w39" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
+                    <iframe src="weekly_report_prototype.html?v=1.0.183_w39" style="width:100%; height:100%; border:none;" title="二쇨컙蹂닿퀬??></iframe>
                   </div>
                 </div>
               </div>
@@ -1241,141 +1176,141 @@
 
   </main>
 
-  <!-- 견적서 상세 모달 다이얼로그 (PC 버전 100% 동일 포맷) -->
+  <!-- 寃ъ쟻???곸꽭 紐⑤떖 ?ㅼ씠?쇰줈洹?(PC 踰꾩쟾 100% ?숈씪 ?щ㎎) -->
   <div class="modal-backdrop" id="quotDetailModal">
     <div class="modal-dialog quotation-dialog-lg">
       <div class="modal-header">
-        <h3 id="modalQuotTitle">견적서 상세 정보</h3>
+        <h3 id="modalQuotTitle">寃ъ쟻???곸꽭 ?뺣낫</h3>
         <button class="close-btn" id="btnCloseQuotModal">&times;</button>
       </div>
       <div class="modal-body" id="modalQuotBody">
-        <!-- PC 버전 동일 ERP 격자 렌더링 -->
+        <!-- PC 踰꾩쟾 ?숈씪 ERP 寃⑹옄 ?뚮뜑留?-->
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm" id="btnModalPrintQuot" style="background:#27ae60;border-color:#27ae60;color:#fff;">인쇄 / PDF</button>
-        <button class="action-btn-sm" id="btnModalCopyQuotText" style="background:#3b82f6;border-color:#3b82f6;color:#fff;">전체 복사</button>
-        <button class="action-btn-sm secondary" id="btnModalClose">닫기</button>
+        <button class="action-btn-sm" id="btnModalPrintQuot" style="background:#27ae60;border-color:#27ae60;color:#fff;">?몄뇙 / PDF</button>
+        <button class="action-btn-sm" id="btnModalCopyQuotText" style="background:#3b82f6;border-color:#3b82f6;color:#fff;">?꾩껜 蹂듭궗</button>
+        <button class="action-btn-sm secondary" id="btnModalClose">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 계약검토서(Project) 상세 모달 다이얼로그 -->
+  <!-- 怨꾩빟寃?좎꽌(Project) ?곸꽭 紐⑤떖 ?ㅼ씠?쇰줈洹?-->
   <div class="modal-backdrop" id="contractDetailModal">
     <div class="modal-dialog quotation-dialog-lg">
       <div class="modal-header">
-        <h3 id="modalContractTitle">계약검토서 상세 정보</h3>
+        <h3 id="modalContractTitle">怨꾩빟寃?좎꽌 ?곸꽭 ?뺣낫</h3>
         <button class="close-btn" id="btnCloseContractModal">&times;</button>
       </div>
       <div class="modal-body" id="modalContractBody">
-        <!-- 계약검토서 상세 내용 렌더링 -->
+        <!-- 怨꾩빟寃?좎꽌 ?곸꽭 ?댁슜 ?뚮뜑留?-->
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm" id="btnModalPrintContract" style="background:#27ae60;border-color:#27ae60;color:#fff;">인쇄 / PDF</button>
-        <button class="action-btn-sm secondary" id="btnModalCloseContract">닫기</button>
+        <button class="action-btn-sm" id="btnModalPrintContract" style="background:#27ae60;border-color:#27ae60;color:#fff;">?몄뇙 / PDF</button>
+        <button class="action-btn-sm secondary" id="btnModalCloseContract">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 설정 및 업데이트 모달 다이얼로그 -->
+  <!-- ?ㅼ젙 諛??낅뜲?댄듃 紐⑤떖 ?ㅼ씠?쇰줈洹?-->
   <div class="modal-backdrop" id="settingsModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>시스템 정보 & 업데이트</h3>
+        <h3>?쒖뒪???뺣낫 & ?낅뜲?댄듃</h3>
         <button class="close-btn" id="btnCloseSettingsModal">&times;</button>
       </div>
       <div class="modal-body">
-        <!-- 언어 설정 섹션 -->
+        <!-- ?몄뼱 ?ㅼ젙 ?뱀뀡 -->
         <div class="setting-item" id="settingItemLanguage">
-          <label id="lblSettingLang">언어 설정 (Language):</label>
+          <label id="lblSettingLang">?몄뼱 ?ㅼ젙 (Language):</label>
           <div style="display:flex; gap:8px; margin-top:6px;">
-            <button type="button" class="action-btn-sm" id="btnLangKo" onclick="setAppLanguage('ko')" style="flex:1; padding:8px 12px; font-size:12.5px; font-weight:700; border-radius:6px; cursor:pointer;">한국어 (Korean)</button>
+            <button type="button" class="action-btn-sm" id="btnLangKo" onclick="setAppLanguage('ko')" style="flex:1; padding:8px 12px; font-size:12.5px; font-weight:700; border-radius:6px; cursor:pointer;">?쒓뎅??(Korean)</button>
             <button type="button" class="action-btn-sm secondary" id="btnLangEn" onclick="setAppLanguage('en')" style="flex:1; padding:8px 12px; font-size:12.5px; font-weight:700; border-radius:6px; cursor:pointer;">English</button>
           </div>
-          <div style="font-size:11.5px; color:var(--text-muted); margin-top:5px; line-height:1.4;" id="lblSettingLangDesc">모바일 웹앱의 모든 메뉴, 검색 필터, 탭 헤더가 선택한 언어로 즉시 전환됩니다.</div>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:5px; line-height:1.4;" id="lblSettingLangDesc">紐⑤컮???뱀빋??紐⑤뱺 硫붾돱, 寃???꾪꽣, ???ㅻ뜑媛 ?좏깮???몄뼱濡?利됱떆 ?꾪솚?⑸땲??</div>
         </div>
 
         <div class="setting-item">
-          <label id="lblSettingEnv">동작 환경 (오프라인 지원):</label>
+          <label id="lblSettingEnv">?숈옉 ?섍꼍 (?ㅽ봽?쇱씤 吏??:</label>
           <div id="boxSettingEnv" style="background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;font-size:12px;color:#cbd5e1;line-height:1.6;">
-            • <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>
-            • <strong>탑재 데이터</strong>: 출하 계획 110,000+건, 견적서 22,000+건, 계약검토서(Project) 2,300+건, 도면 2,900+건, 사내 FAQ 내장.
+            ??<strong>?낅┰ ?ㅽ뻾 紐⑤뱶</strong>: ?щ궡 Wi-Fi??PC ?곌껐 ?놁씠 ?ㅻ쭏?명룿 ?⑤룆?쇰줈 ?묐룞?⑸땲??<br>
+            ??<strong>?묒옱 ?곗씠??/strong>: 異쒗븯 怨꾪쉷 110,000+嫄? 寃ъ쟻??22,000+嫄? 怨꾩빟寃?좎꽌(Project) 2,300+嫄? ?щ궡 FAQ ?댁옣.
           </div>
         </div>
         <div class="setting-item">
-          <label id="lblSettingVer">앱 버전 정보:</label>
+          <label id="lblSettingVer">??踰꾩쟾 ?뺣낫:</label>
           <div class="version-box">
-            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.182</strong></span>
-            <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
+            <span><span id="lblCurrentVerPrefix">?꾩옱 踰꾩쟾:</span> <strong id="currentAppVersion">v1.0.183</strong></span>
+            <button class="action-btn-sm" id="btnCheckAppUpdate">?낅뜲?댄듃 ?뺤씤</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
         </div>
         <div class="setting-item">
-          <label id="lblSettingAdmin">관리자 전용 메뉴:</label>
+          <label id="lblSettingAdmin">愿由ъ옄 ?꾩슜 硫붾돱:</label>
           <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
-            <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%;">관리자 출하 DB 업데이트</button>
-            <button class="action-btn-sm primary" id="btnSettingsOpenFaqManager" style="width:100%; background:#6366f1; border-color:#6366f1;">사내 FAQ 지식베이스 관리</button>
+            <button class="action-btn-sm warning" id="btnSettingsOpenAdminDb" style="width:100%;">愿由ъ옄 異쒗븯 DB ?낅뜲?댄듃</button>
+            <button class="action-btn-sm primary" id="btnSettingsOpenFaqManager" style="width:100%; background:#6366f1; border-color:#6366f1;">?щ궡 FAQ 吏?앸쿋?댁뒪 愿由?/button>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm secondary" id="btnCloseSettings">닫기</button>
+        <button class="action-btn-sm secondary" id="btnCloseSettings">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 관리자 전용 출하 DB 업데이트 모달 -->
+  <!-- 愿由ъ옄 ?꾩슜 異쒗븯 DB ?낅뜲?댄듃 紐⑤떖 -->
   <div class="modal-backdrop" id="adminDbModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>관리자 출하 DB 업데이트</h3>
+        <h3>愿由ъ옄 異쒗븯 DB ?낅뜲?댄듃</h3>
         <button class="close-btn" id="btnCloseAdminDbModal">&times;</button>
       </div>
       <div class="modal-body">
-        <!-- Step 1: PIN 인증 -->
+        <!-- Step 1: PIN ?몄쬆 -->
         <div id="adminAuthSection" class="admin-section">
           <p style="font-size:13px; color:#94a3b8; margin-bottom:12px;">
-            출하 계획 데이터베이스를 갱신하려면 관리자 보안 PIN을 입력하세요.
+            異쒗븯 怨꾪쉷 ?곗씠?곕쿋?댁뒪瑜?媛깆떊?섎젮硫?愿由ъ옄 蹂댁븞 PIN???낅젰?섏꽭??
           </p>
           <div class="form-group" style="display:flex; gap:8px;">
-            <input type="password" id="adminPinInput" class="form-input" placeholder="관리자 PIN 입력" maxlength="8" style="text-align:center; font-size:16px; letter-spacing:4px;" />
-            <button class="action-btn-sm primary" id="btnVerifyAdminPin">인증</button>
+            <input type="password" id="adminPinInput" class="form-input" placeholder="愿由ъ옄 PIN ?낅젰" maxlength="8" style="text-align:center; font-size:16px; letter-spacing:4px;" />
+            <button class="action-btn-sm primary" id="btnVerifyAdminPin">?몄쬆</button>
           </div>
           <div id="adminAuthError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
         </div>
 
-        <!-- Step 2: 엑셀 업로드 및 배포 (인증 후 표시) -->
+        <!-- Step 2: ?묒? ?낅줈??諛?諛고룷 (?몄쬆 ???쒖떆) -->
         <div id="adminUploadSection" class="admin-section" style="display:none;">
           <div class="admin-badge-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span style="font-size:12px; color:#10b981; font-weight:600;">관리자 인증 완료</span>
-            <button class="action-btn-sm secondary" id="btnAdminLogout" style="font-size:11px; padding:2px 8px;">로그아웃</button>
+            <span style="font-size:12px; color:#10b981; font-weight:600;">愿由ъ옄 ?몄쬆 ?꾨즺</span>
+            <button class="action-btn-sm secondary" id="btnAdminLogout" style="font-size:11px; padding:2px 8px;">濡쒓렇?꾩썐</button>
           </div>
 
           <div class="admin-dropzone" id="adminDropzone">
             <input type="file" id="adminFileInput" accept=".xls,.xlsx,.csv" style="display:none;" />
             <div class="dropzone-icon" style="font-size:16px;font-weight:700;color:#3b82f6;">FILE</div>
-            <div class="dropzone-text">최신 출하 엑셀 파일(Excel.xls, .xlsx)을<br><strong>여기에 끌어다 놓거나 터치하여 선택</strong>하세요.</div>
-            <div class="dropzone-sub">사내 전산 ExportShipPlan 양식 자동 파싱 (58,000+건)</div>
+            <div class="dropzone-text">理쒖떊 異쒗븯 ?묒? ?뚯씪(Excel.xls, .xlsx)??br><strong>?ш린???뚯뼱???볤굅???곗튂?섏뿬 ?좏깮</strong>?섏꽭??</div>
+            <div class="dropzone-sub">?щ궡 ?꾩궛 ExportShipPlan ?묒떇 ?먮룞 ?뚯떛 (58,000+嫄?</div>
           </div>
 
-          <!-- 파싱 분석 요약 카드 -->
+          <!-- ?뚯떛 遺꾩꽍 ?붿빟 移대뱶 -->
           <div id="adminFileSummary" class="admin-summary-card" style="display:none;">
             <div class="summary-title" id="adminSummaryFileName">Excel.xls</div>
             <div class="summary-grid">
               <div class="summary-stat">
-                <span class="stat-label">총 출하 건수</span>
-                <span class="stat-value" id="adminSummaryTotal">0건</span>
+                <span class="stat-label">珥?異쒗븯 嫄댁닔</span>
+                <span class="stat-value" id="adminSummaryTotal">0嫄?/span>
               </div>
               <div class="summary-stat">
-                <span class="stat-label">데이터 기준일자</span>
-                <input type="date" id="adminDataDateInput" class="form-input" style="padding:2px 6px;font-size:13px;font-weight:700;color:#10b981;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:4px;width:135px;" title="적용할 데이터 기준일자를 직접 확인 및 수정할 수 있습니다" />
+                <span class="stat-label">?곗씠??湲곗??쇱옄</span>
+                <input type="date" id="adminDataDateInput" class="form-input" style="padding:2px 6px;font-size:13px;font-weight:700;color:#10b981;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:4px;width:135px;" title="?곸슜???곗씠??湲곗??쇱옄瑜?吏곸젒 ?뺤씤 諛??섏젙?????덉뒿?덈떎" />
               </div>
             </div>
           </div>
 
-          <!-- 배포 진행 상태 바 -->
+          <!-- 諛고룷 吏꾪뻾 ?곹깭 諛?-->
           <div id="adminProgressSection" style="display:none; margin-top:14px;">
             <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-              <span id="adminProgressLabel" style="color:#94a3b8;">배포 준비 중...</span>
+              <span id="adminProgressLabel" style="color:#94a3b8;">諛고룷 以鍮?以?..</span>
               <span id="adminProgressPercent" style="font-weight:700; color:#3b82f6;">0%</span>
             </div>
             <div class="admin-progress-bar-bg">
@@ -1385,489 +1320,435 @@
         </div>
       </div>
       <div class="modal-footer" id="adminModalFooter">
-        <button class="action-btn-sm primary" id="btnApplyAdminDeploy" style="display:none;">전체 웹앱에 배포 적용</button>
-        <button class="action-btn-sm secondary" id="btnCloseAdminDb">닫기</button>
+        <button class="action-btn-sm primary" id="btnApplyAdminDeploy" style="display:none;">?꾩껜 ?뱀빋??諛고룷 ?곸슜</button>
+        <button class="action-btn-sm secondary" id="btnCloseAdminDb">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 새 기능 요청 등록 모달 -->
+  <!-- ??湲곕뒫 ?붿껌 ?깅줉 紐⑤떖 -->
   <div class="modal-backdrop" id="feedbackNewModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>새 기능 추가 요청 등록</h3>
+        <h3>??湲곕뒫 異붽? ?붿껌 ?깅줉</h3>
         <button class="close-btn" id="btnCloseFeedbackNewModal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group" style="margin-bottom:12px;">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">작성자 (부서 / 이름) <span style="color:#f43f5e;">*</span></label>
-          <input type="text" id="feedbackAuthorInput" class="form-input" placeholder="예: 해외영업부 홍길동" style="width:100%;" maxlength="20" />
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">?묒꽦??(遺??/ ?대쫫) <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="feedbackAuthorInput" class="form-input" placeholder="?? ?댁쇅?곸뾽遺 ?띻만?? style="width:100%;" maxlength="20" />
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">요청 제목 <span style="color:#f43f5e;">*</span></label>
-          <input type="text" id="feedbackTitleInput" class="form-input" placeholder="추가되었으면 하는 기능을 한 줄로 요약해 주세요" style="width:100%;" maxlength="50" />
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">?붿껌 ?쒕ぉ <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="feedbackTitleInput" class="form-input" placeholder="異붽??섏뿀?쇰㈃ ?섎뒗 湲곕뒫????以꾨줈 ?붿빟??二쇱꽭?? style="width:100%;" maxlength="50" />
         </div>
         <div class="form-group">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">상세 요청 내용 <span style="color:#f43f5e;">*</span></label>
-          <textarea id="feedbackContentInput" class="form-input" rows="5" placeholder="구체적인 사용 상황이나 필요한 세부 사항을 적어주세요." style="width:100%;resize:vertical;"></textarea>
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">?곸꽭 ?붿껌 ?댁슜 <span style="color:#f43f5e;">*</span></label>
+          <textarea id="feedbackContentInput" class="form-input" rows="5" placeholder="援ъ껜?곸씤 ?ъ슜 ?곹솴?대굹 ?꾩슂???몃? ?ы빆???곸뼱二쇱꽭??" style="width:100%;resize:vertical;"></textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnSubmitNewFeedback">등록하기</button>
-        <button class="action-btn-sm secondary" id="btnCancelFeedbackNew">취소</button>
+        <button class="action-btn-sm primary" id="btnSubmitNewFeedback">?깅줉?섍린</button>
+        <button class="action-btn-sm secondary" id="btnCancelFeedbackNew">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- 관리자 답변 및 상태 변경 모달 -->
+  <!-- 愿由ъ옄 ?듬? 諛??곹깭 蹂寃?紐⑤떖 -->
   <div class="modal-backdrop" id="feedbackReplyModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3>관리자 답변 작성 및 상태 변경</h3>
+        <h3>愿由ъ옄 ?듬? ?묒꽦 諛??곹깭 蹂寃?/h3>
         <button class="close-btn" id="btnCloseFeedbackReplyModal">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="feedbackTargetId" />
         <div id="feedbackTargetPreview" style="background:rgba(255,255,255,0.04);padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px;color:#cbd5e1;line-height:1.5;"></div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">처리 상태 변경</label>
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">泥섎━ ?곹깭 蹂寃?/label>
           <select id="feedbackReplyStatusSelect" class="form-input" style="width:100%;">
-            <option value="pending">검토 중</option>
-            <option value="replied">답변 완료</option>
-            <option value="applied">반영 완료</option>
+            <option value="pending">寃??以?/option>
+            <option value="replied">?듬? ?꾨즺</option>
+            <option value="applied">諛섏쁺 ?꾨즺</option>
           </select>
         </div>
         <div class="form-group">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">관리자 공식 답변</label>
-          <textarea id="feedbackReplyTextInput" class="form-input" rows="5" placeholder="해당 요청 사항에 대한 검토 의견 또는 반영 일정을 작성해 주세요." style="width:100%;resize:vertical;"></textarea>
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">愿由ъ옄 怨듭떇 ?듬?</label>
+          <textarea id="feedbackReplyTextInput" class="form-input" rows="5" placeholder="?대떦 ?붿껌 ?ы빆?????寃???섍껄 ?먮뒗 諛섏쁺 ?쇱젙???묒꽦??二쇱꽭??" style="width:100%;resize:vertical;"></textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnSubmitAdminReply">답변 저장</button>
-        <button class="action-btn-sm danger" id="btnDeleteFeedbackPost">삭제</button>
-        <button class="action-btn-sm secondary" id="btnCancelFeedbackReply">닫기</button>
+        <button class="action-btn-sm primary" id="btnSubmitAdminReply">?듬? ???/button>
+        <button class="action-btn-sm danger" id="btnDeleteFeedbackPost">??젣</button>
+        <button class="action-btn-sm secondary" id="btnCancelFeedbackReply">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 게시판 관리자 PIN 인증 모달 (모바일 prompt() 차단 원천 해결) -->
+  <!-- 寃뚯떆??愿由ъ옄 PIN ?몄쬆 紐⑤떖 (紐⑤컮??prompt() 李⑤떒 ?먯쿇 ?닿껐) -->
   <div class="modal-backdrop" id="boardAdminPinModal">
     <div class="modal-dialog" style="max-width:360px;">
       <div class="modal-header">
-        <h3>관리자 모드 인증</h3>
+        <h3>愿由ъ옄 紐⑤뱶 ?몄쬆</h3>
         <button class="close-btn" id="btnCloseBoardPinModal">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-size:13px; color:#94a3b8; margin-bottom:12px; line-height:1.5;">
-          기능 요청 게시판 답변 작성 및 관리 권한을 활성화하려면 관리자 PIN 번호를 입력하세요.
+          湲곕뒫 ?붿껌 寃뚯떆???듬? ?묒꽦 諛?愿由?沅뚰븳???쒖꽦?뷀븯?ㅻ㈃ 愿由ъ옄 PIN 踰덊샇瑜??낅젰?섏꽭??
         </p>
         <div class="form-group" style="margin-bottom:8px;">
-          <input type="password" id="boardPinInput" class="form-input" placeholder="관리자 PIN 입력" maxlength="8" style="text-align:center; font-size:18px; letter-spacing:4px; width:100%;" />
+          <input type="password" id="boardPinInput" class="form-input" placeholder="愿由ъ옄 PIN ?낅젰" maxlength="8" style="text-align:center; font-size:18px; letter-spacing:4px; width:100%;" />
         </div>
         <div id="boardPinError" class="auth-error-msg" style="color:#f43f5e; font-size:12px; margin-top:6px; display:none;"></div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnVerifyBoardPin">인증</button>
-        <button class="action-btn-sm secondary" id="btnCancelBoardPin">취소</button>
+        <button class="action-btn-sm primary" id="btnVerifyBoardPin">?몄쬆</button>
+        <button class="action-btn-sm secondary" id="btnCancelBoardPin">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- 게시글 삭제 확인 전용 모달 (모바일 confirm() 차단 원천 해결) -->
+  <!-- 寃뚯떆湲 ??젣 ?뺤씤 ?꾩슜 紐⑤떖 (紐⑤컮??confirm() 李⑤떒 ?먯쿇 ?닿껐) -->
   <div class="modal-backdrop" id="feedbackDeleteModal">
     <div class="modal-dialog" style="max-width:380px;">
       <div class="modal-header">
-        <h3 style="color:#f43f5e;">게시글 삭제 확인</h3>
+        <h3 style="color:#f43f5e;">寃뚯떆湲 ??젣 ?뺤씤</h3>
         <button class="close-btn" id="btnCloseFeedbackDeleteModal">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="feedbackDeleteTargetId" />
         <p style="font-size:14px; color:#f8fafc; font-weight:600; margin-bottom:8px;" id="feedbackDeleteTitlePreview">
-          선택한 기능 요청 게시글을 삭제하시겠습니까?
+          ?좏깮??湲곕뒫 ?붿껌 寃뚯떆湲????젣?섏떆寃좎뒿?덇퉴?
         </p>
         <p style="font-size:12px; color:#94a3b8; margin-bottom:0; line-height:1.5;">
-          삭제된 요청 내용 및 관리자 답변은 복구할 수 없습니다. 정말로 삭제하시겠습니까?
+          ??젣???붿껌 ?댁슜 諛?愿由ъ옄 ?듬?? 蹂듦뎄?????놁뒿?덈떎. ?뺣쭚濡???젣?섏떆寃좎뒿?덇퉴?
         </p>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm danger" id="btnConfirmDeleteFeedback">삭제하기</button>
-        <button class="action-btn-sm secondary" id="btnCancelDeleteFeedback">취소</button>
+        <button class="action-btn-sm danger" id="btnConfirmDeleteFeedback">??젣?섍린</button>
+        <button class="action-btn-sm secondary" id="btnCancelDeleteFeedback">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- FAQ 등록 및 수정 전용 모달 (사진, PDF, 엑셀, 워드, 영상 최대 30MB 첨부 지원) -->
+  <!-- FAQ ?깅줉 諛??섏젙 ?꾩슜 紐⑤떖 (?ъ쭊, PDF, ?묒?, ?뚮뱶, ?곸긽 理쒕? 30MB 泥⑤? 吏?? -->
   <div class="modal-backdrop" id="faqEditModal">
     <div class="modal-dialog quotation-dialog-lg" style="max-width:680px;">
       <div class="modal-header">
-        <h3 id="faqModalTitle">사내 FAQ 지식 등록 / 수정</h3>
+        <h3 id="faqModalTitle">?щ궡 FAQ 吏???깅줉 / ?섏젙</h3>
         <button class="close-btn" id="btnCloseFaqEditModal">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="faqEditIndex" value="-1" />
         <div class="form-group" style="margin-bottom:12px;">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">질문 (Question) <span style="color:#f43f5e;">*</span></label>
-          <input type="text" id="faqQuestionInput" class="form-input" placeholder="예: 위탁재고(Consignment) 거래 방식과 정산 주기" style="width:100%;" maxlength="150" />
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">吏덈Ц (Question) <span style="color:#f43f5e;">*</span></label>
+          <input type="text" id="faqQuestionInput" class="form-input" placeholder="?? ?꾪긽?ш퀬(Consignment) 嫄곕옒 諛⑹떇怨??뺤궛 二쇨린" style="width:100%;" maxlength="150" />
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">카테고리 / 핵심 검색 키워드 (쉼표로 구분)</label>
-          <input type="text" id="faqCategoryInput" class="form-input" placeholder="예: 인코텀즈, 위탁재고, 출하요청, 해외영업" style="width:100%;" />
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">移댄뀒怨좊━ / ?듭떖 寃???ㅼ썙??(?쇳몴濡?援щ텇)</label>
+          <input type="text" id="faqCategoryInput" class="form-input" placeholder="?? ?몄퐫?利? ?꾪긽?ш퀬, 異쒗븯?붿껌, ?댁쇅?곸뾽" style="width:100%;" />
         </div>
         <div class="form-group" style="margin-bottom:12px;">
           <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">
-            작성자 비밀번호 (4자리 숫자) <span style="color:#f43f5e;">*</span>
-            <span style="font-size:11px;color:#64748b;margin-left:6px;">(차후 수정 및 삭제 시 본인 확인에 사용됩니다)</span>
+            ?묒꽦??鍮꾨?踰덊샇 (4?먮━ ?レ옄) <span style="color:#f43f5e;">*</span>
+            <span style="font-size:11px;color:#64748b;margin-left:6px;">(李⑦썑 ?섏젙 諛???젣 ??蹂몄씤 ?뺤씤???ъ슜?⑸땲??</span>
           </label>
-          <input type="password" id="faqAuthorPinInput" class="form-input" placeholder="4자리 숫자 (예: 1234)" maxlength="4" style="width:180px;letter-spacing:4px;font-weight:700;" inputmode="numeric" pattern="[0-9]*" />
+          <input type="password" id="faqAuthorPinInput" class="form-input" placeholder="4?먮━ ?レ옄 (?? 1234)" maxlength="4" style="width:180px;letter-spacing:4px;font-weight:700;" inputmode="numeric" pattern="[0-9]*" />
         </div>
         <div class="form-group" style="margin-bottom:14px;">
-          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">상세 답변 내용 (Answer) <span style="color:#f43f5e;">*</span></label>
-          <textarea id="faqAnswerInput" class="form-input" rows="7" placeholder="상세 업무 절차, 규정, 유의사항 등을 입력하세요. 줄바꿈과 마크다운 형식을 지원합니다." style="width:100%;resize:vertical;"></textarea>
+          <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;">?곸꽭 ?듬? ?댁슜 (Answer) <span style="color:#f43f5e;">*</span></label>
+          <textarea id="faqAnswerInput" class="form-input" rows="7" placeholder="?곸꽭 ?낅Т ?덉감, 洹쒖젙, ?좎쓽?ы빆 ?깆쓣 ?낅젰?섏꽭?? 以꾨컮轅덇낵 留덊겕?ㅼ슫 ?뺤떇??吏?먰빀?덈떎." style="width:100%;resize:vertical;"></textarea>
         </div>
 
-        <!-- 파일 첨부 섹션 (사진, PDF, 엑셀, 워드, 동영상 최대 30MB) -->
+        <!-- ?뚯씪 泥⑤? ?뱀뀡 (?ъ쭊, PDF, ?묒?, ?뚮뱶, ?숈쁺??理쒕? 30MB) -->
         <div class="form-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <label style="font-size:12px;color:#94a3b8;">첨부 파일 (사진, PDF, 엑셀, 워드, 영상 최대 30MB)</label>
-            <span style="font-size:11px;color:#10b981;" id="faqAttachSizeIndicator">0개 첨부됨 (파일당 최대 30MB)</span>
+            <label style="font-size:12px;color:#94a3b8;">泥⑤? ?뚯씪 (?ъ쭊, PDF, ?묒?, ?뚮뱶, ?곸긽 理쒕? 30MB)</label>
+            <span style="font-size:11px;color:#10b981;" id="faqAttachSizeIndicator">0媛?泥⑤???(?뚯씪??理쒕? 30MB)</span>
           </div>
           <div class="faq-attach-dropzone" id="faqDropzone">
             <input type="file" id="faqFileInput" accept="image/*,video/*,.pdf,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.csv" multiple style="display:none;" />
-            <div style="font-size:13px;color:#cbd5e1;padding-top:8px;">파일을 여기로 끌어다 놓거나 <strong>터치하여 파일 선택</strong></div>
-            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">JPG, PNG, PDF, Excel, Word, MP4 등 (파일당 최대 30MB)</div>
+            <div style="font-size:13px;color:#cbd5e1;padding-top:8px;">?뚯씪???ш린濡??뚯뼱???볤굅??<strong>?곗튂?섏뿬 ?뚯씪 ?좏깮</strong></div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">JPG, PNG, PDF, Excel, Word, MP4 ??(?뚯씪??理쒕? 30MB)</div>
           </div>
           <div id="faqAttachedList" class="faq-attached-items-container" style="margin-top:8px;"></div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnSaveFaqEdit">FAQ 저장</button>
-        <button class="action-btn-sm secondary" id="btnCancelFaqEdit">취소</button>
+        <button class="action-btn-sm primary" id="btnSaveFaqEdit">FAQ ???/button>
+        <button class="action-btn-sm secondary" id="btnCancelFaqEdit">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- FAQ 삭제 확인 모달 -->
+  <!-- FAQ ??젣 ?뺤씤 紐⑤떖 -->
   <div class="modal-backdrop" id="faqDeleteModal">
     <div class="modal-dialog" style="max-width:380px;">
       <div class="modal-header">
-        <h3 style="color:#f43f5e;">FAQ 삭제 확인</h3>
+        <h3 style="color:#f43f5e;">FAQ ??젣 ?뺤씤</h3>
         <button class="close-btn" id="btnCloseFaqDeleteModal">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="faqDeleteTargetIndex" />
         <p style="font-size:14px; color:#f8fafc; font-weight:600; margin-bottom:8px;" id="faqDeleteTitlePreview">
-          해당 FAQ 항목을 삭제하시겠습니까?
+          ?대떦 FAQ ??ぉ????젣?섏떆寃좎뒿?덇퉴?
         </p>
         <p style="font-size:12px; color:#94a3b8; margin-bottom:0; line-height:1.5;">
-          삭제된 FAQ는 챗봇 질의응답에서도 즉시 제외됩니다. 정말로 삭제하시겠습니까?
+          ??젣??FAQ??梨쀫큸 吏덉쓽?묐떟?먯꽌??利됱떆 ?쒖쇅?⑸땲?? ?뺣쭚濡???젣?섏떆寃좎뒿?덇퉴?
         </p>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm danger" id="btnConfirmDeleteFaq">삭제하기</button>
-        <button class="action-btn-sm secondary" id="btnCancelDeleteFaq">취소</button>
+        <button class="action-btn-sm danger" id="btnConfirmDeleteFaq">??젣?섍린</button>
+        <button class="action-btn-sm secondary" id="btnCancelDeleteFaq">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- FAQ 작성자 본인 확인 비밀번호 모달 (수정/삭제 권한 확인) -->
+  <!-- FAQ ?묒꽦??蹂몄씤 ?뺤씤 鍮꾨?踰덊샇 紐⑤떖 (?섏젙/??젣 沅뚰븳 ?뺤씤) -->
   <div class="modal-backdrop" id="faqAuthorPinModal">
     <div class="modal-dialog" style="max-width:360px;">
       <div class="modal-header">
-        <h3 style="color:#38bdf8;">작성자 비밀번호 확인</h3>
+        <h3 style="color:#38bdf8;">?묒꽦??鍮꾨?踰덊샇 ?뺤씤</h3>
         <button class="close-btn" id="btnCloseFaqAuthorPinModal">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="faqAuthTargetIndex" />
         <input type="hidden" id="faqAuthTargetAction" />
         <p style="font-size:13px; color:#cbd5e1; margin-bottom:10px; line-height:1.5;" id="faqAuthorPinPromptText">
-          FAQ 수정/삭제를 위해 등록 시 설정한 4자리 비밀번호를 입력해 주세요.
+          FAQ ?섏젙/??젣瑜??꾪빐 ?깅줉 ???ㅼ젙??4?먮━ 鍮꾨?踰덊샇瑜??낅젰??二쇱꽭??
         </p>
         <div class="form-group" style="margin-bottom:8px;">
-          <input type="password" id="faqAuthorPinCheckInput" class="form-input" placeholder="4자리 숫자 입력" maxlength="4" style="width:100%;font-size:20px;text-align:center;letter-spacing:6px;font-weight:700;" inputmode="numeric" pattern="[0-9]*" />
+          <input type="password" id="faqAuthorPinCheckInput" class="form-input" placeholder="4?먮━ ?レ옄 ?낅젰" maxlength="4" style="width:100%;font-size:20px;text-align:center;letter-spacing:6px;font-weight:700;" inputmode="numeric" pattern="[0-9]*" />
         </div>
         <div id="faqAuthorPinError" style="color:#f43f5e;font-size:12px;display:none;margin-bottom:8px;text-align:center;">
-          비밀번호가 일치하지 않습니다.
+          鍮꾨?踰덊샇媛 ?쇱튂?섏? ?딆뒿?덈떎.
         </div>
         <div style="font-size:11px; color:#94a3b8; text-align:center;">
-          ※ 관리자는 마스터 PIN으로 언제든 처리할 수 있습니다.
+          ??愿由ъ옄??留덉뒪??PIN?쇰줈 ?몄젣??泥섎━?????덉뒿?덈떎.
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnVerifyFaqAuthorPin">확인</button>
-        <button class="action-btn-sm secondary" id="btnCancelFaqAuthorPin">취소</button>
+        <button class="action-btn-sm primary" id="btnVerifyFaqAuthorPin">?뺤씤</button>
+        <button class="action-btn-sm secondary" id="btnCancelFaqAuthorPin">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- 미디어 확대 보기 라이트박스 모달 -->
+  <!-- 誘몃뵒???뺣? 蹂닿린 ?쇱씠?몃컯??紐⑤떖 -->
   <div class="modal-backdrop" id="faqMediaLightboxModal">
     <div class="modal-dialog" style="max-width:90vw; background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.15);">
       <div class="modal-header">
-        <h3 id="faqLightboxTitle" style="font-size:14px; color:#e2e8f0;">미디어 미리보기</h3>
+        <h3 id="faqLightboxTitle" style="font-size:14px; color:#e2e8f0;">誘몃뵒??誘몃━蹂닿린</h3>
         <button class="close-btn" id="btnCloseFaqLightbox">&times;</button>
       </div>
       <div class="modal-body" id="faqLightboxBody" style="text-align:center; padding:15px; max-height:80vh; overflow:auto;">
         <!-- Image or Video injected dynamically -->
       </div>
       <div class="modal-footer">
-        <a id="faqLightboxDownloadBtn" class="action-btn-sm primary" download style="text-decoration:none;">다운로드</a>
-        <button class="action-btn-sm secondary" id="btnCloseFaqLightbox2">닫기</button>
+        <a id="faqLightboxDownloadBtn" class="action-btn-sm primary" download style="text-decoration:none;">?ㅼ슫濡쒕뱶</a>
+        <button class="action-btn-sm secondary" id="btnCloseFaqLightbox2">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 사내 도면 보안 PIN 인증 모달 (보안 자산 보호: PIN 0404) -->
-  <div class="modal-backdrop" id="drawingPinModal">
-    <div class="modal-dialog" style="max-width:380px;">
-      <div class="modal-header">
-        <h3 style="color:#38bdf8;">사내 도면 보안 인증</h3>
-        <button class="close-btn" id="btnCloseDrawingPinModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:14px;">
-          IC Tray 도면은 회사의 중요한 핵심 기술 자산입니다.<br>
-          도면 열람 및 다운로드를 위해 <strong>4자리 보안 PIN</strong>을 입력해 주세요.
-        </div>
-        <input type="hidden" id="drawingPinTargetIndex" />
-        <div class="form-group" style="margin-bottom:8px;">
-          <input type="password" id="drawingPinInput" class="form-input" placeholder="보안 PIN 4자리 입력" maxlength="8" style="width:100%;font-size:18px;letter-spacing:6px;text-align:center;font-weight:700;" inputmode="numeric" />
-        </div>
-        <div id="drawingPinError" style="font-size:12px;color:#f43f5e;display:none;margin-top:6px;text-align:center;">
-          보안 PIN 번호가 일치하지 않습니다.
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnVerifyDrawingPin">인증 확인</button>
-        <button class="action-btn-sm secondary" id="btnCancelDrawingPin">취소</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- 도면 상세 정보 및 리비전별 다운로드 모달 -->
-  <div class="modal-backdrop" id="drawingDetailModal">
-    <div class="modal-dialog quotation-dialog-lg" style="max-width:760px;">
-      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 id="drawingDetailTitle" style="margin:0;font-size:17px;font-weight:700;color:#f8fafc;">도면 상세 정보</h3>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <button class="action-btn-sm secondary" id="btnCopyDrawingSummary" style="font-size:11px;padding:3px 10px;">요약 복사</button>
-          <button class="close-btn" id="btnCloseDrawingDetailModal">&times;</button>
-        </div>
-      </div>
-      <div class="modal-body" style="max-height:calc(85vh - 120px);overflow-y:auto;">
-        <!-- 상단 모델 스펙 요약 카드 -->
-        <div id="drawingDetailSpecArea" style="margin-bottom:16px;"></div>
-
-        <!-- 등록된 리비전별 도면 파일 목록 -->
-        <div style="font-size:14px;font-weight:700;color:#f8fafc;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
-          <span>등록 도면 파일 목록</span>
-          <span id="drawingDetailFileCount" style="font-size:12px;color:#38bdf8;font-weight:600;"></span>
-        </div>
-        <div id="drawingDetailFileList" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="action-btn-sm secondary" id="btnCloseDrawingDetail">닫기</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 자료실 상세 모달 다이얼로그 -->
+  <!-- ?먮즺???곸꽭 紐⑤떖 ?ㅼ씠?쇰줈洹?-->
   <div class="modal-backdrop" id="archiveDetailModal">
     <div class="modal-dialog modal-dialog-lg" style="max-width:760px;">
       <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h3 id="modalArchiveTitle" style="margin:0;font-size:17px;font-weight:700;color:#f8fafc;">프로그램 상세 정보</h3>
+          <h3 id="modalArchiveTitle" style="margin:0;font-size:17px;font-weight:700;color:#f8fafc;">?꾨줈洹몃옩 ?곸꽭 ?뺣낫</h3>
         </div>
         <button class="close-btn" id="btnCloseArchiveDetailModal">&times;</button>
       </div>
       <div class="modal-body" id="modalArchiveBody" style="max-height:calc(85vh - 120px);overflow-y:auto;">
         <div class="archive-detail-meta-bar">
           <div class="archive-meta-item">
-            <span class="meta-label">버전:</span>
+            <span class="meta-label">踰꾩쟾:</span>
             <span class="meta-val highlight" id="modalArchiveVer">-</span>
           </div>
           <div class="archive-meta-item">
-            <span class="meta-label">작성자:</span>
+            <span class="meta-label">?묒꽦??</span>
             <span class="meta-val" id="modalArchiveAuthor">-</span>
           </div>
           <div class="archive-meta-item">
-            <span class="meta-label">등록일:</span>
+            <span class="meta-label">?깅줉??</span>
             <span class="meta-val" id="modalArchiveDate">-</span>
           </div>
           <div class="archive-meta-item">
-            <span class="meta-label">다운로드:</span>
-            <span class="meta-val" id="modalArchiveDownloads">0회</span>
+            <span class="meta-label">?ㅼ슫濡쒕뱶:</span>
+            <span class="meta-val" id="modalArchiveDownloads">0??/span>
           </div>
         </div>
 
         <div class="archive-detail-section">
-          <h4 class="archive-section-title">자료 요약</h4>
+          <h4 class="archive-section-title">?먮즺 ?붿빟</h4>
           <p id="modalArchiveSummary" class="archive-summary-text">-</p>
         </div>
 
         <div class="archive-detail-section">
-          <h4 class="archive-section-title">프로그램 설명 및 사용 가이드</h4>
+          <h4 class="archive-section-title">?꾨줈洹몃옩 ?ㅻ챸 諛??ъ슜 媛?대뱶</h4>
           <div id="modalArchiveDesc" class="archive-desc-box">-</div>
         </div>
 
         <div class="archive-detail-section" id="modalArchiveAttachmentsSection" style="display:none;">
-          <h4 class="archive-section-title">첨부 파일</h4>
+          <h4 class="archive-section-title">泥⑤? ?뚯씪</h4>
           <div id="modalArchiveAttachmentsList" class="archive-attachments-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;"></div>
         </div>
 
         <div class="archive-detail-section" id="modalArchiveTagsSection">
-          <h4 class="archive-section-title">관련 태그</h4>
+          <h4 class="archive-section-title">愿???쒓렇</h4>
           <div id="modalArchiveTags" class="archive-tags-list"></div>
         </div>
 
         <div class="archive-detail-section" id="modalArchiveDownloadsSection">
-          <h4 class="archive-section-title">다운로드 및 저장소 링크</h4>
+          <h4 class="archive-section-title">?ㅼ슫濡쒕뱶 諛???μ냼 留곹겕</h4>
           <div id="modalArchiveLinks" class="archive-links-list"></div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnModalArchiveDownload">다운로드 바로가기</button>
-        <a class="action-btn-sm" id="btnModalArchiveGithub" target="_blank" rel="noopener noreferrer" style="background:#24292e; border-color:#444d56; color:#fff; text-decoration:none; display:none;">GitHub 저장소</a>
-        <button class="action-btn-sm secondary" id="btnCloseArchiveDetail">닫기</button>
+        <button class="action-btn-sm primary" id="btnModalArchiveDownload">?ㅼ슫濡쒕뱶 諛붾줈媛湲?/button>
+        <a class="action-btn-sm" id="btnModalArchiveGithub" target="_blank" rel="noopener noreferrer" style="background:#24292e; border-color:#444d56; color:#fff; text-decoration:none; display:none;">GitHub ??μ냼</a>
+        <button class="action-btn-sm secondary" id="btnCloseArchiveDetail">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 자료실 자료 등록 및 수정 모달 -->
+  <!-- ?먮즺???먮즺 ?깅줉 諛??섏젙 紐⑤떖 -->
   <div class="modal-backdrop" id="archiveEditModal">
     <div class="modal-dialog modal-dialog-md" style="max-width:620px;">
       <div class="modal-header">
-        <h3 id="modalArchiveEditTitle" style="margin:0;font-size:16px;font-weight:700;color:#f8fafc;">새 자료 등록</h3>
+        <h3 id="modalArchiveEditTitle" style="margin:0;font-size:16px;font-weight:700;color:#f8fafc;">???먮즺 ?깅줉</h3>
         <button class="close-btn" id="btnCloseArchiveEditModal">&times;</button>
       </div>
       <div class="modal-body" style="max-height:calc(85vh - 120px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;">
         <input type="hidden" id="archiveEditId" value="" />
         <div class="form-group">
-          <label for="archiveInputTitle" style="font-size:12px;font-weight:600;color:#cbd5e1;">프로그램 / 자료명 <span style="color:#ef4444;">*</span></label>
-          <input type="text" id="archiveInputTitle" class="form-control" placeholder="예: KOSTAT ERP 전산 통합 프로그램" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
+          <label for="archiveInputTitle" style="font-size:12px;font-weight:600;color:#cbd5e1;">?꾨줈洹몃옩 / ?먮즺紐?<span style="color:#ef4444;">*</span></label>
+          <input type="text" id="archiveInputTitle" class="form-control" placeholder="?? KOSTAT ERP ?꾩궛 ?듯빀 ?꾨줈洹몃옩" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
           <div class="form-group">
-            <label for="archiveInputVersion" style="font-size:12px;font-weight:600;color:#cbd5e1;">버전</label>
-            <input type="text" id="archiveInputVersion" class="form-control" placeholder="예: v1.0.0" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
+            <label for="archiveInputVersion" style="font-size:12px;font-weight:600;color:#cbd5e1;">踰꾩쟾</label>
+            <input type="text" id="archiveInputVersion" class="form-control" placeholder="?? v1.0.0" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
           </div>
           <div class="form-group">
-            <label for="archiveInputAuthor" style="font-size:12px;font-weight:600;color:#cbd5e1;">작성자 / 개발자 <span style="color:#ef4444;">*</span></label>
-            <input type="text" id="archiveInputAuthor" class="form-control" placeholder="예: 신경섭" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
+            <label for="archiveInputAuthor" style="font-size:12px;font-weight:600;color:#cbd5e1;">?묒꽦??/ 媛쒕컻??<span style="color:#ef4444;">*</span></label>
+            <input type="text" id="archiveInputAuthor" class="form-control" placeholder="?? ?좉꼍?? required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
           </div>
           <div class="form-group">
-            <label for="archiveInputPin" style="font-size:12px;font-weight:600;color:#cbd5e1;">비밀번호 <span style="color:#ef4444;">*</span> <span style="font-size:10px;color:var(--text-secondary);">(4자리)</span></label>
-            <input type="password" id="archiveInputPin" class="form-control" maxlength="4" placeholder="4자리" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;letter-spacing:3px;" />
+            <label for="archiveInputPin" style="font-size:12px;font-weight:600;color:#cbd5e1;">鍮꾨?踰덊샇 <span style="color:#ef4444;">*</span> <span style="font-size:10px;color:var(--text-secondary);">(4?먮━)</span></label>
+            <input type="password" id="archiveInputPin" class="form-control" maxlength="4" placeholder="4?먮━" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;letter-spacing:3px;" />
           </div>
         </div>
         <div class="form-group">
-          <label for="archiveInputDesc" style="font-size:12px;font-weight:600;color:#cbd5e1;">상세 설명 및 사용 가이드 <span style="color:#ef4444;">*</span></label>
-          <textarea id="archiveInputDesc" class="form-control" rows="5" placeholder="기능 소개, 설치 및 실행 방법, 요구사항 등을 자유롭게 작성해 주세요." required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;resize:vertical;"></textarea>
+          <label for="archiveInputDesc" style="font-size:12px;font-weight:600;color:#cbd5e1;">?곸꽭 ?ㅻ챸 諛??ъ슜 媛?대뱶 <span style="color:#ef4444;">*</span></label>
+          <textarea id="archiveInputDesc" class="form-control" rows="5" placeholder="湲곕뒫 ?뚭컻, ?ㅼ튂 諛??ㅽ뻾 諛⑸쾿, ?붽뎄?ы빆 ?깆쓣 ?먯쑀濡?쾶 ?묒꽦??二쇱꽭??" required style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;resize:vertical;"></textarea>
         </div>
         <div class="form-group">
           <label style="font-size:12px;font-weight:600;color:#cbd5e1;display:flex;justify-content:space-between;align-items:center;">
-            <span>첨부 파일 (엑셀, PDF, 이미지, 워드 등)</span>
-            <span id="archiveAttachSizeIndicator" style="font-size:11px;color:var(--text-secondary);">0개 첨부됨 (파일당 최대 30MB)</span>
+            <span>泥⑤? ?뚯씪 (?묒?, PDF, ?대?吏, ?뚮뱶 ??</span>
+            <span id="archiveAttachSizeIndicator" style="font-size:11px;color:var(--text-secondary);">0媛?泥⑤???(?뚯씪??理쒕? 30MB)</span>
           </label>
           <div class="faq-attach-dropzone" id="archiveAttachDropzone" style="margin-top:6px;cursor:pointer;">
             <input type="file" id="archiveFileInput" multiple accept=".xlsx,.xls,.csv,.pdf,.docx,.doc,.pptx,.txt,.png,.jpg,.jpeg,.gif,.webp,.zip" style="display:none;" />
-            <div style="font-size:13px;color:#cbd5e1;font-weight:600;">파일을 마우스로 끌어다 놓거나 클릭하여 선택</div>
-            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">지원 포맷: Excel(.xlsx, .xls, .csv), PDF, Word(.docx, .doc, .pptx), 이미지, 압축파일 등</div>
+            <div style="font-size:13px;color:#cbd5e1;font-weight:600;">?뚯씪??留덉슦?ㅻ줈 ?뚯뼱???볤굅???대┃?섏뿬 ?좏깮</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">吏???щ㎎: Excel(.xlsx, .xls, .csv), PDF, Word(.docx, .doc, .pptx), ?대?吏, ?뺤텞?뚯씪 ??/div>
           </div>
           <div id="archiveAttachedList" class="faq-attached-items-container" style="margin-top:8px;"></div>
         </div>
         <div class="form-group">
-          <label for="archiveInputDownloadUrl" style="font-size:12px;font-weight:600;color:#cbd5e1;">다운로드 링크 (URL)</label>
-          <input type="url" id="archiveInputDownloadUrl" class="form-control" placeholder="예: https://github.com/.../releases 또는 사내 공유 링크" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
+          <label for="archiveInputDownloadUrl" style="font-size:12px;font-weight:600;color:#cbd5e1;">?ㅼ슫濡쒕뱶 留곹겕 (URL)</label>
+          <input type="url" id="archiveInputDownloadUrl" class="form-control" placeholder="?? https://github.com/.../releases ?먮뒗 ?щ궡 怨듭쑀 留곹겕" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
         </div>
         <div class="form-group">
-          <label for="archiveInputGithubUrl" style="font-size:12px;font-weight:600;color:#cbd5e1;">GitHub 저장소 링크 (선택)</label>
-          <input type="url" id="archiveInputGithubUrl" class="form-control" placeholder="예: https://github.com/skywantae/KOSTAT-ERP-Chatbot" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
+          <label for="archiveInputGithubUrl" style="font-size:12px;font-weight:600;color:#cbd5e1;">GitHub ??μ냼 留곹겕 (?좏깮)</label>
+          <input type="url" id="archiveInputGithubUrl" class="form-control" placeholder="?? https://github.com/skywantae/KOSTAT-ERP-Chatbot" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
         </div>
         <div class="form-group">
-          <label for="archiveInputTags" style="font-size:12px;font-weight:600;color:#cbd5e1;">관련 태그 (쉼표로 구분)</label>
-          <input type="text" id="archiveInputTags" class="form-control" placeholder="예: ERP, 출하계획, 자동화, 파이썬" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
+          <label for="archiveInputTags" style="font-size:12px;font-weight:600;color:#cbd5e1;">愿???쒓렇 (?쇳몴濡?援щ텇)</label>
+          <input type="text" id="archiveInputTags" class="form-control" placeholder="?? ERP, 異쒗븯怨꾪쉷, ?먮룞?? ?뚯씠?? style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:13px;" />
         </div>
         <div class="form-group" style="display:flex;align-items:center;gap:8px;">
           <input type="checkbox" id="archiveInputPinned" style="width:16px;height:16px;cursor:pointer;" />
-          <label for="archiveInputPinned" style="margin:0;cursor:pointer;font-size:13px;font-weight:600;color:#f8fafc;">상단 고정 추천 자료로 지정</label>
+          <label for="archiveInputPinned" style="margin:0;cursor:pointer;font-size:13px;font-weight:600;color:#f8fafc;">?곷떒 怨좎젙 異붿쿇 ?먮즺濡?吏??/label>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm primary" id="btnSaveArchive">등록 완료</button>
-        <button class="action-btn-sm secondary" id="btnCancelArchiveEdit">취소</button>
+        <button class="action-btn-sm primary" id="btnSaveArchive">?깅줉 ?꾨즺</button>
+        <button class="action-btn-sm secondary" id="btnCancelArchiveEdit">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- 자료실 삭제 확인 모달 -->
+  <!-- ?먮즺????젣 ?뺤씤 紐⑤떖 -->
   <div class="modal-backdrop" id="archiveDeleteModal">
     <div class="modal-dialog modal-dialog-sm" style="max-width:400px;">
       <div class="modal-header">
-        <h3 style="margin:0;font-size:16px;font-weight:700;color:#f8fafc;">자료 삭제 확인</h3>
+        <h3 style="margin:0;font-size:16px;font-weight:700;color:#f8fafc;">?먮즺 ??젣 ?뺤씤</h3>
         <button class="close-btn" id="btnCloseArchiveDeleteModal">&times;</button>
       </div>
       <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
         <input type="hidden" id="archiveDeleteTargetId" value="" />
         <p style="font-size:13px;color:var(--text-secondary);margin:0;">
-          삭제 대상: <strong id="archiveDeleteTitlePreview" style="color:var(--text-primary);">-</strong>
+          ??젣 ??? <strong id="archiveDeleteTitlePreview" style="color:var(--text-primary);">-</strong>
         </p>
         <div class="form-group">
-          <label for="archiveDeletePinInput" style="font-size:12px;font-weight:600;color:#cbd5e1;">작성자 비밀번호 (4자리 PIN) 또는 관리자 암호</label>
-          <input type="password" id="archiveDeletePinInput" class="form-control" maxlength="10" placeholder="PIN 번호 입력" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:14px;letter-spacing:3px;text-align:center;" />
+          <label for="archiveDeletePinInput" style="font-size:12px;font-weight:600;color:#cbd5e1;">?묒꽦??鍮꾨?踰덊샇 (4?먮━ PIN) ?먮뒗 愿由ъ옄 ?뷀샇</label>
+          <input type="password" id="archiveDeletePinInput" class="form-control" maxlength="10" placeholder="PIN 踰덊샇 ?낅젰" style="width:100%;padding:8px 10px;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f8fafc;font-size:14px;letter-spacing:3px;text-align:center;" />
           <div id="archiveDeleteError" style="font-size:12px;color:#ef4444;margin-top:4px;display:none;"></div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn-sm danger" id="btnConfirmDeleteArchive">영구 삭제</button>
-        <button class="action-btn-sm secondary" id="btnCancelDeleteArchive">취소</button>
+        <button class="action-btn-sm danger" id="btnConfirmDeleteArchive">?곴뎄 ??젣</button>
+        <button class="action-btn-sm secondary" id="btnCancelDeleteArchive">痍⑥냼</button>
       </div>
     </div>
   </div>
 
-  <!-- 필리핀 지사 리포트 현장 사진 확인 모달 -->
+  <!-- ?꾨━? 吏??由ы룷???꾩옣 ?ъ쭊 ?뺤씤 紐⑤떖 -->
   <div class="modal-overlay" id="phPhotoModal" style="display:none;" onclick="if(event.target===this) closePhPhotoModal()">
     <div class="modal-box" style="max-width:850px; width:94%; max-height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden;">
       <div class="modal-header" style="padding:12px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); background:var(--bg-card-sub);">
-        <div id="phPhotoModalTitle" style="font-weight:700; font-size:14px; color:var(--text-primary);">첨부 사진 확인</div>
+        <div id="phPhotoModalTitle" style="font-weight:700; font-size:14px; color:var(--text-primary);">泥⑤? ?ъ쭊 ?뺤씤</div>
         <button class="modal-close-btn" onclick="closePhPhotoModal()" style="background:none; border:none; font-size:20px; color:var(--text-muted); cursor:pointer;">&times;</button>
       </div>
       <div class="modal-body" style="padding:16px; overflow:auto; text-align:center; background:#111827;">
-        <img id="phPhotoModalImg" src="" style="max-width:100%; max-height:68vh; object-fit:contain; border-radius:6px; box-shadow:0 4px 16px rgba(0,0,0,0.5);" alt="필리핀 현장 사진" />
+        <img id="phPhotoModalImg" src="" style="max-width:100%; max-height:68vh; object-fit:contain; border-radius:6px; box-shadow:0 4px 16px rgba(0,0,0,0.5);" alt="?꾨━? ?꾩옣 ?ъ쭊" />
         <div id="phPhotoModalCaption" style="margin-top:10px; font-size:12px; color:#e5e7eb; line-height:1.5;"></div>
       </div>
       <div class="modal-footer" style="padding:10px 16px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); background:var(--bg-card-sub);">
-        <a id="phPhotoModalDownload" href="" download="ph_photo.png" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px;">원본 다운로드</a>
-        <button class="btn-modal-cancel" onclick="closePhPhotoModal()" style="padding:5px 14px; font-size:12px; cursor:pointer;">닫기</button>
+        <a id="phPhotoModalDownload" href="" download="ph_photo.png" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px;">?먮낯 ?ㅼ슫濡쒕뱶</a>
+        <button class="btn-modal-cancel" onclick="closePhPhotoModal()" style="padding:5px 14px; font-size:12px; cursor:pointer;">?リ린</button>
       </div>
     </div>
   </div>
 
-  <!-- 내장 로컬 데이터베이스 번들 (0.001초 직통 로더) -->
-  <script src="data/shipplan_data.js?v=1.0.182"></script>
-  <script src="data/quotations_data.js?v=1.0.182"></script>
-  <script src="data/contract_reviews_data.js?v=1.0.182"></script>
-  <script src="data/drawings_data.js?v=1.0.182"></script>
-  <script src="data/knowledge_data.js?v=1.0.182"></script>
-  <script src="data/faq_db.js?v=1.0.182"></script>
-  <script src="data/feedback_board.js?v=1.0.182"></script>
-  <script src="data/archive_data.js?v=1.0.182"></script>
-  <script src="data/gimpo_tray_stock_data.js?v=1.0.182"></script>
-  <script src="data/vietnam_tray_stock_data.js?v=1.0.182"></script>
-  <script src="data/taichang_tray_stock_data.js?v=1.0.182"></script>
-  <script src="data/taichang_ct_tray_stock_data.js?v=1.0.182"></script>
-  <script src="data/huizhou_tray_stock_data.js?v=1.0.182"></script>
-  <script src="data/ph_daily_report_data.js?v=1.0.182"></script>
-  <script src="data/ph_weekly_forecast_data.js?v=1.0.182"></script>
-  <script src="data/overseas_sales_targets_2026.js?v=1.0.182"></script>
-  <script src="data/overseas_monthly_actuals_2026.js?v=1.0.182"></script>
-  <script src="data/weekly_report_live.js?v=1.0.182"></script>
-  <script src="data/overseas_samples_2026.js?v=1.0.182"></script>
-  <script src="data/weekly_master_meta.js?v=1.0.182"></script>
+  <!-- ?댁옣 濡쒖뺄 ?곗씠?곕쿋?댁뒪 踰덈뱾 (0.001珥?吏곹넻 濡쒕뜑) -->
+  <script src="data/shipplan_data.js?v=1.0.183"></script>
+  <script src="data/quotations_data.js?v=1.0.183"></script>
+  <script src="data/contract_reviews_data.js?v=1.0.183"></script>
+  <script src="data/knowledge_data.js?v=1.0.183"></script>
+  <script src="data/faq_db.js?v=1.0.183"></script>
+  <script src="data/feedback_board.js?v=1.0.183"></script>
+  <script src="data/archive_data.js?v=1.0.183"></script>
+  <script src="data/gimpo_tray_stock_data.js?v=1.0.183"></script>
+  <script src="data/vietnam_tray_stock_data.js?v=1.0.183"></script>
+  <script src="data/taichang_tray_stock_data.js?v=1.0.183"></script>
+  <script src="data/taichang_ct_tray_stock_data.js?v=1.0.183"></script>
+  <script src="data/huizhou_tray_stock_data.js?v=1.0.183"></script>
+  <script src="data/ph_daily_report_data.js?v=1.0.183"></script>
+  <script src="data/ph_weekly_forecast_data.js?v=1.0.183"></script>
+  <script src="data/overseas_sales_targets_2026.js?v=1.0.183"></script>
+  <script src="data/overseas_monthly_actuals_2026.js?v=1.0.183"></script>
+  <script src="data/weekly_report_live.js?v=1.0.183"></script>
+  <script src="data/overseas_samples_2026.js?v=1.0.183"></script>
+  <script src="data/weekly_master_meta.js?v=1.0.183"></script>
   
-  <script src="xlsx.full.min.js?v=1.0.182"></script>
-  <script src="exceljs.min.js?v=1.0.182"></script>
-  <script src="updater.js?v=1.0.182"></script>
-  <script src="app.js?v=1.0.182"></script>
+  <script src="xlsx.full.min.js?v=1.0.183"></script>
+  <script src="exceljs.min.js?v=1.0.183"></script>
+  <script src="updater.js?v=1.0.183"></script>
+  <script src="app.js?v=1.0.183"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
@@ -1891,7 +1772,8 @@
     }
   </script>
   
-  <!-- 인쇄 전용 컨테이너 (숨김 처리됨, 인쇄시에만 노출) -->
+  <!-- ?몄뇙 ?꾩슜 而⑦뀒?대꼫 (?④? 泥섎━?? ?몄뇙?쒖뿉留??몄텧) -->
   <div id="printContainer" class="print-only"></div>
 </body>
 </html>
+
