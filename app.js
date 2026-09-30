@@ -841,11 +841,13 @@ const APP_I18N = {
     stock_tab_gimpo: '김포 공장 재고 현황리스트',
     stock_tab_vietnam: '베트남 공장 재고 현황리스트',
     stock_tab_taichang: '태창 공장 재고 현황리스트',
+    stock_tab_taichang_ct: '태창 C/T 공장 재고 현황리스트',
     stock_tab_huizhou: '혜주 공장 재고 현황리스트',
 
     stock_gimpo_title: '김포 공장 Tray 재고 현황리스트',
     stock_vietnam_title: '베트남 공장 Tray 재고 현황리스트',
     stock_taichang_title: '태창 공장 Tray 재고 현황리스트',
+    stock_taichang_ct_title: '태창 C/T 공장 재고 현황리스트',
     stock_huizhou_title: '혜주 공장 Tray 재고 현황리스트',
 
     btn_download_excel_source: '엑셀 원본 다운로드',
@@ -856,11 +858,13 @@ const APP_I18N = {
     stock_badge_gimpo: '김포 검색',
     stock_badge_vietnam: '베트남 검색',
     stock_badge_taichang: '태창 검색',
+    stock_badge_taichang_ct: '태창 C/T 검색',
     stock_badge_huizhou: '혜주 검색',
 
     gimpo_search_holder: 'PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색...',
     vietnam_search_holder: '전산코드, PART NO, 모델명, 고객사, 온도, Rev 검색...',
     taichang_search_holder: '전산코드, PART NO, 규격, 고객사, 무역방식 검색...',
+    taichang_ct_search_holder: '전산코드, PART NO, 고객사, 무역방식, 출하처 검색...',
     huizhou_search_holder: '전산코드, PART NO, 규격, 고객사, 무역방식 검색...',
     stock_search_hint: '실시간 다중 키워드 필터링 지원',
 
@@ -898,6 +902,7 @@ const APP_I18N = {
     th_tc_aging: '장기재고',
     th_tc_hold: '보류품',
     th_tc_trade: '무역방식',
+    th_tc_ct_dest: '출하처',
     th_tc_curstock: '현재고',
 
     // Huizhou Table Headers
@@ -1034,11 +1039,13 @@ const APP_I18N = {
     stock_tab_gimpo: 'Gimpo Factory Stock List',
     stock_tab_vietnam: 'Vietnam Factory Stock List',
     stock_tab_taichang: 'Taichang Factory Stock List',
+    stock_tab_taichang_ct: 'Taichang C/T Factory Stock List',
     stock_tab_huizhou: 'Huizhou Factory Stock List',
 
     stock_gimpo_title: 'Gimpo Factory Tray Stock List',
     stock_vietnam_title: 'Vietnam Factory Tray Stock List',
     stock_taichang_title: 'Taichang Factory Tray Stock List',
+    stock_taichang_ct_title: 'Taichang C/T Factory Stock List',
     stock_huizhou_title: 'Huizhou Factory Tray Stock List',
 
     btn_download_excel_source: 'Download Source Excel',
@@ -1049,11 +1056,13 @@ const APP_I18N = {
     stock_badge_gimpo: 'GIMPO',
     stock_badge_vietnam: 'VIETNAM',
     stock_badge_taichang: 'TAICHANG',
+    stock_badge_taichang_ct: 'TAICHANG C/T',
     stock_badge_huizhou: 'HUIZHOU',
 
     gimpo_search_holder: 'Search PART NO, Mat Code, Spec, Customer, Temp, Remark...',
     vietnam_search_holder: 'Search System Code, PART NO, Model, Customer, Temp, Rev...',
     taichang_search_holder: 'Search System Code, PART NO, Spec, Customer, Trade Mode...',
+    taichang_ct_search_holder: 'Search System Code, PART NO, Customer, Trade Mode, Destination...',
     huizhou_search_holder: 'Search System Code, PART NO, Spec, Customer, Trade Mode...',
     stock_search_hint: 'Multi-keyword instant search',
 
@@ -1091,6 +1100,7 @@ const APP_I18N = {
     th_tc_aging: 'Aging Stock',
     th_tc_hold: 'Hold Stock',
     th_tc_trade: 'Trade Mode',
+    th_tc_ct_dest: 'Destination',
     th_tc_curstock: 'Current Stock',
 
     // Huizhou Table Headers
@@ -1381,13 +1391,15 @@ function applyAppLanguage(lang) {
   }
 
 
-  // 11. 재고 현황리스트 (Stocklists - 김포, 베트남, 태창, 혜주 4대 공장) i18n
+  // 11. 재고 현황리스트 (Stocklists - 김포, 베트남, 태창, 태창 C/T, 혜주 5개 라인) i18n
   const btnStockTabGimpo = document.getElementById('btnStockTabGimpo');
   if (btnStockTabGimpo) btnStockTabGimpo.textContent = t.stock_tab_gimpo;
   const btnStockTabVietnam = document.getElementById('btnStockTabVietnam');
   if (btnStockTabVietnam) btnStockTabVietnam.textContent = t.stock_tab_vietnam;
   const btnStockTabTaichang = document.getElementById('btnStockTabTaichang');
   if (btnStockTabTaichang) btnStockTabTaichang.textContent = t.stock_tab_taichang;
+  const btnStockTabTaichangCt = document.getElementById('btnStockTabTaichangCt');
+  if (btnStockTabTaichangCt) btnStockTabTaichangCt.textContent = t.stock_tab_taichang_ct;
   const btnStockTabHuizhou = document.getElementById('btnStockTabHuizhou');
   if (btnStockTabHuizhou) btnStockTabHuizhou.textContent = t.stock_tab_huizhou;
 
@@ -1397,15 +1409,17 @@ function applyAppLanguage(lang) {
   if (titleVietnamStock) titleVietnamStock.textContent = t.stock_vietnam_title;
   const titleTaichangStock = document.getElementById('titleTaichangStock');
   if (titleTaichangStock) titleTaichangStock.textContent = t.stock_taichang_title;
+  const titleTaichangCtStock = document.getElementById('titleTaichangCtStock');
+  if (titleTaichangCtStock) titleTaichangCtStock.textContent = t.stock_taichang_ct_title;
   const titleHuizhouStock = document.getElementById('titleHuizhouStock');
   if (titleHuizhouStock) titleHuizhouStock.textContent = t.stock_huizhou_title;
 
-  ['btnGimpoRefresh', 'btnVietnamRefresh', 'btnTaichangRefresh', 'btnHuizhouRefresh'].forEach(id => {
+  ['btnGimpoRefresh', 'btnVietnamRefresh', 'btnTaichangRefresh', 'btnTaichangCtRefresh', 'btnHuizhouRefresh'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = t.btn_refresh_stock;
   });
 
-  ['gimpoDownloadBtnText', 'vietnamDownloadBtnText', 'taichangDownloadBtnText', 'huizhouDownloadBtnText'].forEach(id => {
+  ['gimpoDownloadBtnText', 'vietnamDownloadBtnText', 'taichangDownloadBtnText', 'taichangCtDownloadBtnText', 'huizhouDownloadBtnText'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = t.btn_download_excel_source;
   });
@@ -1421,6 +1435,8 @@ function applyAppLanguage(lang) {
   if (vietnamSearchBadgeText) vietnamSearchBadgeText.textContent = t.stock_badge_vietnam;
   const taichangSearchBadgeText = document.getElementById('taichangSearchBadgeText');
   if (taichangSearchBadgeText) taichangSearchBadgeText.textContent = t.stock_badge_taichang;
+  const taichangCtSearchBadgeText = document.getElementById('taichangCtSearchBadgeText');
+  if (taichangCtSearchBadgeText) taichangCtSearchBadgeText.textContent = t.stock_badge_taichang_ct;
   const huizhouSearchBadgeText = document.getElementById('huizhouSearchBadgeText');
   if (huizhouSearchBadgeText) huizhouSearchBadgeText.textContent = t.stock_badge_huizhou;
 
@@ -1430,10 +1446,12 @@ function applyAppLanguage(lang) {
   if (vietnamSearchInput) vietnamSearchInput.placeholder = t.vietnam_search_holder;
   const taichangSearchInput = document.getElementById('taichangSearchInput');
   if (taichangSearchInput) taichangSearchInput.placeholder = t.taichang_search_holder;
+  const taichangCtSearchInput = document.getElementById('taichangCtSearchInput');
+  if (taichangCtSearchInput) taichangCtSearchInput.placeholder = t.taichang_ct_search_holder;
   const huizhouSearchInput = document.getElementById('huizhouSearchInput');
   if (huizhouSearchInput) huizhouSearchInput.placeholder = t.huizhou_search_holder;
 
-  ['gimpoSearchHint', 'vietnamSearchHint', 'taichangSearchHint', 'huizhouSearchHint'].forEach(id => {
+  ['gimpoSearchHint', 'vietnamSearchHint', 'taichangSearchHint', 'taichangCtSearchHint', 'huizhouSearchHint'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = t.stock_search_hint;
   });
@@ -1461,6 +1479,12 @@ function applyAppLanguage(lang) {
     tcThs.forEach((th, idx) => { if (thd[idx]) th.textContent = thd[idx]; });
   }
 
+  const tcCtThs = document.querySelectorAll('#taichangCtStockTable thead th');
+  if (tcCtThs && tcCtThs.length >= 11) {
+    const thdCt = [t.th_tc_syscode, t.th_tc_customer, t.th_tc_partno, t.th_tc_prevstock, t.th_tc_in, t.th_tc_out, t.th_tc_aging, t.th_tc_hold, t.th_tc_trade, t.th_tc_ct_dest, t.th_tc_curstock];
+    tcCtThs.forEach((th, idx) => { if (thdCt[idx]) th.textContent = thdCt[idx]; });
+  }
+
   const hzThs = document.querySelectorAll('#huizhouStockTable thead th');
   if (hzThs && hzThs.length >= 10) {
     const hhd = [t.th_hz_syscode, t.th_hz_customer, t.th_hz_partno, t.th_hz_prevstock, t.th_hz_in, t.th_hz_out, t.th_hz_wip, t.th_hz_plan, t.th_hz_trade, t.th_hz_curstock];
@@ -1471,12 +1495,14 @@ function applyAppLanguage(lang) {
   if (typeof updateGimpoHeaderAndMetrics === 'function' && _gimpoStockData) updateGimpoHeaderAndMetrics(_gimpoStockData);
   if (typeof updateVietnamHeaderAndMetrics === 'function' && _vietnamStockData) updateVietnamHeaderAndMetrics(_vietnamStockData);
   if (typeof updateTaichangHeaderAndMetrics === 'function' && _taichangStockData) updateTaichangHeaderAndMetrics(_taichangStockData);
+  if (typeof updateTaichangCtHeaderAndMetrics === 'function' && _taichangCtStockData) updateTaichangCtHeaderAndMetrics(_taichangCtStockData);
   if (typeof updateHuizhouHeaderAndMetrics === 'function' && _huizhouStockData) updateHuizhouHeaderAndMetrics(_huizhouStockData);
 
   // 현재 활성 서브탭 재렌더링
   if (_activeStockSubTab === 'stockSubGimpo' && _gimpoStockData) renderGimpoStock();
   else if (_activeStockSubTab === 'stockSubVietnam' && _vietnamStockData) renderVietnamStock();
   else if (_activeStockSubTab === 'stockSubTaichang' && _taichangStockData) renderTaichangStock();
+  else if (_activeStockSubTab === 'stockSubTaichangCt' && _taichangCtStockData) renderTaichangCtStock();
   else if (_activeStockSubTab === 'stockSubHuizhou' && _huizhouStockData) renderHuizhouStock();
 
   // 12. 주간보고서 iframe에 언어 전달
@@ -7596,8 +7622,8 @@ window.switchPhInnerTab = switchPhInnerTab;
 
 
 // =====================================================
-// 전사 4대 공장 Tray 재고 현황리스트 엔진
-// (김포공장, 베트남공장, 태창공장, 혜주공장)
+// 전사 5개 공장/라인 Tray 재고 현황리스트 엔진
+// (김포공장, 베트남공장, 태창공장, 태창 C/T, 혜주공장)
 // =====================================================
 
 let _activeStockSubTab = 'stockSubGimpo';
@@ -7607,6 +7633,8 @@ let _vietnamStockData = null;
 let _vietnamFilteredItems = [];
 let _taichangStockData = null;
 let _taichangFilteredItems = [];
+let _taichangCtStockData = null;
+let _taichangCtFilteredItems = [];
 let _huizhouStockData = null;
 let _huizhouFilteredItems = [];
 let _stockFetchingMap = {};
@@ -7641,6 +7669,9 @@ function switchStockSubTab(tabId, btn) {
   } else if (tabId === 'stockSubTaichang') {
     if (!_taichangStockData) initTaichangStock();
     else renderTaichangStock();
+  } else if (tabId === 'stockSubTaichangCt') {
+    if (!_taichangCtStockData) initTaichangCtStock();
+    else renderTaichangCtStock();
   } else if (tabId === 'stockSubHuizhou') {
     if (!_huizhouStockData) initHuizhouStock();
     else renderHuizhouStock();
@@ -7652,6 +7683,7 @@ function initStockViewer() {
   initGimpoStock();
   initVietnamStock();
   initTaichangStock();
+  initTaichangCtStock();
   initHuizhouStock();
 
   // 현재 활성 서브탭 표시
@@ -7669,18 +7701,21 @@ async function fetchLatestStock(factoryKey, isManual = false) {
     'gimpo': 'btnGimpoRefresh',
     'vietnam': 'btnVietnamRefresh',
     'taichang': 'btnTaichangRefresh',
+    'taichang_ct': 'btnTaichangCtRefresh',
     'huizhou': 'btnHuizhouRefresh'
   };
   const fileMap = {
     'gimpo': 'gimpo_tray_stock_data.json',
     'vietnam': 'vietnam_tray_stock_data.json',
     'taichang': 'taichang_tray_stock_data.json',
+    'taichang_ct': 'taichang_ct_tray_stock_data.json',
     'huizhou': 'huizhou_tray_stock_data.json'
   };
   const nameMap = {
     'gimpo': '김포 공장',
     'vietnam': '베트남 공장',
     'taichang': '태창 공장',
+    'taichang_ct': '태창 C/T 공장',
     'huizhou': '혜주 공장'
   };
 
@@ -7716,6 +7751,11 @@ async function fetchLatestStock(factoryKey, isManual = false) {
           _taichangStockData = data;
           filterTaichangStock();
           updateTaichangHeaderAndMetrics(data);
+        } else if (factoryKey === 'taichang_ct') {
+          window.KOSTAT_TAICHANG_CT_TRAY_STOCK = data;
+          _taichangCtStockData = data;
+          filterTaichangCtStock();
+          updateTaichangCtHeaderAndMetrics(data);
         } else if (factoryKey === 'huizhou') {
           window.KOSTAT_HUIZHOU_TRAY_STOCK = data;
           _huizhouStockData = data;
@@ -7748,6 +7788,7 @@ window.fetchLatestStock = fetchLatestStock;
 window.fetchLatestGimpoStock = (isManual) => fetchLatestStock('gimpo', isManual);
 window.fetchLatestVietnamStock = (isManual) => fetchLatestStock('vietnam', isManual);
 window.fetchLatestTaichangStock = (isManual) => fetchLatestStock('taichang', isManual);
+window.fetchLatestTaichangCtStock = (isManual) => fetchLatestStock('taichang_ct', isManual);
 window.fetchLatestHuizhouStock = (isManual) => fetchLatestStock('huizhou', isManual);
 
 // =====================================================
@@ -8100,6 +8141,130 @@ function clearTaichangSearch() {
   }
 }
 window.clearTaichangSearch = clearTaichangSearch;
+
+
+// =====================================================
+// 3-2. 태창 C/T 공장 재고 함수군
+// =====================================================
+function getTaichangCtValidItems(data) {
+  if (!data || !Array.isArray(data.items)) return [];
+  return data.items.filter(item => {
+    const p = (item.p || '').trim().toUpperCase();
+    const m = (item.m || '').toUpperCase();
+    if (!p) return false;
+    if (m.includes('합계') || m.includes('TOTAL') || m.includes('SUB-TOTAL') || m.includes('소계') || m.includes('총계') || m.includes('合计') || m.includes('总计') || m.includes('确认') || m.includes('확인')) return false;
+    if (p.includes('합계') || p.includes('TOTAL') || p.includes('SUB-TOTAL') || p.includes('合计') || p.includes('总计')) return false;
+    return true;
+  });
+}
+
+function initTaichangCtStock() {
+  _taichangCtStockData = window.KOSTAT_TAICHANG_CT_TRAY_STOCK || null;
+  if (_taichangCtStockData && _taichangCtStockData.items) {
+    _taichangCtFilteredItems = getTaichangCtValidItems(_taichangCtStockData);
+    updateTaichangCtHeaderAndMetrics(_taichangCtStockData);
+    renderTaichangCtStock();
+  }
+  fetchLatestStock('taichang_ct', false);
+}
+
+function updateTaichangCtHeaderAndMetrics(data) {
+  const isEn = AppState.currentLang === 'en';
+  const asOfEl = document.getElementById('taichangCtAsOfDate');
+  if (asOfEl) {
+    asOfEl.textContent = isEn
+      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
+      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+  }
+  const dlBtn = document.getElementById('btnDownloadTaichangCtExcel');
+  if (dlBtn && (data.download_url || data.download_url_latest)) {
+    dlBtn.href = data.download_url || data.download_url_latest;
+    if (data.source_file) dlBtn.setAttribute('download', data.source_file);
+  }
+}
+
+function renderTaichangCtStock() {
+  const tbody = document.getElementById('taichangCtStockTbody');
+  if (!tbody) return;
+
+  const isEn = AppState.currentLang === 'en';
+  const items = _taichangCtFilteredItems || [];
+  const count = document.getElementById('taichangCtResultCount');
+  if (count) {
+    const masterLen = (_taichangCtStockData && _taichangCtStockData.items) ? getTaichangCtValidItems(_taichangCtStockData).length : items.length;
+    count.textContent = isEn
+      ? `Results: ${formatNum(items.length)} (Total ${formatNum(masterLen)})`
+      : `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+  }
+
+  if (items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">${isEn ? 'No matching stock records found.' : '검색 결과가 없습니다.'}</td></tr>`;
+    return;
+  }
+
+  const displayItems = items.slice(0, 200);
+  let html = '';
+  for (const item of displayItems) {
+    const ttClass = item.tt > 0 ? 'color:var(--primary); font-weight:700;' : 'color:var(--text-dim);';
+    const inClass = item.in > 0 ? 'color:var(--success);' : 'color:var(--text-dim);';
+    const outClass = item.out > 0 ? 'color:var(--danger);' : 'color:var(--text-dim);';
+    const holdClass = item.hd > 0 ? 'color:var(--warning); font-weight:600;' : 'color:var(--text-dim);';
+
+    html += '<tr style="border-bottom:1px solid var(--border-color);">' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;">' + escapeHtml(item.m || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:85px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;color:var(--text-secondary);">' + formatNum(item.ps) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + inClass + '">' + formatNum(item.in) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + outClass + '">' + formatNum(item.out) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;color:var(--text-dim);">' + formatNum(item.lt) + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + holdClass + '">' + formatNum(item.hd) + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.tm || '-') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.dest || '-') + '</td>' +
+      '<td style="padding:6px;text-align:right;font-size:11px;' + ttClass + '">' + formatNum(item.tt) + '</td>' +
+      '</tr>';
+  }
+  if (items.length > 200) {
+    const moreText = isEn ? `and ${items.length - 200} more items (please narrow search)` : `외 ${items.length - 200}건 (검색어를 좁혀주세요)`;
+    html += `<tr><td colspan="11" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">${moreText}</td></tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function filterTaichangCtStock() {
+  if (!_taichangCtStockData) return;
+  const qInput = document.getElementById('taichangCtSearchInput');
+  const q = (qInput ? qInput.value : '').trim().toLowerCase();
+  const clearBtn = document.getElementById('btnTaichangCtSearchClear');
+  if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
+
+  const validItems = getTaichangCtValidItems(_taichangCtStockData);
+  if (!q) {
+    _taichangCtFilteredItems = validItems;
+  } else {
+    const terms = q.split(/\s+/);
+    _taichangCtFilteredItems = validItems.filter(item => {
+      const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''} ${item.dest || ''}`.toLowerCase();
+      return terms.every(t => target.includes(t));
+    });
+  }
+  renderTaichangCtStock();
+}
+window.filterTaichangCtStock = filterTaichangCtStock;
+
+function clearTaichangCtSearch() {
+  const qInput = document.getElementById('taichangCtSearchInput');
+  const clearBtn = document.getElementById('btnTaichangCtSearchClear');
+  if (qInput) { qInput.value = ''; qInput.focus(); }
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (_taichangCtStockData) {
+    _taichangCtFilteredItems = getTaichangCtValidItems(_taichangCtStockData);
+    renderTaichangCtStock();
+  }
+}
+window.clearTaichangCtSearch = clearTaichangCtSearch;
+window.initTaichangCtStock = initTaichangCtStock;
+window.renderTaichangCtStock = renderTaichangCtStock;
 
 
 // =====================================================

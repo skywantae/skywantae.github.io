@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kostat-pwa-v1.0.179'; // {AUTO_REPLACE_CACHE_VERSION}
+const CACHE_NAME = 'kostat-pwa-v1.0.180'; // {AUTO_REPLACE_CACHE_VERSION}
 
 const ASSETS_TO_CACHE = [
   './',
@@ -23,6 +23,7 @@ const ASSETS_TO_CACHE = [
   './data/gimpo_tray_stock_data.js',
   './data/vietnam_tray_stock_data.js',
   './data/taichang_tray_stock_data.js',
+  './data/taichang_ct_tray_stock_data.js',
   './data/huizhou_tray_stock_data.js',
   './data/ph_daily_report_data.js',
   './data/ph_weekly_forecast_data.js',
