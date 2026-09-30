@@ -935,12 +935,113 @@ const APP_I18N = {
     btn_download_excel: '엑셀 다운로드',
     btn_update_db: 'DB 업데이트',
     btn_new_feedback: '새 기능 요청 등록',
-    btn_archive_reg: '자료 등록',
+    btn_new_feedback_btn: '새 요청 등록',
+    btn_admin_mode: '관리자 모드',
+    btn_admin_mode_on: '관리자 모드 ON',
+    btn_archive_reg: '새 자료 등록',
+    btn_new_faq: '새 FAQ 등록',
+    btn_deploy: '배포 적용',
+    btn_backup: '백업',
+    btn_restore: '복원',
+    btn_print_pdf: 'PDF 인쇄',
     btn_open_full: '전체화면 새 창 열기',
     btn_close: '닫기',
     btn_verify: '인증',
+    btn_verify_confirm: '인증 확인',
     btn_copy_summary: '요약 복사',
+    btn_copy_all: '전체 복사',
     btn_check_update: '업데이트 확인',
+    btn_submit: '등록하기',
+    btn_cancel: '취소',
+    btn_save: '저장',
+    btn_save_reply: '답변 저장',
+    btn_save_faq: 'FAQ 저장',
+    btn_save_doc: '등록 완료',
+    btn_delete: '삭제',
+    btn_delete_confirm: '삭제하기',
+    btn_delete_permanent: '영구 삭제',
+    btn_download_link: '다운로드 바로가기',
+    btn_download_file: '다운로드',
+    btn_download_sspc: 'SSPC 매출 엑셀 파일 다운로드 (.xlsx)',
+    btn_reset_sspc: '다른 파일 선택',
+
+    // Select Options
+    opt_all_status: '전체 상태',
+    opt_in_review: '검토 중',
+    opt_replied: '답변 완료',
+    opt_applied: '반영 완료',
+    opt_in_progress: '진행중',
+    opt_completed: '완료',
+    opt_all_series: '전체 시리즈',
+    opt_show_all: '전체보기',
+
+    // Modals
+    modal_quot_title: '견적서 상세 정보',
+    modal_contract_title: '계약검토서 상세 정보',
+    modal_feedback_new_title: '새 기능 추가 요청 등록',
+    modal_feedback_author_holder: '예: 해외영업부 홍길동',
+    modal_feedback_title_holder: '추가되었으면 하는 기능을 한 줄로 요약해 주세요',
+    modal_feedback_content_holder: '구체적인 사용 상황이나 필요한 세부 사항을 적어주세요.',
+    modal_feedback_reply_title: '관리자 답변 작성 및 상태 변경',
+    modal_feedback_reply_holder: '해당 요청 사항에 대한 검토 의견 또는 반영 일정을 작성해 주세요.',
+    modal_board_pin_title: '관리자 모드 인증',
+    modal_board_pin_desc: '기능 요청 게시판 답변 작성 및 관리 권한을 활성화하려면 관리자 PIN 번호를 입력하세요.',
+    modal_board_pin_holder: '관리자 PIN 입력',
+    modal_feedback_del_title: '게시글 삭제 확인',
+    modal_drawing_pin_title: '사내 도면 보안 인증',
+    modal_drawing_pin_desc: 'IC Tray 도면은 회사의 중요한 핵심 기술 자산입니다.<br>도면 열람 및 다운로드를 위해 <strong>4자리 보안 PIN</strong>을 입력해 주세요.',
+    modal_drawing_pin_holder: '보안 PIN 4자리 입력',
+    modal_drawing_detail_title: '도면 상세 정보',
+    modal_faq_edit_title: '사내 FAQ 지식 등록 / 수정',
+    modal_faq_question_holder: '예: 위탁재고(Consignment) 거래 방식과 정산 주기',
+    modal_faq_category_holder: '예: 인코텀즈, 위탁재고, 출하요청, 해외영업',
+    modal_faq_author_pin_holder: '4자리 숫자 (예: 1234)',
+    modal_faq_answer_holder: '상세 업무 절차, 규정, 유의사항 등을 입력하세요. 줄바꿈과 마크다운 형식을 지원합니다.',
+    modal_faq_del_title: 'FAQ 삭제 확인',
+    modal_faq_author_pin_title: '작성자 비밀번호 확인',
+    modal_faq_author_pin_desc: 'FAQ 수정/삭제를 위해 등록 시 설정한 4자리 비밀번호를 입력해 주세요.',
+    modal_faq_lightbox_title: '미디어 미리보기',
+    modal_archive_edit_title: '새 자료 등록',
+    modal_archive_detail_title: '프로그램 상세 정보',
+    modal_archive_del_title: '자료 삭제 확인',
+    modal_archive_pin_holder: 'PIN 번호 입력',
+    modal_admin_db_title: '출하 DB 업데이트',
+    modal_admin_auth_desc: '출하 계획 데이터베이스를 갱신하려면 관리자 보안 PIN을 입력하세요.',
+    modal_admin_pin_holder: '보안 PIN 입력',
+    btn_admin_verify: '인증',
+    btn_admin_deploy: '전체 사용자에게 즉각 배포',
+    modal_ph_photo_title: '첨부 사진 확대',
+    btn_ph_photo_download: '사진 다운로드',
+    gimpo_guide_panel_title: '외부망 Z: 드라이브 직접 접속 안내',
+    btn_gimpo_cmd_copy: '연결 명령어 복사',
+    btn_gimpo_pwd_copy: '비밀번호 복사',
+    archive_meta_ver: '버전:',
+    archive_meta_author: '작성자:',
+    archive_meta_date: '등록일:',
+    archive_meta_downloads: '다운로드:',
+    archive_sec_summary: '자료 요약',
+    archive_sec_guide: '프로그램 소개 및 사용 가이드',
+    archive_sec_attach: '첨부 파일',
+    archive_sec_tags: '관련 태그',
+    archive_sec_links: '다운로드 링크',
+    btn_archive_github: 'GitHub 저장소',
+    archive_ph_title: '예: KOSTAT ERP 납기 집계 자동화 프로그램',
+    archive_ph_version: '예: v1.0.0',
+    archive_ph_author: '예: 신경섭',
+    archive_ph_pin: '4자리',
+    archive_ph_desc: '프로그램 소개, 설치 및 사용 방법, 변경 이력을 자유롭게 작성해 주세요.',
+    archive_ph_download_url: '예: https://github.com/.../releases 또는 사내 공유 링크',
+    archive_ph_github_url: '예: https://github.com/skywantae/KOSTAT-ERP-Chatbot',
+    archive_ph_tags: '예: ERP, 출하계획, 자동화, 재고',
+
+    // Lab & Others
+    lab_main_daily: 'Daily Report (일일 업무 보고 & 프로젝트)',
+    lab_main_weekly: 'Weekly Report (주간 인벤토리 & 9월 매출 예측)',
+    ph_tab_rag: 'RAG 스마트 검색 & 브리핑',
+    ph_tab_projects: '고객사별 프로젝트 (요약본)',
+    ph_tab_daily: '일일 업무 보고 (번역 요약)',
+    ph_tab_visit: '주간 방문 일정',
+    chatbot_header_title: 'FAQ 지식 챗봇',
 
     // Settings Modal
     settings_title: '시스템 정보 & 업데이트',
@@ -966,10 +1067,12 @@ const APP_I18N = {
 
     // Table Headers (Quotations)
     th_quot_no: '견적번호',
-    th_quot_date: '견적일자',
+    th_quot_date: '견적일',
     th_manager: '담당자',
     th_item_count: '품목수',
     th_total_amount: '총금액',
+    th_spec_desc: '규격/설명',
+    th_unit_price: '단가',
     th_remarks: '비고',
 
     // Table Headers (Contract Reviews)
@@ -977,14 +1080,30 @@ const APP_I18N = {
     th_review_date: '검토일자',
     th_proj_name: '프로젝트명',
     th_item_name: '품목명',
-    th_status: '승인상태',
+    th_contract_proj_no: '프로젝트번호',
+    th_contract_date: '등록일',
+    th_contract_country: '국가',
+    th_contract_item: '품목',
+    th_contract_mold: '금형',
+    th_contract_mat: '소재',
+    th_status: '상태',
 
     // Table Headers (Drawings)
     th_ks_no: 'KS 번호',
     th_drawing_name: '도면명',
     th_category: '구분',
     th_rev_date: '개정일자',
-    th_download: '다운로드',
+    th_draw_no: 'No',
+    th_draw_part_model: '품번 / 모델',
+    th_draw_cust_pn: '고객사 P/N',
+    th_draw_spec: '규격 (Package Type)',
+    th_draw_temp: '내열온도',
+    th_draw_material: '재질',
+    th_draw_files: '도면 파일수',
+    th_draw_updated: '최종 수정일',
+    th_download: '도면 다운로드',
+    th_region: '지역',
+    th_amount: '금액',
 
   },
   en: {
@@ -1133,12 +1252,113 @@ const APP_I18N = {
     btn_download_excel: 'Download Excel',
     btn_update_db: 'Update DB',
     btn_new_feedback: 'Submit Request',
-    btn_archive_reg: 'Upload Doc',
+    btn_new_feedback_btn: 'New Request',
+    btn_admin_mode: 'Admin Mode',
+    btn_admin_mode_on: 'Admin Mode ON',
+    btn_archive_reg: 'Upload Document',
+    btn_new_faq: 'New FAQ',
+    btn_deploy: 'Deploy',
+    btn_backup: 'Backup',
+    btn_restore: 'Restore',
+    btn_print_pdf: 'Print PDF',
     btn_open_full: 'Open Full Window',
     btn_close: 'Close',
     btn_verify: 'Verify',
+    btn_verify_confirm: 'Verify',
     btn_copy_summary: 'Copy Summary',
+    btn_copy_all: 'Copy All',
     btn_check_update: 'Check for Updates',
+    btn_submit: 'Submit',
+    btn_cancel: 'Cancel',
+    btn_save: 'Save',
+    btn_save_reply: 'Save Reply',
+    btn_save_faq: 'Save FAQ',
+    btn_save_doc: 'Save Document',
+    btn_delete: 'Delete',
+    btn_delete_confirm: 'Delete',
+    btn_delete_permanent: 'Delete',
+    btn_download_link: 'Download',
+    btn_download_file: 'Download',
+    btn_download_sspc: 'Download SSPC Sales Excel (.xlsx)',
+    btn_reset_sspc: 'Select Another File',
+
+    // Select Options
+    opt_all_status: 'All Statuses',
+    opt_in_review: 'In Review',
+    opt_replied: 'Replied',
+    opt_applied: 'Applied',
+    opt_in_progress: 'In Progress',
+    opt_completed: 'Completed',
+    opt_all_series: 'All Series',
+    opt_show_all: 'Show All',
+
+    // Modals
+    modal_quot_title: 'Quotation Details',
+    modal_contract_title: 'Contract Review Details',
+    modal_feedback_new_title: 'Submit New Feature Request',
+    modal_feedback_author_holder: 'e.g. Sales Dept / John Doe',
+    modal_feedback_title_holder: 'Brief summary of requested feature',
+    modal_feedback_content_holder: 'Describe the use case or specific requirements.',
+    modal_feedback_reply_title: 'Admin Reply & Status Change',
+    modal_feedback_reply_holder: 'Enter review feedback or implementation schedule.',
+    modal_board_pin_title: 'Admin Authentication',
+    modal_board_pin_desc: 'Enter Admin PIN to enable reply and management permissions.',
+    modal_board_pin_holder: 'Enter Admin PIN',
+    modal_feedback_del_title: 'Confirm Post Deletion',
+    modal_drawing_pin_title: 'Drawing Security Authentication',
+    modal_drawing_pin_desc: 'IC Tray drawings are proprietary technical assets.<br>Please enter the <strong>4-digit security PIN</strong> to view and download drawings.',
+    modal_drawing_pin_holder: 'Enter 4-digit PIN',
+    modal_drawing_detail_title: 'Drawing Details',
+    modal_faq_edit_title: 'Register / Edit FAQ Knowledge',
+    modal_faq_question_holder: 'e.g. Consignment trade terms and settlement cycle',
+    modal_faq_category_holder: 'e.g. Incoterms, Consignment, Shipment, Sales',
+    modal_faq_author_pin_holder: '4 digits (e.g. 1234)',
+    modal_faq_answer_holder: 'Enter business procedures, regulations, notes, etc. Supports line breaks and markdown.',
+    modal_faq_del_title: 'Confirm FAQ Deletion',
+    modal_faq_author_pin_title: 'Author PIN Verification',
+    modal_faq_author_pin_desc: 'Please enter the 4-digit PIN set during registration to edit or delete.',
+    modal_faq_lightbox_title: 'Media Preview',
+    modal_archive_edit_title: 'Upload New Document',
+    modal_archive_detail_title: 'Document Details',
+    modal_archive_del_title: 'Confirm Document Deletion',
+    modal_archive_pin_holder: 'Enter PIN',
+    modal_admin_db_title: 'Update Shipping DB',
+    modal_admin_auth_desc: 'Enter administrator PIN to update shipping plan database.',
+    modal_admin_pin_holder: 'Enter security PIN',
+    btn_admin_verify: 'Verify',
+    btn_admin_deploy: 'Deploy to All Users',
+    modal_ph_photo_title: 'Attached Photo Preview',
+    btn_ph_photo_download: 'Download Photo',
+    gimpo_guide_panel_title: 'External Network Z: Drive Direct Access Guide',
+    btn_gimpo_cmd_copy: 'Copy Connection Command',
+    btn_gimpo_pwd_copy: 'Copy Password',
+    archive_meta_ver: 'Version:',
+    archive_meta_author: 'Author:',
+    archive_meta_date: 'Date:',
+    archive_meta_downloads: 'Downloads:',
+    archive_sec_summary: 'Summary',
+    archive_sec_guide: 'Description & Usage Guide',
+    archive_sec_attach: 'Attached Files',
+    archive_sec_tags: 'Tags',
+    archive_sec_links: 'Download Links',
+    btn_archive_github: 'GitHub Repo',
+    archive_ph_title: 'e.g., KOSTAT ERP Automation Program',
+    archive_ph_version: 'e.g., v1.0.0',
+    archive_ph_author: 'e.g., Author Name',
+    archive_ph_pin: '4 digits',
+    archive_ph_desc: 'Enter program overview, installation/usage guide, and changelog.',
+    archive_ph_download_url: 'e.g., https://github.com/.../releases or internal share link',
+    archive_ph_github_url: 'e.g., https://github.com/skywantae/KOSTAT-ERP-Chatbot',
+    archive_ph_tags: 'e.g., ERP, Shipping, Automation, Stock',
+
+    // Lab & Others
+    lab_main_daily: 'Daily Report (Daily Operations & Projects)',
+    lab_main_weekly: 'Weekly Report (Weekly Inventory & Revenue Forecast)',
+    ph_tab_rag: 'RAG Smart Search & Briefing',
+    ph_tab_projects: 'Projects by Customer (Summary)',
+    ph_tab_daily: 'Daily Report (Translated Summary)',
+    ph_tab_visit: 'Weekly Visit Schedule',
+    chatbot_header_title: 'FAQ Knowledge Chatbot',
 
     // Settings Modal
     settings_title: 'System Info & Updates',
@@ -1168,6 +1388,8 @@ const APP_I18N = {
     th_manager: 'Manager',
     th_item_count: 'Items',
     th_total_amount: 'Total Amount',
+    th_spec_desc: 'Spec / Description',
+    th_unit_price: 'Unit Price',
     th_remarks: 'Remarks',
 
     // Table Headers (Contract Reviews)
@@ -1175,14 +1397,30 @@ const APP_I18N = {
     th_review_date: 'Review Date',
     th_proj_name: 'Project Name',
     th_item_name: 'Item Name',
-    th_status: 'Approval Status',
+    th_contract_proj_no: 'Project No',
+    th_contract_date: 'Date',
+    th_contract_country: 'Country',
+    th_contract_item: 'Item',
+    th_contract_mold: 'Mold',
+    th_contract_mat: 'Material',
+    th_status: 'Status',
 
     // Table Headers (Drawings)
     th_ks_no: 'KS No',
     th_drawing_name: 'Drawing Name',
     th_category: 'Category',
     th_rev_date: 'Rev Date',
+    th_draw_no: 'No',
+    th_draw_part_model: 'Part / Model',
+    th_draw_cust_pn: 'Customer P/N',
+    th_draw_spec: 'Spec (Package Type)',
+    th_draw_temp: 'Temp',
+    th_draw_material: 'Material',
+    th_draw_files: 'Drawing Files',
+    th_draw_updated: 'Last Modified',
     th_download: 'Download',
+    th_region: 'Region',
+    th_amount: 'Amount',
 
   }
 };
@@ -1297,7 +1535,7 @@ function applyAppLanguage(lang) {
     if (tabMap[target]) btn.textContent = tabMap[target];
   });
 
-  // 6. 실험실 서브탭 버튼
+  // 6. 실험실 서브탭 버튼 & 세부 스위처
   const btnLabTabTools = document.getElementById('btnLabTabTools');
   if (btnLabTabTools) btnLabTabTools.textContent = t.lab_tab_tools;
   const btnLabTabGimpo = document.getElementById('btnLabTabGimpo');
@@ -1307,23 +1545,66 @@ function applyAppLanguage(lang) {
   const btnLabTabWeekly = document.getElementById('btnLabTabWeekly');
   if (btnLabTabWeekly) btnLabTabWeekly.textContent = t.lab_tab_weekly;
 
+  const btnPhMainDaily = document.getElementById('btnPhMainDaily');
+  if (btnPhMainDaily) btnPhMainDaily.textContent = t.lab_main_daily;
+  const btnPhMainWeekly = document.getElementById('btnPhMainWeekly');
+  if (btnPhMainWeekly) btnPhMainWeekly.textContent = t.lab_main_weekly;
+
+  const phInnerTabMap = {
+    phRagView: t.ph_tab_rag,
+    phProjectView: t.ph_tab_projects,
+    phDailyView: t.ph_tab_daily,
+    phVisitView: t.ph_tab_visit
+  };
+  document.querySelectorAll('.ph-inner-tab').forEach(btn => {
+    const target = btn.getAttribute('data-ph-tab');
+    if (phInnerTabMap[target]) btn.textContent = phInnerTabMap[target];
+  });
+
+  const btnDownloadSspcExcel = document.getElementById('btnDownloadSspcExcel');
+  if (btnDownloadSspcExcel) btnDownloadSspcExcel.textContent = t.btn_download_sspc;
+  const btnResetSspc = document.getElementById('btnResetSspc');
+  if (btnResetSspc) btnResetSspc.textContent = t.btn_reset_sspc;
+
   // 7. 검색 플레이스홀더
   const chatInput = document.getElementById('chatInput');
   if (chatInput) chatInput.placeholder = t.chat_placeholder;
   const btnClearChat = document.getElementById('btnClearChat');
   if (btnClearChat) btnClearChat.textContent = t.btn_clear_chat;
+  const chatbotHeaderTitle = document.getElementById('chatbotHeaderTitle');
+  if (chatbotHeaderTitle) chatbotHeaderTitle.textContent = t.chatbot_header_title;
+  const chatbotStatusBadge = document.getElementById('chatbotStatusBadge');
+  if (chatbotStatusBadge) chatbotStatusBadge.textContent = t.chatbot_status_live;
+
+  const quickChipTexts = lang === 'en'
+    ? ['EXW Terms', 'Consignment', 'Quote Validity', 'Annual Leave', 'Travel Expense', 'FOB Terms']
+    : ['EXW 조건', '위탁재고', '견적 유효기간', '연차휴가', '출장여비', 'FOB 조건'];
+  document.querySelectorAll('.quick-chips-bar .quick-chip').forEach((btn, idx) => {
+    if (quickChipTexts[idx]) btn.textContent = quickChipTexts[idx];
+  });
+
   const shipPlanCustomerInput = document.getElementById('shipPlanCustomerInput');
   if (shipPlanCustomerInput) shipPlanCustomerInput.placeholder = t.ship_holder_cust;
   const shipPlanPartInput = document.getElementById('shipPlanPartInput');
   if (shipPlanPartInput) shipPlanPartInput.placeholder = t.ship_holder_part;
   const shipPlanInvoiceInput = document.getElementById('shipPlanInvoiceInput');
   if (shipPlanInvoiceInput) shipPlanInvoiceInput.placeholder = t.ship_holder_inv;
+
+  const quotCustomerInput = document.getElementById('quotCustomerInput');
+  if (quotCustomerInput) quotCustomerInput.placeholder = lang === 'en' ? 'Search Customer...' : '고객사 검색 (직접 입력)...';
   const quotSearchInput = document.getElementById('quotSearchInput');
   if (quotSearchInput) quotSearchInput.placeholder = t.quot_holder;
+
+  const contractCustomerInput = document.getElementById('contractCustomerInput');
+  if (contractCustomerInput) contractCustomerInput.placeholder = lang === 'en' ? 'Search Customer...' : '고객사 검색...';
   const contractSearchInput = document.getElementById('contractSearchInput');
   if (contractSearchInput) contractSearchInput.placeholder = t.contract_holder;
-  const drawingSearchInput = document.getElementById('drawingSearchInput');
+
+  const drawingSearchInput = document.getElementById('drawingsSearchInput') || document.getElementById('drawingSearchInput');
   if (drawingSearchInput) drawingSearchInput.placeholder = t.drawing_holder;
+
+  const feedbackSearchInput = document.getElementById('feedbackSearchInput');
+  if (feedbackSearchInput) feedbackSearchInput.placeholder = t.feedback_holder;
   const faqSearchInput = document.getElementById('faqSearchInput');
   if (faqSearchInput) faqSearchInput.placeholder = t.faq_holder;
   const archiveSearchInput = document.getElementById('archiveSearchInput');
@@ -1352,6 +1633,7 @@ function applyAppLanguage(lang) {
   });
 
   // 9. 주요 버튼 라벨
+  // 출하 계획
   const btnSearchShipPlan = document.getElementById('btnSearchShipPlan');
   if (btnSearchShipPlan) btnSearchShipPlan.textContent = t.btn_search;
   const btnReloadShipPlan = document.getElementById('btnReloadShipPlan');
@@ -1360,10 +1642,106 @@ function applyAppLanguage(lang) {
   if (btnOpenAdminDbModal) btnOpenAdminDbModal.textContent = t.btn_update_db;
   const btnDownloadShipPlanExcel = document.getElementById('btnDownloadShipPlanExcel');
   if (btnDownloadShipPlanExcel) btnDownloadShipPlanExcel.textContent = t.btn_download_excel;
-  const btnOpenNewFeedback = document.getElementById('btnOpenNewFeedback');
-  if (btnOpenNewFeedback) btnOpenNewFeedback.textContent = t.btn_new_feedback;
-  const btnOpenArchiveRegister = document.getElementById('btnOpenArchiveRegister');
-  if (btnOpenArchiveRegister) btnOpenArchiveRegister.textContent = t.btn_archive_reg;
+
+  // 견적서
+  const btnSearchQuotations = document.getElementById('btnSearchQuotations');
+  if (btnSearchQuotations) btnSearchQuotations.textContent = t.btn_search;
+  const btnReloadQuotHistory = document.getElementById('btnReloadQuotHistory');
+  if (btnReloadQuotHistory) btnReloadQuotHistory.textContent = t.btn_reload;
+  const btnPrintQuotation = document.getElementById('btnPrintQuotation');
+  if (btnPrintQuotation) btnPrintQuotation.textContent = t.btn_print_pdf;
+
+  // 계약검토서
+  const btnSearchContract = document.getElementById('btnSearchContract');
+  if (btnSearchContract) btnSearchContract.textContent = t.btn_search;
+  const btnReloadContract = document.getElementById('btnReloadContract');
+  if (btnReloadContract) btnReloadContract.textContent = t.btn_reload;
+
+  // 도면 관리
+  const btnSearchDrawings = document.getElementById('btnSearchDrawings');
+  if (btnSearchDrawings) btnSearchDrawings.textContent = t.btn_search;
+  const btnReloadDrawings = document.getElementById('btnReloadDrawings');
+  if (btnReloadDrawings) btnReloadDrawings.textContent = t.btn_reload;
+
+  // 기능 요청 게시판 (정확한 ID 바인딩)
+  const btnOpenNewFeedbackModal = document.getElementById('btnOpenNewFeedbackModal');
+  if (btnOpenNewFeedbackModal) btnOpenNewFeedbackModal.textContent = t.btn_new_feedback_btn;
+  const btnRefreshFeedback = document.getElementById('btnRefreshFeedback');
+  if (btnRefreshFeedback) btnRefreshFeedback.textContent = t.btn_reload;
+  const btnToggleBoardAdmin = document.getElementById('btnToggleBoardAdmin');
+  if (btnToggleBoardAdmin) {
+    btnToggleBoardAdmin.textContent = AppState.isBoardAdmin ? t.btn_admin_mode_on : t.btn_admin_mode;
+  }
+
+  // 사내 FAQ
+  const btnOpenNewFaqModal = document.getElementById('btnOpenNewFaqModal');
+  if (btnOpenNewFaqModal) btnOpenNewFaqModal.textContent = t.btn_new_faq;
+  const btnToggleFaqAdmin = document.getElementById('btnToggleFaqAdmin');
+  if (btnToggleFaqAdmin) {
+    btnToggleFaqAdmin.textContent = AppState.isFaqAdmin ? t.btn_admin_mode_on : t.btn_admin_mode;
+  }
+  const btnDeployFaq = document.getElementById('btnDeployFaq');
+  if (btnDeployFaq) btnDeployFaq.textContent = t.btn_deploy;
+  const btnExportFaqBackup = document.getElementById('btnExportFaqBackup');
+  if (btnExportFaqBackup) btnExportFaqBackup.textContent = t.btn_backup;
+  const btnImportFaqBackup = document.getElementById('btnImportFaqBackup');
+  if (btnImportFaqBackup) btnImportFaqBackup.textContent = t.btn_restore;
+
+  // 사내 자료실 (정확한 ID 바인딩)
+  const btnOpenNewArchiveModal = document.getElementById('btnOpenNewArchiveModal');
+  if (btnOpenNewArchiveModal) btnOpenNewArchiveModal.textContent = t.btn_archive_reg;
+  const btnRefreshArchive = document.getElementById('btnRefreshArchive');
+  if (btnRefreshArchive) btnRefreshArchive.textContent = t.btn_reload;
+  const btnToggleArchiveAdmin = document.getElementById('btnToggleArchiveAdmin');
+  if (btnToggleArchiveAdmin) {
+    btnToggleArchiveAdmin.textContent = AppState.isArchiveAdmin ? t.btn_admin_mode_on : t.btn_admin_mode;
+  }
+
+  // 9-1. 드롭다운 선택 옵션 (Select Dropdowns) 번역
+  const translateOptions = (selectId, optionMap) => {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    Array.from(sel.options).forEach(opt => {
+      if (optionMap[opt.value] !== undefined) {
+        opt.textContent = optionMap[opt.value];
+      }
+    });
+  };
+
+  const pageOptionMap = lang === 'en'
+    ? { '10': '10 per page', '15': '15 per page', '20': '20 per page', '30': '30 per page', '50': '50 per page', '100': '100 per page', '150': '150 per page', '200': '200 per page' }
+    : { '10': '10개씩', '15': '15개씩', '20': '20개씩', '30': '30개씩', '50': '50개씩', '100': '100개씩', '150': '150개씩', '200': '200개씩' };
+
+  translateOptions('shipPlanPageSizeSelect', pageOptionMap);
+  translateOptions('quotPageSizeSelect', pageOptionMap);
+  translateOptions('contractPageSizeSelect', pageOptionMap);
+  translateOptions('drawingsPageSizeSelect', pageOptionMap);
+  translateOptions('feedbackPageSizeSelect', pageOptionMap);
+  translateOptions('faqPageSizeSelect', { ...pageOptionMap, '100': t.opt_show_all });
+  translateOptions('archivePageSizeSelect', pageOptionMap);
+
+  translateOptions('contractStatusSelect', {
+    '': t.opt_all_status,
+    '진행중': t.opt_in_progress,
+    '완료': t.opt_completed
+  });
+
+  translateOptions('drawingsSeriesSelect', {
+    'all': t.opt_all_series
+  });
+
+  translateOptions('feedbackStatusFilter', {
+    'all': t.opt_all_status,
+    'pending': t.opt_in_review,
+    'replied': t.opt_replied,
+    'applied': t.opt_applied
+  });
+
+  translateOptions('feedbackReplyStatusSelect', {
+    'pending': t.opt_in_review,
+    'replied': t.opt_replied,
+    'applied': t.opt_applied
+  });
 
   // 10. 테이블 헤더 열 제목 (Table Headers)
   const shipThs = document.querySelectorAll('#shipPlanTable thead th');
@@ -1374,21 +1752,242 @@ function applyAppLanguage(lang) {
 
   const quotThs = document.querySelectorAll('#quotationsTable thead th');
   if (quotThs && quotThs.length >= 7) {
-    const headers = [t.th_quot_no, t.th_quot_date, t.th_customer, t.th_manager, t.th_item_count, t.th_total_amount, t.th_remarks];
+    const headers = [t.th_quot_no, t.th_quot_date, t.th_customer, t.th_part_no, t.th_spec_desc, t.th_unit_price, t.th_remarks];
     quotThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
   }
 
   const contractThs = document.querySelectorAll('#contractReviewsTable thead th');
-  if (contractThs && contractThs.length >= 6) {
-    const headers = [t.th_num, t.th_review_date, t.th_customer, t.th_proj_name, t.th_item_name, t.th_status];
+  if (contractThs && contractThs.length >= 10) {
+    const headers = [t.th_contract_proj_no, t.th_contract_date, t.th_customer, t.th_contract_country, t.th_contract_item, t.th_contract_mold, t.th_part_no, t.th_contract_mat, t.th_qty, t.th_status];
     contractThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
   }
 
   const drawingThs = document.querySelectorAll('#drawingsTable thead th');
-  if (drawingThs && drawingThs.length >= 6) {
-    const headers = [t.th_ks_no, t.th_drawing_name, t.th_customer, t.th_category, t.th_rev_date, t.th_download];
+  if (drawingThs && drawingThs.length >= 10) {
+    const headers = [t.th_draw_no, t.th_draw_part_model, t.th_customer, t.th_draw_cust_pn, t.th_draw_spec, t.th_draw_temp, t.th_draw_material, t.th_draw_files, t.th_draw_updated, t.th_download];
     drawingThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
   }
+
+  const sspcThs = document.querySelectorAll('#sspcPreviewTable thead th');
+  if (sspcThs && sspcThs.length >= 14) {
+    const sspcHeaders = ['ITEM', 'Ship Date', t.th_customer, t.th_region, 'SHIP TO', 'CTR', t.th_part_no, 'Package/Description', 'CUSTOMER P/N', 'PO NO', t.th_qty, t.th_unit_price, t.th_amount, 'INV NO'];
+    sspcThs.forEach((th, idx) => { if (sspcHeaders[idx]) th.textContent = sspcHeaders[idx]; });
+  }
+
+  // 10-1. 모달 다이얼로그 텍스트 & 버튼 번역
+  // 견적서 상세 모달
+  const modalQuotTitle = document.getElementById('modalQuotTitle');
+  if (modalQuotTitle) modalQuotTitle.textContent = t.modal_quot_title;
+  const btnModalPrintQuot = document.getElementById('btnModalPrintQuot');
+  if (btnModalPrintQuot) btnModalPrintQuot.textContent = t.btn_print_pdf;
+  const btnModalCopyQuotText = document.getElementById('btnModalCopyQuotText');
+  if (btnModalCopyQuotText) btnModalCopyQuotText.textContent = t.btn_copy_all;
+  const btnModalClose = document.getElementById('btnModalClose');
+  if (btnModalClose) btnModalClose.textContent = t.btn_close;
+
+  // 계약검토서 상세 모달
+  const modalContractTitle = document.getElementById('modalContractTitle');
+  if (modalContractTitle) modalContractTitle.textContent = t.modal_contract_title;
+  const btnModalPrintContract = document.getElementById('btnModalPrintContract');
+  if (btnModalPrintContract) btnModalPrintContract.textContent = t.btn_print_pdf;
+  const btnModalCloseContract = document.getElementById('btnModalCloseContract');
+  if (btnModalCloseContract) btnModalCloseContract.textContent = t.btn_close;
+
+  // 기능 요청 모달들
+  const feedbackNewModalTitle = document.querySelector('#feedbackNewModal .modal-header h3');
+  if (feedbackNewModalTitle) feedbackNewModalTitle.textContent = t.modal_feedback_new_title;
+  const feedbackAuthorInput = document.getElementById('feedbackAuthorInput');
+  if (feedbackAuthorInput) feedbackAuthorInput.placeholder = t.modal_feedback_author_holder;
+  const feedbackTitleInput = document.getElementById('feedbackTitleInput');
+  if (feedbackTitleInput) feedbackTitleInput.placeholder = t.modal_feedback_title_holder;
+  const feedbackContentInput = document.getElementById('feedbackContentInput');
+  if (feedbackContentInput) feedbackContentInput.placeholder = t.modal_feedback_content_holder;
+  const btnSubmitNewFeedback = document.getElementById('btnSubmitNewFeedback');
+  if (btnSubmitNewFeedback) btnSubmitNewFeedback.textContent = t.btn_submit;
+  const btnCancelFeedbackNew = document.getElementById('btnCancelFeedbackNew');
+  if (btnCancelFeedbackNew) btnCancelFeedbackNew.textContent = t.btn_cancel;
+
+  const feedbackReplyModalTitle = document.querySelector('#feedbackReplyModal .modal-header h3');
+  if (feedbackReplyModalTitle) feedbackReplyModalTitle.textContent = t.modal_feedback_reply_title;
+  const feedbackReplyTextInput = document.getElementById('feedbackReplyTextInput');
+  if (feedbackReplyTextInput) feedbackReplyTextInput.placeholder = t.modal_feedback_reply_holder;
+  const btnSubmitAdminReply = document.getElementById('btnSubmitAdminReply');
+  if (btnSubmitAdminReply) btnSubmitAdminReply.textContent = t.btn_save_reply;
+  const btnDeleteFeedbackPost = document.getElementById('btnDeleteFeedbackPost');
+  if (btnDeleteFeedbackPost) btnDeleteFeedbackPost.textContent = t.btn_delete;
+  const btnCancelFeedbackReply = document.getElementById('btnCancelFeedbackReply');
+  if (btnCancelFeedbackReply) btnCancelFeedbackReply.textContent = t.btn_close;
+
+  const boardAdminPinTitle = document.querySelector('#boardAdminPinModal .modal-header h3');
+  if (boardAdminPinTitle) boardAdminPinTitle.textContent = t.modal_board_pin_title;
+  const boardAdminPinDesc = document.querySelector('#boardAdminPinModal .modal-body p');
+  if (boardAdminPinDesc) boardAdminPinDesc.textContent = t.modal_board_pin_desc;
+  const boardPinInput = document.getElementById('boardPinInput');
+  if (boardPinInput) boardPinInput.placeholder = t.modal_board_pin_holder;
+  const btnVerifyBoardPin = document.getElementById('btnVerifyBoardPin');
+  if (btnVerifyBoardPin) btnVerifyBoardPin.textContent = t.btn_verify;
+  const btnCancelBoardPin = document.getElementById('btnCancelBoardPin');
+  if (btnCancelBoardPin) btnCancelBoardPin.textContent = t.btn_cancel;
+
+  const feedbackDelTitle = document.querySelector('#feedbackDeleteModal .modal-header h3');
+  if (feedbackDelTitle) feedbackDelTitle.textContent = t.modal_feedback_del_title;
+  const btnConfirmDeleteFeedback = document.getElementById('btnConfirmDeleteFeedback');
+  if (btnConfirmDeleteFeedback) btnConfirmDeleteFeedback.textContent = t.btn_delete_confirm;
+  const btnCancelDeleteFeedback = document.getElementById('btnCancelDeleteFeedback');
+  if (btnCancelDeleteFeedback) btnCancelDeleteFeedback.textContent = t.btn_cancel;
+
+  // 도면 보안 PIN 및 상세 모달
+  const drawingPinTitle = document.querySelector('#drawingPinModal .modal-header h3');
+  if (drawingPinTitle) drawingPinTitle.textContent = t.modal_drawing_pin_title;
+  const drawingPinBody = document.querySelector('#drawingPinModal .modal-body div');
+  if (drawingPinBody) drawingPinBody.innerHTML = t.modal_drawing_pin_desc;
+  const drawingPinInput = document.getElementById('drawingPinInput');
+  if (drawingPinInput) drawingPinInput.placeholder = t.modal_drawing_pin_holder;
+  const btnVerifyDrawingPin = document.getElementById('btnVerifyDrawingPin');
+  if (btnVerifyDrawingPin) btnVerifyDrawingPin.textContent = t.btn_verify_confirm;
+  const btnCancelDrawingPin = document.getElementById('btnCancelDrawingPin');
+  if (btnCancelDrawingPin) btnCancelDrawingPin.textContent = t.btn_cancel;
+
+  const drawingDetailTitle = document.getElementById('drawingDetailTitle');
+  if (drawingDetailTitle) drawingDetailTitle.textContent = t.modal_drawing_detail_title;
+  const btnCopyDrawingSummary = document.getElementById('btnCopyDrawingSummary');
+  if (btnCopyDrawingSummary) btnCopyDrawingSummary.textContent = t.btn_copy_summary;
+  const btnCloseDrawingDetail = document.getElementById('btnCloseDrawingDetail');
+  if (btnCloseDrawingDetail) btnCloseDrawingDetail.textContent = t.btn_close;
+
+  // FAQ 모달
+  const faqModalTitle = document.getElementById('faqModalTitle');
+  if (faqModalTitle) faqModalTitle.textContent = t.modal_faq_edit_title;
+  const faqQuestionInput = document.getElementById('faqQuestionInput');
+  if (faqQuestionInput) faqQuestionInput.placeholder = t.modal_faq_question_holder;
+  const faqCategoryInput = document.getElementById('faqCategoryInput');
+  if (faqCategoryInput) faqCategoryInput.placeholder = t.modal_faq_category_holder;
+  const faqAuthorPinInput = document.getElementById('faqAuthorPinInput');
+  if (faqAuthorPinInput) faqAuthorPinInput.placeholder = t.modal_faq_author_pin_holder;
+  const faqAnswerInput = document.getElementById('faqAnswerInput');
+  if (faqAnswerInput) faqAnswerInput.placeholder = t.modal_faq_answer_holder;
+  const btnSaveFaqEdit = document.getElementById('btnSaveFaqEdit');
+  if (btnSaveFaqEdit) btnSaveFaqEdit.textContent = t.btn_save_faq;
+  const btnCancelFaqEdit = document.getElementById('btnCancelFaqEdit');
+  if (btnCancelFaqEdit) btnCancelFaqEdit.textContent = t.btn_cancel;
+
+  const faqDelTitle = document.querySelector('#faqDeleteModal .modal-header h3');
+  if (faqDelTitle) faqDelTitle.textContent = t.modal_faq_del_title;
+  const btnConfirmDeleteFaq = document.getElementById('btnConfirmDeleteFaq');
+  if (btnConfirmDeleteFaq) btnConfirmDeleteFaq.textContent = t.btn_delete_confirm;
+  const btnCancelDeleteFaq = document.getElementById('btnCancelDeleteFaq');
+  if (btnCancelDeleteFaq) btnCancelDeleteFaq.textContent = t.btn_cancel;
+
+  const faqAuthorPinTitle = document.querySelector('#faqAuthorPinModal .modal-header h3');
+  if (faqAuthorPinTitle) faqAuthorPinTitle.textContent = t.modal_faq_author_pin_title;
+  const faqAuthorPinPromptText = document.getElementById('faqAuthorPinPromptText');
+  if (faqAuthorPinPromptText) faqAuthorPinPromptText.textContent = t.modal_faq_author_pin_desc;
+  const faqAuthorPinCheckInput = document.getElementById('faqAuthorPinCheckInput');
+  if (faqAuthorPinCheckInput) faqAuthorPinCheckInput.placeholder = t.modal_faq_author_pin_holder;
+  const btnVerifyFaqAuthorPin = document.getElementById('btnVerifyFaqAuthorPin');
+  if (btnVerifyFaqAuthorPin) btnVerifyFaqAuthorPin.textContent = t.btn_verify;
+  const btnCancelFaqAuthorPin = document.getElementById('btnCancelFaqAuthorPin');
+  if (btnCancelFaqAuthorPin) btnCancelFaqAuthorPin.textContent = t.btn_cancel;
+
+  const faqLightboxTitle = document.getElementById('faqLightboxTitle');
+  if (faqLightboxTitle) faqLightboxTitle.textContent = t.modal_faq_lightbox_title;
+  const faqLightboxDownloadBtn = document.getElementById('faqLightboxDownloadBtn');
+  if (faqLightboxDownloadBtn) faqLightboxDownloadBtn.textContent = t.btn_download_file;
+  const btnCloseFaqLightbox2 = document.getElementById('btnCloseFaqLightbox2');
+  if (btnCloseFaqLightbox2) btnCloseFaqLightbox2.textContent = t.btn_close;
+
+  // 자료실 모달
+  const modalArchiveEditTitle = document.getElementById('modalArchiveEditTitle');
+  if (modalArchiveEditTitle) modalArchiveEditTitle.textContent = t.modal_archive_edit_title;
+  const btnSaveArchive = document.getElementById('btnSaveArchive');
+  if (btnSaveArchive) btnSaveArchive.textContent = t.btn_save_doc;
+  const btnCancelArchiveEdit = document.getElementById('btnCancelArchiveEdit');
+  if (btnCancelArchiveEdit) btnCancelArchiveEdit.textContent = t.btn_cancel;
+
+  const modalArchiveTitle = document.getElementById('modalArchiveTitle');
+  if (modalArchiveTitle) modalArchiveTitle.textContent = t.modal_archive_detail_title;
+  const btnModalArchiveDownload = document.getElementById('btnModalArchiveDownload');
+  if (btnModalArchiveDownload) btnModalArchiveDownload.textContent = t.btn_download_link;
+  const btnCloseArchiveDetail = document.getElementById('btnCloseArchiveDetail');
+  if (btnCloseArchiveDetail) btnCloseArchiveDetail.textContent = t.btn_close;
+
+  const archiveDeleteTitle = document.querySelector('#archiveDeleteModal .modal-header h3');
+  if (archiveDeleteTitle) archiveDeleteTitle.textContent = t.modal_archive_del_title;
+  const archiveDeletePinInput = document.getElementById('archiveDeletePinInput');
+  if (archiveDeletePinInput) archiveDeletePinInput.placeholder = t.modal_archive_pin_holder;
+  const btnConfirmDeleteArchive = document.getElementById('btnConfirmDeleteArchive');
+  if (btnConfirmDeleteArchive) btnConfirmDeleteArchive.textContent = t.btn_delete_permanent;
+  const btnCancelDeleteArchive = document.getElementById('btnCancelDeleteArchive');
+  if (btnCancelDeleteArchive) btnCancelDeleteArchive.textContent = t.btn_cancel;
+
+  // 자료실 상세 모달 메타 레이블 및 섹션 타이틀 번역
+  const arcMetaLabels = document.querySelectorAll('#archiveDetailModal .archive-meta-item .meta-label');
+  if (arcMetaLabels && arcMetaLabels.length >= 4) {
+    arcMetaLabels[0].textContent = t.archive_meta_ver;
+    arcMetaLabels[1].textContent = t.archive_meta_author;
+    arcMetaLabels[2].textContent = t.archive_meta_date;
+    arcMetaLabels[3].textContent = t.archive_meta_downloads;
+  }
+  const arcSecTitles = document.querySelectorAll('#archiveDetailModal .archive-section-title');
+  if (arcSecTitles && arcSecTitles.length >= 3) {
+    if (arcSecTitles[0]) arcSecTitles[0].textContent = t.archive_sec_summary;
+    if (arcSecTitles[1]) arcSecTitles[1].textContent = t.archive_sec_guide;
+    if (arcSecTitles[2]) arcSecTitles[2].textContent = t.archive_sec_attach;
+    if (arcSecTitles[3]) arcSecTitles[3].textContent = t.archive_sec_tags;
+    if (arcSecTitles[4]) arcSecTitles[4].textContent = t.archive_sec_links;
+  }
+  const btnModalArchiveGithub = document.getElementById('btnModalArchiveGithub');
+  if (btnModalArchiveGithub) btnModalArchiveGithub.textContent = t.btn_archive_github;
+
+  // 자료실 등록/수정 모달 플레이스홀더 번역
+  const archiveInputTitle = document.getElementById('archiveInputTitle');
+  if (archiveInputTitle) archiveInputTitle.placeholder = t.archive_ph_title;
+  const archiveInputVersion = document.getElementById('archiveInputVersion');
+  if (archiveInputVersion) archiveInputVersion.placeholder = t.archive_ph_version;
+  const archiveInputAuthor = document.getElementById('archiveInputAuthor');
+  if (archiveInputAuthor) archiveInputAuthor.placeholder = t.archive_ph_author;
+  const archiveInputPin = document.getElementById('archiveInputPin');
+  if (archiveInputPin) archiveInputPin.placeholder = t.archive_ph_pin;
+  const archiveInputDesc = document.getElementById('archiveInputDesc');
+  if (archiveInputDesc) archiveInputDesc.placeholder = t.archive_ph_desc;
+  const archiveInputDownloadUrl = document.getElementById('archiveInputDownloadUrl');
+  if (archiveInputDownloadUrl) archiveInputDownloadUrl.placeholder = t.archive_ph_download_url;
+  const archiveInputGithubUrl = document.getElementById('archiveInputGithubUrl');
+  if (archiveInputGithubUrl) archiveInputGithubUrl.placeholder = t.archive_ph_github_url;
+  const archiveInputTags = document.getElementById('archiveInputTags');
+  if (archiveInputTags) archiveInputTags.placeholder = t.archive_ph_tags;
+
+  // 출하 DB 관리자 모달 i18n
+  const adminDbTitle = document.querySelector('#adminDbModal .modal-header h3');
+  if (adminDbTitle) adminDbTitle.textContent = t.modal_admin_db_title;
+  const adminAuthDesc = document.querySelector('#adminAuthSection p');
+  if (adminAuthDesc) adminAuthDesc.textContent = t.modal_admin_auth_desc;
+  const adminPinInput = document.getElementById('adminPinInput');
+  if (adminPinInput) adminPinInput.placeholder = t.modal_admin_pin_holder;
+  const btnVerifyAdminPin = document.getElementById('btnVerifyAdminPin');
+  if (btnVerifyAdminPin) btnVerifyAdminPin.textContent = t.btn_admin_verify;
+  const btnApplyAdminDeploy = document.getElementById('btnApplyAdminDeploy');
+  if (btnApplyAdminDeploy) btnApplyAdminDeploy.textContent = t.btn_admin_deploy;
+  const btnCloseAdminDb = document.getElementById('btnCloseAdminDb');
+  if (btnCloseAdminDb) btnCloseAdminDb.textContent = t.btn_close;
+
+  // 필리핀 첨부 사진 확대 모달 i18n
+  const phPhotoModalTitle = document.getElementById('phPhotoModalTitle');
+  if (phPhotoModalTitle) phPhotoModalTitle.textContent = t.modal_ph_photo_title;
+  const phPhotoModalDownload = document.getElementById('phPhotoModalDownload');
+  if (phPhotoModalDownload) phPhotoModalDownload.textContent = t.btn_ph_photo_download;
+  const btnClosePhPhoto = document.querySelector('#phPhotoModal .btn-modal-cancel');
+  if (btnClosePhPhoto) btnClosePhPhoto.textContent = t.btn_close;
+
+  // 김포 외부망 안내 패널 i18n
+  const gimpoGuideTitle = document.querySelector('#gimpoAccessGuidePanel > div:first-child > span');
+  if (gimpoGuideTitle) gimpoGuideTitle.textContent = t.gimpo_guide_panel_title;
+  const btnCloseGimpoGuide = document.querySelector('#gimpoAccessGuidePanel > div:first-child > button');
+  if (btnCloseGimpoGuide) btnCloseGimpoGuide.textContent = t.btn_close;
+  const btnGimpoCmd = document.querySelector('#gimpoAccessGuidePanel button[onclick*="copyGimpoNetUseCmd"]');
+  if (btnGimpoCmd) btnGimpoCmd.textContent = t.btn_gimpo_cmd_copy;
+  const btnGimpoPwd = document.querySelector('#gimpoAccessGuidePanel button[onclick*="copyGimpoPassword"]');
+  if (btnGimpoPwd) btnGimpoPwd.textContent = t.btn_gimpo_pwd_copy;
 
 
   // 11. 재고 현황리스트 (Stocklists - 김포, 베트남, 태창, 태창 C/T, 혜주 5개 라인) i18n
@@ -1512,6 +2111,15 @@ function applyAppLanguage(lang) {
       weeklyIframe.contentWindow.postMessage({ type: 'SET_LANGUAGE', lang: lang }, '*');
     } catch (_) {}
   }
+
+  // 13. 모든 탭의 실시간 텍스트 및 페이지네이션 즉각 재렌더링
+  if (AppState.shipPlanData && typeof renderShipPlanPage === 'function') renderShipPlanPage(AppState.shipPlanCurrentPage || 1);
+  if (AppState.quotationsData && typeof renderQuotationsPage === 'function') renderQuotationsPage(AppState.quotCurrentPage || 1);
+  if (AppState.contractReviewsData && typeof renderContractReviewsPage === 'function') renderContractReviewsPage(AppState.contractCurrentPage || 1);
+  if (AppState.drawingsData && typeof renderDrawingsPage === 'function') renderDrawingsPage(AppState.drawingsCurrentPage || 1);
+  if (AppState.feedbackData && typeof renderFeedbackPage === 'function') renderFeedbackPage(AppState.feedbackCurrentPage || 1);
+  if (AppState.knowledgeData && typeof renderFaqPage === 'function') renderFaqPage(AppState.faqCurrentPage || 1);
+  if (AppState.archiveData && typeof renderArchivePage === 'function') renderArchivePage(AppState.archiveCurrentPage || 1);
 }
 
 // --- UI 이벤트 바인딩 ---
@@ -1970,17 +2578,20 @@ function renderShipPlanPage(page) {
   AppState.shipPlanCurrentPage = page;
 
   // 카운트 뱃지 & 페이지 인포
+  const isEn = AppState.currentLang === 'en';
   if (DOM.shipPlanStatusBadge) {
-    DOM.shipPlanStatusBadge.textContent = `${totalRows.toLocaleString()}건`;
+    DOM.shipPlanStatusBadge.textContent = isEn ? `${totalRows.toLocaleString()} items` : `${totalRows.toLocaleString()}건`;
   }
   if (DOM.shipPlanPageInfo) {
-    DOM.shipPlanPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+    DOM.shipPlanPageInfo.textContent = isEn
+      ? `Page ${page.toLocaleString()} of ${totalPages.toLocaleString()} (${totalRows.toLocaleString()} items total)`
+      : `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
   }
 
   if (!DOM.shipPlanTbody) return;
 
   if (totalRows === 0) {
-    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">일치하는 출하 계획 데이터가 없습니다.</td></tr>`;
+    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">${isEn ? 'No matching shipment plan data found.' : '일치하는 출하 계획 데이터가 없습니다.'}</td></tr>`;
     if (DOM.shipPlanPageControls) DOM.shipPlanPageControls.innerHTML = '';
     return;
   }
@@ -2125,17 +2736,20 @@ function renderQuotationsPage(page) {
   AppState.quotCurrentPage = page;
 
   // 카운트 뱃지 & 페이지 인포
+  const isEn = AppState.currentLang === 'en';
   if (DOM.quotHistoryCount) {
-    DOM.quotHistoryCount.textContent = `${totalRows.toLocaleString()}건`;
+    DOM.quotHistoryCount.textContent = isEn ? `${totalRows.toLocaleString()} items` : `${totalRows.toLocaleString()}건`;
   }
   if (DOM.quotPageInfo) {
-    DOM.quotPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+    DOM.quotPageInfo.textContent = isEn
+      ? `Page ${page.toLocaleString()} of ${totalPages.toLocaleString()} (${totalRows.toLocaleString()} items total)`
+      : `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
   }
 
   if (!DOM.quotationsTbody) return;
 
   if (totalRows === 0) {
-    DOM.quotationsTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">일치하는 견적서 데이터가 없습니다.</td></tr>`;
+    DOM.quotationsTbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">${isEn ? 'No matching quotation data found.' : '일치하는 견적서 데이터가 없습니다.'}</td></tr>`;
     if (DOM.quotPageControls) DOM.quotPageControls.innerHTML = '';
     return;
   }
@@ -2220,11 +2834,12 @@ function goToQuotPage(page) {
 
 function openQuotationDetail(quotNo) {
   AppState.selectedQuotNo = quotNo;
-  DOM.modalQuotTitle.textContent = `견적서 상세 정보 [${quotNo}]`;
+  const isEn = AppState.currentLang === 'en';
+  DOM.modalQuotTitle.textContent = isEn ? `Quotation Details [${quotNo}]` : `견적서 상세 정보 [${quotNo}]`;
   
   const found = AppState.quotationsData.filter(r => r.quot_no === quotNo);
   if (found.length === 0) {
-    DOM.modalQuotBody.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">'${quotNo}' 견적서 상세 데이터를 찾을 수 없습니다.</div>`;
+    DOM.modalQuotBody.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">${isEn ? `Quotation '${quotNo}' details not found.` : `'${quotNo}' 견적서 상세 데이터를 찾을 수 없습니다.`}</div>`;
     DOM.quotDetailModal.classList.add('show');
     return;
   }
@@ -2512,17 +3127,20 @@ function renderContractReviewsPage(page) {
   AppState.contractCurrentPage = page;
 
   // 카운트 배지 & 페이지 인포
+  const isEn = AppState.currentLang === 'en';
   if (DOM.contractReviewsCount) {
-    DOM.contractReviewsCount.textContent = `${totalRows.toLocaleString()}건`;
+    DOM.contractReviewsCount.textContent = isEn ? `${totalRows.toLocaleString()} items` : `${totalRows.toLocaleString()}건`;
   }
   if (DOM.contractPageInfo) {
-    DOM.contractPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+    DOM.contractPageInfo.textContent = isEn
+      ? `Page ${page.toLocaleString()} of ${totalPages.toLocaleString()} (${totalRows.toLocaleString()} items total)`
+      : `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
   }
 
   if (!DOM.contractReviewsTbody) return;
 
   if (totalRows === 0) {
-    DOM.contractReviewsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">일치하는 계약검토서 데이터가 없습니다.</td></tr>`;
+    DOM.contractReviewsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">${isEn ? 'No matching contract review data found.' : '일치하는 계약검토서 데이터가 없습니다.'}</td></tr>`;
     if (DOM.contractPageControls) DOM.contractPageControls.innerHTML = '';
     return;
   }
@@ -2616,15 +3234,16 @@ function openContractReviewDetail(projectNo) {
   AppState.selectedContractProjectNo = projectNo;
   if (!DOM.contractDetailModal) return;
 
+  const isEn = AppState.currentLang === 'en';
   const found = (AppState.contractReviewsData || []).find(r => r.project_no === projectNo);
   if (!found) {
-    DOM.modalContractTitle.textContent = `계약검토서 [${projectNo}]`;
-    DOM.modalContractBody.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">'${escapeHtml(projectNo)}' 데이터를 찾을 수 없습니다.</div>`;
+    DOM.modalContractTitle.textContent = isEn ? `Contract Review [${projectNo}]` : `계약검토서 [${projectNo}]`;
+    DOM.modalContractBody.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">${isEn ? `Data for '${escapeHtml(projectNo)}' not found.` : `'${escapeHtml(projectNo)}' 데이터를 찾을 수 없습니다.`}</div>`;
     DOM.contractDetailModal.classList.add('show');
     return;
   }
 
-  DOM.modalContractTitle.textContent = `계약검토서 상세 정보 [${found.project_no}]`;
+  DOM.modalContractTitle.textContent = isEn ? `Contract Review Details [${found.project_no}]` : `계약검토서 상세 정보 [${found.project_no}]`;
 
   // 액션 아이템 목록 HTML
   let actionHtml = '';
@@ -2632,7 +3251,13 @@ function openContractReviewDetail(projectNo) {
     actionHtml = `
       <table class="contract-sub-table">
         <thead>
-          <tr><th>일자</th><th>상태</th><th>도면(Drawing)</th><th>시뮬레이션</th><th>POD</th></tr>
+          <tr>
+            <th>${isEn ? 'Date' : '일자'}</th>
+            <th>${isEn ? 'Status' : '상태'}</th>
+            <th>${isEn ? 'Drawing' : '도면(Drawing)'}</th>
+            <th>${isEn ? 'Simulation' : '시뮬레이션'}</th>
+            <th>POD</th>
+          </tr>
         </thead>
         <tbody>
           ${found.action_items.map(a => `
@@ -2648,7 +3273,7 @@ function openContractReviewDetail(projectNo) {
       </table>
     `;
   } else {
-    actionHtml = `<div class="contract-empty-sub">등록된 Action Item 데이터가 없습니다.</div>`;
+    actionHtml = `<div class="contract-empty-sub">${isEn ? 'No registered Action Item data.' : '등록된 Action Item 데이터가 없습니다.'}</div>`;
   }
 
   // 샘플 배송 목록 HTML
@@ -2657,7 +3282,16 @@ function openContractReviewDetail(projectNo) {
     sampleHtml = `
       <table class="contract-sub-table">
         <thead>
-          <tr><th>일자</th><th>Invoice</th><th>수량</th><th>예정일</th><th>발송일</th><th>설명</th><th>Attn</th><th>배송추적</th></tr>
+          <tr>
+            <th>${isEn ? 'Date' : '일자'}</th>
+            <th>Invoice</th>
+            <th>${isEn ? 'Qty' : '수량'}</th>
+            <th>${isEn ? 'Due Date' : '예정일'}</th>
+            <th>${isEn ? 'Ship Date' : '발송일'}</th>
+            <th>${isEn ? 'Description' : '설명'}</th>
+            <th>Attn</th>
+            <th>${isEn ? 'Tracking' : '배송추적'}</th>
+          </tr>
         </thead>
         <tbody>
           ${found.sample_deliveries.map(s => `
@@ -2676,7 +3310,7 @@ function openContractReviewDetail(projectNo) {
       </table>
     `;
   } else {
-    sampleHtml = `<div class="contract-empty-sub">등록된 Sample Delivery 데이터가 없습니다.</div>`;
+    sampleHtml = `<div class="contract-empty-sub">${isEn ? 'No registered Sample Delivery data.' : '등록된 Sample Delivery 데이터가 없습니다.'}</div>`;
   }
 
   // 인증 상태 목록 HTML
@@ -2685,7 +3319,11 @@ function openContractReviewDetail(projectNo) {
     qualHtml = `
       <table class="contract-sub-table">
         <thead>
-          <tr><th>일자</th><th>상태</th><th>Dual Report</th></tr>
+          <tr>
+            <th>${isEn ? 'Date' : '일자'}</th>
+            <th>${isEn ? 'Status' : '상태'}</th>
+            <th>Dual Report</th>
+          </tr>
         </thead>
         <tbody>
           ${found.qualifications.map(q => `
@@ -2699,7 +3337,7 @@ function openContractReviewDetail(projectNo) {
       </table>
     `;
   } else {
-    qualHtml = `<div class="contract-empty-sub">등록된 Qualification Status 데이터가 없습니다.</div>`;
+    qualHtml = `<div class="contract-empty-sub">${isEn ? 'No registered Qualification Status data.' : '등록된 Qualification Status 데이터가 없습니다.'}</div>`;
   }
 
   DOM.modalContractBody.innerHTML = `
@@ -2818,7 +3456,7 @@ function openContractReviewDetail(projectNo) {
           </div>
           <div class="erp-field-row">
             <span class="erp-field-label">Finish :</span>
-            <span class="erp-field-val">${escapeHtml(found.finish || '미결재')}</span>
+            <span class="erp-field-val">${escapeHtml(found.finish || (isEn ? 'Pending Approval' : '미결재'))}</span>
           </div>
           <div class="erp-descript-container">
             <span class="erp-descript-title">Descript</span>
@@ -2841,25 +3479,25 @@ function openContractReviewDetail(projectNo) {
         <div id="cTabPaneWritten" class="contract-pane active">
           <div class="written-form-table">
             <div class="written-form-row">
-              <div class="written-row-label">의뢰여부</div>
+              <div class="written-row-label">${isEn ? 'Request Type' : '의뢰여부'}</div>
               <div class="written-row-value">
-                <span class="written-input-box short">${escapeHtml(found.req_set || '검토')}</span>
+                <span class="written-input-box short">${escapeHtml(found.req_set || (isEn ? 'Review' : '검토'))}</span>
               </div>
             </div>
             <div class="written-form-row">
-              <div class="written-row-label">의뢰부서</div>
+              <div class="written-row-label">${isEn ? 'Department' : '의뢰부서'}</div>
               <div class="written-row-value">
                 <span class="written-input-box medium">${escapeHtml(found.req_dept || '')}</span>
               </div>
             </div>
             <div class="written-form-row">
-              <div class="written-row-label">검토안건</div>
+              <div class="written-row-label">${isEn ? 'Agenda' : '검토안건'}</div>
               <div class="written-row-value">
                 <span class="written-input-box full bold">${escapeHtml(found.req_head || '')}</span>
               </div>
             </div>
             <div class="written-form-row" style="align-items:stretch;">
-              <div class="written-row-label">의뢰내용</div>
+              <div class="written-row-label">${isEn ? 'Description' : '의뢰내용'}</div>
               <div class="written-row-value">
                 <div class="written-memo-textarea">${escapeHtml(found.req_memo || '')}</div>
               </div>
@@ -2997,17 +3635,20 @@ function renderDrawingsPage(page) {
   AppState.drawingsCurrentPage = page;
 
   // 카운트 배지 & 페이지 인포
+  const isEn = AppState.currentLang === 'en';
   if (DOM.drawingsCountBadge) {
-    DOM.drawingsCountBadge.textContent = `${totalRows.toLocaleString()}건`;
+    DOM.drawingsCountBadge.textContent = isEn ? `${totalRows.toLocaleString()} items` : `${totalRows.toLocaleString()}건`;
   }
   if (DOM.drawingsPageInfo) {
-    DOM.drawingsPageInfo.textContent = `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+    DOM.drawingsPageInfo.textContent = isEn
+      ? `Page ${page.toLocaleString()} of ${totalPages.toLocaleString()} (${totalRows.toLocaleString()} items total)`
+      : `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
   }
 
   if (!DOM.drawingsTbody) return;
 
   if (totalRows === 0) {
-    DOM.drawingsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">일치하는 도면 데이터가 없습니다.</td></tr>`;
+    DOM.drawingsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">${isEn ? 'No matching drawing data found.' : '일치하는 도면 데이터가 없습니다.'}</td></tr>`;
     if (DOM.drawingsPageControls) DOM.drawingsPageControls.innerHTML = '';
     return;
   }
@@ -3135,18 +3776,19 @@ function closeDrawingPinModal() {
 
 function verifyDrawingPin() {
   const pin = DOM.drawingPinInput ? DOM.drawingPinInput.value.trim() : '';
+  const isEn = AppState.currentLang === 'en';
   if (pin === '0404') {
     AppState.isDrawingAuthenticated = true;
     AppState.drawingPin = pin;
     closeDrawingPinModal();
-    showToast('보안 PIN 인증 성공: 도면 열람 및 다운로드 권한이 활성화되었습니다.', 'success');
+    showToast(isEn ? 'Security PIN verified: Drawing view & download permission granted.' : '보안 PIN 인증 성공: 도면 열람 및 다운로드 권한이 활성화되었습니다.', 'success');
     const target = (DOM.drawingPinTargetIndex ? DOM.drawingPinTargetIndex.value : '') || AppState.selectedDrawingModel;
     if (target) {
       openDrawingDetailModal(target);
     }
   } else {
     if (DOM.drawingPinError) {
-      DOM.drawingPinError.textContent = '보안 PIN 번호(4자리)가 일치하지 않습니다.';
+      DOM.drawingPinError.textContent = isEn ? 'Security PIN (4 digits) does not match.' : '보안 PIN 번호(4자리)가 일치하지 않습니다.';
       DOM.drawingPinError.style.display = 'block';
     }
     if (DOM.drawingPinInput) {
@@ -3161,32 +3803,35 @@ function openDrawingDetailModal(modelName) {
   AppState.selectedDrawingModel = modelName;
   if (!DOM.drawingDetailModal) return;
 
+  const isEn = AppState.currentLang === 'en';
   const item = (AppState.drawingsData || []).find(d => d.model === modelName);
   if (!item) {
-    if (DOM.drawingDetailTitle) DOM.drawingDetailTitle.textContent = `도면 상세 [${modelName}]`;
-    if (DOM.drawingDetailSpecArea) DOM.drawingDetailSpecArea.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">'${escapeHtml(modelName)}' 도면 데이터를 찾을 수 없습니다.</div>`;
+    if (DOM.drawingDetailTitle) DOM.drawingDetailTitle.textContent = isEn ? `Drawing Detail [${modelName}]` : `도면 상세 [${modelName}]`;
+    if (DOM.drawingDetailSpecArea) DOM.drawingDetailSpecArea.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">${isEn ? `'${escapeHtml(modelName)}' drawing data not found.` : `'${escapeHtml(modelName)}' 도면 데이터를 찾을 수 없습니다.`}</div>`;
     if (DOM.drawingDetailFileList) DOM.drawingDetailFileList.innerHTML = '';
     DOM.drawingDetailModal.classList.add('show');
     return;
   }
 
   if (DOM.drawingDetailTitle) {
-    DOM.drawingDetailTitle.textContent = `IC Tray 도면 상세 [${item.model}]`;
+    DOM.drawingDetailTitle.textContent = isEn ? `IC Tray Drawing Details [${item.model}]` : `IC Tray 도면 상세 [${item.model}]`;
   }
   if (DOM.drawingDetailFileCount) {
-    DOM.drawingDetailFileCount.textContent = `총 ${(item.files ? item.files.length : 0)}개 PDF 도면 등록`;
+    DOM.drawingDetailFileCount.textContent = isEn
+      ? `${(item.files ? item.files.length : 0)} PDF drawings registered`
+      : `총 ${(item.files ? item.files.length : 0)}개 PDF 도면 등록`;
   }
 
   // 상단 스펙 요약 그리드 렌더링
   if (DOM.drawingDetailSpecArea) {
     DOM.drawingDetailSpecArea.innerHTML = `
       <div style="background:rgba(30,41,59,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-md);padding:14px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;">
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">품번 / 모델</span><strong style="color:#38bdf8;font-size:15px;">${escapeHtml(item.model)}</strong></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">시리즈</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.series || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">고객사</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.customer || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">고객사 P/N</span><span style="color:#a5b4fc;font-weight:600;">${escapeHtml(item.customer_pn || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">패키지 규격 (Package Type)</span><span style="color:#e2e8f0;">${escapeHtml(item.pkg_type || '-')}</span></div>
-        <div><span style="font-size:11px;color:#94a3b8;display:block;">내열온도 / 재질</span><span style="color:#e2e8f0;">${escapeHtml(item.temp || '-')} / ${escapeHtml(item.material || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Part / Model' : '품번 / 모델'}</span><strong style="color:#38bdf8;font-size:15px;">${escapeHtml(item.model)}</strong></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Series' : '시리즈'}</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.series || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Customer' : '고객사'}</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.customer || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Customer P/N' : '고객사 P/N'}</span><span style="color:#a5b4fc;font-weight:600;">${escapeHtml(item.customer_pn || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Package Type' : '패키지 규격 (Package Type)'}</span><span style="color:#e2e8f0;">${escapeHtml(item.pkg_type || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Temp / Material' : '내열온도 / 재질'}</span><span style="color:#e2e8f0;">${escapeHtml(item.temp || '-')} / ${escapeHtml(item.material || '-')}</span></div>
       </div>
     `;
   }
@@ -3194,7 +3839,7 @@ function openDrawingDetailModal(modelName) {
   // 등록 도면 파일 목록 렌더링
   if (DOM.drawingDetailFileList) {
     if (!item.files || item.files.length === 0) {
-      DOM.drawingDetailFileList.innerHTML = `<div style="text-align:center;padding:20px;color:#94a3b8;">등록된 PDF 도면 파일이 없습니다.</div>`;
+      DOM.drawingDetailFileList.innerHTML = `<div style="text-align:center;padding:20px;color:#94a3b8;">${isEn ? 'No registered PDF drawing files.' : '등록된 PDF 도면 파일이 없습니다.'}</div>`;
     } else {
       DOM.drawingDetailFileList.innerHTML = item.files.map((f, idx) => {
         const sizeKb = (f.size / 1024).toFixed(1);
@@ -3205,12 +3850,12 @@ function openDrawingDetailModal(modelName) {
               <span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700;">PDF</span>
               <div>
                 <div style="font-size:13px;font-weight:600;color:#f8fafc;word-break:break-all;">${escapeHtml(f.filename)}</div>
-                <div style="font-size:11px;color:#94a3b8;">크기: ${sizeKb} KB | 수정일: ${dateStr}</div>
+                <div style="font-size:11px;color:#94a3b8;">${isEn ? `Size: ${sizeKb} KB | Modified: ${dateStr}` : `크기: ${sizeKb} KB | 수정일: ${dateStr}`}</div>
               </div>
             </div>
             <div style="display:flex;gap:6px;align-items:center;">
-              <button type="button" class="action-btn-sm secondary" style="font-size:11px;padding:3px 8px;" onclick="copyDrawingPath('${escapeHtml(f.rel_path)}')">경로 복사</button>
-              <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 12px;" onclick="downloadDrawingFile('${escapeHtml(item.model)}', '${escapeHtml(f.filename)}', '${escapeHtml(f.rel_path)}', this)">다운로드</button>
+              <button type="button" class="action-btn-sm secondary" style="font-size:11px;padding:3px 8px;" onclick="copyDrawingPath('${escapeHtml(f.rel_path)}')">${isEn ? 'Copy Path' : '경로 복사'}</button>
+              <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 12px;" onclick="downloadDrawingFile('${escapeHtml(item.model)}', '${escapeHtml(f.filename)}', '${escapeHtml(f.rel_path)}', this)">${isEn ? 'Download' : '다운로드'}</button>
             </div>
           </div>
         `;
@@ -3228,14 +3873,15 @@ function closeDrawingDetailModal() {
 
 function copyDrawingPath(relPath) {
   const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
+  const isEn = AppState.currentLang === 'en';
   if (navigator.clipboard) {
     navigator.clipboard.writeText(fullPath).then(() => {
-      showToast('사내 네트워크 경로가 복사되었습니다: ' + fullPath, 'success');
+      showToast(isEn ? 'Internal network path copied: ' + fullPath : '사내 네트워크 경로가 복사되었습니다: ' + fullPath, 'success');
     }).catch(() => {
-      showToast('사내 경로 복사: ' + fullPath, 'info');
+      showToast(isEn ? 'Internal path: ' + fullPath : '사내 경로 복사: ' + fullPath, 'info');
     });
   } else {
-    showToast('사내 경로 복사: ' + fullPath, 'info');
+    showToast(isEn ? 'Internal path: ' + fullPath : '사내 경로 복사: ' + fullPath, 'info');
   }
 }
 window.copyDrawingPath = copyDrawingPath;
@@ -3269,22 +3915,23 @@ async function getDrawingAuthToken(pin) {
 
 async function downloadDrawingFile(model, filename, relPath, btnEl) {
   const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
+  const isEn = AppState.currentLang === 'en';
   
   // 사내 경로를 클립보드에 우선 자동 복사
   if (navigator.clipboard) {
     navigator.clipboard.writeText(fullPath).catch(() => {});
   }
 
-  showToast(`도면 다운로드 요청 중: ${filename}`, 'info');
-  const originalText = btnEl ? btnEl.textContent : '다운로드';
+  showToast(isEn ? `Requesting drawing download: ${filename}` : `도면 다운로드 요청 중: ${filename}`, 'info');
+  const originalText = btnEl ? btnEl.textContent : (isEn ? 'Download' : '다운로드');
   if (btnEl) {
     btnEl.disabled = true;
-    btnEl.textContent = '다운로드 중...';
+    btnEl.textContent = isEn ? 'Downloading...' : '다운로드 중...';
   }
 
   try {
     const token = await getDrawingAuthToken(AppState.drawingPin || '0404');
-    if (!token) throw new Error('인증 토큰 획득 실패');
+    if (!token) throw new Error(isEn ? 'Failed to obtain auth token' : '인증 토큰 획득 실패');
 
     // GitHub API로 보안 전용 저장소(kostat-drawings)에서 바이너리 원본 스트림 획득
     const encodedPath = (relPath || '').split('/').map(encodeURIComponent).join('/');
@@ -3311,10 +3958,10 @@ async function downloadDrawingFile(model, filename, relPath, btnEl) {
     document.body.removeChild(link);
     setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
 
-    showToast(`도면 다운로드 완료: ${filename}`, 'success');
+    showToast(isEn ? `Drawing download complete: ${filename}` : `도면 다운로드 완료: ${filename}`, 'success');
   } catch (err) {
     console.warn('[DrawingDownload] 다운로드 안내:', err);
-    showToast(`사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창 또는 실행창에 붙여넣어 열어보실 수 있습니다)`, 'info');
+    showToast(isEn ? `Internal path copied: ${fullPath} (Paste in File Explorer to open)` : `사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창 또는 실행창에 붙여넣어 열어보실 수 있습니다)`, 'info');
   } finally {
     if (btnEl) {
       btnEl.disabled = false;
@@ -3329,32 +3976,33 @@ function copyDrawingSummaryText() {
   const item = (AppState.drawingsData || []).find(d => d.model === AppState.selectedDrawingModel);
   if (!item) return;
 
-  let text = `[IC Tray 도면 상세 정보]\n`;
-  text += `• 품번 / 모델: ${item.model}\n`;
-  text += `• 시리즈: ${item.series || '-'}\n`;
-  text += `• 고객사: ${item.customer || '-'}\n`;
-  text += `• 고객사 P/N: ${item.customer_pn || '-'}\n`;
-  text += `• 패키지 규격: ${item.pkg_type || '-'}\n`;
-  text += `• 내열온도 / 재질: ${item.temp || '-'} / ${item.material || '-'}\n`;
-  text += `• 등록 도면 수: ${item.files ? item.files.length : 0}개 파일\n\n`;
+  const isEn = AppState.currentLang === 'en';
+  let text = isEn ? `[IC Tray Drawing Details]\n` : `[IC Tray 도면 상세 정보]\n`;
+  text += isEn ? `• Part / Model: ${item.model}\n` : `• 품번 / 모델: ${item.model}\n`;
+  text += isEn ? `• Series: ${item.series || '-'}\n` : `• 시리즈: ${item.series || '-'}\n`;
+  text += isEn ? `• Customer: ${item.customer || '-'}\n` : `• 고객사: ${item.customer || '-'}\n`;
+  text += isEn ? `• Customer P/N: ${item.customer_pn || '-'}\n` : `• 고객사 P/N: ${item.customer_pn || '-'}\n`;
+  text += isEn ? `• Package Type: ${item.pkg_type || '-'}\n` : `• 패키지 규격: ${item.pkg_type || '-'}\n`;
+  text += isEn ? `• Temp / Material: ${item.temp || '-'} / ${item.material || '-'}\n` : `• 내열온도 / 재질: ${item.temp || '-'} / ${item.material || '-'}\n`;
+  text += isEn ? `• Drawing Count: ${item.files ? item.files.length : 0} files\n\n` : `• 등록 도면 수: ${item.files ? item.files.length : 0}개 파일\n\n`;
 
-  text += `[등록 도면 파일 목록]\n`;
+  text += isEn ? `[Registered Drawing Files]\n` : `[등록 도면 파일 목록]\n`;
   if (item.files && item.files.length > 0) {
     item.files.forEach((f, idx) => {
       const sizeKb = (f.size / 1024).toFixed(1);
       const dateStr = f.mtime ? f.mtime.substring(0, 10) : '-';
-      text += `${idx + 1}. ${f.filename} (${sizeKb} KB, ${dateStr})\n   - 경로: Z:\\KQC\\IC TRAY DRAWING\\${f.rel_path.replace(/\//g, '\\')}\n`;
+      text += `${idx + 1}. ${f.filename} (${sizeKb} KB, ${dateStr})\n   - ${isEn ? 'Path' : '경로'}: Z:\\KQC\\IC TRAY DRAWING\\${f.rel_path.replace(/\//g, '\\')}\n`;
     });
   } else {
-    text += `등록된 도면 파일 없음\n`;
+    text += isEn ? `No drawing files registered\n` : `등록된 도면 파일 없음\n`;
   }
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast('도면 상세 정보 및 파일 목록이 복사되었습니다.');
+      showToast(isEn ? 'Drawing summary and file list copied.' : '도면 상세 정보 및 파일 목록이 복사되었습니다.');
     });
   } else {
-    showToast('클립보드 복사 완료');
+    showToast(isEn ? 'Copied to clipboard.' : '클립보드 복사 완료');
   }
 }
 
@@ -4446,6 +5094,7 @@ function renderFeedbackBoard() {
 function renderFeedbackPage(page) {
   if (!DOM.feedbackBoardList) return;
 
+  const isEn = AppState.currentLang === 'en';
   const list = AppState.feedbackFilteredRows || [];
   const totalRows = list.length;
   const pageSize = AppState.feedbackPageSize || 10;
@@ -4455,18 +5104,20 @@ function renderFeedbackPage(page) {
   AppState.feedbackCurrentPage = page;
 
   if (DOM.feedbackCountBadge) {
-    DOM.feedbackCountBadge.textContent = `${totalRows}건`;
+    DOM.feedbackCountBadge.textContent = isEn ? `${totalRows} items` : `${totalRows}건`;
   }
 
   if (DOM.feedbackPageInfo) {
-    DOM.feedbackPageInfo.textContent = `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+    DOM.feedbackPageInfo.textContent = isEn
+      ? `Page ${page} of ${totalPages} (${totalRows.toLocaleString()} items total)`
+      : `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
   }
 
   if (totalRows === 0) {
     DOM.feedbackBoardList.innerHTML = `
       <div class="feedback-empty-state">
-        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">등록된 기능 요청이 없습니다.</div>
-        <div style="font-size:12px;color:#94a3b8;">새로운 아이디어나 필요한 기능이 있다면 [새 요청 등록] 버튼을 눌러보세요.</div>
+        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">${isEn ? 'No feature requests found.' : '등록된 기능 요청이 없습니다.'}</div>
+        <div style="font-size:12px;color:#94a3b8;">${isEn ? 'Click [New Request] to suggest new features or ideas.' : '새로운 아이디어나 필요한 기능이 있다면 [새 요청 등록] 버튼을 눌러보세요.'}</div>
       </div>
     `;
     if (DOM.feedbackPageControls) DOM.feedbackPageControls.innerHTML = '';
@@ -4480,21 +5131,23 @@ function renderFeedbackPage(page) {
   DOM.feedbackBoardList.innerHTML = pageItems.map(item => {
     item = sanitizeFeedbackPost(item);
     let badgeClass = 'pending';
-    let badgeText = '검토 중';
+    let badgeText = isEn ? 'In Review' : '검토 중';
     const st = String(item.status || '').toLowerCase();
     if (st === 'replied' || st.includes('답변')) {
       badgeClass = 'replied';
-      badgeText = '답변 완료';
+      badgeText = isEn ? 'Replied' : '답변 완료';
     } else if (st === 'applied' || st.includes('반영')) {
       badgeClass = 'applied';
-      badgeText = '반영 완료';
+      badgeText = isEn ? 'Applied' : '반영 완료';
     }
 
     let replyHtml = '';
     if (item.reply && item.reply.content) {
-      const rawAuthor = String(item.reply.author || '시스템 관리자');
+      const rawAuthor = String(item.reply.author || (isEn ? 'System Admin' : '시스템 관리자'));
       const cleanAuthor = rawAuthor.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2B50}-\u{2B55}]|[\u{2300}-\u{23FF}]/gu, '').trim();
-      const replyHeaderTitle = cleanAuthor.endsWith('답변') ? cleanAuthor : `${cleanAuthor || '시스템 관리자'} 답변`;
+      const replyHeaderTitle = isEn
+        ? `${cleanAuthor || 'Admin'} Reply`
+        : (cleanAuthor.endsWith('답변') ? cleanAuthor : `${cleanAuthor || '시스템 관리자'} 답변`);
       replyHtml = `
         <div class="feedback-reply-box">
           <div class="feedback-reply-header">
@@ -4508,23 +5161,28 @@ function renderFeedbackPage(page) {
 
     let adminActionHtml = '';
     if (AppState.isBoardAdmin) {
+      const editLabel = isEn ? 'Edit Reply' : '답변 수정';
+      const writeLabel = isEn ? 'Write Reply' : '답변 작성';
+      const deleteLabel = isEn ? 'Delete' : '삭제';
       adminActionHtml = `
         <div class="feedback-card-actions">
           <button class="action-btn-sm primary" onclick="openAdminReplyModal('${item.id}')" style="font-size:11px;padding:3px 10px;">
-            ${item.reply ? '답변 수정' : '답변 작성'}
+            ${item.reply ? editLabel : writeLabel}
           </button>
           <button class="action-btn-sm danger" onclick="deleteFeedbackPostById('${item.id}')" style="font-size:11px;padding:3px 10px;">
-            삭제
+            ${deleteLabel}
           </button>
         </div>
       `;
     }
 
+    const authorDisplay = item.author || (isEn ? 'Anonymous' : '익명');
+
     return `
       <div class="feedback-card" id="card-${item.id}">
         <div class="feedback-card-header">
           <span class="feedback-badge ${badgeClass}">${badgeText}</span>
-          <span class="feedback-card-meta">${escapeHtml(item.author || '익명')} · ${escapeHtml(item.created_at || '')}</span>
+          <span class="feedback-card-meta">${escapeHtml(authorDisplay)} · ${escapeHtml(item.created_at || '')}</span>
         </div>
         <div class="feedback-card-title">${escapeHtml(item.title)}</div>
         <div class="feedback-card-content">${escapeHtml(item.content)}</div>
@@ -4588,19 +5246,20 @@ function submitNewFeedback() {
   const author = (DOM.feedbackAuthorInput?.value || '').trim();
   const title = (DOM.feedbackTitleInput?.value || '').trim();
   const content = (DOM.feedbackContentInput?.value || '').trim();
+  const isEn = AppState.currentLang === 'en';
 
   if (!author) {
-    showToast('작성자(부서/이름)를 입력해 주세요.', 'error');
+    showToast(isEn ? 'Please enter author (dept/name).' : '작성자(부서/이름)를 입력해 주세요.', 'error');
     DOM.feedbackAuthorInput?.focus();
     return;
   }
   if (!title) {
-    showToast('요청 제목을 입력해 주세요.', 'error');
+    showToast(isEn ? 'Please enter request title.' : '요청 제목을 입력해 주세요.', 'error');
     DOM.feedbackTitleInput?.focus();
     return;
   }
   if (!content) {
-    showToast('상세 요청 내용을 입력해 주세요.', 'error');
+    showToast(isEn ? 'Please enter detailed request content.' : '상세 요청 내용을 입력해 주세요.', 'error');
     DOM.feedbackContentInput?.focus();
     return;
   }
@@ -4633,7 +5292,7 @@ function submitNewFeedback() {
     DOM.feedbackNewModal.classList.remove('active');
   }
   renderFeedbackBoard();
-  showToast('기능 추가 요청이 등록되었습니다. 관리자가 검토 후 답변을 드립니다.');
+  showToast(isEn ? 'Feature request submitted. Admin will review and respond.' : '기능 추가 요청이 등록되었습니다. 관리자가 검토 후 답변을 드립니다.');
 }
 
 function openBoardPinModal() {
@@ -4664,25 +5323,26 @@ async function verifyBoardPin() {
     if (window.AdminState) window.AdminState.isAuthenticated = true;
     AppState.isBoardAdmin = true;
     AppState.isFaqAdmin = true;
+    const isEn = AppState.currentLang === 'en';
     if (DOM.btnToggleBoardAdmin) {
-      DOM.btnToggleBoardAdmin.textContent = '관리자 모드 ON';
+      DOM.btnToggleBoardAdmin.textContent = isEn ? 'Admin Mode ON' : '관리자 모드 ON';
       DOM.btnToggleBoardAdmin.classList.remove('warning');
       DOM.btnToggleBoardAdmin.classList.add('primary');
     }
     if (DOM.btnToggleFaqAdmin) {
-      DOM.btnToggleFaqAdmin.textContent = '관리자 모드 ON';
+      DOM.btnToggleFaqAdmin.textContent = isEn ? 'Admin Mode ON' : '관리자 모드 ON';
       DOM.btnToggleFaqAdmin.classList.remove('warning');
       DOM.btnToggleFaqAdmin.classList.add('primary');
     }
     if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'inline-flex';
     if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'inline-flex';
 
-    showToast('관리자 인증 완료! 요청 답변 및 FAQ 관리가 가능합니다.');
+    showToast(isEn ? 'Admin verified! Reply and FAQ management enabled.' : '관리자 인증 완료! 요청 답변 및 FAQ 관리가 가능합니다.');
     renderFeedbackBoard();
     renderFaqList();
   } else {
     if (DOM.boardPinError) {
-      DOM.boardPinError.textContent = 'PIN 번호가 일치하지 않습니다.';
+      DOM.boardPinError.textContent = AppState.currentLang === 'en' ? 'Incorrect PIN code.' : 'PIN 번호가 일치하지 않습니다.';
       DOM.boardPinError.style.display = 'block';
     }
     DOM.boardPinInput?.select();
@@ -4690,14 +5350,15 @@ async function verifyBoardPin() {
 }
 
 function toggleBoardAdminMode() {
+  const isEn = AppState.currentLang === 'en';
   if (AppState.isBoardAdmin) {
     AppState.isBoardAdmin = false;
     if (DOM.btnToggleBoardAdmin) {
-      DOM.btnToggleBoardAdmin.textContent = '관리자 모드';
+      DOM.btnToggleBoardAdmin.textContent = isEn ? 'Admin Mode' : '관리자 모드';
       DOM.btnToggleBoardAdmin.classList.remove('primary');
       DOM.btnToggleBoardAdmin.classList.add('warning');
     }
-    showToast('관리자 모드가 해제되었습니다.');
+    showToast(isEn ? 'Admin mode deactivated.' : '관리자 모드가 해제되었습니다.');
     renderFeedbackBoard();
     return;
   }
@@ -4706,11 +5367,11 @@ function toggleBoardAdminMode() {
   if (window.AdminState && window.AdminState.isAuthenticated) {
     AppState.isBoardAdmin = true;
     if (DOM.btnToggleBoardAdmin) {
-      DOM.btnToggleBoardAdmin.textContent = '관리자 모드 ON';
+      DOM.btnToggleBoardAdmin.textContent = isEn ? 'Admin Mode ON' : '관리자 모드 ON';
       DOM.btnToggleBoardAdmin.classList.remove('warning');
       DOM.btnToggleBoardAdmin.classList.add('primary');
     }
-    showToast('관리자 권한이 활성화되었습니다.');
+    showToast(isEn ? 'Admin privileges enabled.' : '관리자 권한이 활성화되었습니다.');
     renderFeedbackBoard();
     return;
   }
@@ -4723,11 +5384,12 @@ window.openAdminReplyModal = function(id) {
   const post = (AppState.feedbackData || []).find(p => p.id === id);
   if (!post) return;
 
+  const isEn = AppState.currentLang === 'en';
   if (DOM.feedbackTargetId) DOM.feedbackTargetId.value = id;
   if (DOM.feedbackTargetPreview) {
     DOM.feedbackTargetPreview.innerHTML = `
       <div style="font-weight:700;color:#f8fafc;margin-bottom:4px;">${escapeHtml(post.title)}</div>
-      <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">작성자: ${escapeHtml(post.author)} (${post.created_at})</div>
+      <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">${isEn ? 'Author' : '작성자'}: ${escapeHtml(post.author)} (${post.created_at})</div>
       <div style="font-size:12px;color:#cbd5e1;white-space:pre-wrap;">${escapeHtml(post.content)}</div>
     `;
   }
@@ -4751,11 +5413,12 @@ async function submitAdminReply() {
   const post = (AppState.feedbackData || []).find(p => p.id === id);
   if (!post) return;
 
+  const isEn = AppState.currentLang === 'en';
   const replyText = (DOM.feedbackReplyTextInput?.value || '').trim();
   const status = DOM.feedbackReplyStatusSelect?.value || 'replied';
 
   if (!replyText) {
-    showToast('관리자 공식 답변 내용을 작성해 주세요.', 'error');
+    showToast(isEn ? 'Please enter admin reply content.' : '관리자 공식 답변 내용을 작성해 주세요.', 'error');
     DOM.feedbackReplyTextInput?.focus();
     return;
   }
@@ -4771,7 +5434,7 @@ async function submitAdminReply() {
   post.status = status;
   post.updated_at = dateStr;
   post.reply = {
-    author: '시스템 관리자',
+    author: isEn ? 'System Admin' : '시스템 관리자',
     content: replyText,
     replied_at: dateStr
   };
@@ -4782,22 +5445,25 @@ async function submitAdminReply() {
     DOM.feedbackReplyModal.classList.remove('active');
   }
   renderFeedbackBoard();
-  showToast('관리자 답변이 로컬에 저장되었습니다. 클라우드 동기화 중...');
+  showToast(isEn ? 'Admin reply saved. Syncing to cloud...' : '관리자 답변이 로컬에 저장되었습니다. 클라우드 동기화 중...');
 
   const syncOk = await syncFeedbackToCloud(); // PC↔모바일 클라우드 실시간 동기화
   if (syncOk) {
-    showToast('관리자 답변이 클라우드에 영구 저장되었습니다.', 'success');
+    showToast(isEn ? 'Admin reply permanently saved to cloud.' : '관리자 답변이 클라우드에 영구 저장되었습니다.', 'success');
   } else {
-    showToast('답변이 로컬에 안전하게 보존되었습니다. (네트워크 연결 시 자동 동기화)', 'info');
+    showToast(isEn ? 'Reply saved locally. (Will auto-sync on reconnect)' : '답변이 로컬에 안전하게 보존되었습니다. (네트워크 연결 시 자동 동기화)', 'info');
   }
 }
 
 window.deleteFeedbackPostById = function(id) {
   const post = (AppState.feedbackData || []).find(p => p.id === id);
+  const isEn = AppState.currentLang === 'en';
   if (DOM.feedbackDeleteTargetId) DOM.feedbackDeleteTargetId.value = id;
   if (DOM.feedbackDeleteTitlePreview) {
-    const postTitle = post ? post.title : '선택한 요청';
-    DOM.feedbackDeleteTitlePreview.textContent = `"${postTitle}" 게시글을 삭제하시겠습니까?`;
+    const postTitle = post ? post.title : (isEn ? 'selected request' : '선택한 요청');
+    DOM.feedbackDeleteTitlePreview.textContent = isEn
+      ? `Are you sure you want to delete "${postTitle}"?`
+      : `"${postTitle}" 게시글을 삭제하시겠습니까?`;
   }
   if (DOM.feedbackDeleteModal) {
     DOM.feedbackDeleteModal.classList.add('show');
@@ -4833,6 +5499,8 @@ async function executeDeleteFeedbackPost() {
   const id = DOM.feedbackDeleteTargetId?.value;
   if (!id) return;
 
+  const isEn = AppState.currentLang === 'en';
+
   // 1) 삭제 톰스톤에 등록 (브라우저 캐시나 원격 CDN 지연으로 인한 부활 영구 방지)
   markFeedbackDeleted(id);
 
@@ -4846,12 +5514,12 @@ async function executeDeleteFeedbackPost() {
     DOM.feedbackReplyModal.classList.remove('active');
   }
   renderFeedbackBoard();
-  showToast('게시글을 삭제했습니다. 클라우드 동기화 중...');
+  showToast(isEn ? 'Post deleted. Syncing to cloud...' : '게시글을 삭제했습니다. 클라우드 동기화 중...');
 
   // 3) 클라우드 원격 저장 완료 대기
   const syncOk = await syncFeedbackToCloud();
   if (syncOk) {
-    showToast('게시글이 클라우드에서도 영구 삭제되었습니다.', 'success');
+    showToast(isEn ? 'Post permanently deleted from cloud.' : '게시글이 클라우드에서도 영구 삭제되었습니다.', 'success');
   }
 }
 
@@ -5236,20 +5904,23 @@ function renderFaqPage(page) {
   page = Math.max(1, Math.min(page, totalPages));
   AppState.faqCurrentPage = page;
 
+  const isEn = AppState.currentLang === 'en';
   if (DOM.faqCountBadge) {
-    DOM.faqCountBadge.textContent = `${totalRows}건`;
+    DOM.faqCountBadge.textContent = isEn ? `${totalRows} items` : `${totalRows}건`;
   }
 
   if (DOM.faqPageInfo) {
-    DOM.faqPageInfo.textContent = `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+    DOM.faqPageInfo.textContent = isEn
+      ? `Page ${page} of ${totalPages} (${totalRows.toLocaleString()} items total)`
+      : `${page} / ${totalPages} 페이지 (총 ${totalRows.toLocaleString()}건)`;
   }
 
   if (totalRows === 0) {
     DOM.faqListContainer.innerHTML = `
       <div class="feedback-empty-state">
-        <div style="font-size:14px;color:#94a3b8;font-weight:600;margin-bottom:8px;">FAQ 지식</div>
-        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">일치하는 사내 FAQ 지식이 없습니다.</div>
-        <div style="font-size:12px;color:#94a3b8;">검색어를 변경하거나 우측 상단 [+ 새 FAQ 등록]을 눌러보세요.</div>
+        <div style="font-size:14px;color:#94a3b8;font-weight:600;margin-bottom:8px;">${isEn ? 'FAQ Knowledge' : 'FAQ 지식'}</div>
+        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">${isEn ? 'No matching FAQ knowledge items found.' : '일치하는 사내 FAQ 지식이 없습니다.'}</div>
+        <div style="font-size:12px;color:#94a3b8;">${isEn ? 'Try changing your search terms or click [+ New FAQ] in the upper right.' : '검색어를 변경하거나 우측 상단 [+ 새 FAQ 등록]을 눌러보세요.'}</div>
       </div>
     `;
     if (DOM.faqPageControls) DOM.faqPageControls.innerHTML = '';
@@ -5370,15 +6041,15 @@ function renderFaqPage(page) {
     const actionHtml = `
       <div class="faq-card-actions">
         <button class="action-btn-sm primary" onclick="handleFaqEditClick(${actualIndex})" style="font-size:11px;padding:3px 10px;">
-          수정
+          ${isEn ? 'Edit' : '수정'}
         </button>
         <button class="action-btn-sm danger" onclick="handleFaqDeleteClick(${actualIndex})" style="font-size:11px;padding:3px 10px;">
-          삭제
+          ${isEn ? 'Delete' : '삭제'}
         </button>
       </div>
     `;
 
-    const qTitle = escapeHtml(item.Q || item.question || item.title || '제목 없음');
+    const qTitle = escapeHtml(item.Q || item.question || item.title || (isEn ? 'Untitled' : '제목 없음'));
     const aContent = renderMarkdown(item.A || item.answer || item.content || '');
 
     return `
@@ -5553,15 +6224,16 @@ function detectFaqCategory(q) {
 
 // 관리자 모드 토글
 function toggleFaqAdminMode() {
+  const isEn = AppState.currentLang === 'en';
   if (AppState.isFaqAdmin) {
     AppState.isFaqAdmin = false;
     if (DOM.btnToggleFaqAdmin) {
-      DOM.btnToggleFaqAdmin.textContent = '관리자 모드';
+      DOM.btnToggleFaqAdmin.textContent = isEn ? 'Admin Mode' : '관리자 모드';
       DOM.btnToggleFaqAdmin.classList.remove('primary');
       DOM.btnToggleFaqAdmin.classList.add('warning');
     }
     if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'none';
-    showToast('FAQ 관리자 모드가 해제되었습니다.');
+    showToast(isEn ? 'FAQ admin mode deactivated.' : 'FAQ 관리자 모드가 해제되었습니다.');
     renderFaqList();
     return;
   }
@@ -5570,13 +6242,13 @@ function toggleFaqAdminMode() {
   if ((window.AdminState && window.AdminState.isAuthenticated) || AppState.isBoardAdmin) {
     AppState.isFaqAdmin = true;
     if (DOM.btnToggleFaqAdmin) {
-      DOM.btnToggleFaqAdmin.textContent = '관리자 모드 ON';
+      DOM.btnToggleFaqAdmin.textContent = isEn ? 'Admin Mode ON' : '관리자 모드 ON';
       DOM.btnToggleFaqAdmin.classList.remove('warning');
       DOM.btnToggleFaqAdmin.classList.add('primary');
     }
     if (DOM.btnOpenNewFaqModal) DOM.btnOpenNewFaqModal.style.display = 'inline-flex';
     if (DOM.btnDeployFaq) DOM.btnDeployFaq.style.display = 'inline-flex';
-    showToast('관리자 권한이 활성화되었습니다.');
+    showToast(isEn ? 'Admin privileges enabled.' : '관리자 권한이 활성화되었습니다.');
     renderFaqList();
     return;
   }
@@ -5587,8 +6259,9 @@ function toggleFaqAdminMode() {
 
 // FAQ 등록 모달 열기
 function openNewFaqModal() {
+  const isEn = AppState.currentLang === 'en';
   if (DOM.faqEditIndex) DOM.faqEditIndex.value = '-1';
-  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '새 사내 FAQ / 지식 등록';
+  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = isEn ? 'Register Company FAQ / Knowledge' : '새 사내 FAQ / 지식 등록';
   if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = '';
   if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = '';
   if (DOM.faqAuthorPinInput) DOM.faqAuthorPinInput.value = '';
@@ -5609,8 +6282,9 @@ window.openEditFaqModal = function(idx) {
   const item = AppState.knowledgeData[idx];
   if (!item) return;
 
+  const isEn = AppState.currentLang === 'en';
   if (DOM.faqEditIndex) DOM.faqEditIndex.value = idx;
-  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = '사내 FAQ 지식 수정';
+  if (DOM.faqModalTitle) DOM.faqModalTitle.textContent = isEn ? 'Edit Company FAQ' : '사내 FAQ 지식 수정';
   if (DOM.faqQuestionInput) DOM.faqQuestionInput.value = item.Q || item.question || item.title || '';
   if (DOM.faqCategoryInput) DOM.faqCategoryInput.value = item.category || '';
   if (DOM.faqAuthorPinInput) DOM.faqAuthorPinInput.value = item.author_pin || '';
@@ -5638,10 +6312,11 @@ function closeFaqEditModal() {
 function handleFaqFiles(files) {
   if (!files || files.length === 0) return;
   const MAX_SIZE = 30 * 1024 * 1024; // 30MB
+  const isEn = AppState.currentLang === 'en';
 
   Array.from(files).forEach(file => {
     if (file.size > MAX_SIZE) {
-      showToast(`"${file.name}" 파일 크기(${formatFileSize(file.size)})가 30MB를 초과하여 첨부할 수 없습니다.`, 'error');
+      showToast(isEn ? `File "${file.name}" (${formatFileSize(file.size)}) exceeds 30MB limit.` : `"${file.name}" 파일 크기(${formatFileSize(file.size)})가 30MB를 초과하여 첨부할 수 없습니다.`, 'error');
       return;
     }
 
@@ -5676,21 +6351,22 @@ function renderFaqAttachedList() {
   if (!DOM.faqAttachedList) return;
 
   const list = AppState.currentFaqAttachments || [];
+  const isEn = AppState.currentLang === 'en';
   let totalBytes = 0;
 
   if (list.length === 0) {
     DOM.faqAttachedList.innerHTML = '';
     if (DOM.faqAttachSizeIndicator) {
-      DOM.faqAttachSizeIndicator.textContent = '0개 첨부됨 (파일당 최대 30MB)';
+      DOM.faqAttachSizeIndicator.textContent = isEn ? '0 attached (Max 30MB per file)' : '0개 첨부됨 (파일당 최대 30MB)';
     }
     return;
   }
 
   DOM.faqAttachedList.innerHTML = list.map((att, i) => {
     totalBytes += (att.size || 0);
-    let icon = '[문서]';
-    if (att.category === 'image') icon = '[이미지]';
-    else if (att.category === 'video') icon = '[동영상]';
+    let icon = isEn ? '[Doc]' : '[문서]';
+    if (att.category === 'image') icon = isEn ? '[Image]' : '[이미지]';
+    else if (att.category === 'video') icon = isEn ? '[Video]' : '[동영상]';
     else if (att.category === 'pdf') icon = '[PDF]';
     else if (att.category === 'excel') icon = '[Excel]';
 
@@ -5705,7 +6381,9 @@ function renderFaqAttachedList() {
   }).join('');
 
   if (DOM.faqAttachSizeIndicator) {
-    DOM.faqAttachSizeIndicator.textContent = `${list.length}개 첨부됨 (총 ${formatFileSize(totalBytes)} / 최대 30MB)`;
+    DOM.faqAttachSizeIndicator.textContent = isEn
+      ? `${list.length} attached (Total ${formatFileSize(totalBytes)} / Max 30MB)`
+      : `${list.length}개 첨부됨 (총 ${formatFileSize(totalBytes)} / 최대 30MB)`;
   }
 }
 
@@ -5721,14 +6399,15 @@ function submitFaqEdit() {
   const cat = (DOM.faqCategoryInput?.value || '').trim();
   const authorPin = (DOM.faqAuthorPinInput?.value || '').trim();
   const editIdx = parseInt(DOM.faqEditIndex?.value, 10);
+  const isEn = AppState.currentLang === 'en';
 
   if (!q) {
-    showToast('질문(Question) 내용을 입력해 주세요.', 'error');
+    showToast(isEn ? 'Please enter question content.' : '질문(Question) 내용을 입력해 주세요.', 'error');
     DOM.faqQuestionInput?.focus();
     return;
   }
   if (!a) {
-    showToast('상세 답변(Answer) 내용을 입력해 주세요.', 'error');
+    showToast(isEn ? 'Please enter detailed answer content.' : '상세 답변(Answer) 내용을 입력해 주세요.', 'error');
     DOM.faqAnswerInput?.focus();
     return;
   }
@@ -5736,7 +6415,7 @@ function submitFaqEdit() {
   // 신규 등록 시 4자리 비밀번호 필수 입력 검증
   if (editIdx < 0) {
     if (!authorPin || !/^\d{4}$/.test(authorPin)) {
-      showToast('작성자 확인용 4자리 비밀번호(숫자)를 입력해 주세요.', 'error');
+      showToast(isEn ? 'Please enter a 4-digit PIN for author verification.' : '작성자 확인용 4자리 비밀번호(숫자)를 입력해 주세요.', 'error');
       DOM.faqAuthorPinInput?.focus();
       return;
     }
@@ -5768,10 +6447,10 @@ function submitFaqEdit() {
       faqItem.Files = AppState.knowledgeData[editIdx].Files;
     }
     AppState.knowledgeData[editIdx] = faqItem;
-    showToast('FAQ 지식이 성공적으로 수정되었습니다.');
+    showToast(isEn ? 'FAQ knowledge updated successfully.' : 'FAQ 지식이 성공적으로 수정되었습니다.');
   } else {
     AppState.knowledgeData.unshift(faqItem);
-    showToast('새 FAQ 지식이 등록되었습니다.');
+    showToast(isEn ? 'New FAQ knowledge registered successfully.' : '새 FAQ 지식이 등록되었습니다.');
   }
 
   saveFaqStorage();
@@ -5784,9 +6463,12 @@ window.openDeleteFaqModal = function(idx) {
   const item = AppState.knowledgeData[idx];
   if (!item) return;
 
+  const isEn = AppState.currentLang === 'en';
   if (DOM.faqDeleteTargetIndex) DOM.faqDeleteTargetIndex.value = idx;
   if (DOM.faqDeleteTitlePreview) {
-    DOM.faqDeleteTitlePreview.textContent = `"${escapeHtml(item.Q || item.question || '해당 FAQ')}" 항목을 삭제하시겠습니까?`;
+    DOM.faqDeleteTitlePreview.textContent = isEn
+      ? `Are you sure you want to delete "${escapeHtml(item.Q || item.question || 'this FAQ')}"?`
+      : `"${escapeHtml(item.Q || item.question || '해당 FAQ')}" 항목을 삭제하시겠습니까?`;
   }
   if (DOM.faqDeleteModal) {
     DOM.faqDeleteModal.classList.add('show');
@@ -5805,6 +6487,8 @@ function executeDeleteFaq() {
   const idx = parseInt(DOM.faqDeleteTargetIndex?.value, 10);
   if (isNaN(idx) || idx < 0 || idx >= AppState.knowledgeData.length) return;
 
+  const isEn = AppState.currentLang === 'en';
+
   // 삭제 전 긴급 백업
   saveFaqEmergencyBackup();
 
@@ -5813,7 +6497,7 @@ function executeDeleteFaq() {
 
   closeFaqDeleteModal();
   renderFaqList();
-  showToast('FAQ 항목이 삭제되었습니다.');
+  showToast(isEn ? 'FAQ item deleted.' : 'FAQ 항목이 삭제되었습니다.');
 }
 
 // FAQ 로컬 영구 스토리지 저장 (절대 유실 방지)
@@ -5847,6 +6531,7 @@ function exportFaqBackup() {
   const hh = String(now.getHours()).padStart(2, '0');
   const mm = String(now.getMinutes()).padStart(2, '0');
   const filename = `kostat_faq_backup_${y}${m}${d}_${hh}${mm}.json`;
+  const isEn = AppState.currentLang === 'en';
 
   const payload = {
     backup_version: "1.0",
@@ -5864,12 +6549,13 @@ function exportFaqBackup() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast(`FAQ 백업 파일(${filename})이 저장되었습니다.`);
+  showToast(isEn ? `FAQ backup file (${filename}) saved.` : `FAQ 백업 파일(${filename})이 저장되었습니다.`);
 }
 
 // 백업 파일 복원 (.json)
 function importFaqBackup(file) {
   if (!file) return;
+  const isEn = AppState.currentLang === 'en';
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
@@ -5880,11 +6566,11 @@ function importFaqBackup(file) {
       } else if (parsed && Array.isArray(parsed.items)) {
         items = parsed.items;
       } else {
-        throw new Error('올바른 FAQ 백업 JSON 형식이 아닙니다.');
+        throw new Error(isEn ? 'Invalid FAQ backup JSON format.' : '올바른 FAQ 백업 JSON 형식이 아닙니다.');
       }
 
       if (items.length === 0) {
-        showToast('백업 파일에 복원할 FAQ 항목이 없습니다.', 'error');
+        showToast(isEn ? 'No FAQ items to restore in backup file.' : '백업 파일에 복원할 FAQ 항목이 없습니다.', 'error');
         return;
       }
 
@@ -5892,10 +6578,10 @@ function importFaqBackup(file) {
       AppState.knowledgeData = items;
       saveFaqStorage();
       renderFaqList();
-      showToast(`FAQ 백업 데이터가 성공적으로 복원되었습니다. (총 ${items.length}건)`);
+      showToast(isEn ? `FAQ backup data restored successfully. (${items.length} items total)` : `FAQ 백업 데이터가 성공적으로 복원되었습니다. (총 ${items.length}건)`);
     } catch (err) {
       console.error('FAQ 백업 복원 오류:', err);
-      showToast('백업 파일 파싱 실패: ' + err.message, 'error');
+      showToast(isEn ? 'Backup file parse failure: ' + err.message : '백업 파일 파싱 실패: ' + err.message, 'error');
     }
   };
   reader.readAsText(file, 'utf-8');
@@ -6838,6 +7524,7 @@ function renderArchiveBoard() {
 function renderArchivePage(page) {
   if (!DOM.archiveCardListContainer) return;
 
+  const isEn = AppState.currentLang === 'en';
   const pageSize = AppState.archivePageSize || 15;
   const totalItems = AppState.archiveFilteredRows.length;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
@@ -6852,9 +7539,9 @@ function renderArchivePage(page) {
   if (pageItems.length === 0) {
     DOM.archiveCardListContainer.innerHTML = `
       <div class="feedback-empty-state">
-        <div style="font-size:14px;color:#94a3b8;font-weight:600;margin-bottom:8px;">사내 자료실</div>
-        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">등록된 프로그램 및 자료가 없습니다.</div>
-        <div style="font-size:12px;color:#94a3b8;">우측 상단의 [새 자료 등록] 버튼을 눌러 프로그램이나 작업물을 올려보세요.</div>
+        <div style="font-size:14px;color:#94a3b8;font-weight:600;margin-bottom:8px;">${isEn ? 'Archive' : '사내 자료실'}</div>
+        <div style="font-weight:600;color:#cbd5e1;margin-bottom:4px;">${isEn ? 'No documents or programs found.' : '등록된 프로그램 및 자료가 없습니다.'}</div>
+        <div style="font-size:12px;color:#94a3b8;">${isEn ? 'Click [Upload Document] in the upper right to submit a new file or document.' : '우측 상단의 [새 자료 등록] 버튼을 눌러 프로그램이나 작업물을 올려보세요.'}</div>
       </div>
     `;
     renderArchivePagination(totalPages, totalItems, page);
@@ -6865,14 +7552,14 @@ function renderArchivePage(page) {
     const isPinnedClass = item.is_pinned ? ' pinned' : '';
     const attachments = item.attachments || [];
     const attachBadge = attachments.length > 0
-      ? `<span class="archive-attach-badge">첨부 ${attachments.length}개</span>`
+      ? `<span class="archive-attach-badge">${isEn ? `Attachments (${attachments.length})` : `첨부 ${attachments.length}개`}</span>`
       : '';
 
     // 관리자 또는 본인 관리 버튼
     const adminBtns = AppState.isArchiveAdmin ? `
       <div class="archive-card-admin-btns" onclick="event.stopPropagation();">
-        <button class="action-btn-sm" style="padding:3px 8px;font-size:11px;" onclick="openArchiveEditModal('${item.id}'); event.stopPropagation();">수정</button>
-        <button class="action-btn-sm danger" style="padding:3px 8px;font-size:11px;" onclick="openArchiveDeleteModal('${item.id}'); event.stopPropagation();">삭제</button>
+        <button class="action-btn-sm" style="padding:3px 8px;font-size:11px;" onclick="openArchiveEditModal('${item.id}'); event.stopPropagation();">${isEn ? 'Edit' : '수정'}</button>
+        <button class="action-btn-sm danger" style="padding:3px 8px;font-size:11px;" onclick="openArchiveDeleteModal('${item.id}'); event.stopPropagation();">${isEn ? 'Delete' : '삭제'}</button>
       </div>
     ` : '';
 
@@ -6881,13 +7568,13 @@ function renderArchivePage(page) {
     if (item.download_url) {
       linkButtons += `
         <a class="archive-btn-download" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event); event.stopPropagation();">
-          다운로드 바로가기
+          ${isEn ? 'Download' : '다운로드 바로가기'}
         </a>
       `;
     } else if (attachments.length > 0) {
       linkButtons += `
         <button class="archive-btn-download" onclick="openArchiveDetail('${item.id}'); event.stopPropagation();">
-          첨부파일 (${attachments.length})
+          ${isEn ? `Attachments (${attachments.length})` : `첨부파일 (${attachments.length})`}
         </button>
       `;
     }
@@ -6904,21 +7591,27 @@ function renderArchivePage(page) {
       ? `<span>|</span><span>#${escapeHtml(item.tags.join(' #'))}</span>`
       : '';
 
+    const authorDisplay = item.author || (isEn ? 'Admin' : '신경섭');
+    const pinnedText = isEn ? 'Featured' : '고정 추천';
+    const authorPrefix = isEn ? 'Author' : '작성';
+    const downloadsPrefix = isEn ? 'Downloads' : '다운로드';
+    const downloadsSuffix = isEn ? '' : '회';
+
     return `
       <div class="archive-item-card${isPinnedClass}" id="archive-item-${item.id}" onclick="openArchiveDetail('${item.id}')" title="클릭하여 상세 정보 및 첨부파일 확인">
         <div class="archive-item-main">
           <div class="archive-item-title-row">
             <h4 class="archive-item-title">${escapeHtml(item.title)}</h4>
             ${item.version ? `<span class="archive-ver-badge">${escapeHtml(item.version)}</span>` : ''}
-            ${item.is_pinned ? '<span class="archive-pinned-badge">고정 추천</span>' : ''}
+            ${item.is_pinned ? `<span class="archive-pinned-badge">${pinnedText}</span>` : ''}
             ${attachBadge}
           </div>
           <div class="archive-item-meta">
-            <span>작성: ${escapeHtml(item.author || '신경섭')}</span>
+            <span>${authorPrefix}: ${escapeHtml(authorDisplay)}</span>
             <span>|</span>
             <span>${item.date || '-'}</span>
             <span>|</span>
-            <span>다운로드: ${(item.download_count || 0).toLocaleString()}회</span>
+            <span>${downloadsPrefix}: ${(item.download_count || 0).toLocaleString()}${downloadsSuffix}</span>
             ${tagsHtml}
           </div>
         </div>
@@ -6937,7 +7630,10 @@ function renderArchivePage(page) {
 function renderArchivePagination(totalPages, totalItems, currentPage) {
   if (!DOM.archivePagination || !DOM.archivePageInfo || !DOM.archivePageControls) return;
 
-  DOM.archivePageInfo.textContent = `${currentPage} / ${totalPages} 페이지 (총 ${totalItems.toLocaleString()}건)`;
+  const isEn = AppState.currentLang === 'en';
+  DOM.archivePageInfo.textContent = isEn
+    ? `Page ${currentPage} of ${totalPages} (${totalItems.toLocaleString()} items total)`
+    : `${currentPage} / ${totalPages} 페이지 (총 ${totalItems.toLocaleString()}건)`;
 
   if (totalPages <= 1) {
     DOM.archivePageControls.innerHTML = '';
@@ -6947,7 +7643,7 @@ function renderArchivePagination(totalPages, totalItems, currentPage) {
   let controlsHtml = '';
   // 이전 버튼
   controlsHtml += `
-    <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="renderArchivePage(${currentPage - 1})">이전</button>
+    <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="renderArchivePage(${currentPage - 1})">${isEn ? 'Prev' : '이전'}</button>
   `;
 
   // 페이지 번호 범위
@@ -6965,7 +7661,7 @@ function renderArchivePagination(totalPages, totalItems, currentPage) {
 
   // 다음 버튼
   controlsHtml += `
-    <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="renderArchivePage(${currentPage + 1})">다음</button>
+    <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="renderArchivePage(${currentPage + 1})">${isEn ? 'Next' : '다음'}</button>
   `;
 
   DOM.archivePageControls.innerHTML = controlsHtml;
@@ -6976,16 +7672,22 @@ function openArchiveDetail(id) {
   const item = (AppState.archiveData || []).find(it => it.id === id);
   if (!item) return;
 
+  const isEn = AppState.currentLang === 'en';
+
   if (DOM.modalArchiveTitle) DOM.modalArchiveTitle.textContent = item.title || '';
   if (DOM.modalArchiveVer) DOM.modalArchiveVer.textContent = item.version || 'v1.0.0';
-  if (DOM.modalArchiveAuthor) DOM.modalArchiveAuthor.textContent = item.author || '신경섭';
+  if (DOM.modalArchiveAuthor) DOM.modalArchiveAuthor.textContent = item.author || (isEn ? 'Admin' : '신경섭');
   if (DOM.modalArchiveDate) DOM.modalArchiveDate.textContent = item.date || '-';
-  if (DOM.modalArchiveDownloads) DOM.modalArchiveDownloads.textContent = `${(item.download_count || 0).toLocaleString()}회`;
+  if (DOM.modalArchiveDownloads) {
+    DOM.modalArchiveDownloads.textContent = isEn
+      ? `${(item.download_count || 0).toLocaleString()} times`
+      : `${(item.download_count || 0).toLocaleString()}회`;
+  }
   if (DOM.modalArchiveSummary) {
     DOM.modalArchiveSummary.textContent = item.summary || (item.description ? item.description.slice(0, 100) : '-');
   }
   if (DOM.modalArchiveDesc) {
-    DOM.modalArchiveDesc.innerHTML = renderMarkdown(item.description || item.summary || '등록된 프로그램 설명이 없습니다.');
+    DOM.modalArchiveDesc.innerHTML = renderMarkdown(item.description || item.summary || (isEn ? 'No program description registered.' : '등록된 프로그램 설명이 없습니다.'));
   }
 
   // 첨부 파일 목록 렌더링
@@ -6993,10 +7695,10 @@ function openArchiveDetail(id) {
     const atts = item.attachments || [];
     if (atts.length > 0) {
       const attsHtml = atts.map(att => {
-        const attName = escapeHtml(att.name || '첨부파일');
+        const attName = escapeHtml(att.name || (isEn ? 'Attachment' : '첨부파일'));
         const attSize = formatFileSize(att.size || 0);
         let catClass = 'file';
-        let catLabel = '[파일]';
+        let catLabel = isEn ? '[File]' : '[파일]';
         const fName = (att.name || '').toLowerCase();
         if (att.category === 'excel' || fName.match(/\.(xlsx?|csv)$/)) {
           catClass = 'excel';
@@ -7006,10 +7708,10 @@ function openArchiveDetail(id) {
           catLabel = '[PDF]';
         } else if (att.category === 'image' || fName.match(/\.(png|jpe?g|gif|webp|svg)$/)) {
           catClass = 'image';
-          catLabel = '[이미지]';
+          catLabel = isEn ? '[Image]' : '[이미지]';
         } else if (att.category === 'word' || fName.match(/\.(docx?|pptx?|txt)$/)) {
           catClass = 'word';
-          catLabel = '[문서]';
+          catLabel = isEn ? '[Doc]' : '[문서]';
         }
 
         return `
@@ -7044,10 +7746,10 @@ function openArchiveDetail(id) {
       linksHtml += `
         <div class="archive-link-card">
           <div class="archive-link-info">
-            <span class="archive-link-name">공식 다운로드 링크</span>
+            <span class="archive-link-name">${isEn ? 'Official Download Link' : '공식 다운로드 링크'}</span>
             <span class="archive-link-url">${escapeHtml(item.download_url)}</span>
           </div>
-          <a class="action-btn-sm primary" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event)">다운로드</a>
+          <a class="action-btn-sm primary" href="${escapeHtml(item.download_url)}" target="_blank" rel="noopener noreferrer" onclick="handleArchiveDownloadClick('${item.id}', event)">${isEn ? 'Download' : '다운로드'}</a>
         </div>
       `;
     }
@@ -7055,15 +7757,15 @@ function openArchiveDetail(id) {
       linksHtml += `
         <div class="archive-link-card">
           <div class="archive-link-info">
-            <span class="archive-link-name">GitHub 오픈소스 저장소</span>
+            <span class="archive-link-name">${isEn ? 'GitHub Repository' : 'GitHub 오픈소스 저장소'}</span>
             <span class="archive-link-url">${escapeHtml(item.github_url)}</span>
           </div>
-          <a class="action-btn-sm" style="background:#24292e;color:#fff;border-color:#444d56;" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer">저장소 열기</a>
+          <a class="action-btn-sm" style="background:#24292e;color:#fff;border-color:#444d56;" href="${escapeHtml(item.github_url)}" target="_blank" rel="noopener noreferrer">${isEn ? 'Open Repo' : '저장소 열기'}</a>
         </div>
       `;
     }
     if (!linksHtml) {
-      linksHtml = '<div style="font-size:13px;color:#94a3b8;">등록된 외부 링크가 없습니다.</div>';
+      linksHtml = `<div style="font-size:13px;color:#94a3b8;">${isEn ? 'No external links registered.' : '등록된 외부 링크가 없습니다.'}</div>`;
     }
     DOM.modalArchiveLinks.innerHTML = linksHtml;
   }
@@ -7072,14 +7774,16 @@ function openArchiveDetail(id) {
   if (DOM.btnModalArchiveDownload) {
     if (item.download_url) {
       DOM.btnModalArchiveDownload.style.display = 'inline-flex';
-      DOM.btnModalArchiveDownload.textContent = '다운로드 바로가기';
+      DOM.btnModalArchiveDownload.textContent = isEn ? 'Download Now' : '다운로드 바로가기';
       DOM.btnModalArchiveDownload.onclick = (e) => {
         handleArchiveDownloadClick(item.id, e);
         window.open(item.download_url, '_blank', 'noopener,noreferrer');
       };
     } else if (item.attachments && item.attachments.length > 0) {
       DOM.btnModalArchiveDownload.style.display = 'inline-flex';
-      DOM.btnModalArchiveDownload.textContent = `첫 번째 파일 다운로드 (${item.attachments[0].name})`;
+      DOM.btnModalArchiveDownload.textContent = isEn
+        ? `Download First File (${item.attachments[0].name})`
+        : `첫 번째 파일 다운로드 (${item.attachments[0].name})`;
       DOM.btnModalArchiveDownload.onclick = (e) => {
         handleArchiveAttachmentClick(item.id, e);
         const a = document.createElement('a');
@@ -7099,6 +7803,7 @@ function openArchiveDetail(id) {
     if (item.github_url) {
       DOM.btnModalArchiveGithub.style.display = 'inline-flex';
       DOM.btnModalArchiveGithub.href = item.github_url;
+      DOM.btnModalArchiveGithub.textContent = isEn ? 'GitHub Repo' : 'GitHub 저장소';
     } else {
       DOM.btnModalArchiveGithub.style.display = 'none';
     }
@@ -7127,8 +7832,11 @@ function handleArchiveDownloadClick(id, event) {
   if (item) {
     item.download_count = (item.download_count || 0) + 1;
     saveArchiveStorage();
+    const isEn = AppState.currentLang === 'en';
     if (DOM.modalArchiveDownloads) {
-      DOM.modalArchiveDownloads.textContent = `${item.download_count.toLocaleString()}회`;
+      DOM.modalArchiveDownloads.textContent = isEn
+        ? `${item.download_count.toLocaleString()} times`
+        : `${item.download_count.toLocaleString()}회`;
     }
     // 백그라운드 클라우드 동기화
     syncArchiveToCloud();
@@ -7139,15 +7847,18 @@ function handleArchiveDownloadClick(id, event) {
 function openArchiveEditModal(id = null) {
   const isEdit = Boolean(id);
   const item = isEdit ? (AppState.archiveData || []).find(it => it.id === id) : null;
+  const isEn = AppState.currentLang === 'en';
 
   if (DOM.archiveEditId) DOM.archiveEditId.value = isEdit ? id : '';
   if (DOM.modalArchiveEditTitle) {
-    DOM.modalArchiveEditTitle.textContent = isEdit ? '자료 정보 수정' : '새 자료 등록';
+    DOM.modalArchiveEditTitle.textContent = isEdit
+      ? (isEn ? 'Edit Document Info' : '자료 정보 수정')
+      : (isEn ? 'Upload New Document' : '새 자료 등록');
   }
 
   if (DOM.archiveInputTitle) DOM.archiveInputTitle.value = item ? (item.title || '') : '';
   if (DOM.archiveInputVersion) DOM.archiveInputVersion.value = item ? (item.version || '') : 'v1.0.0';
-  if (DOM.archiveInputAuthor) DOM.archiveInputAuthor.value = item ? (item.author || '') : '신경섭';
+  if (DOM.archiveInputAuthor) DOM.archiveInputAuthor.value = item ? (item.author || '') : (isEn ? 'Admin' : '신경섭');
   if (DOM.archiveInputPin) DOM.archiveInputPin.value = '';
   if (DOM.archiveInputDesc) DOM.archiveInputDesc.value = item ? (item.description || item.summary || '') : '';
   if (DOM.archiveInputDownloadUrl) DOM.archiveInputDownloadUrl.value = item ? (item.download_url || '') : '';
@@ -7187,23 +7898,25 @@ async function saveArchivePost() {
   const tagsRaw = (DOM.archiveInputTags ? DOM.archiveInputTags.value : '').trim();
   const isPinned = DOM.archiveInputPinned ? DOM.archiveInputPinned.checked : false;
 
+  const isEn = AppState.currentLang === 'en';
+
   if (!title) {
-    alert('프로그램/자료명을 입력해 주세요.');
+    alert(isEn ? 'Please enter program / archive title.' : '프로그램/자료명을 입력해 주세요.');
     if (DOM.archiveInputTitle) DOM.archiveInputTitle.focus();
     return;
   }
   if (!author) {
-    alert('작성자/개발자명을 입력해 주세요.');
+    alert(isEn ? 'Please enter author / developer name.' : '작성자/개발자명을 입력해 주세요.');
     if (DOM.archiveInputAuthor) DOM.archiveInputAuthor.focus();
     return;
   }
   if (!pin || pin.length < 4) {
-    alert('비밀번호(4자리 PIN)를 입력해 주세요. (수정/삭제 시 확인에 사용됩니다)');
+    alert(isEn ? 'Please enter a 4-digit PIN for modification and deletion.' : '비밀번호(4자리 PIN)를 입력해 주세요. (수정/삭제 시 확인에 사용됩니다)');
     if (DOM.archiveInputPin) DOM.archiveInputPin.focus();
     return;
   }
   if (!desc) {
-    alert('프로그램 설명 및 사용 가이드를 입력해 주세요.');
+    alert(isEn ? 'Please enter program description and usage guide.' : '프로그램 설명 및 사용 가이드를 입력해 주세요.');
     if (DOM.archiveInputDesc) DOM.archiveInputDesc.focus();
     return;
   }
@@ -7216,13 +7929,13 @@ async function saveArchivePost() {
   if (isEdit) {
     const existing = (AppState.archiveData || []).find(it => it.id === editId);
     if (!existing) {
-      alert('수정 대상 자료를 찾을 수 없습니다.');
+      alert(isEn ? 'Target archive item could not be found.' : '수정 대상 자료를 찾을 수 없습니다.');
       return;
     }
     // PIN 검증 (기존 등록 PIN 또는 마스터 PIN)
     const isAdmin = await checkAdminPinHash(pin);
     if (existing.pin && existing.pin !== pin && !isAdmin) {
-      alert('비밀번호가 일치하지 않습니다. 등록 시 설정한 4자리 PIN을 입력하세요.');
+      alert(isEn ? 'Incorrect PIN. Please enter the 4-digit PIN set during registration.' : '비밀번호가 일치하지 않습니다. 등록 시 설정한 4자리 PIN을 입력하세요.');
       if (DOM.archiveInputPin) DOM.archiveInputPin.focus();
       return;
     }
@@ -7262,7 +7975,7 @@ async function saveArchivePost() {
   saveArchiveStorage();
   closeArchiveEditModal();
   renderArchiveBoard();
-  showToast(isEdit ? '자료 정보가 수정되었습니다.' : '새 자료가 성공적으로 등록되었습니다.');
+  showToast(isEdit ? (isEn ? 'Archive information has been updated.' : '자료 정보가 수정되었습니다.') : (isEn ? 'New archive item registered successfully.' : '새 자료가 성공적으로 등록되었습니다.'));
 
   // 클라우드 자동 동기화
   syncArchiveToCloud();
@@ -7299,6 +8012,7 @@ function closeArchiveDeleteModal() {
 async function confirmDeleteArchivePost() {
   const id = DOM.archiveDeleteTargetId ? DOM.archiveDeleteTargetId.value : '';
   const pin = (DOM.archiveDeletePinInput ? DOM.archiveDeletePinInput.value : '').trim();
+  const isEn = AppState.currentLang === 'en';
 
   const item = (AppState.archiveData || []).find(it => it.id === id);
   if (!item) {
@@ -7309,7 +8023,7 @@ async function confirmDeleteArchivePost() {
   const isAdmin = await checkAdminPinHash(pin);
   if (item.pin && item.pin !== pin && !isAdmin) {
     if (DOM.archiveDeleteError) {
-      DOM.archiveDeleteError.textContent = '비밀번호가 일치하지 않습니다.';
+      DOM.archiveDeleteError.textContent = isEn ? 'Incorrect password.' : '비밀번호가 일치하지 않습니다.';
       DOM.archiveDeleteError.style.display = 'block';
     }
     return;
@@ -7327,7 +8041,7 @@ async function confirmDeleteArchivePost() {
   saveArchiveStorage();
   closeArchiveDeleteModal();
   renderArchiveBoard();
-  showToast('자료가 영구 삭제되었습니다.');
+  showToast(isEn ? 'Archive item permanently deleted.' : '자료가 영구 삭제되었습니다.');
 
   // 클라우드 동기화
   syncArchiveToCloud();
@@ -7335,14 +8049,15 @@ async function confirmDeleteArchivePost() {
 
 // 관리자 모드 토글
 function toggleArchiveAdminMode() {
+  const isEn = AppState.currentLang === 'en';
   if (AppState.isArchiveAdmin) {
     AppState.isArchiveAdmin = false;
     if (DOM.btnToggleArchiveAdmin) {
-      DOM.btnToggleArchiveAdmin.textContent = '관리자 모드';
+      DOM.btnToggleArchiveAdmin.textContent = isEn ? 'Admin Mode' : '관리자 모드';
       DOM.btnToggleArchiveAdmin.classList.remove('primary');
       DOM.btnToggleArchiveAdmin.classList.add('warning');
     }
-    showToast('자료실 관리자 모드가 해제되었습니다.');
+    showToast(isEn ? 'Archive admin mode disabled.' : '자료실 관리자 모드가 해제되었습니다.');
     renderArchiveBoard();
     return;
   }
@@ -7351,11 +8066,11 @@ function toggleArchiveAdminMode() {
   if ((window.AdminState && window.AdminState.isAuthenticated) || AppState.isBoardAdmin || AppState.isFaqAdmin) {
     AppState.isArchiveAdmin = true;
     if (DOM.btnToggleArchiveAdmin) {
-      DOM.btnToggleArchiveAdmin.textContent = '관리자 모드 ON';
+      DOM.btnToggleArchiveAdmin.textContent = isEn ? 'Admin Mode ON' : '관리자 모드 ON';
       DOM.btnToggleArchiveAdmin.classList.remove('warning');
       DOM.btnToggleArchiveAdmin.classList.add('primary');
     }
-    showToast('자료실 관리자 권한이 활성화되었습니다.');
+    showToast(isEn ? 'Archive admin privileges activated.' : '자료실 관리자 권한이 활성화되었습니다.');
     renderArchiveBoard();
     return;
   }
@@ -7364,20 +8079,20 @@ function toggleArchiveAdminMode() {
   if (typeof openBoardPinModal === 'function') {
     openBoardPinModal();
   } else {
-    const pin = prompt('관리자 보안 PIN을 입력하세요:');
+    const pin = prompt(isEn ? 'Enter admin security PIN:' : '관리자 보안 PIN을 입력하세요:');
     if (pin) {
       checkAdminPinHash(pin).then(ok => {
         if (ok) {
           AppState.isArchiveAdmin = true;
           if (DOM.btnToggleArchiveAdmin) {
-            DOM.btnToggleArchiveAdmin.textContent = '관리자 모드 ON';
+            DOM.btnToggleArchiveAdmin.textContent = isEn ? 'Admin Mode ON' : '관리자 모드 ON';
             DOM.btnToggleArchiveAdmin.classList.remove('warning');
             DOM.btnToggleArchiveAdmin.classList.add('primary');
           }
-          showToast('자료실 관리자 권한이 활성화되었습니다.');
+          showToast(isEn ? 'Archive admin privileges activated.' : '자료실 관리자 권한이 활성화되었습니다.');
           renderArchiveBoard();
         } else {
-          alert('관리자 PIN 번호가 일치하지 않습니다.');
+          alert(isEn ? 'Admin PIN does not match.' : '관리자 PIN 번호가 일치하지 않습니다.');
         }
       });
     }
