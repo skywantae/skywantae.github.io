@@ -7984,10 +7984,22 @@ window.clearVietnamSearch = clearVietnamSearch;
 // =====================================================
 // 3. 태창 공장 재고 함수군
 // =====================================================
+function getTaichangValidItems(data) {
+  if (!data || !Array.isArray(data.items)) return [];
+  return data.items.filter(item => {
+    const p = (item.p || '').trim().toUpperCase();
+    const m = (item.m || '').toUpperCase();
+    if (!p) return false;
+    if (m.includes('합계') || m.includes('TOTAL') || m.includes('SUB-TOTAL') || m.includes('소계') || m.includes('총계') || m.includes('合计') || m.includes('总计') || m.includes('确认') || m.includes('확인')) return false;
+    if (p.includes('합계') || p.includes('TOTAL') || p.includes('SUB-TOTAL') || p.includes('合计') || p.includes('总计')) return false;
+    return true;
+  });
+}
+
 function initTaichangStock() {
   _taichangStockData = window.KOSTAT_TAICHANG_TRAY_STOCK || null;
   if (_taichangStockData && _taichangStockData.items) {
-    _taichangFilteredItems = _taichangStockData.items;
+    _taichangFilteredItems = getTaichangValidItems(_taichangStockData);
     updateTaichangHeaderAndMetrics(_taichangStockData);
     renderTaichangStock();
   }
@@ -8017,7 +8029,7 @@ function renderTaichangStock() {
   const items = _taichangFilteredItems || [];
   const count = document.getElementById('taichangResultCount');
   if (count) {
-    const masterLen = (_taichangStockData && _taichangStockData.items) ? _taichangStockData.items.length : items.length;
+    const masterLen = (_taichangStockData && _taichangStockData.items) ? getTaichangValidItems(_taichangStockData).length : items.length;
     count.textContent = isEn
       ? `Results: ${formatNum(items.length)} (Total ${formatNum(masterLen)})`
       : `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
@@ -8063,11 +8075,12 @@ function filterTaichangStock() {
   const clearBtn = document.getElementById('btnTaichangSearchClear');
   if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
 
+  const validItems = getTaichangValidItems(_taichangStockData);
   if (!q) {
-    _taichangFilteredItems = _taichangStockData.items;
+    _taichangFilteredItems = validItems;
   } else {
     const terms = q.split(/\s+/);
-    _taichangFilteredItems = _taichangStockData.items.filter(item => {
+    _taichangFilteredItems = validItems.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''}`.toLowerCase();
       return terms.every(t => target.includes(t));
     });
@@ -8082,7 +8095,7 @@ function clearTaichangSearch() {
   if (qInput) { qInput.value = ''; qInput.focus(); }
   if (clearBtn) clearBtn.style.display = 'none';
   if (_taichangStockData) {
-    _taichangFilteredItems = _taichangStockData.items;
+    _taichangFilteredItems = getTaichangValidItems(_taichangStockData);
     renderTaichangStock();
   }
 }
@@ -8092,10 +8105,22 @@ window.clearTaichangSearch = clearTaichangSearch;
 // =====================================================
 // 4. 혜주 공장 재고 함수군
 // =====================================================
+function getHuizhouValidItems(data) {
+  if (!data || !Array.isArray(data.items)) return [];
+  return data.items.filter(item => {
+    const p = (item.p || '').trim().toUpperCase();
+    const m = (item.m || '').toUpperCase();
+    if (!p) return false;
+    if (m.includes('합계') || m.includes('TOTAL') || m.includes('SUB-TOTAL') || m.includes('소계') || m.includes('총계') || m.includes('合计') || m.includes('总计') || m.includes('确认') || m.includes('확인')) return false;
+    if (p.includes('합계') || p.includes('TOTAL') || p.includes('SUB-TOTAL') || p.includes('合计') || p.includes('总计')) return false;
+    return true;
+  });
+}
+
 function initHuizhouStock() {
   _huizhouStockData = window.KOSTAT_HUIZHOU_TRAY_STOCK || null;
   if (_huizhouStockData && _huizhouStockData.items) {
-    _huizhouFilteredItems = _huizhouStockData.items;
+    _huizhouFilteredItems = getHuizhouValidItems(_huizhouStockData);
     updateHuizhouHeaderAndMetrics(_huizhouStockData);
     renderHuizhouStock();
   }
@@ -8125,7 +8150,7 @@ function renderHuizhouStock() {
   const items = _huizhouFilteredItems || [];
   const count = document.getElementById('huizhouResultCount');
   if (count) {
-    const masterLen = (_huizhouStockData && _huizhouStockData.items) ? _huizhouStockData.items.length : items.length;
+    const masterLen = (_huizhouStockData && _huizhouStockData.items) ? getHuizhouValidItems(_huizhouStockData).length : items.length;
     count.textContent = isEn
       ? `Results: ${formatNum(items.length)} (Total ${formatNum(masterLen)})`
       : `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
@@ -8171,11 +8196,12 @@ function filterHuizhouStock() {
   const clearBtn = document.getElementById('btnHuizhouSearchClear');
   if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
 
+  const validItems = getHuizhouValidItems(_huizhouStockData);
   if (!q) {
-    _huizhouFilteredItems = _huizhouStockData.items;
+    _huizhouFilteredItems = validItems;
   } else {
     const terms = q.split(/\s+/);
-    _huizhouFilteredItems = _huizhouStockData.items.filter(item => {
+    _huizhouFilteredItems = validItems.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''}`.toLowerCase();
       return terms.every(t => target.includes(t));
     });
@@ -8190,7 +8216,7 @@ function clearHuizhouSearch() {
   if (qInput) { qInput.value = ''; qInput.focus(); }
   if (clearBtn) clearBtn.style.display = 'none';
   if (_huizhouStockData) {
-    _huizhouFilteredItems = _huizhouStockData.items;
+    _huizhouFilteredItems = getHuizhouValidItems(_huizhouStockData);
     renderHuizhouStock();
   }
 }
