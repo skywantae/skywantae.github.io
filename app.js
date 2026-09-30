@@ -837,16 +837,36 @@ const APP_I18N = {
     lab_tab_ph: '필리핀 지사 리포트 & 프로젝트',
     lab_tab_weekly: '주간보고서',
 
-    // Gimpo Tray Stock
-    gimpo_title: '김포공장 Tray 재고 현황',
-    gimpo_refresh_btn: '최신 재고 새로고침',
-    gimpo_as_of: '기준',
-    gimpo_access_guide: '외부 접속 계정 안내',
-    gimpo_manual_upload: '엑셀 수동 업로드',
+    // Stock Sub-Tabs & Factory Panels
+    stock_tab_gimpo: '김포 공장 재고 현황리스트',
+    stock_tab_vietnam: '베트남 공장 재고 현황리스트',
+    stock_tab_taichang: '태창 공장 재고 현황리스트',
+    stock_tab_huizhou: '혜주 공장 재고 현황리스트',
+
+    stock_gimpo_title: '김포 공장 Tray 재고 현황리스트',
+    stock_vietnam_title: '베트남 공장 Tray 재고 현황리스트',
+    stock_taichang_title: '태창 공장 Tray 재고 현황리스트',
+    stock_huizhou_title: '혜주 공장 Tray 재고 현황리스트',
+
+    btn_download_excel_source: '엑셀 원본 다운로드',
+    btn_refresh_stock: '최신 재고 새로고침',
+    gimpo_access_guide: '외부 접속 안내',
+    gimpo_manual_upload: '수동 업로드',
+
+    stock_badge_gimpo: '김포 검색',
+    stock_badge_vietnam: '베트남 검색',
+    stock_badge_taichang: '태창 검색',
+    stock_badge_huizhou: '혜주 검색',
+
     gimpo_search_holder: 'PART NO, 자재코드, 규격, 거래처, Temp, 특이사항 검색...',
-    gimpo_result_count: '검색 결과',
-    gimpo_unit: '건',
+    vietnam_search_holder: '전산코드, PART NO, 모델명, 고객사, 온도, Rev 검색...',
+    taichang_search_holder: '전산코드, PART NO, 규격, 고객사, 무역방식 검색...',
+    huizhou_search_holder: '전산코드, PART NO, 규격, 고객사, 무역방식 검색...',
+    stock_search_hint: '실시간 다중 키워드 필터링 지원',
+
+    // Gimpo Tray Stock Table Headers
     th_gimpo_partno: 'PART NO',
+    th_gimpo_matcode: '자재코드',
     th_gimpo_temp: 'Temp',
     th_gimpo_spec: '규격',
     th_gimpo_customer: '거래처',
@@ -854,6 +874,43 @@ const APP_I18N = {
     th_gimpo_prod: '생산부',
     th_gimpo_mat: '자재부',
     th_gimpo_total: '합계',
+
+    // Vietnam Table Headers
+    th_vn_syscode: '전산코드',
+    th_vn_partno: 'PART NO (모델명)',
+    th_vn_customer: '고객사',
+    th_vn_temp: '온도',
+    th_vn_boxunit: '박스단위',
+    th_vn_rev: 'Rev',
+    th_vn_prevstock: '전월재고',
+    th_vn_in: '입고',
+    th_vn_out: '출고',
+    th_vn_wait: '출하대기',
+    th_vn_goodstock: '양품재고',
+
+    // Taichang Table Headers
+    th_tc_syscode: '전산코드',
+    th_tc_customer: '고객사',
+    th_tc_partno: 'PART NO (품명)',
+    th_tc_prevstock: '전재고',
+    th_tc_in: '입고',
+    th_tc_out: '출고',
+    th_tc_aging: '장기재고',
+    th_tc_hold: '보류품',
+    th_tc_trade: '무역방식',
+    th_tc_curstock: '현재고',
+
+    // Huizhou Table Headers
+    th_hz_syscode: '전산코드',
+    th_hz_customer: '고객사',
+    th_hz_partno: 'PART NO (품명)',
+    th_hz_prevstock: '전재고',
+    th_hz_in: '입고',
+    th_hz_out: '출고',
+    th_hz_wip: '공정재고',
+    th_hz_plan: '출하계획',
+    th_hz_trade: '무역방식',
+    th_hz_curstock: '현재고',
 
     // Search Placeholders
     ship_holder_cust: '고객사명 입력...',
@@ -937,7 +994,7 @@ const APP_I18N = {
     tab_quotations: 'Quotations',
     tab_contract: 'Project',
     tab_drawings: 'Drawings',
-    tab_stock: 'Stock Status',
+    tab_stock: 'Stocklists',
     tab_feedback: 'Feature Requests',
     tab_chatbot: 'FAQ Chatbot',
     tab_faq: 'Regulations & FAQ',
@@ -953,7 +1010,7 @@ const APP_I18N = {
     contract_sub: 'Project & Contract Review History',
     drawings_title: 'R&D Drawing Management',
     drawings_sub: 'Tray / Carrier Tape Approved Drawings',
-    stock_title: 'Stock Status List',
+    stock_title: 'Stocklists',
     stock_sub: 'Real-time Tray inventory for Gimpo, Vietnam, Taichang, Huizhou factories',
     feedback_title: 'Feature Request Board',
     feedback_sub: 'Web App Feedback & Feature Requests',
@@ -973,16 +1030,36 @@ const APP_I18N = {
     lab_tab_ph: 'PH Branch Report & Projects',
     lab_tab_weekly: 'Weekly Report',
 
-    // Gimpo Tray Stock
-    gimpo_title: 'Gimpo Factory Tray Stock',
-    gimpo_refresh_btn: 'Refresh Stock',
-    gimpo_as_of: 'As of',
+    // Stock Sub-Tabs & Factory Panels
+    stock_tab_gimpo: 'Gimpo Factory Stock List',
+    stock_tab_vietnam: 'Vietnam Factory Stock List',
+    stock_tab_taichang: 'Taichang Factory Stock List',
+    stock_tab_huizhou: 'Huizhou Factory Stock List',
+
+    stock_gimpo_title: 'Gimpo Factory Tray Stock List',
+    stock_vietnam_title: 'Vietnam Factory Tray Stock List',
+    stock_taichang_title: 'Taichang Factory Tray Stock List',
+    stock_huizhou_title: 'Huizhou Factory Tray Stock List',
+
+    btn_download_excel_source: 'Download Source Excel',
+    btn_refresh_stock: 'Refresh Stock',
     gimpo_access_guide: 'External Access Guide',
     gimpo_manual_upload: 'Manual Excel Upload',
-    gimpo_search_holder: 'Search PART NO, Code, Spec, Customer, Temp, Remark...',
-    gimpo_result_count: 'Results',
-    gimpo_unit: 'items',
+
+    stock_badge_gimpo: 'GIMPO',
+    stock_badge_vietnam: 'VIETNAM',
+    stock_badge_taichang: 'TAICHANG',
+    stock_badge_huizhou: 'HUIZHOU',
+
+    gimpo_search_holder: 'Search PART NO, Mat Code, Spec, Customer, Temp, Remark...',
+    vietnam_search_holder: 'Search System Code, PART NO, Model, Customer, Temp, Rev...',
+    taichang_search_holder: 'Search System Code, PART NO, Spec, Customer, Trade Mode...',
+    huizhou_search_holder: 'Search System Code, PART NO, Spec, Customer, Trade Mode...',
+    stock_search_hint: 'Multi-keyword instant search',
+
+    // Gimpo Tray Stock Table Headers
     th_gimpo_partno: 'PART NO',
+    th_gimpo_matcode: 'Mat Code',
     th_gimpo_temp: 'Temp',
     th_gimpo_spec: 'Spec',
     th_gimpo_customer: 'Customer',
@@ -990,6 +1067,43 @@ const APP_I18N = {
     th_gimpo_prod: 'Production',
     th_gimpo_mat: 'Warehouse',
     th_gimpo_total: 'Total',
+
+    // Vietnam Table Headers
+    th_vn_syscode: 'System Code',
+    th_vn_partno: 'PART NO (Model)',
+    th_vn_customer: 'Customer',
+    th_vn_temp: 'Temp',
+    th_vn_boxunit: 'Box Unit',
+    th_vn_rev: 'Rev',
+    th_vn_prevstock: 'Prev Stock',
+    th_vn_in: 'In',
+    th_vn_out: 'Out',
+    th_vn_wait: 'Wait Ship',
+    th_vn_goodstock: 'Good Stock',
+
+    // Taichang Table Headers
+    th_tc_syscode: 'System Code',
+    th_tc_customer: 'Customer',
+    th_tc_partno: 'PART NO (Item)',
+    th_tc_prevstock: 'Prev Stock',
+    th_tc_in: 'In',
+    th_tc_out: 'Out',
+    th_tc_aging: 'Aging Stock',
+    th_tc_hold: 'Hold Stock',
+    th_tc_trade: 'Trade Mode',
+    th_tc_curstock: 'Current Stock',
+
+    // Huizhou Table Headers
+    th_hz_syscode: 'System Code',
+    th_hz_customer: 'Customer',
+    th_hz_partno: 'PART NO (Item)',
+    th_hz_prevstock: 'Prev Stock',
+    th_hz_in: 'In',
+    th_hz_out: 'Out',
+    th_hz_wip: 'WIP',
+    th_hz_plan: 'Ship Plan',
+    th_hz_trade: 'Trade Mode',
+    th_hz_curstock: 'Current Stock',
 
     // Search Placeholders
     ship_holder_cust: 'Search Customer...',
@@ -1161,6 +1275,7 @@ function applyAppLanguage(lang) {
     viewQuotations: t.tab_quotations,
     viewContractReviews: t.tab_contract,
     viewDrawings: t.tab_drawings,
+    viewStock: t.tab_stock,
     viewFeedback: t.tab_feedback,
     viewChatbot: t.tab_chatbot,
     viewFaq: t.tab_faq,
@@ -1210,6 +1325,7 @@ function applyAppLanguage(lang) {
     { selector: '#viewQuotations .viewer-title-group h3', title: t.quotations_title, subSel: '#viewQuotations .viewer-tools span', sub: t.quotations_sub },
     { selector: '#viewContractReviews .viewer-title-group h3', title: t.contract_title, subSel: '#viewContractReviews .viewer-tools span', sub: t.contract_sub },
     { selector: '#viewDrawings .viewer-title-group h3', title: t.drawings_title, subSel: '#viewDrawings .viewer-tools span', sub: t.drawings_sub },
+    { selector: '#viewStock .viewer-title-group h3', title: t.stock_title, subSel: '#viewStock .viewer-tools span', sub: t.stock_sub },
     { selector: '#viewFeedback .viewer-title-group h3', title: t.feedback_title, subSel: '#viewFeedback .viewer-tools span', sub: t.feedback_sub },
     { selector: '#viewChatbot .viewer-title-group h3', title: t.chatbot_title, subSel: '#chatbotStatusBadge', sub: t.chatbot_status_live },
     { selector: '#viewFaq .viewer-title-group h3', title: t.faq_title, subSel: '#viewFaq .viewer-tools span', sub: t.faq_sub },
@@ -1265,33 +1381,103 @@ function applyAppLanguage(lang) {
   }
 
 
-  // 11. 김포공장 Tray 재고 현황 i18n
-  const gimpoTitleEl = document.querySelector('#labSubGimpo h4');
-  if (gimpoTitleEl) gimpoTitleEl.textContent = t.gimpo_title;
-  const btnGimpoRefreshEl = document.getElementById('btnGimpoRefresh');
-  if (btnGimpoRefreshEl) btnGimpoRefreshEl.textContent = t.gimpo_refresh_btn;
-  const btnGimpoGuide = document.querySelector('#labSubGimpo button[onclick*="showGimpoAccessGuide"]');
+  // 11. 재고 현황리스트 (Stocklists - 김포, 베트남, 태창, 혜주 4대 공장) i18n
+  const btnStockTabGimpo = document.getElementById('btnStockTabGimpo');
+  if (btnStockTabGimpo) btnStockTabGimpo.textContent = t.stock_tab_gimpo;
+  const btnStockTabVietnam = document.getElementById('btnStockTabVietnam');
+  if (btnStockTabVietnam) btnStockTabVietnam.textContent = t.stock_tab_vietnam;
+  const btnStockTabTaichang = document.getElementById('btnStockTabTaichang');
+  if (btnStockTabTaichang) btnStockTabTaichang.textContent = t.stock_tab_taichang;
+  const btnStockTabHuizhou = document.getElementById('btnStockTabHuizhou');
+  if (btnStockTabHuizhou) btnStockTabHuizhou.textContent = t.stock_tab_huizhou;
+
+  const titleGimpoStock = document.getElementById('titleGimpoStock');
+  if (titleGimpoStock) titleGimpoStock.textContent = t.stock_gimpo_title;
+  const titleVietnamStock = document.getElementById('titleVietnamStock');
+  if (titleVietnamStock) titleVietnamStock.textContent = t.stock_vietnam_title;
+  const titleTaichangStock = document.getElementById('titleTaichangStock');
+  if (titleTaichangStock) titleTaichangStock.textContent = t.stock_taichang_title;
+  const titleHuizhouStock = document.getElementById('titleHuizhouStock');
+  if (titleHuizhouStock) titleHuizhouStock.textContent = t.stock_huizhou_title;
+
+  ['btnGimpoRefresh', 'btnVietnamRefresh', 'btnTaichangRefresh', 'btnHuizhouRefresh'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t.btn_refresh_stock;
+  });
+
+  ['gimpoDownloadBtnText', 'vietnamDownloadBtnText', 'taichangDownloadBtnText', 'huizhouDownloadBtnText'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t.btn_download_excel_source;
+  });
+
+  const btnGimpoGuide = document.getElementById('btnGimpoGuide');
   if (btnGimpoGuide) btnGimpoGuide.textContent = t.gimpo_access_guide;
-  const btnGimpoUpload = document.querySelector('#labSubGimpo button[onclick*="gimpoStockFileInput"]');
+  const btnGimpoUpload = document.getElementById('btnGimpoUpload');
   if (btnGimpoUpload) btnGimpoUpload.textContent = t.gimpo_manual_upload;
+
+  const gimpoSearchBadgeText = document.getElementById('gimpoSearchBadgeText');
+  if (gimpoSearchBadgeText) gimpoSearchBadgeText.textContent = t.stock_badge_gimpo;
+  const vietnamSearchBadgeText = document.getElementById('vietnamSearchBadgeText');
+  if (vietnamSearchBadgeText) vietnamSearchBadgeText.textContent = t.stock_badge_vietnam;
+  const taichangSearchBadgeText = document.getElementById('taichangSearchBadgeText');
+  if (taichangSearchBadgeText) taichangSearchBadgeText.textContent = t.stock_badge_taichang;
+  const huizhouSearchBadgeText = document.getElementById('huizhouSearchBadgeText');
+  if (huizhouSearchBadgeText) huizhouSearchBadgeText.textContent = t.stock_badge_huizhou;
+
   const gimpoSearchInput = document.getElementById('gimpoSearchInput');
   if (gimpoSearchInput) gimpoSearchInput.placeholder = t.gimpo_search_holder;
-  const gimpoBadgeText = document.getElementById('gimpoSearchBadgeText');
-  if (gimpoBadgeText) gimpoBadgeText.textContent = (lang === 'en' ? 'SEARCH' : '검색');
-  const gimpoHintEl = document.getElementById('gimpoSearchHint');
-  if (gimpoHintEl) gimpoHintEl.textContent = (lang === 'en' ? 'Multi-keyword instant search' : '실시간 다중 키워드 필터링 지원');
-  // Gimpo 테이블 헤더 (Warehouse / Production)
+  const vietnamSearchInput = document.getElementById('vietnamSearchInput');
+  if (vietnamSearchInput) vietnamSearchInput.placeholder = t.vietnam_search_holder;
+  const taichangSearchInput = document.getElementById('taichangSearchInput');
+  if (taichangSearchInput) taichangSearchInput.placeholder = t.taichang_search_holder;
+  const huizhouSearchInput = document.getElementById('huizhouSearchInput');
+  if (huizhouSearchInput) huizhouSearchInput.placeholder = t.huizhou_search_holder;
+
+  ['gimpoSearchHint', 'vietnamSearchHint', 'taichangSearchHint', 'huizhouSearchHint'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t.stock_search_hint;
+  });
+
+  // 테이블 헤더 (Table Headers)
   const gimpoThs = document.querySelectorAll('#gimpoStockTable thead th');
-  if (gimpoThs && gimpoThs.length >= 8) {
-    const ghd = [t.th_gimpo_partno, t.th_gimpo_temp, t.th_gimpo_spec, t.th_gimpo_customer, t.th_gimpo_remark, t.th_gimpo_prod, t.th_gimpo_mat, t.th_gimpo_total];
+  if (gimpoThs && gimpoThs.length >= 9) {
+    const ghd = [t.th_gimpo_partno, t.th_gimpo_matcode, t.th_gimpo_temp, t.th_gimpo_spec, t.th_gimpo_customer, t.th_gimpo_remark, t.th_gimpo_prod, t.th_gimpo_mat, t.th_gimpo_total];
     gimpoThs.forEach((th, idx) => { if (ghd[idx]) th.textContent = ghd[idx]; });
   }
   const thMatDirect = document.getElementById('thGimpoMat');
   if (thMatDirect) thMatDirect.textContent = t.th_gimpo_mat;
   const thProdDirect = document.getElementById('thGimpoProd');
   if (thProdDirect) thProdDirect.textContent = t.th_gimpo_prod;
-  // Gimpo 결과 카운트 갱신 (렌더 후 자동 반영되므로 renderGimpoStock 재호출)
-  if (typeof renderGimpoStock === 'function' && _gimpoStockData) renderGimpoStock();
+
+  const vnThs = document.querySelectorAll('#vietnamStockTable thead th');
+  if (vnThs && vnThs.length >= 11) {
+    const vhd = [t.th_vn_syscode, t.th_vn_partno, t.th_vn_customer, t.th_vn_temp, t.th_vn_boxunit, t.th_vn_rev, t.th_vn_prevstock, t.th_vn_in, t.th_vn_out, t.th_vn_wait, t.th_vn_goodstock];
+    vnThs.forEach((th, idx) => { if (vhd[idx]) th.textContent = vhd[idx]; });
+  }
+
+  const tcThs = document.querySelectorAll('#taichangStockTable thead th');
+  if (tcThs && tcThs.length >= 10) {
+    const thd = [t.th_tc_syscode, t.th_tc_customer, t.th_tc_partno, t.th_tc_prevstock, t.th_tc_in, t.th_tc_out, t.th_tc_aging, t.th_tc_hold, t.th_tc_trade, t.th_tc_curstock];
+    tcThs.forEach((th, idx) => { if (thd[idx]) th.textContent = thd[idx]; });
+  }
+
+  const hzThs = document.querySelectorAll('#huizhouStockTable thead th');
+  if (hzThs && hzThs.length >= 10) {
+    const hhd = [t.th_hz_syscode, t.th_hz_customer, t.th_hz_partno, t.th_hz_prevstock, t.th_hz_in, t.th_hz_out, t.th_hz_wip, t.th_hz_plan, t.th_hz_trade, t.th_hz_curstock];
+    hzThs.forEach((th, idx) => { if (hhd[idx]) th.textContent = hhd[idx]; });
+  }
+
+  // 메타 정보 텍스트 재반영
+  if (typeof updateGimpoHeaderAndMetrics === 'function' && _gimpoStockData) updateGimpoHeaderAndMetrics(_gimpoStockData);
+  if (typeof updateVietnamHeaderAndMetrics === 'function' && _vietnamStockData) updateVietnamHeaderAndMetrics(_vietnamStockData);
+  if (typeof updateTaichangHeaderAndMetrics === 'function' && _taichangStockData) updateTaichangHeaderAndMetrics(_taichangStockData);
+  if (typeof updateHuizhouHeaderAndMetrics === 'function' && _huizhouStockData) updateHuizhouHeaderAndMetrics(_huizhouStockData);
+
+  // 현재 활성 서브탭 재렌더링
+  if (_activeStockSubTab === 'stockSubGimpo' && _gimpoStockData) renderGimpoStock();
+  else if (_activeStockSubTab === 'stockSubVietnam' && _vietnamStockData) renderVietnamStock();
+  else if (_activeStockSubTab === 'stockSubTaichang' && _taichangStockData) renderTaichangStock();
+  else if (_activeStockSubTab === 'stockSubHuizhou' && _huizhouStockData) renderHuizhouStock();
 
   // 12. 주간보고서 iframe에 언어 전달
   const weeklyIframe = document.querySelector('#labSubWeekly iframe');
@@ -7567,10 +7753,22 @@ window.fetchLatestHuizhouStock = (isManual) => fetchLatestStock('huizhou', isMan
 // =====================================================
 // 1. 김포 공장 재고 함수군
 // =====================================================
+function getGimpoValidItems(data) {
+  if (!data || !Array.isArray(data.items)) return [];
+  return data.items.filter(item => {
+    const p = (item.p || '').trim();
+    const m = (item.m || '').toUpperCase();
+    if (!p) return false;
+    if (m.includes('합계') || m.includes('TOTAL') || m.includes('SUB-TOTAL') || m.includes('소계') || m.includes('총계')) return false;
+    if (p.includes('합계') || p.toUpperCase().includes('TOTAL') || p.toUpperCase().includes('SUB-TOTAL')) return false;
+    return true;
+  });
+}
+
 function initGimpoStock() {
   _gimpoStockData = window.KOSTAT_GIMPO_TRAY_STOCK || null;
   if (_gimpoStockData && _gimpoStockData.items) {
-    _gimpoFilteredItems = _gimpoStockData.items;
+    _gimpoFilteredItems = getGimpoValidItems(_gimpoStockData);
     updateGimpoHeaderAndMetrics(_gimpoStockData);
     renderGimpoStock();
   }
@@ -7578,39 +7776,36 @@ function initGimpoStock() {
 }
 
 function updateGimpoHeaderAndMetrics(data) {
+  const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('gimpoAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = `기준: ${data.as_of_date || ''} ${data.as_of_time || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = isEn
+      ? `As of: ${data.as_of_date || ''} ${data.as_of_time || ''} / Source: ${data.source_file || ''}`
+      : `기준: ${data.as_of_date || ''} ${data.as_of_time || ''} / 출처: ${data.source_file || ''}`;
   }
   const dlBtn = document.getElementById('btnDownloadGimpoExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
     dlBtn.href = data.download_url || data.download_url_latest;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
-  const summary = data.summary || {};
-  const elTotal = document.getElementById('gimpoMetricTotal');
-  const elActive = document.getElementById('gimpoMetricActive');
-  const elProd = document.getElementById('gimpoMetricProd');
-  const elMat = document.getElementById('gimpoMetricMat');
-  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
-  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
-  if (elProd) elProd.textContent = `${formatNum(summary.prod_total)} EA`;
-  if (elMat) elMat.textContent = `${formatNum(summary.mat_total)} EA`;
 }
 
 function renderGimpoStock() {
   const tbody = document.getElementById('gimpoStockTbody');
   if (!tbody) return;
 
+  const isEn = AppState.currentLang === 'en';
   const items = _gimpoFilteredItems || [];
   const count = document.getElementById('gimpoResultCount');
   if (count) {
-    const masterLen = (_gimpoStockData && _gimpoStockData.items) ? _gimpoStockData.items.length : items.length;
-    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+    const masterLen = (_gimpoStockData && _gimpoStockData.items) ? getGimpoValidItems(_gimpoStockData).length : items.length;
+    count.textContent = isEn
+      ? `Results: ${formatNum(items.length)} (Total ${formatNum(masterLen)})`
+      : `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
   }
 
   if (items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-dim);">${isEn ? 'No matching stock records found.' : '검색 결과가 없습니다.'}</td></tr>`;
     return;
   }
 
@@ -7637,7 +7832,8 @@ function renderGimpoStock() {
       '</tr>';
   }
   if (items.length > 200) {
-    html += '<tr><td colspan="9" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+    const moreText = isEn ? `and ${items.length - 200} more items (please narrow search)` : `외 ${items.length - 200}건 (검색어를 좁혀주세요)`;
+    html += `<tr><td colspan="9" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">${moreText}</td></tr>`;
   }
   tbody.innerHTML = html;
 }
@@ -7649,11 +7845,12 @@ function filterGimpoStock() {
   const clearBtn = document.getElementById('btnGimpoSearchClear');
   if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
 
+  const validItems = getGimpoValidItems(_gimpoStockData);
   if (!q) {
-    _gimpoFilteredItems = _gimpoStockData.items;
+    _gimpoFilteredItems = validItems;
   } else {
     const terms = q.split(/\s+/);
-    _gimpoFilteredItems = _gimpoStockData.items.filter(item => {
+    _gimpoFilteredItems = validItems.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.s || ''} ${item.t || ''} ${item.c || ''} ${item.r || ''}`.toLowerCase();
       return terms.every(t => target.includes(t));
     });
@@ -7668,7 +7865,7 @@ function clearGimpoSearch() {
   if (qInput) { qInput.value = ''; qInput.focus(); }
   if (clearBtn) clearBtn.style.display = 'none';
   if (_gimpoStockData) {
-    _gimpoFilteredItems = _gimpoStockData.items;
+    _gimpoFilteredItems = getGimpoValidItems(_gimpoStockData);
     renderGimpoStock();
   }
 }
@@ -7689,43 +7886,36 @@ function initVietnamStock() {
 }
 
 function updateVietnamHeaderAndMetrics(data) {
+  const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('vietnamAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = isEn
+      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
+      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
   }
   const dlBtn = document.getElementById('btnDownloadVietnamExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
     dlBtn.href = data.download_url || data.download_url_latest;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
-  const summary = data.summary || {};
-  const elTotal = document.getElementById('vietnamMetricTotal');
-  const elActive = document.getElementById('vietnamMetricActive');
-  const elPrev = document.getElementById('vietnamMetricPrev');
-  const elIn = document.getElementById('vietnamMetricIn');
-  const elOut = document.getElementById('vietnamMetricOut');
-  const elWait = document.getElementById('vietnamMetricWait');
-  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
-  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
-  if (elPrev) elPrev.textContent = `${formatNum(summary.prev_stock)} EA`;
-  if (elIn) elIn.textContent = `${formatNum(summary.total_in)} EA`;
-  if (elOut) elOut.textContent = `${formatNum(summary.total_out)} EA`;
-  if (elWait) elWait.textContent = `${formatNum(summary.wait_shipment)} EA`;
 }
 
 function renderVietnamStock() {
   const tbody = document.getElementById('vietnamStockTbody');
   if (!tbody) return;
 
+  const isEn = AppState.currentLang === 'en';
   const items = _vietnamFilteredItems || [];
   const count = document.getElementById('vietnamResultCount');
   if (count) {
     const masterLen = (_vietnamStockData && _vietnamStockData.items) ? _vietnamStockData.items.length : items.length;
-    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+    count.textContent = isEn
+      ? `Results: ${formatNum(items.length)} (Total ${formatNum(masterLen)})`
+      : `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
   }
 
   if (items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-dim);">${isEn ? 'No matching stock records found.' : '검색 결과가 없습니다.'}</td></tr>`;
     return;
   }
 
@@ -7752,7 +7942,8 @@ function renderVietnamStock() {
       '</tr>';
   }
   if (items.length > 200) {
-    html += '<tr><td colspan="11" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+    const moreText = isEn ? `and ${items.length - 200} more items (please narrow search)` : `외 ${items.length - 200}건 (검색어를 좁혀주세요)`;
+    html += `<tr><td colspan="11" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">${moreText}</td></tr>`;
   }
   tbody.innerHTML = html;
 }
@@ -7804,43 +7995,36 @@ function initTaichangStock() {
 }
 
 function updateTaichangHeaderAndMetrics(data) {
+  const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('taichangAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = isEn
+      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
+      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
   }
   const dlBtn = document.getElementById('btnDownloadTaichangExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
     dlBtn.href = data.download_url || data.download_url_latest;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
-  const summary = data.summary || {};
-  const elTotal = document.getElementById('taichangMetricTotal');
-  const elActive = document.getElementById('taichangMetricActive');
-  const elPrev = document.getElementById('taichangMetricPrev');
-  const elIn = document.getElementById('taichangMetricIn');
-  const elOut = document.getElementById('taichangMetricOut');
-  const elHold = document.getElementById('taichangMetricHold');
-  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
-  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
-  if (elPrev) elPrev.textContent = `${formatNum(summary.prev_stock)} EA`;
-  if (elIn) elIn.textContent = `${formatNum(summary.total_in)} EA`;
-  if (elOut) elOut.textContent = `${formatNum(summary.total_out)} EA`;
-  if (elHold) elHold.textContent = `${formatNum(summary.hold_stock)} EA`;
 }
 
 function renderTaichangStock() {
   const tbody = document.getElementById('taichangStockTbody');
   if (!tbody) return;
 
+  const isEn = AppState.currentLang === 'en';
   const items = _taichangFilteredItems || [];
   const count = document.getElementById('taichangResultCount');
   if (count) {
     const masterLen = (_taichangStockData && _taichangStockData.items) ? _taichangStockData.items.length : items.length;
-    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+    count.textContent = isEn
+      ? `Results: ${formatNum(items.length)} (Total ${formatNum(masterLen)})`
+      : `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
   }
 
   if (items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">${isEn ? 'No matching stock records found.' : '검색 결과가 없습니다.'}</td></tr>`;
     return;
   }
 
@@ -7866,7 +8050,8 @@ function renderTaichangStock() {
       '</tr>';
   }
   if (items.length > 200) {
-    html += '<tr><td colspan="10" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+    const moreText = isEn ? `and ${items.length - 200} more items (please narrow search)` : `외 ${items.length - 200}건 (검색어를 좁혀주세요)`;
+    html += `<tr><td colspan="10" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">${moreText}</td></tr>`;
   }
   tbody.innerHTML = html;
 }
@@ -7918,43 +8103,36 @@ function initHuizhouStock() {
 }
 
 function updateHuizhouHeaderAndMetrics(data) {
+  const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('huizhouAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = isEn
+      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
+      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
   }
   const dlBtn = document.getElementById('btnDownloadHuizhouExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
     dlBtn.href = data.download_url || data.download_url_latest;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
-  const summary = data.summary || {};
-  const elTotal = document.getElementById('huizhouMetricTotal');
-  const elActive = document.getElementById('huizhouMetricActive');
-  const elPrev = document.getElementById('huizhouMetricPrev');
-  const elIn = document.getElementById('huizhouMetricIn');
-  const elOut = document.getElementById('huizhouMetricOut');
-  const elPlan = document.getElementById('huizhouMetricPlan');
-  if (elTotal) elTotal.textContent = `${formatNum(summary.total_stock)} EA`;
-  if (elActive) elActive.textContent = `${formatNum(summary.active_items)}건 / ${formatNum(summary.master_items)}건`;
-  if (elPrev) elPrev.textContent = `${formatNum(summary.prev_stock)} EA`;
-  if (elIn) elIn.textContent = `${formatNum(summary.total_in)} EA`;
-  if (elOut) elOut.textContent = `${formatNum(summary.total_out)} EA`;
-  if (elPlan) elPlan.textContent = `${formatNum(summary.ship_plan)} EA`;
 }
 
 function renderHuizhouStock() {
   const tbody = document.getElementById('huizhouStockTbody');
   if (!tbody) return;
 
+  const isEn = AppState.currentLang === 'en';
   const items = _huizhouFilteredItems || [];
   const count = document.getElementById('huizhouResultCount');
   if (count) {
     const masterLen = (_huizhouStockData && _huizhouStockData.items) ? _huizhouStockData.items.length : items.length;
-    count.textContent = `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
+    count.textContent = isEn
+      ? `Results: ${formatNum(items.length)} (Total ${formatNum(masterLen)})`
+      : `검색 결과: ${formatNum(items.length)}건 (전체 ${formatNum(masterLen)}건)`;
   }
 
   if (items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">검색 결과가 없습니다.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-dim);">${isEn ? 'No matching stock records found.' : '검색 결과가 없습니다.'}</td></tr>`;
     return;
   }
 
@@ -7980,7 +8158,8 @@ function renderHuizhouStock() {
       '</tr>';
   }
   if (items.length > 200) {
-    html += '<tr><td colspan="10" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">외 ' + (items.length - 200) + '건 (검색어를 좁혀주세요)</td></tr>';
+    const moreText = isEn ? `and ${items.length - 200} more items (please narrow search)` : `외 ${items.length - 200}건 (검색어를 좁혀주세요)`;
+    html += `<tr><td colspan="10" style="text-align:center;padding:12px;color:var(--text-dim);font-size:11px;">${moreText}</td></tr>`;
   }
   tbody.innerHTML = html;
 }
