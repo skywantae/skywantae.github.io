@@ -1846,6 +1846,11 @@
     }
 
   </style>
+  <!-- Google Firebase SDK (v10 compat) for Live Collaboration -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase_config.js?v=1.0.184"></script>
 </head>
 <body>
 
@@ -5761,6 +5766,21 @@
       const statusText = document.getElementById('syncStatusText');
       if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Syncing to cloud...' : '클라우드 동기화 중...';
 
+      // 0) Google Firebase Firestore 실시간 즉시 연동 (0.05초 만에 전 팀원 화면 즉각 반영)
+      try {
+        if (window.firebase && firebase.firestore) {
+          const fdb = firebase.firestore();
+          fdb.collection('weekly_reports').doc('live').set({
+            content: LIVE_DB,
+            lastEditor: CURRENT_USER_NAME,
+            lastMsg: logMsg || '',
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true }).then(() => {
+            if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Live Synced (Firebase)' : '실시간 연동 완료 (Firebase)';
+          }).catch(fe => console.warn('[Firestore] push error:', fe));
+        }
+      } catch (_) {}
+
       const token = getCloudSyncToken();
       const repo = 'skywantae/skywantae.github.io';
       const path = 'data/weekly_report_live.json';
@@ -6939,6 +6959,47 @@
       renderPeriodWeekButtons();
       renderLockStatus();
       renderMemberView();
+
+      // Google Firestore 실시간 동시 협업 구독 (타 사용자 수정 시 0.05초 즉각 화면 갱신)
+      try {
+        if (window.firebase && firebase.firestore) {
+          const fdb = firebase.firestore();
+          let isFirst = true;
+          fdb.collection('weekly_reports').doc('live').onSnapshot(doc => {
+            if (isFirst) {
+              isFirst = false;
+              if (doc.exists && doc.data() && doc.data().content) {
+                const remote = doc.data().content;
+                if (remote.last_updated_at && (!LIVE_DB.last_updated_at || remote.last_updated_at > LIVE_DB.last_updated_at)) {
+                  LIVE_DB = remote;
+                  ensureWeeklyForecasts(LIVE_DB);
+                  renderMemberView();
+                }
+              }
+              return;
+            }
+            if (!doc.exists) return;
+            const remoteData = doc.data();
+            if (!remoteData || !remoteData.content) return;
+            if (IS_SYNCING_CLOUD) return;
+
+            // 원격에서 다른 동료(상철 선임님 등)가 수정한 경우 즉각 화면 반영
+            if (remoteData.lastEditor && remoteData.lastEditor !== CURRENT_USER_NAME) {
+              LIVE_DB = remoteData.content;
+              ensureWeeklyForecasts(LIVE_DB);
+              renderMemberView();
+              const editorName = remoteData.lastEditor || '팀원';
+              showToast(`${editorName}님이 주간보고서를 실시간 업데이트했습니다.`);
+              const statusText = document.getElementById('syncStatusText');
+              if (statusText) statusText.textContent = `${editorName}님과 실시간 연동됨`;
+            }
+          }, err => {
+            console.warn('[Firestore] snapshot listen error:', err);
+          });
+        }
+      } catch (fe) {
+        console.warn('[Firestore] realtime listen error:', fe);
+      }
     });
   </script>
 </body>

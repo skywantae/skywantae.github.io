@@ -3636,6 +3636,22 @@ window.clearChatHistory = clearChatHistory;
 function switchViewerCard(targetId) {
   if (!targetId) return;
 
+  // 사내 RBAC 탭 권한 검사 인터셉트
+  if (window.KostatAuth && typeof window.KostatAuth.canAccessTab === 'function') {
+    if (!window.KostatAuth.canAccessTab(targetId)) {
+      if (!window.KostatAuth.isLoggedIn()) {
+        showToast('사내 계정 로그인이 필요합니다.', 'warning');
+        if (typeof openAuthModal === 'function') openAuthModal('login');
+      } else if (!window.KostatAuth.isApproved()) {
+        showToast('관리자 승인 대기 중인 계정입니다.', 'warning');
+        if (typeof openAuthModal === 'function') openAuthModal('pending');
+      } else {
+        showToast('해당 탭에 대한 열람 권한이 없습니다. 관리자에게 문의하십시오.', 'error');
+      }
+      return;
+    }
+  }
+
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
     const isTarget = btn.getAttribute('data-target') === targetId;
     btn.classList.toggle('active', isTarget);
@@ -9718,3 +9734,545 @@ function renderPhInventoryItemsTable() {
   `).join('');
 }
 window.renderPhInventoryItemsTable = renderPhInventoryItemsTable;
+
+/* ==========================================================================
+   KOSTAT ERP 사내 인증 및 사용자/탭 권한(RBAC) 관리 시스템
+   - 사내 승인제 로그인 / 회원가입 / 자동 로그인
+   - 최고 관리자(teokim@kostat.com) 및 복수 관리자 지정 기능
+   - 사용자별 열람 탭 권한 제어
+   ========================================================================== */
+
+let _adminCachedUsers = [];
+
+function openAuthModal(mode) {
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+
+  if (window.KostatAuth && window.KostatAuth.isLoggedIn()) {
+    if (!window.KostatAuth.isApproved()) {
+      switchAuthView('pending');
+    } else {
+      switchAuthView('profile');
+    }
+  } else {
+    switchAuthView(mode || 'login');
+  }
+}
+window.openAuthModal = openAuthModal;
+
+function closeAuthModal() {
+  const modal = document.getElementById('authModal');
+  if (modal) modal.style.display = 'none';
+}
+window.closeAuthModal = closeAuthModal;
+
+function switchAuthView(viewName) {
+  const loginForm = document.getElementById('authLoginForm');
+  const registerForm = document.getElementById('authRegisterForm');
+  const pendingView = document.getElementById('authPendingView');
+  const profileView = document.getElementById('authProfileView');
+  const title = document.getElementById('authModalHeaderTitle');
+
+  if (loginForm) loginForm.style.display = (viewName === 'login') ? 'flex' : 'none';
+  if (registerForm) registerForm.style.display = (viewName === 'register') ? 'flex' : 'none';
+  if (pendingView) pendingView.style.display = (viewName === 'pending') ? 'flex' : 'none';
+  if (profileView) profileView.style.display = (viewName === 'profile') ? 'flex' : 'none';
+
+  if (title) {
+    if (viewName === 'login') title.textContent = 'KOSTAT ERP 사내 로그인';
+    else if (viewName === 'register') title.textContent = '사내 승인 가입 신청';
+    else if (viewName === 'pending') title.textContent = '계정 승인 대기';
+    else if (viewName === 'profile') title.textContent = '내 사내 계정 정보';
+  }
+
+  // 프로필 정보 바인딩
+  if (viewName === 'profile' && window.KostatAuth && window.KostatAuth.userProfile) {
+    const p = window.KostatAuth.userProfile;
+    const nameEl = document.getElementById('profileUserName');
+    const emailEl = document.getElementById('profileUserEmail');
+    const badgeEl = document.getElementById('profileUserRoleBadge');
+    const tabsListEl = document.getElementById('profileAllowedTabsList');
+
+    if (nameEl) nameEl.textContent = `${p.name || '사원'} (${p.department || '부서미지정'})`;
+    if (emailEl) emailEl.textContent = p.email || '';
+    if (badgeEl) {
+      if (p.role === 'super_admin') {
+        badgeEl.textContent = '최고 관리자';
+        badgeEl.style.color = '#a78bfa';
+        badgeEl.style.borderColor = 'rgba(167,139,250,0.4)';
+        badgeEl.style.background = 'rgba(167,139,250,0.15)';
+      } else if (p.role === 'admin') {
+        badgeEl.textContent = '시스템 관리자';
+        badgeEl.style.color = '#60a5fa';
+        badgeEl.style.borderColor = 'rgba(96,165,250,0.4)';
+        badgeEl.style.background = 'rgba(96,165,250,0.15)';
+      } else {
+        badgeEl.textContent = '일반 사원 (승인완료)';
+        badgeEl.style.color = '#34d399';
+        badgeEl.style.borderColor = 'rgba(52,211,153,0.4)';
+        badgeEl.style.background = 'rgba(52,211,153,0.15)';
+      }
+    }
+    if (tabsListEl) {
+      const allowed = p.allowedTabs || [];
+      const tabMap = (window.KostatAuth && window.KostatAuth.systemTabs) || [];
+      tabsListEl.innerHTML = tabMap.map(t => {
+        const has = allowed.includes(t.id) || p.role === 'super_admin' || p.role === 'admin';
+        return `<span style="padding:3px 8px; border-radius:4px; font-size:11px; font-weight:600; ${has ? 'background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3);' : 'background:var(--bg-input); color:var(--text-dim); text-decoration:line-through;'}">${t.name}</span>`;
+      }).join('');
+    }
+  }
+
+  // 승인 대기 정보 바인딩
+  if (viewName === 'pending' && window.KostatAuth && window.KostatAuth.currentUser) {
+    const infoEl = document.getElementById('authPendingUserInfo');
+    const u = window.KostatAuth.currentUser;
+    const p = window.KostatAuth.userProfile || {};
+    if (infoEl) {
+      infoEl.innerHTML = `
+        <div>신청 이메일: <strong>${escapeAttr(u.email || '')}</strong></div>
+        <div>신청자 성명: <strong>${escapeAttr(p.name || '미등록')}</strong></div>
+        <div>소속 부서: <strong>${escapeAttr(p.department || '미지정')}</strong></div>
+        <div style="margin-top:6px; color:#fbbf24; font-weight:600;">현재 최고 관리자의 확인 및 승인을 대기 중입니다.</div>
+      `;
+    }
+  }
+}
+window.switchAuthView = switchAuthView;
+
+function handleAuthLogin() {
+  const emailInput = document.getElementById('authLoginEmail');
+  const passInput = document.getElementById('authLoginPassword');
+  const rememberCheckbox = document.getElementById('authRememberMe');
+  const errorBox = document.getElementById('authLoginError');
+  const btn = document.getElementById('btnSubmitLogin');
+
+  const email = (emailInput ? emailInput.value : '').trim();
+  const password = (passInput ? passInput.value : '').trim();
+  const remember = rememberCheckbox ? rememberCheckbox.checked : true;
+
+  if (errorBox) { errorBox.style.display = 'none'; errorBox.textContent = ''; }
+
+  if (!email || !password) {
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = '이메일과 비밀번호를 모두 입력해 주십시오.';
+    }
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = '로그인 확인 중...'; }
+
+  window.KostatAuth.login(email, password, remember)
+    .then(() => {
+      if (btn) { btn.disabled = false; btn.textContent = '로그인'; }
+      showToast('사내 인증에 성공하였습니다.', 'success');
+      setTimeout(() => {
+        if (!window.KostatAuth.isApproved()) {
+          switchAuthView('pending');
+        } else {
+          closeAuthModal();
+          syncTabVisibility();
+        }
+      }, 500);
+    })
+    .catch(err => {
+      if (btn) { btn.disabled = false; btn.textContent = '로그인'; }
+      let msg = '로그인에 실패하였습니다. 이메일 또는 비밀번호를 확인하십시오.';
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        msg = '등록되지 않은 이메일이거나 비밀번호가 일치하지 않습니다.';
+      } else if (err.code === 'auth/invalid-email') {
+        msg = '올바른 이메일 형식이 아닙니다.';
+      } else if (err.message) {
+        msg = err.message;
+      }
+      if (errorBox) {
+        errorBox.style.display = 'block';
+        errorBox.textContent = msg;
+      }
+    });
+}
+window.handleAuthLogin = handleAuthLogin;
+
+function handleAuthRegister() {
+  const emailInput = document.getElementById('authRegEmail');
+  const passInput = document.getElementById('authRegPassword');
+  const nameInput = document.getElementById('authRegName');
+  const deptInput = document.getElementById('authRegDept');
+  const errorBox = document.getElementById('authRegError');
+  const btn = document.getElementById('btnSubmitRegister');
+
+  const email = (emailInput ? emailInput.value : '').trim();
+  const password = (passInput ? passInput.value : '').trim();
+  const name = (nameInput ? nameInput.value : '').trim();
+  const dept = (deptInput ? deptInput.value : '').trim();
+
+  if (errorBox) { errorBox.style.display = 'none'; errorBox.textContent = ''; }
+
+  if (!email || !password || !name) {
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = '이메일, 비밀번호, 실명을 모두 입력해 주십시오.';
+    }
+    return;
+  }
+
+  if (password.length < 6) {
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = '비밀번호는 최소 6자리 이상이어야 합니다.';
+    }
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = '가입 신청 처리 중...'; }
+
+  window.KostatAuth.register(email, password, name, dept)
+    .then(() => {
+      if (btn) { btn.disabled = false; btn.textContent = '가입 신청 제출'; }
+      showToast('가입 신청이 완료되었습니다. 관리자 승인을 기다려 주십시오.', 'info');
+      switchAuthView('pending');
+    })
+    .catch(err => {
+      if (btn) { btn.disabled = false; btn.textContent = '가입 신청 제출'; }
+      let msg = '가입 신청 중 오류가 발생하였습니다.';
+      if (err.code === 'auth/email-already-in-use') {
+        msg = '이미 가입 신청된 이메일 주소입니다. 로그인 화면을 이용하십시오.';
+      } else if (err.code === 'auth/invalid-email') {
+        msg = '유효한 이메일 형식이 아닙니다.';
+      } else if (err.message) {
+        msg = err.message;
+      }
+      if (errorBox) {
+        errorBox.style.display = 'block';
+        errorBox.textContent = msg;
+      }
+    });
+}
+window.handleAuthRegister = handleAuthRegister;
+
+function handleAuthLogout() {
+  if (confirm('사내 ERP 시스템에서 로그아웃 하시겠습니까?')) {
+    window.KostatAuth.logout().then(() => {
+      showToast('로그아웃 되었습니다.', 'info');
+      closeAuthModal();
+      syncTabVisibility();
+    });
+  }
+}
+window.handleAuthLogout = handleAuthLogout;
+
+function handleAuthResetPassword() {
+  const emailInput = document.getElementById('authLoginEmail');
+  const email = (emailInput ? emailInput.value : '').trim();
+  if (!email) {
+    alert('비밀번호를 재설정할 사내 이메일 주소를 입력창에 먼저 입력해 주십시오.');
+    return;
+  }
+  if (confirm(`[${email}] 주소로 비밀번호 재설정 이메일을 전송하시겠습니까?`)) {
+    window.KostatAuth.resetPassword(email).then(() => {
+      alert('비밀번호 재설정 링크가 이메일로 발송되었습니다. 메일함을 확인해 주십시오.');
+    }).catch(err => {
+      alert('비밀번호 재설정 메일 발송 실패: ' + (err.message || '이메일을 확인하십시오.'));
+    });
+  }
+}
+window.handleAuthResetPassword = handleAuthResetPassword;
+
+// 탭 가시성 및 권한 동기화
+function syncTabVisibility() {
+  if (!window.KostatAuth) return;
+
+  const isAuth = window.KostatAuth.isLoggedIn();
+  const isAppr = window.KostatAuth.isApproved();
+  const isAdmin = window.KostatAuth.isAdmin();
+
+  // 헤더 버튼 상태 갱신
+  const btnAdminUsers = document.getElementById('btnAdminUsers');
+  if (btnAdminUsers) {
+    btnAdminUsers.style.display = isAdmin ? 'inline-flex' : 'none';
+  }
+
+  const authUserLabel = document.getElementById('authUserLabel');
+  if (authUserLabel) {
+    if (isAuth && window.KostatAuth.userProfile) {
+      const p = window.KostatAuth.userProfile;
+      const roleTxt = p.role === 'super_admin' ? ' (최고관리자)' : (p.role === 'admin' ? ' (관리자)' : '');
+      authUserLabel.textContent = (p.name || p.email.split('@')[0]) + roleTxt;
+    } else {
+      authUserLabel.textContent = '로그인';
+    }
+  }
+
+  // 탭 버튼 제어
+  let firstAllowedTab = null;
+  document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
+    const target = btn.getAttribute('data-target');
+    const allowed = window.KostatAuth.canAccessTab(target);
+    btn.style.display = allowed ? '' : 'none';
+    if (allowed && !firstAllowedTab) {
+      firstAllowedTab = target;
+    }
+  });
+
+  // 현재 활성화된 탭이 열람 불가한 경우 허용된 탭으로 자동 이동
+  const activeBtn = document.querySelector('.viewer-tab-btn.active');
+  const currentTarget = activeBtn ? activeBtn.getAttribute('data-target') : null;
+  if (currentTarget && !window.KostatAuth.canAccessTab(currentTarget)) {
+    if (firstAllowedTab) {
+      switchViewerCard(firstAllowedTab);
+    }
+  }
+}
+window.syncTabVisibility = syncTabVisibility;
+
+// 관리자 사용자 목록 모달 제어
+function openAdminUsersModal() {
+  if (!window.KostatAuth || !window.KostatAuth.isAdmin()) {
+    showToast('시스템 관리자만 접근할 수 있습니다.', 'error');
+    return;
+  }
+  const modal = document.getElementById('adminUsersModal');
+  if (modal) modal.style.display = 'flex';
+  loadAdminUserList();
+}
+window.openAdminUsersModal = openAdminUsersModal;
+
+function closeAdminUsersModal() {
+  const modal = document.getElementById('adminUsersModal');
+  if (modal) modal.style.display = 'none';
+}
+window.closeAdminUsersModal = closeAdminUsersModal;
+
+function loadAdminUserList() {
+  const tbody = document.getElementById('adminUserTableBody');
+  const countBadge = document.getElementById('adminUserCountBadge');
+  if (tbody) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">사용자 목록을 불러오는 중입니다...</td></tr>';
+  }
+
+  window.KostatAuth.fetchUsers().then(users => {
+    _adminCachedUsers = users;
+    if (countBadge) countBadge.textContent = `${users.length}명`;
+    renderAdminUserTable(users);
+  }).catch(err => {
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:#f87171;">목록 조회 오류: ${err.message}</td></tr>`;
+    }
+  });
+}
+window.loadAdminUserList = loadAdminUserList;
+
+function filterAdminUserList() {
+  const input = document.getElementById('adminUserSearchInput');
+  const query = (input ? input.value : '').toLowerCase().trim();
+  if (!query) {
+    renderAdminUserTable(_adminCachedUsers);
+    return;
+  }
+  const filtered = _adminCachedUsers.filter(u => {
+    return (
+      (u.name && u.name.toLowerCase().includes(query)) ||
+      (u.email && u.email.toLowerCase().includes(query)) ||
+      (u.department && u.department.toLowerCase().includes(query))
+    );
+  });
+  renderAdminUserTable(filtered);
+}
+window.filterAdminUserList = filterAdminUserList;
+
+function renderAdminUserTable(users) {
+  const tbody = document.getElementById('adminUserTableBody');
+  if (!tbody) return;
+
+  if (!users || users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">등록된 사용자가 없습니다.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = users.map(u => {
+    const isMaster = window.KostatAuth.masterSuperAdmins.includes((u.email || '').toLowerCase());
+    const isSuper = u.role === 'super_admin';
+    const isAdmin = isSuper || u.role === 'admin';
+    const isApproved = u.status === 'approved';
+    const isPending = u.status === 'pending';
+
+    let statusBadge = '';
+    if (isApproved) {
+      statusBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">승인됨</span>';
+    } else if (isPending) {
+      statusBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);">대기 중</span>';
+    } else {
+      statusBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">반려됨</span>';
+    }
+
+    let roleBadge = '-';
+    if (isSuper) {
+      roleBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(167,139,250,0.15); color:#c4b5fd; border:1px solid rgba(167,139,250,0.3);">최고관리자</span>';
+    } else if (isAdmin) {
+      roleBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3);">관리자</span>';
+    }
+
+    const allowedCount = (u.allowedTabs && Array.isArray(u.allowedTabs)) ? u.allowedTabs.length : 0;
+    const tabSummary = isAdmin ? '전체 허용 (관리자)' : `${allowedCount}개 탭 허용`;
+
+    return `
+      <tr style="border-bottom:1px solid var(--border-color);">
+        <td style="padding:10px 12px;">
+          <div style="font-weight:700; color:var(--text-primary); font-size:12.5px;">${escapeAttr(u.name || '미등록')}</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">${escapeAttr(u.department || '미지정')}</div>
+        </td>
+        <td style="padding:10px 12px; font-family:monospace; color:var(--text-secondary);">${escapeAttr(u.email || '')}</td>
+        <td style="padding:10px 12px; text-align:center;">${statusBadge}</td>
+        <td style="padding:10px 12px; text-align:center;">${roleBadge}</td>
+        <td style="padding:10px 12px; color:var(--text-secondary); font-size:11.5px;">${tabSummary}</td>
+        <td style="padding:10px 12px; text-align:center;">
+          <button type="button" onclick="openAdminEditUserModal('${u.uid}')" class="action-btn-sm primary" style="padding:4px 10px; font-size:11.5px; cursor:pointer;">권한 설정</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// 사용자 개별 편집 모달 제어
+function openAdminEditUserModal(uid) {
+  const user = _adminCachedUsers.find(u => u.uid === uid);
+  if (!user) return;
+
+  const modal = document.getElementById('adminEditUserModal');
+  const uidInput = document.getElementById('editUserUid');
+  const titleEl = document.getElementById('editUserDisplayTitle');
+  const subEl = document.getElementById('editUserDisplaySub');
+  const adminCheckbox = document.getElementById('editUserIsAdmin');
+  const grid = document.getElementById('editTabsCheckboxGrid');
+
+  if (uidInput) uidInput.value = user.uid;
+  if (titleEl) titleEl.textContent = `${user.name || '미등록'} (${user.department || '부서미지정'})`;
+  if (subEl) subEl.textContent = user.email || '';
+
+  // 승인 상태 라디오 세팅
+  const statusRadios = document.querySelectorAll('input[name="editUserStatus"]');
+  statusRadios.forEach(r => {
+    r.checked = (r.value === (user.status || 'pending'));
+  });
+
+  // 관리자 여부 세팅
+  const isMaster = window.KostatAuth.masterSuperAdmins.includes((user.email || '').toLowerCase());
+  if (adminCheckbox) {
+    adminCheckbox.checked = (user.role === 'admin' || user.role === 'super_admin');
+    adminCheckbox.disabled = isMaster; // 최고 관리자는 해제 불가
+  }
+
+  // 탭 목록 체크박스 렌더링
+  const sysTabs = (window.KostatAuth && window.KostatAuth.systemTabs) || [];
+  const allowed = user.allowedTabs || [];
+
+  if (grid) {
+    grid.innerHTML = sysTabs.map(t => {
+      const isChecked = allowed.includes(t.id) || user.role === 'super_admin' || user.role === 'admin';
+      return `
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:var(--text-primary); padding:4px 6px; border-radius:4px; background:var(--bg-card-sub);">
+          <input type="checkbox" class="edit-tab-checkbox" value="${t.id}" ${isChecked ? 'checked' : ''} style="cursor:pointer;" />
+          <span>${t.name}</span>
+        </label>
+      `;
+    }).join('');
+  }
+
+  if (modal) modal.style.display = 'flex';
+}
+window.openAdminEditUserModal = openAdminEditUserModal;
+
+function closeAdminEditUserModal() {
+  const modal = document.getElementById('adminEditUserModal');
+  if (modal) modal.style.display = 'none';
+}
+window.closeAdminEditUserModal = closeAdminEditUserModal;
+
+function selectAllEditTabs(selectAll) {
+  document.querySelectorAll('.edit-tab-checkbox').forEach(cb => {
+    cb.checked = !!selectAll;
+  });
+}
+window.selectAllEditTabs = selectAllEditTabs;
+
+function handleSaveUserPermissions() {
+  const uid = document.getElementById('editUserUid').value;
+  if (!uid) return;
+
+  const targetUser = _adminCachedUsers.find(u => u.uid === uid);
+  const isMaster = targetUser && window.KostatAuth.masterSuperAdmins.includes((targetUser.email || '').toLowerCase());
+
+  // 승인 상태
+  const statusRadio = document.querySelector('input[name="editUserStatus"]:checked');
+  const status = statusRadio ? statusRadio.value : 'pending';
+
+  // 관리자 권한
+  const adminCheckbox = document.getElementById('editUserIsAdmin');
+  const isAdminChecked = adminCheckbox ? adminCheckbox.checked : false;
+
+  let role = 'user';
+  if (isMaster) {
+    role = 'super_admin';
+  } else if (isAdminChecked) {
+    role = 'admin';
+  }
+
+  // 허용 탭 목록
+  const allowedTabs = [];
+  document.querySelectorAll('.edit-tab-checkbox:checked').forEach(cb => {
+    allowedTabs.push(cb.value);
+  });
+
+  const updates = {
+    status: isMaster ? 'approved' : status,
+    role: role,
+    allowedTabs: (role === 'admin' || role === 'super_admin') ? (window.KostatAuth.systemTabs.map(t => t.id)) : allowedTabs
+  };
+
+  window.KostatAuth.updateUserPermissions(uid, updates).then(() => {
+    showToast('사용자 권한 설정이 성공적으로 저장되었습니다.', 'success');
+    closeAdminEditUserModal();
+    loadAdminUserList();
+    // 만약 현재 로그인한 내 정보가 수정된 경우 즉시 갱신
+    if (window.KostatAuth.currentUser && window.KostatAuth.currentUser.uid === uid) {
+      window.KostatAuth.loadUserProfile(uid, window.KostatAuth.currentUser.email, () => {
+        syncTabVisibility();
+      });
+    }
+  }).catch(err => {
+    alert('권한 저장 실패: ' + err.message);
+  });
+}
+window.handleSaveUserPermissions = handleSaveUserPermissions;
+
+function handleDeleteUserRecord() {
+  const uid = document.getElementById('editUserUid').value;
+  if (!uid) return;
+
+  const targetUser = _adminCachedUsers.find(u => u.uid === uid);
+  if (targetUser && window.KostatAuth.masterSuperAdmins.includes((targetUser.email || '').toLowerCase())) {
+    alert('최고 관리자 마스터 계정은 삭제할 수 없습니다.');
+    return;
+  }
+
+  if (confirm(`정말로 [${(targetUser && targetUser.name) || '해당 사용자'}] 계정 정보를 삭제하시겠습니까?`)) {
+    window.KostatAuth.deleteUserRecord(uid).then(() => {
+      showToast('사용자 정보가 삭제되었습니다.', 'info');
+      closeAdminEditUserModal();
+      loadAdminUserList();
+    }).catch(err => {
+      alert('사용자 삭제 실패: ' + err.message);
+    });
+  }
+}
+window.handleDeleteUserRecord = handleDeleteUserRecord;
+
+// 인증 상태 리스너 구독 및 탭 제어 자동 초기화
+if (window.KostatAuth) {
+  window.KostatAuth.onAuthStateChanged(function (user, profile) {
+    syncTabVisibility();
+  });
+}
+

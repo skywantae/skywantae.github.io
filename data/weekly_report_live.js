@@ -1,8 +1,8 @@
 window.KOSTAT_WEEKLY_REPORT_LIVE = {
   "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서",
   "week_label": "9월 4주차 (0921-0925)",
-  "last_updated_at": "2026-09-29 06:46:22",
-  "last_updated_by": "김완태 사원",
+  "last_updated_at": "2026-10-01 06:33:52",
+  "last_updated_by": "한준희",
   "kpi": {
     "target": 2404602,
     "current": 937933,
