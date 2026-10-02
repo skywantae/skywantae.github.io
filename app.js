@@ -9988,7 +9988,21 @@ function syncTabVisibility() {
   const isAppr = window.KostatAuth.isApproved();
   const isAdmin = window.KostatAuth.isAdmin();
 
-  // 헤더 버튼 상태 갱신
+  // 1. 전용 랜딩 페이지 오버레이 제어 (비인가 사용자는 랜딩 페이지로 격리)
+  const landingOverlay = document.getElementById('authLandingOverlay');
+  if (landingOverlay) {
+    if (!isAuth) {
+      landingOverlay.style.display = 'flex';
+      switchLandingView('signin');
+    } else if (!isAppr) {
+      landingOverlay.style.display = 'flex';
+      switchLandingView('pending');
+    } else {
+      landingOverlay.style.display = 'none'; // 승인된 인가 회원은 메인 ERP로 진입
+    }
+  }
+
+  // 2. 헤더 버튼 상태 갱신
   const btnAdminUsers = document.getElementById('btnAdminUsers');
   if (btnAdminUsers) {
     btnAdminUsers.style.display = isAdmin ? 'inline-flex' : 'none';
@@ -9998,14 +10012,14 @@ function syncTabVisibility() {
   if (authUserLabel) {
     if (isAuth && window.KostatAuth.userProfile) {
       const p = window.KostatAuth.userProfile;
-      const roleTxt = p.role === 'super_admin' ? ' (최고관리자)' : (p.role === 'admin' ? ' (관리자)' : '');
+      const roleTxt = p.role === 'super_admin' ? ' (Super Admin)' : (p.role === 'admin' ? ' (Admin)' : '');
       authUserLabel.textContent = (p.name || p.email.split('@')[0]) + roleTxt;
     } else {
-      authUserLabel.textContent = '로그인';
+      authUserLabel.textContent = 'Sign In';
     }
   }
 
-  // 탭 버튼 제어
+  // 3. 탭 버튼 제어
   let firstAllowedTab = null;
   document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
     const target = btn.getAttribute('data-target');
@@ -10016,7 +10030,7 @@ function syncTabVisibility() {
     }
   });
 
-  // 현재 활성화된 탭이 열람 불가한 경우 허용된 탭으로 자동 이동
+  // 4. 현재 활성화된 탭이 열람 불가한 경우 허용된 탭으로 자동 이동
   const activeBtn = document.querySelector('.viewer-tab-btn.active');
   const currentTarget = activeBtn ? activeBtn.getAttribute('data-target') : null;
   if (currentTarget && !window.KostatAuth.canAccessTab(currentTarget)) {
@@ -10026,6 +10040,210 @@ function syncTabVisibility() {
   }
 }
 window.syncTabVisibility = syncTabVisibility;
+
+/* ==========================================================================
+   KOSTAT ERP 글로벌 랜딩 페이지 뷰 전환 및 이벤트 핸들러 (English UI)
+   ========================================================================== */
+
+function switchLandingView(viewName) {
+  const signInView = document.getElementById('landingSignInView');
+  const signUpView = document.getElementById('landingSignUpView');
+  const pendingView = document.getElementById('landingPendingView');
+  const resetView = document.getElementById('landingResetView');
+
+  if (signInView) signInView.style.display = (viewName === 'signin') ? 'flex' : 'none';
+  if (signUpView) signUpView.style.display = (viewName === 'signup') ? 'flex' : 'none';
+  if (pendingView) pendingView.style.display = (viewName === 'pending') ? 'flex' : 'none';
+  if (resetView) resetView.style.display = (viewName === 'reset') ? 'flex' : 'none';
+
+  if (viewName === 'pending' && window.KostatAuth && window.KostatAuth.currentUser) {
+    const detailsEl = document.getElementById('landingPendingDetails');
+    const u = window.KostatAuth.currentUser;
+    const p = window.KostatAuth.userProfile || {};
+    if (detailsEl) {
+      detailsEl.innerHTML = `
+        <div>Account Email: <strong style="color:#f8fafc;">${escapeAttr(u.email || '')}</strong></div>
+        <div>Applicant Name: <strong style="color:#f8fafc;">${escapeAttr(p.name || 'Not registered')}</strong></div>
+        <div>Department / Factory: <strong style="color:#f8fafc;">${escapeAttr(p.department || 'Not specified')}</strong></div>
+        <div style="margin-top:6px; color:#fbbf24; font-weight:700;">Status: Waiting for administrator approval</div>
+      `;
+    }
+  }
+}
+window.switchLandingView = switchLandingView;
+
+function handleLandingSignIn() {
+  const emailInput = document.getElementById('landingLoginEmail');
+  const passInput = document.getElementById('landingLoginPassword');
+  const rememberCheckbox = document.getElementById('landingRememberMe');
+  const errorBox = document.getElementById('landingLoginError');
+  const btn = document.getElementById('btnLandingSignIn');
+
+  const email = (emailInput ? emailInput.value : '').trim();
+  const password = (passInput ? passInput.value : '').trim();
+  const remember = rememberCheckbox ? rememberCheckbox.checked : true;
+
+  if (errorBox) { errorBox.style.display = 'none'; errorBox.textContent = ''; }
+
+  if (!email || !password) {
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Please enter both your corporate email and password.';
+    }
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying credentials...'; }
+
+  window.KostatAuth.login(email, password, remember)
+    .then(() => {
+      if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+      showToast('Authentication successful.', 'success');
+      setTimeout(() => {
+        syncTabVisibility();
+      }, 300);
+    })
+    .catch(err => {
+      if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+      let msg = 'Authentication failed. Please verify your email and password.';
+      if (err.code === 'auth/configuration-not-found' || (err.message && err.message.includes('CONFIGURATION_NOT_FOUND'))) {
+        msg = 'Firebase Authentication is not yet enabled in the Firebase Console. Please enable Email/Password provider at https://console.firebase.google.com/project/kostat-chatbot/authentication.';
+      } else if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        msg = 'Invalid credentials or unregistered account. Please check your email and password.';
+      } else if (err.code === 'auth/invalid-email') {
+        msg = 'Invalid corporate email address format.';
+      } else if (err.message) {
+        msg = err.message;
+      }
+      if (errorBox) {
+        errorBox.style.display = 'block';
+        errorBox.textContent = msg;
+      }
+    });
+}
+window.handleLandingSignIn = handleLandingSignIn;
+
+function handleLandingSignUp() {
+  const emailInput = document.getElementById('landingRegEmail');
+  const passInput = document.getElementById('landingRegPassword');
+  const nameInput = document.getElementById('landingRegName');
+  const deptInput = document.getElementById('landingRegDept');
+  const errorBox = document.getElementById('landingRegError');
+  const btn = document.getElementById('btnLandingSignUp');
+
+  const email = (emailInput ? emailInput.value : '').trim();
+  const password = (passInput ? passInput.value : '').trim();
+  const name = (nameInput ? nameInput.value : '').trim();
+  const dept = (deptInput ? deptInput.value : '').trim();
+
+  if (errorBox) { errorBox.style.display = 'none'; errorBox.textContent = ''; }
+
+  if (!email || !password || !name) {
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Please fill in Email, Password, and Full Name.';
+    }
+    return;
+  }
+
+  if (password.length < 6) {
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Password must be at least 6 characters.';
+    }
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting application...'; }
+
+  window.KostatAuth.register(email, password, name, dept)
+    .then(() => {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Application'; }
+      showToast('Registration application submitted.', 'info');
+      switchLandingView('pending');
+    })
+    .catch(err => {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Application'; }
+      let msg = 'Failed to submit registration application.';
+      if (err.code === 'auth/configuration-not-found' || (err.message && err.message.includes('CONFIGURATION_NOT_FOUND'))) {
+        msg = 'Firebase Authentication is not yet enabled in the Firebase Console. Please enable Email/Password provider at https://console.firebase.google.com/project/kostat-chatbot/authentication.';
+      } else if (err.code === 'auth/email-already-in-use') {
+        msg = 'This email is already registered. Please sign in instead.';
+      } else if (err.code === 'auth/invalid-email') {
+        msg = 'Invalid corporate email address format.';
+      } else if (err.message) {
+        msg = err.message;
+      }
+      if (errorBox) {
+        errorBox.style.display = 'block';
+        errorBox.textContent = msg;
+      }
+    });
+}
+window.handleLandingSignUp = handleLandingSignUp;
+
+function handleLandingSignOut() {
+  if (confirm('Sign out from KOSTAT ERP Global Portal?')) {
+    window.KostatAuth.logout().then(() => {
+      showToast('Signed out.', 'info');
+      syncTabVisibility();
+    });
+  }
+}
+window.handleLandingSignOut = handleLandingSignOut;
+
+function handleLandingSendReset() {
+  const emailInput = document.getElementById('landingResetEmail');
+  const noticeBox = document.getElementById('landingResetNotice');
+  const btn = document.getElementById('btnLandingSendReset');
+
+  const email = (emailInput ? emailInput.value : '').trim();
+  if (noticeBox) { noticeBox.style.display = 'none'; noticeBox.textContent = ''; }
+
+  if (!email) {
+    if (noticeBox) {
+      noticeBox.style.display = 'block';
+      noticeBox.style.background = 'rgba(239,68,68,0.15)';
+      noticeBox.style.border = '1px solid rgba(239,68,68,0.35)';
+      noticeBox.style.color = '#fca5a5';
+      noticeBox.textContent = 'Please enter your corporate email address.';
+    }
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending reset link...'; }
+
+  window.KostatAuth.resetPassword(email)
+    .then(() => {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Password Reset Link'; }
+      if (noticeBox) {
+        noticeBox.style.display = 'block';
+        noticeBox.style.background = 'rgba(16,185,129,0.15)';
+        noticeBox.style.border = '1px solid rgba(16,185,129,0.35)';
+        noticeBox.style.color = '#86efac';
+        noticeBox.textContent = 'Password reset email sent successfully! Please check your inbox and spam folder.';
+      }
+    })
+    .catch(err => {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Password Reset Link'; }
+      let msg = 'Failed to send password reset email: ' + (err.message || 'Please check your email.');
+      if (err.code === 'auth/configuration-not-found' || (err.message && err.message.includes('CONFIGURATION_NOT_FOUND'))) {
+        msg = 'Firebase Authentication is not yet activated on Google Cloud. The system manager must click "Get Started" in the Firebase Console (Authentication > Sign-in method > Email/Password).';
+      } else if (err.code === 'auth/user-not-found') {
+        msg = 'No corporate account found with this email address.';
+      } else if (err.code === 'auth/invalid-email') {
+        msg = 'Invalid corporate email format.';
+      }
+      if (noticeBox) {
+        noticeBox.style.display = 'block';
+        noticeBox.style.background = 'rgba(239,68,68,0.15)';
+        noticeBox.style.border = '1px solid rgba(239,68,68,0.35)';
+        noticeBox.style.color = '#fca5a5';
+        noticeBox.textContent = msg;
+      }
+    });
+}
+window.handleLandingSendReset = handleLandingSendReset;
 
 // 관리자 사용자 목록 모달 제어
 function openAdminUsersModal() {

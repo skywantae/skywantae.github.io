@@ -21,6 +21,135 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="dark-theme">
+  <!-- ========================================== -->
+  <!-- KOSTAT ERP GLOBAL AUTH LANDING PAGE OVERLAY -->
+  <!-- ========================================== -->
+  <div id="authLandingOverlay" style="position:fixed; inset:0; z-index:99999; background:linear-gradient(135deg, #090d16 0%, #0f172a 100%); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
+    <div style="width:100%; max-width:460px; background:#131c2e; border:1px solid rgba(59,130,246,0.3); border-radius:16px; box-shadow:0 24px 64px rgba(0,0,0,0.85); overflow:hidden; display:flex; flex-direction:column;">
+      
+      <!-- Brand & Header -->
+      <div style="padding:28px 28px 20px 28px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.08); background:rgba(15,23,42,0.6);">
+        <div style="display:inline-flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <img src="logo.png" style="height:32px; object-fit:contain;" alt="KOSTAT" />
+          <span style="font-size:22px; font-weight:900; letter-spacing:1px; color:#ffffff;">ERP</span>
+        </div>
+        <div style="font-size:16px; font-weight:700; color:#f8fafc; letter-spacing:-0.2px;">Global Enterprise Portal</div>
+        <div style="font-size:12px; color:#94a3b8; margin-top:4px; line-height:1.4;">Authorized Personnel Authentication for Global Factories & Branches</div>
+      </div>
+
+      <div style="padding:24px 28px;">
+        <!-- 1. SIGN IN VIEW (DEFAULT) -->
+        <div id="landingSignInView" style="display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <div style="font-size:15px; font-weight:700; color:#f1f5f9;">Sign In to Your Account</div>
+            <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Enter your corporate email address and password.</div>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">Work Email</label>
+            <input type="email" id="landingLoginEmail" placeholder="name@kostat.com" style="width:100%; box-sizing:border-box; padding:11px 14px; background:#0b1120; border:1px solid #334155; border-radius:8px; color:#f8fafc; font-size:13.5px;" />
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label style="font-size:12px; font-weight:600; color:#cbd5e1;">Password</label>
+              <button type="button" onclick="switchLandingView('reset')" style="background:none; border:none; color:#60a5fa; font-size:11.5px; cursor:pointer; text-decoration:underline;">Forgot password?</button>
+            </div>
+            <input type="password" id="landingLoginPassword" placeholder="Enter your password" style="width:100%; box-sizing:border-box; padding:11px 14px; background:#0b1120; border:1px solid #334155; border-radius:8px; color:#f8fafc; font-size:13.5px;" />
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:#94a3b8;">
+              <input type="checkbox" id="landingRememberMe" checked style="cursor:pointer;" />
+              <span>Keep me signed in</span>
+            </label>
+          </div>
+
+          <div id="landingLoginError" style="display:none; padding:10px 14px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); border-radius:8px; color:#fca5a5; font-size:12px; line-height:1.45;"></div>
+
+          <button type="button" id="btnLandingSignIn" onclick="handleLandingSignIn()" style="width:100%; padding:12px; background:#2563eb; color:#ffffff; font-size:14px; font-weight:700; border:none; border-radius:8px; cursor:pointer; box-shadow:0 4px 14px rgba(37,99,235,0.4); transition:all 0.15s ease;">Sign In</button>
+
+          <div style="text-align:center; padding-top:12px; border-top:1px solid rgba(255,255,255,0.06); font-size:12.5px; color:#94a3b8;">
+            Do not have an account? 
+            <button type="button" onclick="switchLandingView('signup')" style="background:none; border:none; color:#60a5fa; font-weight:700; cursor:pointer; text-decoration:underline; margin-left:4px;">Apply for Account</button>
+          </div>
+        </div>
+
+        <!-- 2. CREATE ACCOUNT / SIGN UP VIEW -->
+        <div id="landingSignUpView" style="display:none; flex-direction:column; gap:14px;">
+          <div>
+            <div style="font-size:15px; font-weight:700; color:#f1f5f9;">Apply for Corporate Account</div>
+            <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Account requires administrative verification prior to activation.</div>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#cbd5e1; margin-bottom:5px;">Corporate Email</label>
+            <input type="email" id="landingRegEmail" placeholder="id@kostat.com" style="width:100%; box-sizing:border-box; padding:10px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; color:#f8fafc; font-size:13px;" />
+          </div>
+
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#cbd5e1; margin-bottom:5px;">Password (Min. 6 characters)</label>
+            <input type="password" id="landingRegPassword" placeholder="Create password" style="width:100%; box-sizing:border-box; padding:10px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; color:#f8fafc; font-size:13px;" />
+          </div>
+
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#cbd5e1; margin-bottom:5px;">Full Name</label>
+            <input type="text" id="landingRegName" placeholder="e.g. John Doe / 홍길동" style="width:100%; box-sizing:border-box; padding:10px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; color:#f8fafc; font-size:13px;" />
+          </div>
+
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#cbd5e1; margin-bottom:5px;">Department / Location</label>
+            <input type="text" id="landingRegDept" placeholder="e.g. Overseas Sales, Vietnam Factory, Taichang, Huizhou, PH, Gimpo" style="width:100%; box-sizing:border-box; padding:10px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; color:#f8fafc; font-size:13px;" />
+          </div>
+
+          <div id="landingRegError" style="display:none; padding:10px 14px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); border-radius:8px; color:#fca5a5; font-size:12px; line-height:1.45;"></div>
+
+          <button type="button" id="btnLandingSignUp" onclick="handleLandingSignUp()" style="width:100%; padding:12px; background:#2563eb; color:#ffffff; font-size:14px; font-weight:700; border:none; border-radius:8px; cursor:pointer; margin-top:4px;">Submit Application</button>
+
+          <div style="text-align:center; padding-top:10px; border-top:1px solid rgba(255,255,255,0.06); font-size:12.5px; color:#94a3b8;">
+            Already have an account? 
+            <button type="button" onclick="switchLandingView('signin')" style="background:none; border:none; color:#60a5fa; font-weight:700; cursor:pointer; text-decoration:underline; margin-left:4px;">Back to Sign In</button>
+          </div>
+        </div>
+
+        <!-- 3. PENDING APPROVAL VIEW -->
+        <div id="landingPendingView" style="display:none; flex-direction:column; gap:16px; text-align:center; padding:10px 0;">
+          <div style="font-size:17px; font-weight:800; color:#fbbf24;">Account Authorization Pending</div>
+          <div style="font-size:13px; color:#cbd5e1; line-height:1.6; word-break:keep-all;">
+            Your registration request has been submitted successfully.<br/>
+            An administrator (<strong style="color:#60a5fa;">teokim@kostat.com</strong>) must verify your account and grant tab permissions before you can enter the portal.
+          </div>
+          <div id="landingPendingDetails" style="padding:12px 16px; background:#0b1120; border:1px solid #334155; border-radius:8px; font-size:12px; color:#94a3b8; text-align:left; line-height:1.6;"></div>
+          <div style="font-size:12px; color:#64748b;">Please contact the system manager to expedite your approval.</div>
+          <button type="button" onclick="handleLandingSignOut()" style="width:100%; padding:10px; background:#1e293b; border:1px solid #334155; color:#f8fafc; font-size:13px; font-weight:600; border-radius:8px; cursor:pointer;">Sign Out</button>
+        </div>
+
+        <!-- 4. FORGOT PASSWORD VIEW -->
+        <div id="landingResetView" style="display:none; flex-direction:column; gap:14px;">
+          <div>
+            <div style="font-size:15px; font-weight:700; color:#f1f5f9;">Reset Your Password</div>
+            <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Enter your registered work email to receive a password reset link.</div>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#cbd5e1; margin-bottom:5px;">Work Email</label>
+            <input type="email" id="landingResetEmail" placeholder="name@kostat.com" style="width:100%; box-sizing:border-box; padding:10px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; color:#f8fafc; font-size:13px;" />
+          </div>
+
+          <div id="landingResetNotice" style="display:none; padding:10px 14px; border-radius:8px; font-size:12px; line-height:1.45;"></div>
+
+          <button type="button" id="btnLandingSendReset" onclick="handleLandingSendReset()" style="width:100%; padding:12px; background:#2563eb; color:#ffffff; font-size:14px; font-weight:700; border:none; border-radius:8px; cursor:pointer;">Send Password Reset Link</button>
+
+          <div style="text-align:center; padding-top:10px; border-top:1px solid rgba(255,255,255,0.06); font-size:12.5px; color:#94a3b8;">
+            Remember your password? 
+            <button type="button" onclick="switchLandingView('signin')" style="background:none; border:none; color:#60a5fa; font-weight:700; cursor:pointer; text-decoration:underline; margin-left:4px;">Back to Sign In</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- 최상단 상태바 및 헤더 -->
   <header class="app-header">
     <div class="header-left">
