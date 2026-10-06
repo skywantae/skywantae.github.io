@@ -1120,7 +1120,7 @@ const APP_I18N = {
     status_approved: '승인됨',
     status_pending: '대기 중',
     status_rejected: '반려됨',
-    role_super_admin: '최고관리자',
+    role_super_admin: '관리자',
     role_admin: '관리자',
     role_user: '일반',
     btn_admin_permissions: '권한 설정',
@@ -1159,7 +1159,7 @@ const APP_I18N = {
     auth_btn_login: '로그인',
     auth_no_account_txt: '계정이 없으신가요?',
     auth_link_register: '사내 승인 가입 신청',
-    auth_reg_banner: '가입 신청 완료 후 사내 최고 관리자의 권한 승인이 완료되어야 시스템 이용이 가능합니다.',
+    auth_reg_banner: '가입 신청 완료 후 사내 관리자의 권한 승인이 완료되어야 시스템 이용이 가능합니다.',
     auth_reg_email_lbl: '회사 이메일',
     auth_reg_email_placeholder: 'id@kostat.com',
     auth_reg_pass_lbl: '비밀번호 (6자리 이상)',
@@ -1172,15 +1172,15 @@ const APP_I18N = {
     auth_has_account_txt: '이미 계정이 있으신가요?',
     auth_link_login: '로그인 화면으로',
     auth_pending_title: '관리자 승인 대기 중',
-    auth_pending_desc: '가입 신청이 성공적으로 접수되었습니다.<br/>현재 시스템 최고 관리자(<strong style="color:var(--text-primary);">teokim@kostat.com</strong>)의 승인을 기다리고 있습니다.<br/>승인 완료 및 열람 권한 배정 후 재접속해 주십시오.',
+    auth_pending_desc: '가입 신청이 성공적으로 접수되었습니다.<br/>현재 시스템 관리자(<strong style="color:var(--text-primary);">teokim@kostat.com</strong>)의 승인을 기다리고 있습니다.<br/>승인 완료 및 열람 권한 배정 후 재접속해 주십시오.',
     auth_pending_email_lbl: '신청 이메일',
     auth_pending_name_lbl: '신청자 성명',
     auth_pending_dept_lbl: '소속 부서',
-    auth_pending_wait_msg: '현재 최고 관리자의 확인 및 승인을 대기 중입니다.',
+    auth_pending_wait_msg: '현재 관리자의 확인 및 승인을 대기 중입니다.',
     auth_btn_logout: '로그아웃',
     auth_badge_approved: '승인완료',
-    auth_badge_super_admin: '최고 관리자',
-    auth_badge_admin: '시스템 관리자',
+    auth_badge_super_admin: '관리자',
+    auth_badge_admin: '관리자',
     auth_header_sign_in: '로그인',
 
   },
@@ -1515,7 +1515,7 @@ const APP_I18N = {
     status_approved: 'Approved',
     status_pending: 'Pending',
     status_rejected: 'Rejected',
-    role_super_admin: 'Super Admin',
+    role_super_admin: 'Admin',
     role_admin: 'Admin',
     role_user: 'User',
     btn_admin_permissions: 'Permissions',
@@ -1554,7 +1554,7 @@ const APP_I18N = {
     auth_btn_login: 'Sign In',
     auth_no_account_txt: "Don't have an account?",
     auth_link_register: 'Request Corporate Account',
-    auth_reg_banner: 'Account access will be granted after Super Admin review and approval.',
+    auth_reg_banner: 'Account access will be granted after Administrator review and approval.',
     auth_reg_email_lbl: 'Corporate Email',
     auth_reg_email_placeholder: 'id@kostat.com',
     auth_reg_pass_lbl: 'Password (6+ characters)',
@@ -1567,15 +1567,15 @@ const APP_I18N = {
     auth_has_account_txt: 'Already have an account?',
     auth_link_login: 'Go to Sign In',
     auth_pending_title: 'Pending Admin Approval',
-    auth_pending_desc: 'Your application has been received successfully.<br/>Currently awaiting approval from Super Admin (<strong style="color:var(--text-primary);">teokim@kostat.com</strong>).<br/>Please reconnect once permissions have been granted.',
+    auth_pending_desc: 'Your application has been received successfully.<br/>Currently awaiting approval from Administrator (<strong style="color:var(--text-primary);">teokim@kostat.com</strong>).<br/>Please reconnect once permissions have been granted.',
     auth_pending_email_lbl: 'Account Email',
     auth_pending_name_lbl: 'Applicant Name',
     auth_pending_dept_lbl: 'Department / Factory',
-    auth_pending_wait_msg: 'Currently pending review & approval by Super Admin.',
+    auth_pending_wait_msg: 'Currently pending review & approval by Administrator.',
     auth_btn_logout: 'Sign Out',
     auth_badge_approved: 'Approved',
-    auth_badge_super_admin: 'Super Admin',
-    auth_badge_admin: 'System Admin',
+    auth_badge_super_admin: 'Admin',
+    auth_badge_admin: 'Admin',
     auth_header_sign_in: 'Sign In',
 
   }
@@ -2408,13 +2408,8 @@ function updateAuthModalLanguage(lang) {
     const unassignText = isEn ? 'Unassigned' : '부서미지정';
     if (nameEl) nameEl.textContent = `${p.name || empText} (${p.department || unassignText})`;
     if (badgeEl) {
-      if (p.role === 'super_admin') {
-        badgeEl.textContent = t.auth_badge_super_admin;
-        badgeEl.style.color = '#a78bfa';
-        badgeEl.style.borderColor = 'rgba(167,139,250,0.4)';
-        badgeEl.style.background = 'rgba(167,139,250,0.15)';
-      } else if (p.role === 'admin') {
-        badgeEl.textContent = t.auth_badge_admin;
+      if (p.role === 'super_admin' || p.role === 'admin') {
+        badgeEl.textContent = isEn ? 'Admin' : '관리자';
         badgeEl.style.color = '#60a5fa';
         badgeEl.style.borderColor = 'rgba(96,165,250,0.4)';
         badgeEl.style.background = 'rgba(96,165,250,0.15)';
@@ -2433,7 +2428,7 @@ function updateAuthModalLanguage(lang) {
   if (authUserLabel) {
     if (window.KostatAuth && window.KostatAuth.isLoggedIn() && window.KostatAuth.userProfile) {
       const p = window.KostatAuth.userProfile;
-      const roleTxt = p.role === 'super_admin' ? (isEn ? ' (Super Admin)' : ' (최고 관리자)') : (p.role === 'admin' ? (isEn ? ' (Admin)' : ' (관리자)') : '');
+      const roleTxt = (p.role === 'super_admin' || p.role === 'admin') ? (isEn ? ' (Admin)' : ' (관리자)') : '';
       authUserLabel.textContent = (p.name || p.email.split('@')[0]) + roleTxt;
     } else {
       authUserLabel.textContent = t.auth_header_sign_in;
@@ -11043,7 +11038,7 @@ function syncTabVisibility() {
     const isEn = AppState.currentLang === 'en';
     if (isAuth && window.KostatAuth.userProfile) {
       const p = window.KostatAuth.userProfile;
-      const roleTxt = p.role === 'super_admin' ? (isEn ? ' (Super Admin)' : ' (최고 관리자)') : (p.role === 'admin' ? (isEn ? ' (Admin)' : ' (관리자)') : '');
+      const roleTxt = (p.role === 'super_admin' || p.role === 'admin') ? (isEn ? ' (Admin)' : ' (관리자)') : '';
       authUserLabel.textContent = (p.name || p.email.split('@')[0]) + roleTxt;
     } else {
       authUserLabel.textContent = isEn ? 'Sign In' : '로그인';
@@ -11364,15 +11359,13 @@ function renderAdminUserTable(users) {
     }
 
     let roleBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; color:var(--text-muted);">${isEn ? 'User' : '일반'}</span>`;
-    if (isSuper) {
-      roleBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(167,139,250,0.15); color:#c4b5fd; border:1px solid rgba(167,139,250,0.3);">${isEn ? 'Super Admin' : '최고관리자'}</span>`;
-    } else if (isAdmin) {
+    if (isSuper || isAdmin) {
       roleBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3);">${isEn ? 'Admin' : '관리자'}</span>`;
     }
 
     const allowedCount = (u.allowedTabs && Array.isArray(u.allowedTabs)) ? u.allowedTabs.length : 0;
-    const tabSummary = isMaster 
-      ? (isEn ? 'All Allowed (Super Admin)' : '전체 허용 (최고관리자)') 
+    const tabSummary = (isMaster || isSuper)
+      ? (isEn ? 'All Allowed (Admin)' : '전체 허용 (관리자)')
       : (isEn ? `${allowedCount} Tabs Allowed` : `${allowedCount}개 탭 허용`);
 
     const actionText = isEn ? 'Permissions' : '권한 설정';
