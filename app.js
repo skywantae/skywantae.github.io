@@ -9003,19 +9003,14 @@ function renderGimpoStock() {
     const tempVal = item.t ? escapeHtml(item.t) : '-';
     const remarkVal = item.r ? escapeHtml(item.r) : '-';
     const remarkStyle = item.r ? 'font-size:10.5px;color:var(--accent);font-weight:600;' : 'font-size:10.5px;color:var(--text-dim);';
-
-    const isRestricted = isRestrictedDrawingCustomer(item.c);
-    const badgeSec = isRestricted
-      ? ` <span style="display:inline-block;margin-left:4px;font-size:9.5px;color:#f87171;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);border-radius:3px;padding:0 4px;font-weight:700;">${isEn ? 'Restricted' : '도면제한'}</span>`
-      : '';
-    const custStyle = isRestricted ? 'color:#f87171;font-weight:700;' : 'color:var(--text-secondary);';
+    const clickTitle = isEn ? 'View Drawing (Click)' : '도면 열람 (클릭)';
 
     html += '<tr style="border-bottom:1px solid var(--border-color);">' +
-      '<td onclick="handleGimpoStockDrawingClick(\'' + escapeAttr(item.p || '') + '\', \'' + escapeAttr(item.c || '') + '\')" style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;cursor:pointer;color:var(--primary-light);" title="' + (isRestricted ? (isEn ? 'Drawing Restricted (Samsung/Hynix Security Policy)' : '도면 열람 제한 (삼성/하이닉스 보안 규정)') : (isEn ? 'View Drawing (Click)' : '도면 열람 (클릭)')) + '">' + escapeHtml(item.p || '') + badgeSec + '</td>' +
+      '<td onclick="handleGimpoStockDrawingClick(\'' + escapeAttr(item.p || '') + '\', \'' + escapeAttr(item.c || '') + '\')" style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;cursor:pointer;color:var(--primary-light);" title="' + clickTitle + '">' + escapeHtml(item.p || '') + '</td>' +
       '<td style="padding:6px;font-size:10.5px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.m || '') + '</td>' +
       '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + tempVal + '</td>' +
       '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.s || '') + '">' + escapeHtml(item.s || '') + '</td>' +
-      '<td style="padding:6px;font-size:10px;' + custStyle + 'max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
       '<td style="padding:6px;' + remarkStyle + 'max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.r || '') + '">' + remarkVal + '</td>' +
       '<td style="padding:6px;text-align:right;font-size:11px;' + ptClass + '">' + formatNum(item.pt) + '</td>' +
       '<td style="padding:6px;text-align:right;font-size:11px;' + mtClass + '">' + formatNum(item.mt) + '</td>' +
