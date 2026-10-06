@@ -2269,8 +2269,6 @@ function applyAppLanguage(lang) {
   if (thAdminTabs) thAdminTabs.textContent = t.th_admin_tabs;
   const thAdminAction = document.getElementById('thAdminAction');
   if (thAdminAction) thAdminAction.textContent = t.th_admin_action;
-  const btnAdminUsersClose = document.getElementById('btnAdminUsersClose');
-  if (btnAdminUsersClose) btnAdminUsersClose.textContent = t.btn_close;
 
   // 권한 설정 서브 모달
   const adminEditModalTitle = document.getElementById('adminEditModalTitle');
