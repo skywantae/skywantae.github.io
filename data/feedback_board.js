@@ -5,8 +5,13 @@ window.KOSTAT_FEEDBACK_DATA = [
     "author": "해외영업부 김샘물",
     "content": "기존 erp 에 production -> 수율, 금형관리, pm일지 -> mold entry(Tray) 에 파트별 보유한 금형 위치가 나오는데, 해당 기능을 챗봇에 가져와 확인 가능한지 검토 부탁합니다.",
     "created_at": "2026-10-06 11:40",
-    "status": "pending",
-    "reply": null
+    "status": "replied",
+    "reply": {
+      "author": "System Admin",
+      "content": "안녕하십니까, 김샘물 선임님. 김완태입니다.\n현재 '수율,금형관리,PM일지' 메뉴의 DB 접근 권한이 없어 기능 구현이 어려운 상태입니다.\n현재로서는 '출하계획' 탭에서 품목명 검색 후 Invoice No.로 제조 공장을 파악하시고, '재고 현황리스트'의 엑셀 원본 다운로드 기능을 통해 해당 공장의 금형 여부를 확인하시는 방법이 가장 최선일 것으로 보입니다.\n번거로우시겠지만 우선 해당 방법으로 확인 부탁드리겠습니다.",
+      "replied_at": "2026-10-06 14:48"
+    },
+    "updated_at": "2026-10-06 14:48"
   },
   {
     "id": "req-1790664739341",
