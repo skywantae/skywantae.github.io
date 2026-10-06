@@ -1983,69 +1983,69 @@
 
       <!-- 1. 로그인 폼 -->
       <div id="authLoginForm" style="padding:20px; display:flex; flex-direction:column; gap:14px;">
-        <div style="font-size:12.5px; color:var(--text-muted); line-height:1.5;">사내 인가된 이메일 계정으로 로그인하십시오.</div>
+        <div id="authLoginSubtitle" style="font-size:12.5px; color:var(--text-muted); line-height:1.5;">사내 인가된 이메일 계정으로 로그인하십시오.</div>
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">사내 이메일</label>
+          <label id="lblAuthLoginEmail" style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">사내 이메일</label>
           <input type="email" id="authLoginEmail" placeholder="example@kostat.com" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); font-size:13px;" />
         </div>
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">비밀번호</label>
+          <label id="lblAuthLoginPassword" style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">비밀번호</label>
           <input type="password" id="authLoginPassword" placeholder="비밀번호 입력" style="width:100%; box-sizing:border-box; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); font-size:13px;" />
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
           <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:var(--text-secondary);">
             <input type="checkbox" id="authRememberMe" checked style="cursor:pointer;" />
-            <span>자동 로그인 유지</span>
+            <span id="lblAuthRememberMe">자동 로그인 유지</span>
           </label>
-          <button type="button" onclick="handleAuthResetPassword()" style="background:none; border:none; color:var(--primary-light); cursor:pointer; font-size:11.5px; text-decoration:underline;">비밀번호 재설정</button>
+          <button type="button" id="btnAuthResetPassword" onclick="handleAuthResetPassword()" style="background:none; border:none; color:var(--primary-light); cursor:pointer; font-size:11.5px; text-decoration:underline;">비밀번호 재설정</button>
         </div>
         <div id="authLoginError" style="display:none; padding:8px 12px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); border-radius:6px; color:#fca5a5; font-size:12px; line-height:1.4;"></div>
         <button type="button" id="btnSubmitLogin" onclick="handleAuthLogin()" class="action-btn primary" style="width:100%; padding:11px; font-size:13.5px; font-weight:700; margin-top:4px; border-radius:6px; cursor:pointer;">로그인</button>
         <div style="text-align:center; margin-top:8px; font-size:12px; color:var(--text-muted);">
-          계정이 없으신가요? 
-          <button type="button" onclick="switchAuthView('register')" style="background:none; border:none; color:var(--primary-light); font-weight:700; cursor:pointer; text-decoration:underline; margin-left:4px;">사내 승인 가입 신청</button>
+          <span id="lblAuthNoAccount">계정이 없으신가요?</span>
+          <button type="button" id="btnSwitchToRegister" onclick="switchAuthView('register')" style="background:none; border:none; color:var(--primary-light); font-weight:700; cursor:pointer; text-decoration:underline; margin-left:4px;">사내 승인 가입 신청</button>
         </div>
       </div>
 
       <!-- 2. 승인제 회원가입 신청 폼 -->
       <div id="authRegisterForm" style="display:none; padding:20px; flex-direction:column; gap:12px;">
-        <div style="padding:10px 12px; background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); border-radius:6px; font-size:12px; color:#93c5fd; line-height:1.5;">
+        <div id="authRegBanner" style="padding:10px 12px; background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); border-radius:6px; font-size:12px; color:#93c5fd; line-height:1.5;">
           가입 신청 완료 후 사내 최고 관리자의 권한 승인이 완료되어야 시스템 이용이 가능합니다.
         </div>
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">회사 이메일</label>
+          <label id="lblAuthRegEmail" style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">회사 이메일</label>
           <input type="email" id="authRegEmail" placeholder="id@kostat.com" style="width:100%; box-sizing:border-box; padding:9px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); font-size:13px;" />
         </div>
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">비밀번호 (6자리 이상)</label>
+          <label id="lblAuthRegPassword" style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">비밀번호 (6자리 이상)</label>
           <input type="password" id="authRegPassword" placeholder="비밀번호 설정" style="width:100%; box-sizing:border-box; padding:9px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); font-size:13px;" />
         </div>
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">이름 (실명)</label>
+          <label id="lblAuthRegName" style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">이름 (실명)</label>
           <input type="text" id="authRegName" placeholder="홍길동" style="width:100%; box-sizing:border-box; padding:9px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); font-size:13px;" />
         </div>
         <div>
-          <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">소속 부서 / 공장</label>
+          <label id="lblAuthRegDept" style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">소속 부서 / 공장</label>
           <input type="text" id="authRegDept" placeholder="예: 해외영업팀, 김포공장, 생산관리 등" style="width:100%; box-sizing:border-box; padding:9px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:6px; color:var(--text-primary); font-size:13px;" />
         </div>
         <div id="authRegError" style="display:none; padding:8px 12px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); border-radius:6px; color:#fca5a5; font-size:12px; line-height:1.4;"></div>
         <button type="button" id="btnSubmitRegister" onclick="handleAuthRegister()" class="action-btn primary" style="width:100%; padding:11px; font-size:13.5px; font-weight:700; margin-top:4px; border-radius:6px; cursor:pointer;">가입 신청 제출</button>
         <div style="text-align:center; margin-top:6px; font-size:12px; color:var(--text-muted);">
-          이미 계정이 있으신가요? 
-          <button type="button" onclick="switchAuthView('login')" style="background:none; border:none; color:var(--primary-light); font-weight:700; cursor:pointer; text-decoration:underline; margin-left:4px;">로그인 화면으로</button>
+          <span id="lblAuthHasAccount">이미 계정이 있으신가요?</span>
+          <button type="button" id="btnSwitchToLogin" onclick="switchAuthView('login')" style="background:none; border:none; color:var(--primary-light); font-weight:700; cursor:pointer; text-decoration:underline; margin-left:4px;">로그인 화면으로</button>
         </div>
       </div>
 
       <!-- 3. 승인 대기 안내 화면 (Pending) -->
       <div id="authPendingView" style="display:none; padding:24px 20px; text-align:center; flex-direction:column; gap:16px;">
-        <div style="font-size:16px; font-weight:700; color:#fbbf24;">관리자 승인 대기 중</div>
-        <div style="font-size:13px; color:var(--text-secondary); line-height:1.6; word-break:keep-all;">
+        <div id="authPendingTitle" style="font-size:16px; font-weight:700; color:#fbbf24;">관리자 승인 대기 중</div>
+        <div id="authPendingDesc" style="font-size:13px; color:var(--text-secondary); line-height:1.6; word-break:keep-all;">
           가입 신청이 성공적으로 접수되었습니다.<br/>
           현재 시스템 최고 관리자(<strong style="color:var(--text-primary);">teokim@kostat.com</strong>)의 승인을 기다리고 있습니다.<br/>
           승인 완료 및 열람 권한 배정 후 재접속해 주십시오.
         </div>
         <div id="authPendingUserInfo" style="padding:10px 14px; background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:8px; font-size:12px; color:var(--text-muted); text-align:left;"></div>
-        <button type="button" onclick="handleAuthLogout()" class="action-btn-sm" style="width:100%; padding:9px; font-size:13px; cursor:pointer;">로그아웃</button>
+        <button type="button" id="btnAuthPendingLogout" onclick="handleAuthLogout()" class="action-btn-sm" style="width:100%; padding:9px; font-size:13px; cursor:pointer;">로그아웃</button>
       </div>
 
       <!-- 4. 로그인 완료 사용자 정보 화면 -->
@@ -2055,13 +2055,13 @@
             <div id="profileUserName" style="font-size:15px; font-weight:700; color:var(--text-primary);"></div>
             <div id="profileUserEmail" style="font-size:12px; color:var(--text-muted); margin-top:2px;"></div>
           </div>
-          <span id="profileUserRoleBadge" style="padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">승인됨</span>
+          <span id="profileUserRoleBadge" style="padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">승인완료</span>
         </div>
-        <div>
-          <div style="font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">열람 허용 탭 목록</div>
-          <div id="profileAllowedTabsList" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+        <!-- 열람 허용 탭 목록은 사내 계정 정보 모달에서 완전 비노출 (최고관리자 콘솔에서만 관리) -->
+        <div id="profileAllowedTabsSection" style="display:none !important;">
+          <div id="profileAllowedTabsList" style="display:none;"></div>
         </div>
-        <button type="button" onclick="handleAuthLogout()" class="action-btn-sm danger" style="width:100%; padding:10px; font-size:13px; font-weight:700; margin-top:6px; cursor:pointer;">로그아웃</button>
+        <button type="button" id="btnProfileLogout" onclick="handleAuthLogout()" class="action-btn-sm danger" style="width:100%; padding:10px; font-size:13px; font-weight:700; margin-top:6px; cursor:pointer;">로그아웃</button>
       </div>
     </div>
   </div>

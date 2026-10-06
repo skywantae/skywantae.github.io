@@ -1144,6 +1144,45 @@ const APP_I18N = {
     admin_loading_users: '사용자 목록을 불러오는 중입니다...',
     admin_empty_users: '등록된 사용자가 없습니다.',
 
+    // 사내 인증 및 내 계정 정보 모달 번역
+    auth_modal_title_login: 'KOSTAT ERP 사내 로그인',
+    auth_modal_title_register: '사내 승인 가입 신청',
+    auth_modal_title_pending: '계정 승인 대기',
+    auth_modal_title_profile: '내 사내 계정 정보',
+    auth_login_subtitle: '사내 인가된 이메일 계정으로 로그인하십시오.',
+    auth_login_email_lbl: '사내 이메일',
+    auth_login_email_placeholder: 'example@kostat.com',
+    auth_login_pass_lbl: '비밀번호',
+    auth_login_pass_placeholder: '비밀번호 입력',
+    auth_remember_me: '자동 로그인 유지',
+    auth_reset_pass_btn: '비밀번호 재설정',
+    auth_btn_login: '로그인',
+    auth_no_account_txt: '계정이 없으신가요?',
+    auth_link_register: '사내 승인 가입 신청',
+    auth_reg_banner: '가입 신청 완료 후 사내 최고 관리자의 권한 승인이 완료되어야 시스템 이용이 가능합니다.',
+    auth_reg_email_lbl: '회사 이메일',
+    auth_reg_email_placeholder: 'id@kostat.com',
+    auth_reg_pass_lbl: '비밀번호 (6자리 이상)',
+    auth_reg_pass_placeholder: '비밀번호 설정',
+    auth_reg_name_lbl: '이름 (실명)',
+    auth_reg_name_placeholder: '홍길동',
+    auth_reg_dept_lbl: '소속 부서 / 공장',
+    auth_reg_dept_placeholder: '예: 해외영업팀, 김포공장, 생산관리 등',
+    auth_btn_register: '가입 신청 제출',
+    auth_has_account_txt: '이미 계정이 있으신가요?',
+    auth_link_login: '로그인 화면으로',
+    auth_pending_title: '관리자 승인 대기 중',
+    auth_pending_desc: '가입 신청이 성공적으로 접수되었습니다.<br/>현재 시스템 최고 관리자(<strong style="color:var(--text-primary);">teokim@kostat.com</strong>)의 승인을 기다리고 있습니다.<br/>승인 완료 및 열람 권한 배정 후 재접속해 주십시오.',
+    auth_pending_email_lbl: '신청 이메일',
+    auth_pending_name_lbl: '신청자 성명',
+    auth_pending_dept_lbl: '소속 부서',
+    auth_pending_wait_msg: '현재 최고 관리자의 확인 및 승인을 대기 중입니다.',
+    auth_btn_logout: '로그아웃',
+    auth_badge_approved: '승인완료',
+    auth_badge_super_admin: '최고 관리자',
+    auth_badge_admin: '시스템 관리자',
+    auth_header_sign_in: '로그인',
+
   },
   en: {
     lang_badge: 'KO',
@@ -1499,6 +1538,45 @@ const APP_I18N = {
     admin_tab_count_suffix: ' Tabs Allowed',
     admin_loading_users: 'Loading user list...',
     admin_empty_users: 'No registered users found.',
+
+    // Corporate Auth & Account Details Modal Translation
+    auth_modal_title_login: 'KOSTAT ERP Corporate Sign In',
+    auth_modal_title_register: 'Apply for Corporate Account',
+    auth_modal_title_pending: 'Account Pending Approval',
+    auth_modal_title_profile: 'My Account Information',
+    auth_login_subtitle: 'Please sign in with your authorized corporate email account.',
+    auth_login_email_lbl: 'Corporate Email',
+    auth_login_email_placeholder: 'example@kostat.com',
+    auth_login_pass_lbl: 'Password',
+    auth_login_pass_placeholder: 'Enter password',
+    auth_remember_me: 'Keep me signed in',
+    auth_reset_pass_btn: 'Reset Password',
+    auth_btn_login: 'Sign In',
+    auth_no_account_txt: "Don't have an account?",
+    auth_link_register: 'Request Corporate Account',
+    auth_reg_banner: 'Account access will be granted after Super Admin review and approval.',
+    auth_reg_email_lbl: 'Corporate Email',
+    auth_reg_email_placeholder: 'id@kostat.com',
+    auth_reg_pass_lbl: 'Password (6+ characters)',
+    auth_reg_pass_placeholder: 'Set password',
+    auth_reg_name_lbl: 'Full Name',
+    auth_reg_name_placeholder: 'John Doe',
+    auth_reg_dept_lbl: 'Department / Factory',
+    auth_reg_dept_placeholder: 'e.g., Overseas Sales, Gimpo Plant, QC',
+    auth_btn_register: 'Submit Application',
+    auth_has_account_txt: 'Already have an account?',
+    auth_link_login: 'Go to Sign In',
+    auth_pending_title: 'Pending Admin Approval',
+    auth_pending_desc: 'Your application has been received successfully.<br/>Currently awaiting approval from Super Admin (<strong style="color:var(--text-primary);">teokim@kostat.com</strong>).<br/>Please reconnect once permissions have been granted.',
+    auth_pending_email_lbl: 'Account Email',
+    auth_pending_name_lbl: 'Applicant Name',
+    auth_pending_dept_lbl: 'Department / Factory',
+    auth_pending_wait_msg: 'Currently pending review & approval by Super Admin.',
+    auth_btn_logout: 'Sign Out',
+    auth_badge_approved: 'Approved',
+    auth_badge_super_admin: 'Super Admin',
+    auth_badge_admin: 'System Admin',
+    auth_header_sign_in: 'Sign In',
 
   }
 };
@@ -2247,7 +2325,141 @@ function applyAppLanguage(lang) {
   if (AppState.drawingsData && typeof renderDrawingsPage === 'function') {
     renderDrawingsPage(AppState.drawingsCurrentPage || 1);
   }
+
+  // 사내 인증 및 계정 모달 다국어 실시간 동기화
+  updateAuthModalLanguage(lang);
 }
+
+// 사내 인증 및 내 사내 계정 정보 모달 다국어 동기화 함수
+function updateAuthModalLanguage(lang) {
+  const isEn = (lang === 'en');
+  const t = APP_I18N[lang] || APP_I18N.ko;
+
+  // 1. 로그인 폼
+  const authLoginSubtitle = document.getElementById('authLoginSubtitle');
+  if (authLoginSubtitle) authLoginSubtitle.textContent = t.auth_login_subtitle;
+  const lblAuthLoginEmail = document.getElementById('lblAuthLoginEmail');
+  if (lblAuthLoginEmail) lblAuthLoginEmail.textContent = t.auth_login_email_lbl;
+  const authLoginEmail = document.getElementById('authLoginEmail');
+  if (authLoginEmail) authLoginEmail.placeholder = t.auth_login_email_placeholder;
+  const lblAuthLoginPassword = document.getElementById('lblAuthLoginPassword');
+  if (lblAuthLoginPassword) lblAuthLoginPassword.textContent = t.auth_login_pass_lbl;
+  const authLoginPassword = document.getElementById('authLoginPassword');
+  if (authLoginPassword) authLoginPassword.placeholder = t.auth_login_pass_placeholder;
+  const lblAuthRememberMe = document.getElementById('lblAuthRememberMe');
+  if (lblAuthRememberMe) lblAuthRememberMe.textContent = t.auth_remember_me;
+  const btnAuthResetPassword = document.getElementById('btnAuthResetPassword');
+  if (btnAuthResetPassword) btnAuthResetPassword.textContent = t.auth_reset_pass_btn;
+  const btnSubmitLogin = document.getElementById('btnSubmitLogin');
+  if (btnSubmitLogin) btnSubmitLogin.textContent = t.auth_btn_login;
+  const lblAuthNoAccount = document.getElementById('lblAuthNoAccount');
+  if (lblAuthNoAccount) lblAuthNoAccount.textContent = t.auth_no_account_txt;
+  const btnSwitchToRegister = document.getElementById('btnSwitchToRegister');
+  if (btnSwitchToRegister) btnSwitchToRegister.textContent = t.auth_link_register;
+
+  // 2. 회원가입 폼
+  const authRegBanner = document.getElementById('authRegBanner');
+  if (authRegBanner) authRegBanner.textContent = t.auth_reg_banner;
+  const lblAuthRegEmail = document.getElementById('lblAuthRegEmail');
+  if (lblAuthRegEmail) lblAuthRegEmail.textContent = t.auth_reg_email_lbl;
+  const authRegEmail = document.getElementById('authRegEmail');
+  if (authRegEmail) authRegEmail.placeholder = t.auth_reg_email_placeholder;
+  const lblAuthRegPassword = document.getElementById('lblAuthRegPassword');
+  if (lblAuthRegPassword) lblAuthRegPassword.textContent = t.auth_reg_pass_lbl;
+  const authRegPassword = document.getElementById('authRegPassword');
+  if (authRegPassword) authRegPassword.placeholder = t.auth_reg_pass_placeholder;
+  const lblAuthRegName = document.getElementById('lblAuthRegName');
+  if (lblAuthRegName) lblAuthRegName.textContent = t.auth_reg_name_lbl;
+  const authRegName = document.getElementById('authRegName');
+  if (authRegName) authRegName.placeholder = t.auth_reg_name_placeholder;
+  const lblAuthRegDept = document.getElementById('lblAuthRegDept');
+  if (lblAuthRegDept) lblAuthRegDept.textContent = t.auth_reg_dept_lbl;
+  const authRegDept = document.getElementById('authRegDept');
+  if (authRegDept) authRegDept.placeholder = t.auth_reg_dept_placeholder;
+  const btnSubmitRegister = document.getElementById('btnSubmitRegister');
+  if (btnSubmitRegister) btnSubmitRegister.textContent = t.auth_btn_register;
+  const lblAuthHasAccount = document.getElementById('lblAuthHasAccount');
+  if (lblAuthHasAccount) lblAuthHasAccount.textContent = t.auth_has_account_txt;
+  const btnSwitchToLogin = document.getElementById('btnSwitchToLogin');
+  if (btnSwitchToLogin) btnSwitchToLogin.textContent = t.auth_link_login;
+
+  // 3. 승인 대기 화면
+  const authPendingTitle = document.getElementById('authPendingTitle');
+  if (authPendingTitle) authPendingTitle.textContent = t.auth_pending_title;
+  const authPendingDesc = document.getElementById('authPendingDesc');
+  if (authPendingDesc) authPendingDesc.innerHTML = t.auth_pending_desc;
+  const btnAuthPendingLogout = document.getElementById('btnAuthPendingLogout');
+  if (btnAuthPendingLogout) btnAuthPendingLogout.textContent = t.auth_btn_logout;
+
+  // 4. 내 사내 계정 정보 (프로필) 화면
+  const btnProfileLogout = document.getElementById('btnProfileLogout');
+  if (btnProfileLogout) btnProfileLogout.textContent = t.auth_btn_logout;
+
+  // 열람 허용 탭 목록 섹션은 영구 비노출
+  const tabsSecEl = document.getElementById('profileAllowedTabsSection');
+  if (tabsSecEl) tabsSecEl.style.display = 'none';
+  const tabsListEl = document.getElementById('profileAllowedTabsList');
+  if (tabsListEl) tabsListEl.innerHTML = '';
+
+  // 프로필 정보 바인딩 (로그인된 상태일 때)
+  if (window.KostatAuth && window.KostatAuth.userProfile) {
+    const p = window.KostatAuth.userProfile;
+    const nameEl = document.getElementById('profileUserName');
+    const badgeEl = document.getElementById('profileUserRoleBadge');
+    const empText = isEn ? 'Employee' : '사원';
+    const unassignText = isEn ? 'Unassigned' : '부서미지정';
+    if (nameEl) nameEl.textContent = `${p.name || empText} (${p.department || unassignText})`;
+    if (badgeEl) {
+      if (p.role === 'super_admin') {
+        badgeEl.textContent = t.auth_badge_super_admin;
+        badgeEl.style.color = '#a78bfa';
+        badgeEl.style.borderColor = 'rgba(167,139,250,0.4)';
+        badgeEl.style.background = 'rgba(167,139,250,0.15)';
+      } else if (p.role === 'admin') {
+        badgeEl.textContent = t.auth_badge_admin;
+        badgeEl.style.color = '#60a5fa';
+        badgeEl.style.borderColor = 'rgba(96,165,250,0.4)';
+        badgeEl.style.background = 'rgba(96,165,250,0.15)';
+      } else {
+        // 일반 사원 표시 완전 제거 -> 승인완료(Approved)만 깔끔하게 표시
+        badgeEl.textContent = t.auth_badge_approved;
+        badgeEl.style.color = '#34d399';
+        badgeEl.style.borderColor = 'rgba(52,211,153,0.4)';
+        badgeEl.style.background = 'rgba(52,211,153,0.15)';
+      }
+    }
+  }
+
+  // 상단 헤더 사용자 버튼 라벨 동기화
+  const authUserLabel = document.getElementById('authUserLabel');
+  if (authUserLabel) {
+    if (window.KostatAuth && window.KostatAuth.isLoggedIn() && window.KostatAuth.userProfile) {
+      const p = window.KostatAuth.userProfile;
+      const roleTxt = p.role === 'super_admin' ? (isEn ? ' (Super Admin)' : ' (최고 관리자)') : (p.role === 'admin' ? (isEn ? ' (Admin)' : ' (관리자)') : '');
+      authUserLabel.textContent = (p.name || p.email.split('@')[0]) + roleTxt;
+    } else {
+      authUserLabel.textContent = t.auth_header_sign_in;
+    }
+  }
+
+  // 모달 타이틀 동기화 (현재 노출 중인 뷰 기준)
+  const title = document.getElementById('authModalHeaderTitle');
+  if (title) {
+    const profileView = document.getElementById('authProfileView');
+    const pendingView = document.getElementById('authPendingView');
+    const registerForm = document.getElementById('authRegisterForm');
+    if (profileView && profileView.style.display !== 'none') {
+      title.textContent = t.auth_modal_title_profile;
+    } else if (pendingView && pendingView.style.display !== 'none') {
+      title.textContent = t.auth_modal_title_pending;
+    } else if (registerForm && registerForm.style.display !== 'none') {
+      title.textContent = t.auth_modal_title_register;
+    } else {
+      title.textContent = t.auth_modal_title_login;
+    }
+  }
+}
+window.updateAuthModalLanguage = updateAuthModalLanguage;
 
 // --- UI 이벤트 바인딩 ---
 function initUI() {
@@ -10621,6 +10833,7 @@ function closeAuthModal() {
 window.closeAuthModal = closeAuthModal;
 
 function switchAuthView(viewName) {
+  const isEn = AppState.currentLang === 'en';
   const loginForm = document.getElementById('authLoginForm');
   const registerForm = document.getElementById('authRegisterForm');
   const pendingView = document.getElementById('authPendingView');
@@ -10632,50 +10845,11 @@ function switchAuthView(viewName) {
   if (pendingView) pendingView.style.display = (viewName === 'pending') ? 'flex' : 'none';
   if (profileView) profileView.style.display = (viewName === 'profile') ? 'flex' : 'none';
 
-  if (title) {
-    if (viewName === 'login') title.textContent = 'KOSTAT ERP 사내 로그인';
-    else if (viewName === 'register') title.textContent = '사내 승인 가입 신청';
-    else if (viewName === 'pending') title.textContent = '계정 승인 대기';
-    else if (viewName === 'profile') title.textContent = '내 사내 계정 정보';
-  }
-
-  // 프로필 정보 바인딩
-  if (viewName === 'profile' && window.KostatAuth && window.KostatAuth.userProfile) {
-    const p = window.KostatAuth.userProfile;
-    const nameEl = document.getElementById('profileUserName');
-    const emailEl = document.getElementById('profileUserEmail');
-    const badgeEl = document.getElementById('profileUserRoleBadge');
-    const tabsListEl = document.getElementById('profileAllowedTabsList');
-
-    if (nameEl) nameEl.textContent = `${p.name || '사원'} (${p.department || '부서미지정'})`;
-    if (emailEl) emailEl.textContent = p.email || '';
-    if (badgeEl) {
-      if (p.role === 'super_admin') {
-        badgeEl.textContent = '최고 관리자';
-        badgeEl.style.color = '#a78bfa';
-        badgeEl.style.borderColor = 'rgba(167,139,250,0.4)';
-        badgeEl.style.background = 'rgba(167,139,250,0.15)';
-      } else if (p.role === 'admin') {
-        badgeEl.textContent = '시스템 관리자';
-        badgeEl.style.color = '#60a5fa';
-        badgeEl.style.borderColor = 'rgba(96,165,250,0.4)';
-        badgeEl.style.background = 'rgba(96,165,250,0.15)';
-      } else {
-        badgeEl.textContent = '일반 사원 (승인완료)';
-        badgeEl.style.color = '#34d399';
-        badgeEl.style.borderColor = 'rgba(52,211,153,0.4)';
-        badgeEl.style.background = 'rgba(52,211,153,0.15)';
-      }
-    }
-    if (tabsListEl) {
-      const allowed = p.allowedTabs || [];
-      const tabMap = (window.KostatAuth && window.KostatAuth.systemTabs) || [];
-      tabsListEl.innerHTML = tabMap.map(t => {
-        const has = allowed.includes(t.id) || p.role === 'super_admin' || p.role === 'admin';
-        return `<span style="padding:3px 8px; border-radius:4px; font-size:11px; font-weight:600; ${has ? 'background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3);' : 'background:var(--bg-input); color:var(--text-dim); text-decoration:line-through;'}">${t.name}</span>`;
-      }).join('');
-    }
-  }
+  // "내 사내 계정 정보 보면 열람 허용 탭 목록이 보이는데 이거 안보이게 해줘" -> 섹션 완전 숨김
+  const tabsSecEl = document.getElementById('profileAllowedTabsSection');
+  if (tabsSecEl) tabsSecEl.style.display = 'none';
+  const tabsListEl = document.getElementById('profileAllowedTabsList');
+  if (tabsListEl) tabsListEl.innerHTML = '';
 
   // 승인 대기 정보 바인딩
   if (viewName === 'pending' && window.KostatAuth && window.KostatAuth.currentUser) {
@@ -10683,13 +10857,23 @@ function switchAuthView(viewName) {
     const u = window.KostatAuth.currentUser;
     const p = window.KostatAuth.userProfile || {};
     if (infoEl) {
-      infoEl.innerHTML = `
+      infoEl.innerHTML = isEn ? `
+        <div>Account Email: <strong>${escapeAttr(u.email || '')}</strong></div>
+        <div>Applicant Name: <strong>${escapeAttr(p.name || 'Unregistered')}</strong></div>
+        <div>Department / Factory: <strong>${escapeAttr(p.department || 'Not specified')}</strong></div>
+        <div style="margin-top:6px; color:#fbbf24; font-weight:600;">Currently pending review & approval by Super Admin.</div>
+      ` : `
         <div>신청 이메일: <strong>${escapeAttr(u.email || '')}</strong></div>
         <div>신청자 성명: <strong>${escapeAttr(p.name || '미등록')}</strong></div>
         <div>소속 부서: <strong>${escapeAttr(p.department || '미지정')}</strong></div>
         <div style="margin-top:6px; color:#fbbf24; font-weight:600;">현재 최고 관리자의 확인 및 승인을 대기 중입니다.</div>
       `;
     }
+  }
+
+  // 모달 텍스트 및 다국어 실시간 동기화
+  if (typeof updateAuthModalLanguage === 'function') {
+    updateAuthModalLanguage(AppState.currentLang || 'ko');
   }
 }
 window.switchAuthView = switchAuthView;
@@ -10863,12 +11047,13 @@ function syncTabVisibility() {
 
   const authUserLabel = document.getElementById('authUserLabel');
   if (authUserLabel) {
+    const isEn = AppState.currentLang === 'en';
     if (isAuth && window.KostatAuth.userProfile) {
       const p = window.KostatAuth.userProfile;
-      const roleTxt = p.role === 'super_admin' ? ' (Super Admin)' : (p.role === 'admin' ? ' (Admin)' : '');
+      const roleTxt = p.role === 'super_admin' ? (isEn ? ' (Super Admin)' : ' (최고 관리자)') : (p.role === 'admin' ? (isEn ? ' (Admin)' : ' (관리자)') : '');
       authUserLabel.textContent = (p.name || p.email.split('@')[0]) + roleTxt;
     } else {
-      authUserLabel.textContent = 'Sign In';
+      authUserLabel.textContent = isEn ? 'Sign In' : '로그인';
     }
   }
 

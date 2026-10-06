@@ -1,5 +1,14 @@
 [
   {
+    "id": "req-1791254403688",
+    "title": "금형 위치 확인 기능",
+    "author": "해외영업부 김샘물",
+    "content": "기존 erp 에 production -> 수율, 금형관리, pm일지 -> mold entry(Tray) 에 파트별 보유한 금형 위치가 나오는데, 해당 기능을 챗봇에 가져와 확인 가능한지 검토 부탁합니다.",
+    "created_at": "2026-10-06 11:40",
+    "status": "pending",
+    "reply": null
+  },
+  {
     "id": "req-1790664739341",
     "title": "김포공장 Tray 재고현황 기능 개선 요청의 건",
     "author": "해외영업부 이상철",
