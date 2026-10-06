@@ -47,6 +47,7 @@
     { id: 'viewShipPlan', name: '출하 계획', defaultAllowed: true },
     { id: 'viewQuotations', name: '견적서', defaultAllowed: true },
     { id: 'viewContractReviews', name: '계약검토서', defaultAllowed: false },
+    { id: 'viewDrawings', name: '도면 (Drawings)', defaultAllowed: false },
     { id: 'viewStock', name: '재고 현황리스트', defaultAllowed: true },
     { id: 'viewWeeklyReport', name: '주간보고서', defaultAllowed: true },
     { id: 'viewFeedback', name: '기능 요청', defaultAllowed: true },
@@ -269,10 +270,10 @@
       if (!this.currentUser) return false;
       // 미승인 사용자는 어떠한 탭도 접근 불가
       if (!this.isApproved()) return false;
-      // 관리자는 모든 탭 열람 가능
-      if (this.isAdmin()) return true;
+      // 최고 관리자(Super Admin)는 모든 탭 무조건 열람 가능
+      if (this.isSuperAdmin()) return true;
 
-      // 일반 승인 사용자: allowedTabs 목록 검사
+      // 일반 관리자 및 일반 사용자: allowedTabs 목록에 부여된 탭만 열람 가능
       if (this.userProfile && Array.isArray(this.userProfile.allowedTabs)) {
         return this.userProfile.allowedTabs.includes(tabTargetId);
       }

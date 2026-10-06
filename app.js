@@ -27,6 +27,15 @@ const AppState = {
   shipPlanPageSize: 50,
   shipPlanFilteredRows: [],
 
+  // IC Tray 도면 상태
+  drawingsData: [],
+  drawingsFilteredRows: [],
+  drawingsCurrentPage: 1,
+  drawingsPageSize: 15,
+  isDrawingAuthenticated: false,
+  selectedDrawingModel: null,
+  drawingAuthToken: null,
+
 
   // 기능 요청 게시판 상태
   feedbackData: [],
@@ -225,6 +234,39 @@ const DOM = {
   btnCloseContractModal: document.getElementById('btnCloseContractModal'),
   btnModalCloseContract: document.getElementById('btnModalCloseContract'),
   btnModalPrintContract: document.getElementById('btnModalPrintContract'),
+
+  // IC Tray 도면 DOM
+  viewDrawings: document.getElementById('viewDrawings'),
+  drawingsCountBadge: document.getElementById('drawingsCountBadge'),
+  drawingsSearchInput: document.getElementById('drawingsSearchInput'),
+  drawingsSeriesSelect: document.getElementById('drawingsSeriesSelect'),
+  drawingsPageSizeSelect: document.getElementById('drawingsPageSizeSelect'),
+  btnSearchDrawings: document.getElementById('btnSearchDrawings'),
+  btnReloadDrawings: document.getElementById('btnReloadDrawings'),
+  drawingsTable: document.getElementById('drawingsTable'),
+  drawingsTbody: document.getElementById('drawingsTbody'),
+  drawingsPagination: document.getElementById('drawingsPagination'),
+  drawingsPageInfo: document.getElementById('drawingsPageInfo'),
+  drawingsPageControls: document.getElementById('drawingsPageControls'),
+
+  // 도면 보안 PIN 모달 DOM
+  drawingPinModal: document.getElementById('drawingPinModal'),
+  drawingPinInput: document.getElementById('drawingPinInput'),
+  drawingPinTargetIndex: document.getElementById('drawingPinTargetIndex'),
+  drawingPinError: document.getElementById('drawingPinError'),
+  btnVerifyDrawingPin: document.getElementById('btnVerifyDrawingPin'),
+  btnCancelDrawingPin: document.getElementById('btnCancelDrawingPin'),
+  btnCloseDrawingPinModal: document.getElementById('btnCloseDrawingPinModal'),
+
+  // 도면 상세 모달 DOM
+  drawingDetailModal: document.getElementById('drawingDetailModal'),
+  drawingDetailTitle: document.getElementById('drawingDetailTitle'),
+  btnCopyDrawingSummary: document.getElementById('btnCopyDrawingSummary'),
+  btnCloseDrawingDetailModal: document.getElementById('btnCloseDrawingDetailModal'),
+  drawingDetailSpecArea: document.getElementById('drawingDetailSpecArea'),
+  drawingDetailFileCount: document.getElementById('drawingDetailFileCount'),
+  drawingDetailFileList: document.getElementById('drawingDetailFileList'),
+  btnCloseDrawingDetail: document.getElementById('btnCloseDrawingDetail'),
 
   // 재고 현황리스트 DOM
   tabBtnStock: document.getElementById('tabBtnStock'),
@@ -509,6 +551,9 @@ async function loadInitialDatabases() {
     if (window.KOSTAT_CONTRACT_REVIEWS_DATA && window.KOSTAT_CONTRACT_REVIEWS_DATA.length > 0) {
       AppState.contractReviewsData = window.KOSTAT_CONTRACT_REVIEWS_DATA;
     }
+    if (window.KOSTAT_DRAWINGS_DATA && window.KOSTAT_DRAWINGS_DATA.length > 0) {
+      AppState.drawingsData = window.KOSTAT_DRAWINGS_DATA;
+    }
     // FAQ 지식 데이터 우선 바인딩 (전용 DB > 번들 객체)
     if (window.KOSTAT_FAQ_DB && window.KOSTAT_FAQ_DB.length > 0) {
       AppState.knowledgeData = window.KOSTAT_FAQ_DB;
@@ -637,11 +682,12 @@ async function loadInitialDatabases() {
     // UI 초기 렌더링
     renderQuotHistory();
     renderContractReviews();
+    renderDrawingsHistory();
     renderShipPlanHistory();
     renderFeedbackBoard();
     renderFaqList();
 
-    console.log(`[DB Ready] ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}`);
+    console.log(`[DB Ready] ShipPlan: ${AppState.shipPlanData.length}, Quotations: ${AppState.quotationsData.length}, ContractReviews: ${AppState.contractReviewsData.length}, Drawings: ${AppState.drawingsData.length}`);
   } catch (err) {
     console.error('DB Load Error:', err);
     updateStatus(true, getDataDateStatusText());
@@ -754,6 +800,7 @@ const APP_I18N = {
     tab_shipplan: '출하 계획',
     tab_quotations: '견적서',
     tab_contract: '계약검토서',
+    tab_drawings: '도면',
     tab_stock: '재고 현황리스트',
     tab_feedback: '기능 요청',
     tab_chatbot: 'FAQ 챗봇',
@@ -768,6 +815,8 @@ const APP_I18N = {
     quotations_sub: '견적 번호 및 고객사 검색',
     contract_title: '계약검토서 관리 현황',
     contract_sub: '프로젝트 및 계약 검토 이력',
+    drawings_title: 'IC Tray 도면 뷰어',
+    drawings_sub: '보안 인가 전용 도면 데이터베이스',
     stock_title: '재고 현황리스트',
     stock_sub: '김포, 베트남, 태창, 혜주 4대 공장 실시간 Tray 재고 현황',
     feedback_title: '기능 요청 게시판',
@@ -1036,6 +1085,65 @@ const APP_I18N = {
     th_region: '지역',
     th_amount: '금액',
 
+    // Drawings Viewer
+    drawings_search_holder: '품번, 고객사, 규격, 재질, 도면 파일명 검색...',
+    drawings_series_all: '전체 시리즈',
+    th_drawings_no: '번호',
+    th_drawings_model: '품번 / 모델',
+    th_drawings_customer: '고객사',
+    th_drawings_cpn: '고객사 P/N',
+    th_drawings_pkg: '규격',
+    th_drawings_temp: '온도',
+    th_drawings_mat: '재질',
+    th_drawings_files: '도면 파일',
+    th_drawings_mtime: '수정일',
+    th_drawings_action: '작업',
+    btn_drawings_view: '열람/다운로드',
+    drawings_pin_title: '보안 PIN 인증',
+    drawings_pin_desc: '도면 열람 및 파일 다운로드를 위해 보안 PIN 번호를 입력하십시오.',
+    drawings_pin_holder: 'PIN 번호 4자리',
+    drawings_modal_title: 'IC Tray 도면 상세',
+    btn_drawings_copy_summary: '상세 정보 복사',
+    btn_drawings_copy_path: '경로 복사',
+    btn_drawings_download: '다운로드',
+
+    // Admin Users & Tab Permissions Management
+    admin_console_title: '사내 사용자 및 탭 열람 권한 관리 콘솔',
+    admin_search_holder: '이름, 이메일, 부서 검색...',
+    btn_admin_refresh: '목록 새로고침',
+    th_admin_user: '이름/부서',
+    th_admin_email: '계정 이메일',
+    th_admin_status: '상태',
+    th_admin_role: '관리자',
+    th_admin_tabs: '열람 허용 탭',
+    th_admin_action: '작업',
+    status_approved: '승인됨',
+    status_pending: '대기 중',
+    status_rejected: '반려됨',
+    role_super_admin: '최고관리자',
+    role_admin: '관리자',
+    role_user: '일반',
+    btn_admin_permissions: '권한 설정',
+    admin_edit_title: '계정 권한 및 탭 열람 설정',
+    lbl_edit_user_status: '가입 승인 상태',
+    lbl_status_approved: '승인 완료 (Approved)',
+    lbl_status_pending: '승인 대기 (Pending)',
+    lbl_status_rejected: '이용 반려 (Rejected)',
+    lbl_edit_user_admin_grant: '관리자 권한 부여 (다른 사용자 승인 및 탭 권한 설정 가능)',
+    lbl_edit_user_admin_help: '체크 시 시스템 관리자 콘솔 접근 권한이 부여됩니다.',
+    lbl_edit_user_tabs: '열람 허용 탭 선택',
+    btn_tabs_select_all: '전체 선택',
+    btn_tabs_deselect_all: '전체 해제',
+    btn_delete_user: '계정 삭제',
+    btn_save_permissions: '설정 저장',
+    unregistered: '미등록',
+    unassigned: '미지정',
+    admin_user_count_suffix: '명',
+    admin_tab_all_allowed: '전체 허용 (관리자)',
+    admin_tab_count_suffix: '개 탭 허용',
+    admin_loading_users: '사용자 목록을 불러오는 중입니다...',
+    admin_empty_users: '등록된 사용자가 없습니다.',
+
   },
   en: {
     lang_badge: 'KO',
@@ -1048,6 +1156,7 @@ const APP_I18N = {
     tab_shipplan: 'Ship Plan',
     tab_quotations: 'Quotation',
     tab_contract: 'Project',
+    tab_drawings: 'Drawings',
     tab_stock: 'Stocklists',
     tab_feedback: 'Feature Request',
     tab_chatbot: 'FAQ Chatbot',
@@ -1062,6 +1171,8 @@ const APP_I18N = {
     quotations_sub: 'Search Quotations by Number & Customer',
     contract_title: 'Contract Review Management',
     contract_sub: 'Project & Contract Review History',
+    drawings_title: 'IC Tray Drawings',
+    drawings_sub: 'Authorized Personnel Only Engineering Drawings Repository',
     stock_title: 'Stocklists',
     stock_sub: 'Real-time Tray inventory for Gimpo, Vietnam, Taichang, Huizhou factories',
     feedback_title: 'Feature Request Board',
@@ -1330,6 +1441,65 @@ const APP_I18N = {
     th_region: 'Region',
     th_amount: 'Amount',
 
+    // Drawings Viewer
+    drawings_search_holder: 'Search Model, Customer, P/N, Material, Filename...',
+    drawings_series_all: 'All Series',
+    th_drawings_no: 'No.',
+    th_drawings_model: 'Model / Part No.',
+    th_drawings_customer: 'Customer',
+    th_drawings_cpn: 'Customer P/N',
+    th_drawings_pkg: 'Package',
+    th_drawings_temp: 'Temp',
+    th_drawings_mat: 'Material',
+    th_drawings_files: 'PDF Files',
+    th_drawings_mtime: 'Updated',
+    th_drawings_action: 'Action',
+    btn_drawings_view: 'View / Download',
+    drawings_pin_title: 'Security PIN Verification',
+    drawings_pin_desc: 'Please enter 4-digit security PIN to view and download drawings.',
+    drawings_pin_holder: 'Enter 4-digit PIN',
+    drawings_modal_title: 'IC Tray Drawing Details',
+    btn_drawings_copy_summary: 'Copy Details',
+    btn_drawings_copy_path: 'Copy Path',
+    btn_drawings_download: 'Download',
+
+    // Admin Users & Tab Permissions Management
+    admin_console_title: 'User & Tab Permissions Management Console',
+    admin_search_holder: 'Search Name, Email, Department...',
+    btn_admin_refresh: 'Refresh List',
+    th_admin_user: 'Name / Department',
+    th_admin_email: 'Account Email',
+    th_admin_status: 'Status',
+    th_admin_role: 'Role',
+    th_admin_tabs: 'Allowed Tabs',
+    th_admin_action: 'Action',
+    status_approved: 'Approved',
+    status_pending: 'Pending',
+    status_rejected: 'Rejected',
+    role_super_admin: 'Super Admin',
+    role_admin: 'Admin',
+    role_user: 'User',
+    btn_admin_permissions: 'Permissions',
+    admin_edit_title: 'Account Role & Tab Permissions',
+    lbl_edit_user_status: 'Registration Status',
+    lbl_status_approved: 'Approved',
+    lbl_status_pending: 'Pending Approval',
+    lbl_status_rejected: 'Rejected',
+    lbl_edit_user_admin_grant: 'Grant Admin Role (Manage other users & tab permissions)',
+    lbl_edit_user_admin_help: 'Enables access to the Admin Console.',
+    lbl_edit_user_tabs: 'Select Allowed Tabs',
+    btn_tabs_select_all: 'Select All',
+    btn_tabs_deselect_all: 'Deselect All',
+    btn_delete_user: 'Delete Account',
+    btn_save_permissions: 'Save Settings',
+    unregistered: 'Unregistered',
+    unassigned: 'Unassigned',
+    admin_user_count_suffix: ' users',
+    admin_tab_all_allowed: 'All Allowed (Admin)',
+    admin_tab_count_suffix: ' Tabs Allowed',
+    admin_loading_users: 'Loading user list...',
+    admin_empty_users: 'No registered users found.',
+
   }
 };
 
@@ -1430,6 +1600,7 @@ function applyAppLanguage(lang) {
     viewShipPlan: t.tab_shipplan,
     viewQuotations: t.tab_quotations,
     viewContractReviews: t.tab_contract,
+    viewDrawings: t.tab_drawings,
     viewStock: t.tab_stock,
     viewFeedback: t.tab_feedback,
     viewChatbot: t.tab_chatbot,
@@ -1519,6 +1690,7 @@ function applyAppLanguage(lang) {
     { selector: '#viewShipPlan .viewer-title-group h3', title: t.shipplan_title, subSel: '#viewShipPlan .viewer-tools span', sub: t.shipplan_sub },
     { selector: '#viewQuotations .viewer-title-group h3', title: t.quotations_title, subSel: '#viewQuotations .viewer-tools span', sub: t.quotations_sub },
     { selector: '#viewContractReviews .viewer-title-group h3', title: t.contract_title, subSel: '#viewContractReviews .viewer-tools span', sub: t.contract_sub },
+    { selector: '#viewDrawings .viewer-title-group h3', title: t.drawings_title, subSel: '#viewDrawings .viewer-tools span', sub: t.drawings_sub },
     { selector: '#viewStock .viewer-title-group h3', title: t.stock_title, subSel: '#viewStock .viewer-tools span', sub: t.stock_sub },
     { selector: '#viewFeedback .viewer-title-group h3', title: t.feedback_title, subSel: '#viewFeedback .viewer-tools span', sub: t.feedback_sub },
     { selector: '#viewChatbot .viewer-title-group h3', title: t.chatbot_title, subSel: '#chatbotStatusBadge', sub: t.chatbot_status_live },
@@ -1534,6 +1706,19 @@ function applyAppLanguage(lang) {
       if (subEl) subEl.textContent = item.sub;
     }
   });
+
+  // 8-1. 도면 뷰어 컨트롤러 번역
+  const drawingsSearchInput = document.getElementById('drawingsSearchInput');
+  if (drawingsSearchInput) drawingsSearchInput.placeholder = t.drawings_search_holder;
+  const drawingsSeriesSelect = document.getElementById('drawingsSeriesSelect');
+  if (drawingsSeriesSelect && drawingsSeriesSelect.options.length > 0) {
+    drawingsSeriesSelect.options[0].textContent = t.drawings_series_all;
+  }
+  const drawingsThs = document.querySelectorAll('#drawingsTable thead th');
+  if (drawingsThs && drawingsThs.length >= 10) {
+    const drwHeaders = [t.th_drawings_no, t.th_drawings_model, t.th_drawings_customer, t.th_drawings_cpn, t.th_drawings_pkg, t.th_drawings_temp, t.th_drawings_mat, t.th_drawings_files, t.th_drawings_mtime, t.th_drawings_action];
+    drawingsThs.forEach((th, idx) => { if (drwHeaders[idx]) th.textContent = drwHeaders[idx]; });
+  }
 
   // 9. 주요 버튼 라벨
   // 출하 계획
@@ -1986,6 +2171,82 @@ function applyAppLanguage(lang) {
   if (AppState.feedbackData && typeof renderFeedbackPage === 'function') renderFeedbackPage(AppState.feedbackCurrentPage || 1);
   if (AppState.knowledgeData && typeof renderFaqPage === 'function') renderFaqPage(AppState.faqCurrentPage || 1);
   if (AppState.archiveData && typeof renderArchivePage === 'function') renderArchivePage(AppState.archiveCurrentPage || 1);
+
+  // 14. 사내 사용자 및 탭 열람 권한 관리 콘솔 (Admin Users & Tab Permissions Console) i18n
+  const adminUsersModalTitle = document.getElementById('adminUsersModalTitle');
+  if (adminUsersModalTitle) adminUsersModalTitle.textContent = t.admin_console_title;
+  const adminUserSearchInput = document.getElementById('adminUserSearchInput');
+  if (adminUserSearchInput) adminUserSearchInput.placeholder = t.admin_search_holder;
+  const btnAdminUserRefresh = document.getElementById('btnAdminUserRefresh');
+  if (btnAdminUserRefresh) btnAdminUserRefresh.textContent = t.btn_admin_refresh;
+  const thAdminUser = document.getElementById('thAdminUser');
+  if (thAdminUser) thAdminUser.textContent = t.th_admin_user;
+  const thAdminEmail = document.getElementById('thAdminEmail');
+  if (thAdminEmail) thAdminEmail.textContent = t.th_admin_email;
+  const thAdminStatus = document.getElementById('thAdminStatus');
+  if (thAdminStatus) thAdminStatus.textContent = t.th_admin_status;
+  const thAdminRole = document.getElementById('thAdminRole');
+  if (thAdminRole) thAdminRole.textContent = t.th_admin_role;
+  const thAdminTabs = document.getElementById('thAdminTabs');
+  if (thAdminTabs) thAdminTabs.textContent = t.th_admin_tabs;
+  const thAdminAction = document.getElementById('thAdminAction');
+  if (thAdminAction) thAdminAction.textContent = t.th_admin_action;
+  const btnAdminUsersClose = document.getElementById('btnAdminUsersClose');
+  if (btnAdminUsersClose) btnAdminUsersClose.textContent = t.btn_close;
+
+  // 권한 설정 서브 모달
+  const adminEditModalTitle = document.getElementById('adminEditModalTitle');
+  if (adminEditModalTitle) adminEditModalTitle.textContent = t.admin_edit_title;
+  const lblEditUserStatus = document.getElementById('lblEditUserStatus');
+  if (lblEditUserStatus) lblEditUserStatus.textContent = t.lbl_edit_user_status;
+  const lblStatusApproved = document.getElementById('lblStatusApproved');
+  if (lblStatusApproved) lblStatusApproved.textContent = t.lbl_status_approved;
+  const lblStatusPending = document.getElementById('lblStatusPending');
+  if (lblStatusPending) lblStatusPending.textContent = t.lbl_status_pending;
+  const lblStatusRejected = document.getElementById('lblStatusRejected');
+  if (lblStatusRejected) lblStatusRejected.textContent = t.lbl_status_rejected;
+  const lblEditUserAdminGrant = document.getElementById('lblEditUserAdminGrant');
+  if (lblEditUserAdminGrant) lblEditUserAdminGrant.textContent = t.lbl_edit_user_admin_grant;
+  const lblEditUserAdminHelp = document.getElementById('lblEditUserAdminHelp');
+  if (lblEditUserAdminHelp) lblEditUserAdminHelp.textContent = t.lbl_edit_user_admin_help;
+  const lblEditUserTabs = document.getElementById('lblEditUserTabs');
+  if (lblEditUserTabs) lblEditUserTabs.textContent = t.lbl_edit_user_tabs;
+  const btnEditTabsSelectAll = document.getElementById('btnEditTabsSelectAll');
+  if (btnEditTabsSelectAll) btnEditTabsSelectAll.textContent = t.btn_tabs_select_all;
+  const btnEditTabsDeselectAll = document.getElementById('btnEditTabsDeselectAll');
+  if (btnEditTabsDeselectAll) btnEditTabsDeselectAll.textContent = t.btn_tabs_deselect_all;
+  const btnDeleteUserRecord = document.getElementById('btnDeleteUserRecord');
+  if (btnDeleteUserRecord) btnDeleteUserRecord.textContent = t.btn_delete_user;
+  const btnCancelEditUser = document.getElementById('btnCancelEditUser');
+  if (btnCancelEditUser) btnCancelEditUser.textContent = t.btn_cancel || t.btn_close;
+  const btnSaveUserPermissions = document.getElementById('btnSaveUserPermissions');
+  if (btnSaveUserPermissions) btnSaveUserPermissions.textContent = t.btn_save_permissions;
+
+  // 도면 PIN 및 상세 모달 i18n
+  const drawingPinModalTitle = document.getElementById('drawingPinModalTitle');
+  if (drawingPinModalTitle) drawingPinModalTitle.textContent = t.drawings_pin_title;
+  const drawingPinDesc = document.getElementById('drawingPinDesc');
+  if (drawingPinDesc) drawingPinDesc.textContent = t.drawings_pin_desc;
+  const drawingPinInput = document.getElementById('drawingPinInput');
+  if (drawingPinInput) drawingPinInput.placeholder = t.drawings_pin_holder;
+  const btnVerifyDrawingPin = document.getElementById('btnVerifyDrawingPin');
+  if (btnVerifyDrawingPin) btnVerifyDrawingPin.textContent = t.btn_verify || '인증 확인';
+  const btnCancelDrawingPin = document.getElementById('btnCancelDrawingPin');
+  if (btnCancelDrawingPin) btnCancelDrawingPin.textContent = t.btn_close;
+  const btnCopyDrawingSummary = document.getElementById('btnCopyDrawingSummary');
+  if (btnCopyDrawingSummary) btnCopyDrawingSummary.textContent = t.btn_drawings_copy_summary;
+  const btnCloseDrawingDetail = document.getElementById('btnCloseDrawingDetail');
+  if (btnCloseDrawingDetail) btnCloseDrawingDetail.textContent = t.btn_close;
+
+  // 관리자 테이블 데이터가 캐시되어 있으면 언어에 맞추어 즉각 재렌더링
+  if (typeof _adminCachedUsers !== 'undefined' && _adminCachedUsers && _adminCachedUsers.length > 0) {
+    renderAdminUserTable(_adminCachedUsers);
+  }
+
+  // 도면 페이지 재렌더링
+  if (AppState.drawingsData && typeof renderDrawingsPage === 'function') {
+    renderDrawingsPage(AppState.drawingsCurrentPage || 1);
+  }
 }
 
 // --- UI 이벤트 바인딩 ---
@@ -2180,6 +2441,57 @@ function initUI() {
         printContractReview(AppState.selectedContractProjectNo);
       }
     });
+  }
+
+  // IC Tray 도면 검색 & 필터 & 페이지 크기 & 모달 이벤트
+  if (DOM.drawingsSearchInput) {
+    DOM.drawingsSearchInput.addEventListener('input', debounce(filterDrawingsTable, 200));
+    DOM.drawingsSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterDrawingsTable();
+    });
+  }
+  if (DOM.drawingsSeriesSelect) {
+    DOM.drawingsSeriesSelect.addEventListener('change', filterDrawingsTable);
+  }
+  if (DOM.drawingsPageSizeSelect) {
+    DOM.drawingsPageSizeSelect.addEventListener('change', () => {
+      AppState.drawingsPageSize = parseInt(DOM.drawingsPageSizeSelect.value, 10) || 15;
+      AppState.drawingsCurrentPage = 1;
+      renderDrawingsPage(1);
+    });
+  }
+  if (DOM.btnSearchDrawings) {
+    DOM.btnSearchDrawings.addEventListener('click', filterDrawingsTable);
+  }
+  if (DOM.btnReloadDrawings) {
+    DOM.btnReloadDrawings.addEventListener('click', () => {
+      if (DOM.drawingsSearchInput) DOM.drawingsSearchInput.value = '';
+      if (DOM.drawingsSeriesSelect) DOM.drawingsSeriesSelect.value = 'all';
+      renderDrawingsHistory();
+    });
+  }
+  if (DOM.btnVerifyDrawingPin) {
+    DOM.btnVerifyDrawingPin.addEventListener('click', verifyDrawingPin);
+  }
+  if (DOM.drawingPinInput) {
+    DOM.drawingPinInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') verifyDrawingPin();
+    });
+  }
+  if (DOM.btnCancelDrawingPin) {
+    DOM.btnCancelDrawingPin.addEventListener('click', closeDrawingPinModal);
+  }
+  if (DOM.btnCloseDrawingPinModal) {
+    DOM.btnCloseDrawingPinModal.addEventListener('click', closeDrawingPinModal);
+  }
+  if (DOM.btnCloseDrawingDetailModal) {
+    DOM.btnCloseDrawingDetailModal.addEventListener('click', closeDrawingDetailModal);
+  }
+  if (DOM.btnCloseDrawingDetail) {
+    DOM.btnCloseDrawingDetail.addEventListener('click', closeDrawingDetailModal);
+  }
+  if (DOM.btnCopyDrawingSummary) {
+    DOM.btnCopyDrawingSummary.addEventListener('click', copyDrawingSummaryText);
   }
 
   // 설정 모달
@@ -3363,7 +3675,538 @@ function switchContractSubTab(tabName) {
 }
 window.switchContractSubTab = switchContractSubTab;
 
+// --- 7-1. IC Tray 도면 뷰어 & 보안 PIN(0404) 다운로드 엔진 & 고객사 보안 필터 ---
 
+// 삼성전자 및 SK하이닉스 고객사 판별 함수 (보안 규정 전용)
+function isRestrictedDrawingCustomer(customerStr) {
+  if (!customerStr) return false;
+  const c = String(customerStr).toLowerCase().replace(/[\s_\-]/g, '');
+  // 삼성: sec, samsung, 삼성
+  if (c.includes('sec') || c.includes('samsung') || c.includes('삼성')) return true;
+  // 하이닉스: hynix, 하이닉스, sk하이닉스, 하이스텍
+  if (c.includes('hynix') || c.includes('하이닉스') || c.includes('하이스텍')) return true;
+  return false;
+}
+window.isRestrictedDrawingCustomer = isRestrictedDrawingCustomer;
+
+// 김포공장 재고리스트 품번 클릭 시 도면 연동 핸들러
+function handleGimpoStockDrawingClick(partNo, customer) {
+  const isEn = AppState.currentLang === 'en';
+  // 1. 삼성/하이닉스 고객사 보안 차단
+  if (isRestrictedDrawingCustomer(customer)) {
+    showToast(
+      isEn 
+        ? 'Access to drawings for Samsung and SK Hynix customers is strictly prohibited by security policy.' 
+        : '보안 규정에 의해 삼성 및 SK하이닉스 고객사 도면은 열람이 엄격히 금지되어 있습니다.',
+      'warning'
+    );
+    return;
+  }
+
+  // 2. 도면 열람 권한 확인 (최고관리자 또는 권한 부여 계정만)
+  if (window.KostatAuth && !window.KostatAuth.canAccessTab('viewDrawings')) {
+    showToast(
+      isEn 
+        ? 'You do not have permission to view drawings. Please request permission from administrator.' 
+        : '도면 열람 권한이 없습니다. 시스템 관리자에게 권한을 요청하세요.',
+      'warning'
+    );
+    return;
+  }
+
+  // 3. 권한이 있는 경우 도면 탭으로 전환 후 검색
+  switchViewerTab('viewDrawings');
+  if (DOM.drawingsSearchInput) {
+    DOM.drawingsSearchInput.value = partNo || '';
+    filterDrawingsTable();
+  }
+}
+window.handleGimpoStockDrawingClick = handleGimpoStockDrawingClick;
+
+function renderDrawingsHistory() {
+  if (DOM.drawingsSearchInput) DOM.drawingsSearchInput.value = '';
+  if (DOM.drawingsSeriesSelect) DOM.drawingsSeriesSelect.value = 'all';
+  AppState.drawingsFilteredRows = AppState.drawingsData || [];
+  AppState.drawingsCurrentPage = 1;
+  renderDrawingsPage(1);
+}
+
+function filterDrawingsTable() {
+  const search = DOM.drawingsSearchInput ? DOM.drawingsSearchInput.value.toLowerCase().trim() : '';
+  const searchNorm = search.replace(/[-_\s]/g, '');
+  const series = DOM.drawingsSeriesSelect ? DOM.drawingsSeriesSelect.value : 'all';
+
+  AppState.drawingsFilteredRows = (AppState.drawingsData || []).filter(r => {
+    // 1. 시리즈 필터
+    if (series && series !== 'all') {
+      if (series === 'KS-80XX, 81XX') {
+        if (r.series !== 'KS-80XX, 81XX' && r.series !== 'KS-80XX' && r.series !== 'KS-81XX') {
+          return false;
+        }
+      } else if (r.series !== series) {
+        return false;
+      }
+    }
+
+    // 2. 품번/고객사/규격/재질/온도 및 파일명 통합 검색
+    if (!search) return true;
+
+    const m = (r.model || '').toLowerCase();
+    const c = (r.customer || '').toLowerCase();
+    const cpn = (r.customer_pn || '').toLowerCase();
+    const pkg = (r.pkg_type || '').toLowerCase();
+    const mat = (r.material || '').toLowerCase();
+    const temp = (r.temp || '').toLowerCase();
+    const s = (r.series || '').toLowerCase();
+
+    if (m.includes(search) || c.includes(search) || cpn.includes(search) ||
+        pkg.includes(search) || mat.includes(search) || temp.includes(search) || s.includes(search)) {
+      return true;
+    }
+
+    // 하이픈/공백 제거 정규화 검색
+    if (searchNorm.length >= 2) {
+      if (m.replace(/[-_\s]/g, '').includes(searchNorm) ||
+          cpn.replace(/[-_\s]/g, '').includes(searchNorm) ||
+          c.replace(/[-_\s]/g, '').includes(searchNorm)) {
+        return true;
+      }
+    }
+
+    // 도면 파일명 내부 검색
+    if (r.files && r.files.length > 0) {
+      for (let i = 0; i < r.files.length; i++) {
+        const fn = (r.files[i].filename || '').toLowerCase();
+        if (fn.includes(search)) return true;
+        if (searchNorm.length >= 2 && fn.replace(/[-_\s]/g, '').includes(searchNorm)) return true;
+      }
+    }
+
+    return false;
+  });
+
+  AppState.drawingsCurrentPage = 1;
+  renderDrawingsPage(1);
+}
+
+function renderDrawingsPage(page) {
+  const rows = AppState.drawingsFilteredRows || [];
+  const totalRows = rows.length;
+  const pageSize = AppState.drawingsPageSize || 15;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  page = Math.max(1, Math.min(page, totalPages));
+  AppState.drawingsCurrentPage = page;
+
+  const isEn = AppState.currentLang === 'en';
+
+  // 카운트 배지 & 페이지 인포
+  if (DOM.drawingsCountBadge) {
+    DOM.drawingsCountBadge.textContent = `${totalRows.toLocaleString()}${isEn ? ' items' : '건'}`;
+  }
+  if (DOM.drawingsPageInfo) {
+    DOM.drawingsPageInfo.textContent = isEn
+      ? `Page ${page.toLocaleString()} of ${totalPages.toLocaleString()} (Total ${totalRows.toLocaleString()})`
+      : `${page.toLocaleString()} / ${totalPages.toLocaleString()} 페이지 (총 ${totalRows.toLocaleString()}건)`;
+  }
+
+  if (!DOM.drawingsTbody) return;
+
+  if (totalRows === 0) {
+    DOM.drawingsTbody.innerHTML = `<tr><td colspan="10" class="text-center py-4" style="color:#94a3b8;">${isEn ? 'No matching drawing records found.' : '일치하는 도면 데이터가 없습니다.'}</td></tr>`;
+    if (DOM.drawingsPageControls) DOM.drawingsPageControls.innerHTML = '';
+    return;
+  }
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageRows = rows.slice(start, end);
+
+  DOM.drawingsTbody.innerHTML = pageRows.map((r, i) => {
+    const rowNo = start + i + 1;
+    // 최신 수정일 계산
+    let latestDate = '-';
+    if (r.files && r.files.length > 0) {
+      const dates = r.files.map(f => f.mtime).filter(Boolean).sort().reverse();
+      if (dates.length > 0) latestDate = dates[0].substring(0, 10);
+    }
+    const fileCount = r.files ? r.files.length : (r.file_count || 0);
+
+    const isRestricted = isRestrictedDrawingCustomer(r.customer);
+    const actionBtnHtml = isRestricted
+      ? `<span style="font-size:11px;padding:3px 8px;border-radius:4px;background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);font-weight:700;">${isEn ? 'Restricted' : '도면제한'}</span>`
+      : `<button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 10px;" onclick="event.stopPropagation(); handleDrawingModelClick('${escapeHtml(r.model)}');">${isEn ? 'View / Download' : '열람/다운로드'}</button>`;
+
+    return `
+      <tr onclick="handleDrawingModelClick('${escapeHtml(r.model)}')" style="cursor:pointer;" class="erp-copyable-cell" title="${isRestricted ? (isEn ? 'Drawing Restricted (Samsung/Hynix)' : '도면 열람 제한 (삼성/하이닉스)') : (isEn ? 'Drawing details & download' : '도면 상세 및 다운로드')}">
+        <td style="text-align:center;color:#94a3b8;font-size:12px;">${rowNo}</td>
+        <td style="font-weight:700;color:#38bdf8;">${escapeHtml(r.model)}</td>
+        <td style="font-weight:600;color:#f8fafc;">${escapeHtml(r.customer || '-')}${isRestricted ? ` <span style="font-size:9.5px;color:#f87171;font-weight:700;">[${isEn ? 'SEC/Hynix' : '보안제한'}]</span>` : ''}</td>
+        <td style="color:#a5b4fc;">${escapeHtml(r.customer_pn || '-')}</td>
+        <td style="color:#cbd5e1;">${escapeHtml(r.pkg_type || '-')}</td>
+        <td style="text-align:center;color:#e2e8f0;">${escapeHtml(r.temp || '-')}</td>
+        <td style="text-align:center;color:#cbd5e1;">${escapeHtml(r.material || '-')}</td>
+        <td style="text-align:center;"><span class="count-badge" style="background:rgba(14,165,233,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-size:11px;">PDF ${fileCount}</span></td>
+        <td style="text-align:center;color:#94a3b8;font-size:12px;">${escapeHtml(latestDate)}</td>
+        <td style="text-align:center;">
+          ${actionBtnHtml}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // 페이지네이션 컨트롤러 렌더링
+  renderDrawingsPaginationControls(page, totalPages);
+}
+
+function renderDrawingsPaginationControls(currentPage, totalPages) {
+  if (!DOM.drawingsPageControls) return;
+
+  const svgChevronFirst = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>`;
+  const svgChevronPrev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+  const svgChevronNext = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  const svgChevronLast = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`;
+
+  let btnsHtml = '';
+
+  // 처음으로
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToDrawingsPage(1)" title="First Page">${svgChevronFirst}</button>`;
+  
+  // 이전
+  btnsHtml += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToDrawingsPage(${currentPage - 1})" title="Prev Page">${svgChevronPrev}</button>`;
+
+  // 슬라이딩 윈도우 페이지 번호
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    range.push(i);
+  }
+
+  // 1페이지 버튼
+  btnsHtml += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goToDrawingsPage(1)">1</button>`;
+
+  if (range.length > 0 && range[0] > 2) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  range.forEach(p => {
+    btnsHtml += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goToDrawingsPage(${p})">${p}</button>`;
+  });
+
+  if (range.length > 0 && range[range.length - 1] < totalPages - 1) {
+    btnsHtml += `<span class="page-ellipsis">...</span>`;
+  }
+
+  // 마지막 페이지
+  if (totalPages > 1) {
+    btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goToDrawingsPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  // 다음
+  btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToDrawingsPage(${currentPage + 1})" title="Next Page">${svgChevronNext}</button>`;
+
+  // 마지막으로
+  btnsHtml += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToDrawingsPage(${totalPages})" title="Last Page">${svgChevronLast}</button>`;
+
+  DOM.drawingsPageControls.innerHTML = btnsHtml;
+}
+
+window.goToDrawingsPage = function(page) {
+  renderDrawingsPage(page);
+  const wrapper = document.querySelector('#viewDrawings .table-responsive-wrapper');
+  if (wrapper) wrapper.scrollTop = 0;
+};
+
+function handleDrawingModelClick(modelName) {
+  const isEn = AppState.currentLang === 'en';
+  const item = (AppState.drawingsData || []).find(d => d.model === modelName);
+  if (item && isRestrictedDrawingCustomer(item.customer)) {
+    showToast(
+      isEn 
+        ? 'Access to drawings for Samsung and SK Hynix customers is strictly prohibited by security policy.' 
+        : '보안 규정에 의해 삼성 및 SK하이닉스 고객사 도면은 열람이 엄격히 금지되어 있습니다.',
+      'warning'
+    );
+    return;
+  }
+
+  // 권한 확인
+  if (window.KostatAuth && !window.KostatAuth.canAccessTab('viewDrawings')) {
+    showToast(
+      isEn 
+        ? 'You do not have permission to view drawings. Please request permission from administrator.' 
+        : '도면 열람 권한이 없습니다. 시스템 관리자에게 권한을 요청하세요.',
+      'warning'
+    );
+    return;
+  }
+
+  AppState.selectedDrawingModel = modelName;
+  if (!AppState.isDrawingAuthenticated) {
+    openDrawingPinModal(modelName);
+  } else {
+    openDrawingDetailModal(modelName);
+  }
+}
+window.handleDrawingModelClick = handleDrawingModelClick;
+
+// --- 보안 PIN 모달 제어 (비밀번호: 0404) ---
+function openDrawingPinModal(modelName) {
+  if (DOM.drawingPinTargetIndex) DOM.drawingPinTargetIndex.value = modelName || '';
+  if (DOM.drawingPinInput) DOM.drawingPinInput.value = '';
+  if (DOM.drawingPinError) DOM.drawingPinError.style.display = 'none';
+  if (DOM.drawingPinModal) DOM.drawingPinModal.classList.add('show');
+  setTimeout(() => {
+    if (DOM.drawingPinInput) DOM.drawingPinInput.focus();
+  }, 150);
+}
+
+function closeDrawingPinModal() {
+  if (DOM.drawingPinModal) DOM.drawingPinModal.classList.remove('show');
+  if (DOM.drawingPinInput) DOM.drawingPinInput.value = '';
+  if (DOM.drawingPinError) DOM.drawingPinError.style.display = 'none';
+}
+
+function verifyDrawingPin() {
+  const isEn = AppState.currentLang === 'en';
+  const pin = DOM.drawingPinInput ? DOM.drawingPinInput.value.trim() : '';
+  if (pin === '0404') {
+    AppState.isDrawingAuthenticated = true;
+    AppState.drawingPin = pin;
+    closeDrawingPinModal();
+    showToast(isEn ? 'Security PIN authenticated: Drawing view & download authorized.' : '보안 PIN 인증 성공: 도면 열람 및 다운로드 권한이 활성화되었습니다.', 'success');
+    const target = (DOM.drawingPinTargetIndex ? DOM.drawingPinTargetIndex.value : '') || AppState.selectedDrawingModel;
+    if (target) {
+      openDrawingDetailModal(target);
+    }
+  } else {
+    if (DOM.drawingPinError) {
+      DOM.drawingPinError.textContent = isEn ? 'Invalid security PIN (4 digits).' : '보안 PIN 번호(4자리)가 일치하지 않습니다.';
+      DOM.drawingPinError.style.display = 'block';
+    }
+    if (DOM.drawingPinInput) {
+      DOM.drawingPinInput.value = '';
+      DOM.drawingPinInput.focus();
+    }
+  }
+}
+
+// --- 도면 상세 모달 제어 ---
+function openDrawingDetailModal(modelName) {
+  const isEn = AppState.currentLang === 'en';
+  const item = (AppState.drawingsData || []).find(d => d.model === modelName);
+  if (item && isRestrictedDrawingCustomer(item.customer)) {
+    showToast(
+      isEn 
+        ? 'Access to drawings for Samsung and SK Hynix customers is strictly prohibited by security policy.' 
+        : '보안 규정에 의해 삼성 및 SK하이닉스 고객사 도면은 열람이 엄격히 금지되어 있습니다.',
+      'warning'
+    );
+    return;
+  }
+
+  AppState.selectedDrawingModel = modelName;
+  if (!DOM.drawingDetailModal) return;
+
+  if (!item) {
+    if (DOM.drawingDetailTitle) DOM.drawingDetailTitle.textContent = isEn ? `Drawing [${modelName}]` : `도면 상세 [${modelName}]`;
+    if (DOM.drawingDetailSpecArea) DOM.drawingDetailSpecArea.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">${isEn ? `Drawing data for '${escapeHtml(modelName)}' not found.` : `'${escapeHtml(modelName)}' 도면 데이터를 찾을 수 없습니다.`}</div>`;
+    if (DOM.drawingDetailFileList) DOM.drawingDetailFileList.innerHTML = '';
+    DOM.drawingDetailModal.classList.add('show');
+    return;
+  }
+
+  if (DOM.drawingDetailTitle) {
+    DOM.drawingDetailTitle.textContent = isEn ? `IC Tray Drawing [${item.model}]` : `IC Tray 도면 상세 [${item.model}]`;
+  }
+  if (DOM.drawingDetailFileCount) {
+    DOM.drawingDetailFileCount.textContent = isEn 
+      ? `Total ${(item.files ? item.files.length : 0)} PDF drawings registered`
+      : `총 ${(item.files ? item.files.length : 0)}개 PDF 도면 등록`;
+  }
+
+  // 상단 스펙 요약 그리드 렌더링
+  if (DOM.drawingDetailSpecArea) {
+    DOM.drawingDetailSpecArea.innerHTML = `
+      <div style="background:rgba(30,41,59,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-md);padding:14px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;">
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Model / Part No.' : '품번 / 모델'}</span><strong style="color:#38bdf8;font-size:15px;">${escapeHtml(item.model)}</strong></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Series' : '시리즈'}</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.series || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Customer' : '고객사'}</span><span style="color:#f8fafc;font-weight:600;">${escapeHtml(item.customer || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Customer P/N' : '고객사 P/N'}</span><span style="color:#a5b4fc;font-weight:600;">${escapeHtml(item.customer_pn || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Package Type' : '패키지 규격 (Package Type)'}</span><span style="color:#e2e8f0;">${escapeHtml(item.pkg_type || '-')}</span></div>
+        <div><span style="font-size:11px;color:#94a3b8;display:block;">${isEn ? 'Temp / Material' : '내열온도 / 재질'}</span><span style="color:#e2e8f0;">${escapeHtml(item.temp || '-')} / ${escapeHtml(item.material || '-')}</span></div>
+      </div>
+    `;
+  }
+
+  // 등록 도면 파일 목록 렌더링
+  if (DOM.drawingDetailFileList) {
+    if (!item.files || item.files.length === 0) {
+      DOM.drawingDetailFileList.innerHTML = `<div style="text-align:center;padding:20px;color:#94a3b8;">${isEn ? 'No PDF drawing files registered.' : '등록된 PDF 도면 파일이 없습니다.'}</div>`;
+    } else {
+      DOM.drawingDetailFileList.innerHTML = item.files.map((f, idx) => {
+        const sizeKb = (f.size / 1024).toFixed(1);
+        const dateStr = f.mtime ? f.mtime.substring(0, 10) : '-';
+        return `
+          <div style="background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:240px;flex:1;">
+              <span style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700;">PDF</span>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#f8fafc;word-break:break-all;">${escapeHtml(f.filename)}</div>
+                <div style="font-size:11px;color:#94a3b8;">${isEn ? 'Size' : '크기'}: ${sizeKb} KB | ${isEn ? 'Updated' : '수정일'}: ${dateStr}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button type="button" class="action-btn-sm secondary" style="font-size:11px;padding:3px 8px;" onclick="copyDrawingPath('${escapeHtml(f.rel_path)}')">${isEn ? 'Copy Path' : '경로 복사'}</button>
+              <button type="button" class="action-btn-sm primary" style="font-size:11px;padding:3px 12px;" onclick="downloadDrawingFile('${escapeHtml(item.model)}', '${escapeHtml(f.filename)}', '${escapeHtml(f.rel_path)}', this)">${isEn ? 'Download' : '다운로드'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  DOM.drawingDetailModal.classList.add('show');
+}
+window.openDrawingDetailModal = openDrawingDetailModal;
+
+function closeDrawingDetailModal() {
+  if (DOM.drawingDetailModal) DOM.drawingDetailModal.classList.remove('show');
+}
+
+function copyDrawingPath(relPath) {
+  const isEn = AppState.currentLang === 'en';
+  const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(fullPath).then(() => {
+      showToast((isEn ? 'Internal network path copied: ' : '사내 네트워크 경로가 복사되었습니다: ') + fullPath, 'success');
+    }).catch(() => {
+      showToast((isEn ? 'Internal path: ' : '사내 경로 복사: ') + fullPath, 'info');
+    });
+  } else {
+    showToast((isEn ? 'Internal path: ' : '사내 경로 복사: ') + fullPath, 'info');
+  }
+}
+window.copyDrawingPath = copyDrawingPath;
+
+const DRAWING_AUTH_CIPHER = 'PfDlQ4CqhAesc39QyDrWqHU5yAi39qawYW7ymLTIEkKi+Gkj8sBdW9omUkrMr+3C84UbQ+nDVbL/lR0osbgj+sYpjj8=';
+const DRAWING_AUTH_SALT = 'kostat_drawing_auth_salt_2026';
+
+async function getDrawingAuthToken(pin) {
+  if (AppState.drawingAuthToken) return AppState.drawingAuthToken;
+  try {
+    const rawBytes = Uint8Array.from(atob(DRAWING_AUTH_CIPHER), c => c.charCodeAt(0));
+    const nonce = rawBytes.subarray(0, 12);
+    const ct = rawBytes.subarray(12);
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin || '0404'), { name: 'PBKDF2' }, false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: enc.encode(DRAWING_AUTH_SALT), iterations: 50000, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt']
+    );
+    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, ct);
+    AppState.drawingAuthToken = new TextDecoder().decode(decrypted);
+    return AppState.drawingAuthToken;
+  } catch (e) {
+    console.warn('[DrawingAuth] 토큰 복호화 실패:', e);
+    return null;
+  }
+}
+
+async function downloadDrawingFile(model, filename, relPath, btnEl) {
+  const isEn = AppState.currentLang === 'en';
+  const fullPath = 'Z:\\KQC\\IC TRAY DRAWING\\' + (relPath || '').replace(/\//g, '\\');
+  
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(fullPath).catch(() => {});
+  }
+
+  showToast((isEn ? 'Requesting drawing download: ' : '도면 다운로드 요청 중: ') + filename, 'info');
+  const originalText = btnEl ? btnEl.textContent : (isEn ? 'Download' : '다운로드');
+  if (btnEl) {
+    btnEl.disabled = true;
+    btnEl.textContent = isEn ? 'Downloading...' : '다운로드 중...';
+  }
+
+  try {
+    const token = await getDrawingAuthToken(AppState.drawingPin || '0404');
+    if (!token) throw new Error('인증 토큰 획득 실패');
+
+    const encodedPath = (relPath || '').split('/').map(encodeURIComponent).join('/');
+    const apiUrl = `https://api.github.com/repos/skywantae/kostat-drawings/contents/${encodedPath}`;
+
+    const res = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3.raw'
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`파일 서버 응답 코드: ${res.status}`);
+    }
+
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+
+    showToast((isEn ? 'Drawing downloaded: ' : '도면 다운로드 완료: ') + filename, 'success');
+  } catch (err) {
+    console.warn('[DrawingDownload] 다운로드 안내:', err);
+    showToast(isEn ? `Internal path copied: ${fullPath}` : `사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창에 붙여넣어 열어보실 수 있습니다)`, 'info');
+  } finally {
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.textContent = originalText;
+    }
+  }
+}
+window.downloadDrawingFile = downloadDrawingFile;
+
+function copyDrawingSummaryText() {
+  if (!AppState.selectedDrawingModel) return;
+  const item = (AppState.drawingsData || []).find(d => d.model === AppState.selectedDrawingModel);
+  if (!item) return;
+
+  const isEn = AppState.currentLang === 'en';
+  let text = isEn ? `[IC Tray Drawing Details]\n` : `[IC Tray 도면 상세 정보]\n`;
+  text += `• ${isEn ? 'Model' : '품번 / 모델'}: ${item.model}\n`;
+  text += `• ${isEn ? 'Series' : '시리즈'}: ${item.series || '-'}\n`;
+  text += `• ${isEn ? 'Customer' : '고객사'}: ${item.customer || '-'}\n`;
+  text += `• ${isEn ? 'Customer P/N' : '고객사 P/N'}: ${item.customer_pn || '-'}\n`;
+  text += `• ${isEn ? 'Package' : '패키지 규격'}: ${item.pkg_type || '-'}\n`;
+  text += `• ${isEn ? 'Temp / Mat' : '내열온도 / 재질'}: ${item.temp || '-'} / ${item.material || '-'}\n`;
+  text += `• ${isEn ? 'Files' : '등록 도면 수'}: ${item.files ? item.files.length : 0}\n\n`;
+
+  text += isEn ? `[Registered Drawing Files]\n` : `[등록 도면 파일 목록]\n`;
+  if (item.files && item.files.length > 0) {
+    item.files.forEach((f, idx) => {
+      const sizeKb = (f.size / 1024).toFixed(1);
+      const dateStr = f.mtime ? f.mtime.substring(0, 10) : '-';
+      text += `${idx + 1}. ${f.filename} (${sizeKb} KB, ${dateStr})\n   - Path: Z:\\KQC\\IC TRAY DRAWING\\${f.rel_path.replace(/\//g, '\\')}\n`;
+    });
+  } else {
+    text += isEn ? `No files registered\n` : `등록된 도면 파일 없음\n`;
+  }
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(isEn ? 'Drawing summary copied to clipboard.' : '도면 상세 정보 및 파일 목록이 복사되었습니다.');
+    });
+  } else {
+    showToast(isEn ? 'Copied to clipboard.' : '클립보드 복사 완료');
+  }
+}
+window.copyDrawingSummaryText = copyDrawingSummaryText;
 
 // --- 8. 탭 및 네비게이션 ---
 
@@ -3692,7 +4535,11 @@ function switchViewerCard(targetId) {
       AppState.contractFilteredRows = AppState.contractReviewsData || [];
     }
     renderContractReviewsPage(AppState.contractCurrentPage || 1);
-
+  } else if (targetId === 'viewDrawings') {
+    if (!AppState.drawingsFilteredRows || AppState.drawingsFilteredRows.length === 0) {
+      AppState.drawingsFilteredRows = AppState.drawingsData || [];
+    }
+    renderDrawingsPage(AppState.drawingsCurrentPage || 1);
   } else if (targetId === 'viewStock') {
     if (typeof initStockViewer === 'function') {
       initStockViewer();
@@ -7945,12 +8792,18 @@ function renderGimpoStock() {
     const remarkVal = item.r ? escapeHtml(item.r) : '-';
     const remarkStyle = item.r ? 'font-size:10.5px;color:var(--accent);font-weight:600;' : 'font-size:10.5px;color:var(--text-dim);';
 
+    const isRestricted = isRestrictedDrawingCustomer(item.c);
+    const badgeSec = isRestricted
+      ? ` <span style="display:inline-block;margin-left:4px;font-size:9.5px;color:#f87171;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);border-radius:3px;padding:0 4px;font-weight:700;">${isEn ? 'Restricted' : '도면제한'}</span>`
+      : '';
+    const custStyle = isRestricted ? 'color:#f87171;font-weight:700;' : 'color:var(--text-secondary);';
+
     html += '<tr style="border-bottom:1px solid var(--border-color);">' +
-      '<td style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;">' + escapeHtml(item.p || '') + '</td>' +
+      '<td onclick="handleGimpoStockDrawingClick(\'' + escapeAttr(item.p || '') + '\', \'' + escapeAttr(item.c || '') + '\')" style="padding:6px;font-family:\'Inter\',monospace;font-size:10.5px;white-space:nowrap;font-weight:600;cursor:pointer;color:var(--primary-light);" title="' + (isRestricted ? (isEn ? 'Drawing Restricted (Samsung/Hynix Security Policy)' : '도면 열람 제한 (삼성/하이닉스 보안 규정)') : (isEn ? 'View Drawing (Click)' : '도면 열람 (클릭)')) + '">' + escapeHtml(item.p || '') + badgeSec + '</td>' +
       '<td style="padding:6px;font-size:10.5px;color:var(--text-secondary);white-space:nowrap;">' + escapeHtml(item.m || '') + '</td>' +
       '<td style="padding:6px;font-size:10px;color:var(--text-secondary);white-space:nowrap;">' + tempVal + '</td>' +
       '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.s || '') + '">' + escapeHtml(item.s || '') + '</td>' +
-      '<td style="padding:6px;font-size:10px;color:var(--text-secondary);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
+      '<td style="padding:6px;font-size:10px;' + custStyle + 'max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.c || '') + '">' + escapeHtml(item.c || '') + '</td>' +
       '<td style="padding:6px;' + remarkStyle + 'max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(item.r || '') + '">' + remarkVal + '</td>' +
       '<td style="padding:6px;text-align:right;font-size:11px;' + ptClass + '">' + formatNum(item.pt) + '</td>' +
       '<td style="padding:6px;text-align:right;font-size:11px;' + mtClass + '">' + formatNum(item.mt) + '</td>' +
@@ -10247,8 +11100,9 @@ window.handleLandingSendReset = handleLandingSendReset;
 
 // 관리자 사용자 목록 모달 제어
 function openAdminUsersModal() {
+  const isEn = AppState.currentLang === 'en';
   if (!window.KostatAuth || !window.KostatAuth.isAdmin()) {
-    showToast('시스템 관리자만 접근할 수 있습니다.', 'error');
+    showToast(isEn ? 'System Administrator privileges required.' : '시스템 관리자만 접근할 수 있습니다.', 'error');
     return;
   }
   const modal = document.getElementById('adminUsersModal');
@@ -10264,19 +11118,20 @@ function closeAdminUsersModal() {
 window.closeAdminUsersModal = closeAdminUsersModal;
 
 function loadAdminUserList() {
+  const isEn = AppState.currentLang === 'en';
   const tbody = document.getElementById('adminUserTableBody');
   const countBadge = document.getElementById('adminUserCountBadge');
   if (tbody) {
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">사용자 목록을 불러오는 중입니다...</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">${isEn ? 'Loading user list...' : '사용자 목록을 불러오는 중입니다...'}</td></tr>`;
   }
 
   window.KostatAuth.fetchUsers().then(users => {
     _adminCachedUsers = users;
-    if (countBadge) countBadge.textContent = `${users.length}명`;
+    if (countBadge) countBadge.textContent = `${users.length}${isEn ? ' users' : '명'}`;
     renderAdminUserTable(users);
   }).catch(err => {
     if (tbody) {
-      tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:#f87171;">목록 조회 오류: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:#f87171;">${isEn ? 'Error loading users: ' : '목록 조회 오류: '}${err.message}</td></tr>`;
     }
   });
 }
@@ -10304,10 +11159,15 @@ function renderAdminUserTable(users) {
   const tbody = document.getElementById('adminUserTableBody');
   if (!tbody) return;
 
+  const isEn = AppState.currentLang === 'en';
+
   if (!users || users.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">등록된 사용자가 없습니다.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">${isEn ? 'No registered users found.' : '등록된 사용자가 없습니다.'}</td></tr>`;
     return;
   }
+
+  const countBadge = document.getElementById('adminUserCountBadge');
+  if (countBadge) countBadge.textContent = `${users.length}${isEn ? ' users' : '명'}`;
 
   tbody.innerHTML = users.map(u => {
     const isMaster = window.KostatAuth.masterSuperAdmins.includes((u.email || '').toLowerCase());
@@ -10318,35 +11178,41 @@ function renderAdminUserTable(users) {
 
     let statusBadge = '';
     if (isApproved) {
-      statusBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">승인됨</span>';
+      statusBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">${isEn ? 'Approved' : '승인됨'}</span>`;
     } else if (isPending) {
-      statusBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);">대기 중</span>';
+      statusBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);">${isEn ? 'Pending' : '대기 중'}</span>`;
     } else {
-      statusBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">반려됨</span>';
+      statusBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">${isEn ? 'Rejected' : '반려됨'}</span>`;
     }
 
-    let roleBadge = '-';
+    let roleBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; color:var(--text-muted);">${isEn ? 'User' : '일반'}</span>`;
     if (isSuper) {
-      roleBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(167,139,250,0.15); color:#c4b5fd; border:1px solid rgba(167,139,250,0.3);">최고관리자</span>';
+      roleBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(167,139,250,0.15); color:#c4b5fd; border:1px solid rgba(167,139,250,0.3);">${isEn ? 'Super Admin' : '최고관리자'}</span>`;
     } else if (isAdmin) {
-      roleBadge = '<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3);">관리자</span>';
+      roleBadge = `<span style="padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3);">${isEn ? 'Admin' : '관리자'}</span>`;
     }
 
     const allowedCount = (u.allowedTabs && Array.isArray(u.allowedTabs)) ? u.allowedTabs.length : 0;
-    const tabSummary = isAdmin ? '전체 허용 (관리자)' : `${allowedCount}개 탭 허용`;
+    const tabSummary = isMaster 
+      ? (isEn ? 'All Allowed (Super Admin)' : '전체 허용 (최고관리자)') 
+      : (isEn ? `${allowedCount} Tabs Allowed` : `${allowedCount}개 탭 허용`);
+
+    const actionText = isEn ? 'Permissions' : '권한 설정';
+    const unregText = isEn ? 'Unregistered' : '미등록';
+    const unassignText = isEn ? 'Unassigned' : '미지정';
 
     return `
       <tr style="border-bottom:1px solid var(--border-color);">
         <td style="padding:10px 12px;">
-          <div style="font-weight:700; color:var(--text-primary); font-size:12.5px;">${escapeAttr(u.name || '미등록')}</div>
-          <div style="font-size:11.5px; color:var(--text-muted);">${escapeAttr(u.department || '미지정')}</div>
+          <div style="font-weight:700; color:var(--text-primary); font-size:12.5px;">${escapeAttr(u.name || unregText)}</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">${escapeAttr(u.department || unassignText)}</div>
         </td>
         <td style="padding:10px 12px; font-family:monospace; color:var(--text-secondary);">${escapeAttr(u.email || '')}</td>
         <td style="padding:10px 12px; text-align:center;">${statusBadge}</td>
         <td style="padding:10px 12px; text-align:center;">${roleBadge}</td>
         <td style="padding:10px 12px; color:var(--text-secondary); font-size:11.5px;">${tabSummary}</td>
         <td style="padding:10px 12px; text-align:center;">
-          <button type="button" onclick="openAdminEditUserModal('${u.uid}')" class="action-btn-sm primary" style="padding:4px 10px; font-size:11.5px; cursor:pointer;">권한 설정</button>
+          <button type="button" onclick="openAdminEditUserModal('${u.uid}')" class="action-btn-sm primary" style="padding:4px 10px; font-size:11.5px; cursor:pointer;">${actionText}</button>
         </td>
       </tr>
     `;
@@ -10358,6 +11224,7 @@ function openAdminEditUserModal(uid) {
   const user = _adminCachedUsers.find(u => u.uid === uid);
   if (!user) return;
 
+  const isEn = AppState.currentLang === 'en';
   const modal = document.getElementById('adminEditUserModal');
   const uidInput = document.getElementById('editUserUid');
   const titleEl = document.getElementById('editUserDisplayTitle');
@@ -10365,8 +11232,11 @@ function openAdminEditUserModal(uid) {
   const adminCheckbox = document.getElementById('editUserIsAdmin');
   const grid = document.getElementById('editTabsCheckboxGrid');
 
+  const unregText = isEn ? 'Unregistered' : '미등록';
+  const unassignText = isEn ? 'Unassigned' : '부서미지정';
+
   if (uidInput) uidInput.value = user.uid;
-  if (titleEl) titleEl.textContent = `${user.name || '미등록'} (${user.department || '부서미지정'})`;
+  if (titleEl) titleEl.textContent = `${user.name || unregText} (${user.department || unassignText})`;
   if (subEl) subEl.textContent = user.email || '';
 
   // 승인 상태 라디오 세팅
@@ -10382,17 +11252,33 @@ function openAdminEditUserModal(uid) {
     adminCheckbox.disabled = isMaster; // 최고 관리자는 해제 불가
   }
 
+  // 탭 목록 영문 명칭 맵
+  const enTabNames = {
+    viewShipPlan: 'Shipping Plan',
+    viewQuotations: 'Quotations',
+    viewContractReviews: 'Contract Reviews',
+    viewDrawings: 'Drawings',
+    viewStock: 'Stocklists',
+    viewWeeklyReport: 'Weekly Report',
+    viewFeedback: 'Feedback Board',
+    viewChatbot: 'FAQ Chatbot',
+    viewFaq: 'Corporate FAQ',
+    viewArchive: 'Document Archive',
+    viewLab: 'Enterprise Lab'
+  };
+
   // 탭 목록 체크박스 렌더링
   const sysTabs = (window.KostatAuth && window.KostatAuth.systemTabs) || [];
   const allowed = user.allowedTabs || [];
 
   if (grid) {
     grid.innerHTML = sysTabs.map(t => {
-      const isChecked = allowed.includes(t.id) || user.role === 'super_admin' || user.role === 'admin';
+      const isChecked = isMaster ? true : allowed.includes(t.id);
+      const tabName = isEn ? (enTabNames[t.id] || t.name) : t.name;
       return `
         <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:var(--text-primary); padding:4px 6px; border-radius:4px; background:var(--bg-card-sub);">
-          <input type="checkbox" class="edit-tab-checkbox" value="${t.id}" ${isChecked ? 'checked' : ''} style="cursor:pointer;" />
-          <span>${t.name}</span>
+          <input type="checkbox" class="edit-tab-checkbox" value="${t.id}" ${isChecked ? 'checked' : ''} ${isMaster ? 'disabled' : ''} style="cursor:pointer;" />
+          <span>${tabName}</span>
         </label>
       `;
     }).join('');
@@ -10410,7 +11296,7 @@ window.closeAdminEditUserModal = closeAdminEditUserModal;
 
 function selectAllEditTabs(selectAll) {
   document.querySelectorAll('.edit-tab-checkbox').forEach(cb => {
-    cb.checked = !!selectAll;
+    if (!cb.disabled) cb.checked = !!selectAll;
   });
 }
 window.selectAllEditTabs = selectAllEditTabs;
@@ -10419,6 +11305,7 @@ function handleSaveUserPermissions() {
   const uid = document.getElementById('editUserUid').value;
   if (!uid) return;
 
+  const isEn = AppState.currentLang === 'en';
   const targetUser = _adminCachedUsers.find(u => u.uid === uid);
   const isMaster = targetUser && window.KostatAuth.masterSuperAdmins.includes((targetUser.email || '').toLowerCase());
 
@@ -10437,7 +11324,7 @@ function handleSaveUserPermissions() {
     role = 'admin';
   }
 
-  // 허용 탭 목록
+  // 허용 탭 목록 (계정별 선택된 탭만 엄격 반영)
   const allowedTabs = [];
   document.querySelectorAll('.edit-tab-checkbox:checked').forEach(cb => {
     allowedTabs.push(cb.value);
@@ -10446,11 +11333,11 @@ function handleSaveUserPermissions() {
   const updates = {
     status: isMaster ? 'approved' : status,
     role: role,
-    allowedTabs: (role === 'admin' || role === 'super_admin') ? (window.KostatAuth.systemTabs.map(t => t.id)) : allowedTabs
+    allowedTabs: isMaster ? (window.KostatAuth.systemTabs.map(t => t.id)) : allowedTabs
   };
 
   window.KostatAuth.updateUserPermissions(uid, updates).then(() => {
-    showToast('사용자 권한 설정이 성공적으로 저장되었습니다.', 'success');
+    showToast(isEn ? 'User permissions successfully saved.' : '사용자 권한 설정이 성공적으로 저장되었습니다.', 'success');
     closeAdminEditUserModal();
     loadAdminUserList();
     // 만약 현재 로그인한 내 정보가 수정된 경우 즉시 갱신
@@ -10460,7 +11347,7 @@ function handleSaveUserPermissions() {
       });
     }
   }).catch(err => {
-    alert('권한 저장 실패: ' + err.message);
+    alert((isEn ? 'Failed to save permissions: ' : '권한 저장 실패: ') + err.message);
   });
 }
 window.handleSaveUserPermissions = handleSaveUserPermissions;
@@ -10469,19 +11356,24 @@ function handleDeleteUserRecord() {
   const uid = document.getElementById('editUserUid').value;
   if (!uid) return;
 
+  const isEn = AppState.currentLang === 'en';
   const targetUser = _adminCachedUsers.find(u => u.uid === uid);
   if (targetUser && window.KostatAuth.masterSuperAdmins.includes((targetUser.email || '').toLowerCase())) {
-    alert('최고 관리자 마스터 계정은 삭제할 수 없습니다.');
+    alert(isEn ? 'Master Super Admin account cannot be deleted.' : '최고 관리자 마스터 계정은 삭제할 수 없습니다.');
     return;
   }
 
-  if (confirm(`정말로 [${(targetUser && targetUser.name) || '해당 사용자'}] 계정 정보를 삭제하시겠습니까?`)) {
+  const confirmMsg = isEn 
+    ? `Are you sure you want to delete user [${(targetUser && targetUser.name) || 'User'}]?`
+    : `정말로 [${(targetUser && targetUser.name) || '해당 사용자'}] 계정 정보를 삭제하시겠습니까?`;
+
+  if (confirm(confirmMsg)) {
     window.KostatAuth.deleteUserRecord(uid).then(() => {
-      showToast('사용자 정보가 삭제되었습니다.', 'info');
+      showToast(isEn ? 'User account deleted.' : '사용자 정보가 삭제되었습니다.', 'info');
       closeAdminEditUserModal();
       loadAdminUserList();
     }).catch(err => {
-      alert('사용자 삭제 실패: ' + err.message);
+      alert((isEn ? 'Failed to delete user: ' : '사용자 삭제 실패: ') + err.message);
     });
   }
 }

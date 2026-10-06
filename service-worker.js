@@ -15,6 +15,7 @@ const ASSETS_TO_CACHE = [
   './data/shipplan_data.js',
   './data/quotations_data.js',
   './data/contract_reviews_data.js',
+  './data/drawings_data.js',
   './data/knowledge_data.js',
   './data/faq_db.js',
   './data/feedback_board.js',
