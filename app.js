@@ -586,6 +586,10 @@ async function loadSecureDataBundle() {
   if (typeof renderArchiveCards === 'function') renderArchiveCards();
   if (typeof renderFaqList === 'function') renderFaqList();
   if (typeof initGimpoStock === 'function') initGimpoStock();
+  if (typeof initVietnamStock === 'function') initVietnamStock();
+  if (typeof initTaichangStock === 'function') initTaichangStock();
+  if (typeof initTaichangCtStock === 'function') initTaichangCtStock();
+  if (typeof initHuizhouStock === 'function') initHuizhouStock();
   if (typeof initPhDailyReport === 'function') initPhDailyReport();
   if (typeof initPhWeeklyForecast === 'function') initPhWeeklyForecast();
   updateStatus(true, '시스템 정상 준비 완료');
@@ -602,6 +606,16 @@ function clearSecureDataBundle() {
   window.KOSTAT_QUOTATIONS_DATA = null;
   window.KOSTAT_CONTRACT_REVIEWS_DATA = null;
   window.KOSTAT_DRAWINGS_DATA = null;
+  window.KOSTAT_GIMPO_TRAY_STOCK = null;
+  window.KOSTAT_VIETNAM_TRAY_STOCK = null;
+  window.KOSTAT_TAICHANG_TRAY_STOCK = null;
+  window.KOSTAT_TAICHANG_CT_TRAY_STOCK = null;
+  window.KOSTAT_HUIZHOU_TRAY_STOCK = null;
+  _gimpoStockData = null;
+  _vietnamStockData = null;
+  _taichangStockData = null;
+  _taichangCtStockData = null;
+  _huizhouStockData = null;
   if (typeof renderQuotHistory === 'function') renderQuotHistory();
   if (typeof renderShipPlanHistory === 'function') renderShipPlanHistory();
 }
@@ -9144,6 +9158,29 @@ function clearGimpoSearch() {
 window.clearGimpoSearch = clearGimpoSearch;
 
 
+function formatStockHeaderInfo(data, isEn) {
+  if (!data) return '';
+  const asOf = data.as_of_date || '';
+  const note = data.as_of_note ? ` (${data.as_of_note})` : '';
+  let recStr = data.email_received_at_formatted || '';
+  if (!recStr && data.email_received_at) {
+    try {
+      const d = new Date(data.email_received_at);
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const h = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        recStr = `${y}-${m}-${day} ${h}:${min}`;
+      }
+    } catch (e) {}
+  }
+  const recPart = recStr ? (isEn ? ` / Received: ${recStr}` : ` / 수신: ${recStr}`) : '';
+  const src = data.source_file ? (isEn ? ` / Source: ${data.source_file}` : ` / 출처: ${data.source_file}`) : '';
+  return isEn ? `As of: ${asOf}${note}${recPart}${src}` : `기준: ${asOf}${note}${recPart}${src}`;
+}
+
 // =====================================================
 // 2. 베트남 공장 재고 함수군
 // =====================================================
@@ -9161,9 +9198,7 @@ function updateVietnamHeaderAndMetrics(data) {
   const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('vietnamAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = isEn
-      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
-      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadVietnamExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
@@ -9282,9 +9317,7 @@ function updateTaichangHeaderAndMetrics(data) {
   const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('taichangAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = isEn
-      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
-      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadTaichangExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
@@ -9403,9 +9436,7 @@ function updateTaichangCtHeaderAndMetrics(data) {
   const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('taichangCtAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = isEn
-      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
-      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadTaichangCtExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
@@ -9527,9 +9558,7 @@ function updateHuizhouHeaderAndMetrics(data) {
   const isEn = AppState.currentLang === 'en';
   const asOfEl = document.getElementById('huizhouAsOfDate');
   if (asOfEl) {
-    asOfEl.textContent = isEn
-      ? `As of: ${data.as_of_date || ''} / Received: ${data.email_received_at || ''} / Source: ${data.source_file || ''}`
-      : `기준: ${data.as_of_date || ''} / 수신: ${data.email_received_at || ''} / 출처: ${data.source_file || ''}`;
+    asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadHuizhouExcel');
   if (dlBtn && (data.download_url || data.download_url_latest)) {
