@@ -519,10 +519,97 @@ const IDB = {
   }
 };
 
+// --- 보안 인증 기반 동적 데이터 로더 (Authenticated Lazy Data Loader) ---
+let isDataBundleLoaded = false;
+let isDataBundleLoading = false;
+
+const SECURE_DATA_FILES = [
+  'data/shipplan_data.js',
+  'data/quotations_data.js',
+  'data/contract_reviews_data.js',
+  'data/drawings_data.js',
+  'data/knowledge_data.js',
+  'data/faq_db.js',
+  'data/feedback_board.js',
+  'data/archive_data.js',
+  'data/gimpo_tray_stock_data.js',
+  'data/vietnam_tray_stock_data.js',
+  'data/taichang_tray_stock_data.js',
+  'data/taichang_ct_tray_stock_data.js',
+  'data/huizhou_tray_stock_data.js',
+  'data/ph_daily_report_data.js',
+  'data/ph_weekly_forecast_data.js',
+  'data/overseas_sales_targets_2026.js',
+  'data/overseas_monthly_actuals_2026.js',
+  'data/weekly_report_live.js',
+  'data/overseas_samples_2026.js',
+  'data/weekly_master_meta.js'
+];
+
+async function loadSecureDataBundle() {
+  if (isDataBundleLoaded || isDataBundleLoading) return;
+  isDataBundleLoading = true;
+  updateStatus(false, '사내 데이터베이스 보안 로드 중...');
+
+  const versionTag = '1.0.185';
+  const loadScriptPromise = (file) => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = file + '?v=' + versionTag;
+      script.async = false;
+      script.onload = () => resolve(true);
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
+  try {
+    for (const file of SECURE_DATA_FILES) {
+      await loadScriptPromise(file);
+    }
+    isDataBundleLoaded = true;
+  } catch (e) {
+    console.error('[DataLoad Error]', e);
+  } finally {
+    isDataBundleLoading = false;
+  }
+
+  // 데이터베이스 초기화 및 뷰 재렌더링
+  await loadInitialDatabases();
+  if (typeof renderQuotHistory === 'function') renderQuotHistory();
+  if (typeof renderShipPlanHistory === 'function') renderShipPlanHistory();
+  if (typeof renderContractReviews === 'function') renderContractReviews();
+  if (typeof renderDrawingsHistory === 'function') renderDrawingsHistory();
+  if (typeof renderFeedbackBoard === 'function') renderFeedbackBoard();
+  if (typeof renderArchiveCards === 'function') renderArchiveCards();
+  if (typeof renderFaqList === 'function') renderFaqList();
+  if (typeof initGimpoStock === 'function') initGimpoStock();
+  if (typeof initPhDailyReport === 'function') initPhDailyReport();
+  if (typeof initPhWeeklyForecast === 'function') initPhWeeklyForecast();
+  updateStatus(true, '시스템 정상 준비 완료');
+}
+window.loadSecureDataBundle = loadSecureDataBundle;
+
+function clearSecureDataBundle() {
+  isDataBundleLoaded = false;
+  AppState.shipPlanData = [];
+  AppState.quotationsData = [];
+  AppState.contractReviewsData = [];
+  AppState.drawingsData = [];
+  window.KOSTAT_SHIPPLAN_DATA = null;
+  window.KOSTAT_QUOTATIONS_DATA = null;
+  window.KOSTAT_CONTRACT_REVIEWS_DATA = null;
+  window.KOSTAT_DRAWINGS_DATA = null;
+  if (typeof renderQuotHistory === 'function') renderQuotHistory();
+  if (typeof renderShipPlanHistory === 'function') renderShipPlanHistory();
+}
+window.clearSecureDataBundle = clearSecureDataBundle;
+
 // --- 초기화 ---
 document.addEventListener('DOMContentLoaded', async () => {
   initUI();
-  await loadInitialDatabases();
   
   // 환영 메시지 시간
   const now = new Date();
@@ -531,11 +618,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     welcomeTime.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   }
 
+  // 이미 인증/승인된 세션이 있는 경우에만 안전하게 데이터 번들 로드
+  if (window.KostatAuth && window.KostatAuth.isApproved && window.KostatAuth.isApproved()) {
+    await loadSecureDataBundle();
+  }
+
   // 앱 시작 2초 후 실시간 백그라운드 클라우드 동기화 시도
   setTimeout(() => {
     syncLiveDatabases(false);
   }, 2000);
 });
+
 
 // --- 1. 초기 데이터베이스 로드 (Zero-Latency 번들 우선 + 캐시 병합) ---
 async function loadInitialDatabases() {
@@ -11019,11 +11112,14 @@ function syncTabVisibility() {
     if (!isAuth) {
       landingOverlay.style.display = 'flex';
       switchLandingView('signin');
+      if (typeof clearSecureDataBundle === 'function') clearSecureDataBundle();
     } else if (!isAppr) {
       landingOverlay.style.display = 'flex';
       switchLandingView('pending');
+      if (typeof clearSecureDataBundle === 'function') clearSecureDataBundle();
     } else {
       landingOverlay.style.display = 'none'; // 승인된 인가 회원은 메인 ERP로 진입
+      if (typeof loadSecureDataBundle === 'function') loadSecureDataBundle();
     }
   }
 
