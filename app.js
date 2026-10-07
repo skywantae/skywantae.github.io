@@ -551,7 +551,7 @@ async function loadSecureDataBundle() {
   isDataBundleLoading = true;
   updateStatus(false, '사내 데이터베이스 보안 로드 중...');
 
-  const versionTag = '1.0.185';
+  const versionTag = '1.0.186';
   const loadScriptPromise = (file) => {
     return new Promise((resolve) => {
       const script = document.createElement('script');
