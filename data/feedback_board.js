@@ -1,5 +1,14 @@
 window.KOSTAT_FEEDBACK_DATA = [
   {
+    "id": "req-1791361750086",
+    "title": "출하 계획에서 PO 넘버로도 검색이 될 수 있었으면 좋겠습니다.",
+    "author": "해외영업부 이상철",
+    "content": "구두 전달",
+    "created_at": "2026-10-07 17:29",
+    "status": "pending",
+    "reply": null
+  },
+  {
     "id": "req-1791254403688",
     "title": "금형 위치 확인 기능",
     "author": "해외영업부 김샘물",

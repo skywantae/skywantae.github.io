@@ -9160,8 +9160,6 @@ window.clearGimpoSearch = clearGimpoSearch;
 
 function formatStockHeaderInfo(data, isEn) {
   if (!data) return '';
-  const asOf = data.as_of_date || '';
-  const note = data.as_of_note ? ` (${data.as_of_note})` : '';
   let recStr = data.email_received_at_formatted || '';
   if (!recStr && data.email_received_at) {
     try {
@@ -9176,9 +9174,13 @@ function formatStockHeaderInfo(data, isEn) {
       }
     } catch (e) {}
   }
-  const recPart = recStr ? (isEn ? ` / Received: ${recStr}` : ` / 수신: ${recStr}`) : '';
-  const src = data.source_file ? (isEn ? ` / Source: ${data.source_file}` : ` / 출처: ${data.source_file}`) : '';
-  return isEn ? `As of: ${asOf}${note}${recPart}${src}` : `기준: ${asOf}${note}${recPart}${src}`;
+  const file = data.source_file || '';
+  if (file && recStr) {
+    return `${file} (${recStr})`;
+  }
+  if (file) return file;
+  if (recStr) return recStr;
+  return data.as_of_date || '';
 }
 
 // =====================================================
