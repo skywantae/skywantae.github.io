@@ -9088,8 +9088,8 @@ function updateGimpoHeaderAndMetrics(data) {
       : `기준: ${data.as_of_date || ''} ${data.as_of_time || ''} / 출처: ${data.source_file || ''}`;
   }
   const dlBtn = document.getElementById('btnDownloadGimpoExcel');
-  if (dlBtn && (data.download_url || data.download_url_latest)) {
-    dlBtn.href = data.download_url || data.download_url_latest;
+  if (dlBtn && (data.download_url_latest || data.download_url)) {
+    dlBtn.href = data.download_url_latest || data.download_url;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
 }
@@ -9222,8 +9222,8 @@ function updateVietnamHeaderAndMetrics(data) {
     asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadVietnamExcel');
-  if (dlBtn && (data.download_url || data.download_url_latest)) {
-    dlBtn.href = data.download_url || data.download_url_latest;
+  if (dlBtn && (data.download_url_latest || data.download_url)) {
+    dlBtn.href = data.download_url_latest || data.download_url;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
 }
@@ -9341,8 +9341,8 @@ function updateTaichangHeaderAndMetrics(data) {
     asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadTaichangExcel');
-  if (dlBtn && (data.download_url || data.download_url_latest)) {
-    dlBtn.href = data.download_url || data.download_url_latest;
+  if (dlBtn && (data.download_url_latest || data.download_url)) {
+    dlBtn.href = data.download_url_latest || data.download_url;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
 }
@@ -9460,8 +9460,8 @@ function updateTaichangCtHeaderAndMetrics(data) {
     asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadTaichangCtExcel');
-  if (dlBtn && (data.download_url || data.download_url_latest)) {
-    dlBtn.href = data.download_url || data.download_url_latest;
+  if (dlBtn && (data.download_url_latest || data.download_url)) {
+    dlBtn.href = data.download_url_latest || data.download_url;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
 }
@@ -9582,8 +9582,8 @@ function updateHuizhouHeaderAndMetrics(data) {
     asOfEl.textContent = formatStockHeaderInfo(data, isEn);
   }
   const dlBtn = document.getElementById('btnDownloadHuizhouExcel');
-  if (dlBtn && (data.download_url || data.download_url_latest)) {
-    dlBtn.href = data.download_url || data.download_url_latest;
+  if (dlBtn && (data.download_url_latest || data.download_url)) {
+    dlBtn.href = data.download_url_latest || data.download_url;
     if (data.source_file) dlBtn.setAttribute('download', data.source_file);
   }
 }
