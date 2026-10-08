@@ -1215,6 +1215,8 @@ const APP_I18N = {
     btn_drawings_download: '다운로드',
 
     // Admin Users & Tab Permissions Management
+    btn_admin_users: '권한 관리',
+    title_admin_users: '사용자 권한 관리',
     admin_console_title: '사내 사용자 및 탭 열람 권한 관리 콘솔',
     admin_search_holder: '이름, 이메일, 부서 검색...',
     btn_admin_refresh: '목록 새로고침',
@@ -1610,6 +1612,8 @@ const APP_I18N = {
     btn_drawings_download: 'Download',
 
     // Admin Users & Tab Permissions Management
+    btn_admin_users: 'Permissions',
+    title_admin_users: 'User Permissions Management',
     admin_console_title: 'User & Tab Permissions Management Console',
     admin_search_holder: 'Search Name, Email, Department...',
     btn_admin_refresh: 'Refresh List',
@@ -1723,6 +1727,11 @@ function applyAppLanguage(lang) {
   if (btnToggleLang) {
     btnToggleLang.textContent = t.lang_badge;
     btnToggleLang.title = t.lang_title;
+  }
+  const btnAdminUsers = document.getElementById('btnAdminUsers');
+  if (btnAdminUsers) {
+    btnAdminUsers.textContent = t.btn_admin_users;
+    btnAdminUsers.title = t.title_admin_users;
   }
 
   // 2. 설정 모달 버튼 상태
@@ -11158,6 +11167,10 @@ function syncTabVisibility() {
   const btnAdminUsers = document.getElementById('btnAdminUsers');
   if (btnAdminUsers) {
     btnAdminUsers.style.display = isAdmin ? 'inline-flex' : 'none';
+    const isEn = AppState.currentLang === 'en';
+    const t = APP_I18N[AppState.currentLang] || APP_I18N.ko;
+    btnAdminUsers.textContent = t.btn_admin_users || (isEn ? 'Permissions' : '권한 관리');
+    btnAdminUsers.title = t.title_admin_users || (isEn ? 'User Permissions Management' : '사용자 권한 관리');
   }
 
   const authUserLabel = document.getElementById('authUserLabel');

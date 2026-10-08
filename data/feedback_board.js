@@ -5,8 +5,13 @@ window.KOSTAT_FEEDBACK_DATA = [
     "author": "해외영업부 이상철",
     "content": "구두 전달",
     "created_at": "2026-10-07 17:29",
-    "status": "pending",
-    "reply": null
+    "status": "applied",
+    "reply": {
+      "author": "시스템 관리자",
+      "content": "안녕하십니까, 이상철 선임님. 해당 기능 반영하였습니다.",
+      "replied_at": "2026-10-08 09:14"
+    },
+    "updated_at": "2026-10-08 09:14"
   },
   {
     "id": "req-1791254403688",
