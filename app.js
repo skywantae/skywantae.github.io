@@ -9047,6 +9047,16 @@ window.fetchLatestHuizhouStock = (isManual) => fetchLatestStock('huizhou', isMan
 // =====================================================
 // 1. 김포 공장 재고 함수군
 // =====================================================
+function matchStockSearchTerms(target, terms) {
+  if (!terms || terms.length === 0) return true;
+  const targetNorm = target.replace(/[-_\s/]/g, '');
+  return terms.every(t => {
+    if (target.includes(t)) return true;
+    const tNorm = t.replace(/[-_\s/]/g, '');
+    return tNorm.length >= 2 && targetNorm.includes(tNorm);
+  });
+}
+
 function getGimpoValidItems(data) {
   if (!data || !Array.isArray(data.items)) return [];
   return data.items.filter(item => {
@@ -9144,10 +9154,10 @@ function filterGimpoStock() {
   if (!q) {
     _gimpoFilteredItems = validItems;
   } else {
-    const terms = q.split(/\s+/);
+    const terms = q.split(/\s+/).filter(Boolean);
     _gimpoFilteredItems = validItems.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.s || ''} ${item.t || ''} ${item.c || ''} ${item.r || ''}`.toLowerCase();
-      return terms.every(t => target.includes(t));
+      return matchStockSearchTerms(target, terms);
     });
   }
   renderGimpoStock();
@@ -9276,10 +9286,10 @@ function filterVietnamStock() {
   if (!q) {
     _vietnamFilteredItems = _vietnamStockData.items;
   } else {
-    const terms = q.split(/\s+/);
+    const terms = q.split(/\s+/).filter(Boolean);
     _vietnamFilteredItems = _vietnamStockData.items.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.t || ''} ${item.pkg || ''} ${item.r || ''}`.toLowerCase();
-      return terms.every(t => target.includes(t));
+      return matchStockSearchTerms(target, terms);
     });
   }
   renderVietnamStock();
@@ -9395,10 +9405,10 @@ function filterTaichangStock() {
   if (!q) {
     _taichangFilteredItems = validItems;
   } else {
-    const terms = q.split(/\s+/);
+    const terms = q.split(/\s+/).filter(Boolean);
     _taichangFilteredItems = validItems.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''}`.toLowerCase();
-      return terms.every(t => target.includes(t));
+      return matchStockSearchTerms(target, terms);
     });
   }
   renderTaichangStock();
@@ -9515,10 +9525,10 @@ function filterTaichangCtStock() {
   if (!q) {
     _taichangCtFilteredItems = validItems;
   } else {
-    const terms = q.split(/\s+/);
+    const terms = q.split(/\s+/).filter(Boolean);
     _taichangCtFilteredItems = validItems.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''} ${item.dest || ''}`.toLowerCase();
-      return terms.every(t => target.includes(t));
+      return matchStockSearchTerms(target, terms);
     });
   }
   renderTaichangCtStock();
@@ -9636,10 +9646,10 @@ function filterHuizhouStock() {
   if (!q) {
     _huizhouFilteredItems = validItems;
   } else {
-    const terms = q.split(/\s+/);
+    const terms = q.split(/\s+/).filter(Boolean);
     _huizhouFilteredItems = validItems.filter(item => {
       const target = `${item.p || ''} ${item.m || ''} ${item.c || ''} ${item.tm || ''}`.toLowerCase();
-      return terms.every(t => target.includes(t));
+      return matchStockSearchTerms(target, terms);
     });
   }
   renderHuizhouStock();
