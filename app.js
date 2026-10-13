@@ -4635,7 +4635,8 @@ function printContractReview(projectNo) {
       text-align: center !important;
     }
     .kostat-contract-print-sheet .contract-section-header-left {
-      border-right: 3.5pt solid #000000 !important;
+      width: 401.3pt !important;
+      border-right: 1.44pt solid #000000 !important;
       box-sizing: border-box !important;
       font-family: 'Gulim', 'Dotum', sans-serif !important;
       font-size: 12pt !important;
@@ -4644,6 +4645,8 @@ function printContractReview(projectNo) {
       padding-left: 30.7pt !important;
     }
     .kostat-contract-print-sheet .contract-section-header-right {
+      width: 396.7pt !important;
+      border-left: none !important;
       box-sizing: border-box !important;
       font-family: 'Gulim', 'Dotum', sans-serif !important;
       font-size: 12pt !important;
@@ -4652,26 +4655,32 @@ function printContractReview(projectNo) {
       padding-left: 30.7pt !important;
     }
     .kostat-contract-print-sheet .contract-left-col {
-      border-right: 3.5pt solid #000000 !important;
+      width: 401.3pt !important;
+      border-right: none !important;
+      overflow: hidden !important;
       box-sizing: border-box !important;
     }
     .kostat-contract-print-sheet .contract-memo-area {
-      border-right: 3.5pt solid #000000 !important;
+      border-bottom: 1.44pt solid #000000 !important;
+      border-right: none !important;
       box-sizing: border-box !important;
+      overflow: hidden !important;
     }
     .kostat-contract-print-sheet .contract-spec-table {
+      width: 100% !important;
       box-sizing: border-box !important;
     }
     .kostat-contract-print-sheet .contract-spec-table th:last-child,
     .kostat-contract-print-sheet .contract-spec-table td:last-child {
-      border-right: 3.5pt solid #000000 !important;
+      border-right: none !important;
     }
     .kostat-contract-print-sheet .contract-right-col {
-      border-left: 3.5pt solid #000000 !important;
+      width: 396.7pt !important;
+      border-left: 1.44pt solid #000000 !important;
       box-sizing: border-box !important;
     }
     .kostat-contract-print-sheet .contract-approval-box {
-      border-left: 3.5pt solid #000000 !important;
+      border-left: 1.44pt solid #000000 !important;
       box-sizing: border-box !important;
     }
   `;
@@ -4794,77 +4803,77 @@ function printContractReview(projectNo) {
 
       <!-- 4. 본문 구분 헤더: 의뢰내용 및 이중 실선 -->
       <div class="contract-section-header-row">
-        <div class="contract-section-header-left" style="border-right: 3.5pt solid #000000 !important; box-sizing: border-box !important; font-family:'Gulim', 'Dotum', sans-serif !important; font-size:12pt !important; font-weight:normal !important; letter-spacing:30.7pt !important; padding-left:30.7pt !important;">의뢰내용</div>
-        <div class="contract-section-header-right" style="box-sizing: border-box !important; font-family:'Gulim', 'Dotum', sans-serif !important; font-size:12pt !important; font-weight:normal !important; letter-spacing:30.7pt !important; padding-left:30.7pt !important;">의뢰내용</div>
+        <div class="contract-section-header-left" style="width: 401.3pt !important; border-right: 1.44pt solid #000000 !important; box-sizing: border-box !important; font-family:'Gulim', 'Dotum', sans-serif !important; font-size:12pt !important; font-weight:normal !important; letter-spacing:30.7pt !important; padding-left:30.7pt !important;">의뢰내용</div>
+        <div class="contract-section-header-right" style="width: 396.7pt !important; border-left: none !important; box-sizing: border-box !important; font-family:'Gulim', 'Dotum', sans-serif !important; font-size:12pt !important; font-weight:normal !important; letter-spacing:30.7pt !important; padding-left:30.7pt !important;">의뢰내용</div>
       </div>
       <div class="contract-double-line"></div>
 
       <!-- 5. 좌우 2단 본문 영역 (총 높이 364.6pt) -->
       <div class="contract-body-split">
-        <!-- 좌측 컬럼 (401.2pt): 의뢰 상세 메모 (120pt) + 스펙 테이블 (244.6pt) -->
-        <div class="contract-left-col" style="border-right: 3.5pt solid #000000 !important; box-sizing: border-box !important;">
-          <div class="contract-memo-area" style="font-size: 11pt; line-height: 1.35; padding: 4pt 5pt; border-right: 3.5pt solid #000000 !important; box-sizing: border-box !important;">${escapeHtml(cleanMemo)}</div>
-          <table class="contract-spec-table" style="box-sizing: border-box !important;">
+        <!-- 좌측 컬럼 (401.3pt): 의뢰 상세 메모 (120pt) + 스펙 테이블 (244.6pt) -->
+        <div class="contract-left-col" style="width: 401.3pt !important; border-right: none !important; overflow: hidden !important; box-sizing: border-box !important;">
+          <div class="contract-memo-area" style="font-size: 11pt; line-height: 1.35; padding: 4pt 5pt; border-bottom: 1.44pt solid #000000 !important; border-right: none !important; box-sizing: border-box !important;">${escapeHtml(cleanMemo)}</div>
+          <table class="contract-spec-table" style="width: 100% !important; box-sizing: border-box !important;">
             <colgroup>
               <col style="width: 90.8pt;">
               <col style="width: 156.0pt;">
-              <col style="width: 154.4pt;">
+              <col style="width: 154.5pt;">
             </colgroup>
             <tbody>
               <tr style="height: 17.3pt;">
                 <th colspan="2">ITEM</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.item || '')}</td>
+                <td>${escapeHtml(found.item || '')}</td>
               </tr>
               <tr style="height: 18.0pt;">
                 <th colspan="2">DWG NO.</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.part_no || '')}</td>
+                <td>${escapeHtml(found.part_no || '')}</td>
               </tr>
               <tr style="height: 17.3pt;">
                 <th rowspan="3">SAMPLE<br>INFO</th>
                 <th>Temp(Length)</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.temp || '')}</td>
+                <td>${escapeHtml(found.temp || '')}</td>
               </tr>
               <tr style="height: 17.1pt;">
                 <th>Qty</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.qty || '')}</td>
+                <td>${escapeHtml(found.qty || '')}</td>
               </tr>
               <tr style="height: 18.0pt;">
                 <th>Due Date</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.due_date || '')}</td>
+                <td>${escapeHtml(found.due_date || '')}</td>
               </tr>
               <tr style="height: 17.3pt;">
                 <th rowspan="3">TOOL</th>
                 <th>금형 수주가</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(toolingCost)}</td>
+                <td>${escapeHtml(toolingCost)}</td>
               </tr>
               <tr style="height: 17.3pt;">
                 <th>TOOL TYPE</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.tool_type || '')}</td>
+                <td>${escapeHtml(found.tool_type || '')}</td>
               </tr>
               <tr style="height: 18.0pt;">
                 <th>PO #</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.tooling_po_no || '')}</td>
+                <td>${escapeHtml(found.tooling_po_no || '')}</td>
               </tr>
               <tr style="height: 69.0pt;">
                 <th>MATERIAL</th>
                 <td></td>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(found.material || '')}</td>
+                <td>${escapeHtml(found.material || '')}</td>
               </tr>
               <tr style="height: 17.3pt;">
                 <th rowspan="2">FORECAST</th>
                 <th>Expecting PO Month</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(expPoYymm)}</td>
+                <td>${escapeHtml(expPoYymm)}</td>
               </tr>
               <tr style="height: 18.0pt;">
                 <th>Monthly Forecast</th>
-                <td style="border-right: 3.5pt solid #000000 !important;">${escapeHtml(monthlyAmount)}</td>
+                <td>${escapeHtml(monthlyAmount)}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- 우측 컬럼 (396.8pt): 5대 부서 검토란 (설계팀, 생산부, Q.C, R/D, 자재부) -->
-        <div class="contract-right-col" style="border-left: 3.5pt solid #000000 !important; box-sizing: border-box !important;">
+        <!-- 우측 컬럼 (396.7pt): 5대 부서 검토란 (설계팀, 생산부, Q.C, R/D, 자재부) -->
+        <div class="contract-right-col" style="width: 396.7pt !important; border-left: 1.44pt solid #000000 !important; box-sizing: border-box !important;">
           ${depts.map(d => `
             <div class="dept-review-box" style="height: ${d.h};">
               <div class="dept-tag">${escapeHtml(d.name)}</div>

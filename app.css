@@ -1562,7 +1562,7 @@ html, body {
   top: 0 !important;
   width: 200.3pt !important;
   height: 65.3pt !important;
-  border-left: 3.5pt solid #000000 !important;
+  border-left: 1.44pt solid #000000 !important;
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;
@@ -1689,8 +1689,8 @@ html, body {
 }
 
 .kostat-contract-print-sheet .contract-section-header-left {
-  width: 401.2pt !important;
-  border-right: 3.5pt solid #000000 !important;
+  width: 401.3pt !important;
+  border-right: 1.44pt solid #000000 !important;
   box-sizing: border-box !important;
   display: flex !important;
   align-items: center !important;
@@ -1705,7 +1705,8 @@ html, body {
 }
 
 .kostat-contract-print-sheet .contract-section-header-right {
-  width: 396.8pt !important;
+  width: 396.7pt !important;
+  border-left: none !important;
   box-sizing: border-box !important;
   display: flex !important;
   align-items: center !important;
@@ -1729,26 +1730,28 @@ html, body {
   display: flex !important;
   width: 100% !important;
   height: 364.6pt !important;
+  box-sizing: border-box !important;
 }
 
 .kostat-contract-print-sheet .contract-left-col {
-  width: 401.2pt !important;
+  width: 401.3pt !important;
   height: 100% !important;
-  border-right: 3.5pt solid #000000 !important;
+  border-right: none !important;
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
+  overflow: hidden !important;
 }
 
 .kostat-contract-print-sheet .contract-memo-area {
   height: 120.0pt !important;
-  padding: 3.5pt 4pt !important;
-  font-size: 11.5pt !important;
+  padding: 4pt 5pt !important;
+  font-size: 11pt !important;
   line-height: 1.35 !important;
   white-space: pre-wrap !important;
   word-break: break-all !important;
   border-bottom: 1.44pt solid #000000 !important;
-  border-right: 3.5pt solid #000000 !important;
+  border-right: none !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
   font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif !important;
@@ -1775,7 +1778,7 @@ html, body {
 
 .kostat-contract-print-sheet .contract-spec-table th:last-child,
 .kostat-contract-print-sheet .contract-spec-table td:last-child {
-  border-right: 3.5pt solid #000000 !important;
+  border-right: none !important;
 }
 
 .kostat-contract-print-sheet .contract-spec-table tr:last-child td {
@@ -1796,9 +1799,9 @@ html, body {
 }
 
 .kostat-contract-print-sheet .contract-right-col {
-  width: 396.8pt !important;
+  width: 396.7pt !important;
   height: 100% !important;
-  border-left: 3.5pt solid #000000 !important;
+  border-left: 1.44pt solid #000000 !important;
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;
