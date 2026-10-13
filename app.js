@@ -4535,6 +4535,16 @@ function printQuotation(quotNo) {
   const printContainer = document.getElementById('printContainer');
   if (!printContainer) return;
 
+  printContainer.classList.remove('landscape-mode');
+
+  let printPageStyle = document.getElementById('dynamicPrintPageStyle');
+  if (!printPageStyle) {
+    printPageStyle = document.createElement('style');
+    printPageStyle.id = 'dynamicPrintPageStyle';
+    document.head.appendChild(printPageStyle);
+  }
+  printPageStyle.textContent = `@media print { @page { size: A4 portrait !important; margin: 0 !important; } }`;
+
   const printableQuotation = document.getElementById('printableQuotation');
   if (printableQuotation) {
     // 모달이 열려 있는 경우 해당 견적서 시트 복제
@@ -4580,67 +4590,49 @@ function printContractReview(projectNo) {
     return;
   }
 
-  // Action Items HTML 생성
-  let actionRows = '';
-  if (found.action_items && found.action_items.length > 0) {
-    actionRows = found.action_items.map(a => `
-      <tr>
-        <td>${escapeHtml(a.date || '-')}</td>
-        <td>${escapeHtml(a.status || '-')}</td>
-        <td>${escapeHtml(a.drawing || '-')}</td>
-        <td>${escapeHtml(a.simulation || '-')}</td>
-        <td>${escapeHtml(a.pod || '-')}</td>
-      </tr>
-    `).join('');
-  }
+  printContainer.classList.add('landscape-mode');
 
-  // Sample Deliveries HTML 생성
-  let sampleRows = '';
-  if (found.sample_deliveries && found.sample_deliveries.length > 0) {
-    sampleRows = found.sample_deliveries.map(s => `
-      <tr>
-        <td>${escapeHtml(s.date || '-')}</td>
-        <td>${escapeHtml(s.invoice || '-')}</td>
-        <td>${escapeHtml(s.qty || '-')}</td>
-        <td>${escapeHtml(s.due_date || '-')}</td>
-        <td>${escapeHtml(s.shipped_date || '-')}</td>
-        <td>${escapeHtml(s.description || '-')}</td>
-        <td>${escapeHtml(s.courier_tracking || '-')}</td>
-      </tr>
-    `).join('');
+  let printPageStyle = document.getElementById('dynamicPrintPageStyle');
+  if (!printPageStyle) {
+    printPageStyle = document.createElement('style');
+    printPageStyle.id = 'dynamicPrintPageStyle';
+    document.head.appendChild(printPageStyle);
   }
+  printPageStyle.textContent = `@media print { @page { size: A4 landscape !important; margin: 0 !important; } }`;
 
-  // 계약검토서 공식 A4 규격 인쇄 서식 렌더링
+  const rawDate = found.date || '';
+  const dateFormatted = rawDate ? rawDate.slice(2).replace(/[-.]/g, '/') : '//';
+  const deptName = (found.deptno === '1231' || !found.deptno) ? '해외영업부' : (found.deptno || '해외영업부');
+  const reqSet = found.req_set || '검토';
+  const depts = ['설계팀', '생산부', 'Q.C', 'R/D', '자재부'];
+
+  // 공식 계약 ( 검토 ) 의뢰서 (F-P03-02-R.0) 원본 A4 규격 인쇄 서식 렌더링
   printContainer.innerHTML = `
     <div class="kostat-contract-print-sheet">
-      <!-- 1. 헤더 (KOSTAT 공식 결재선 포함) -->
-      <div class="kostat-print-header">
-        <div class="kostat-logo-area">
-          <div class="kostat-red-title">KOSTAT, INC</div>
-          <div class="kostat-address-text" style="font-size:8.5px; line-height:1.35; color:#000; margin-top:4px; font-weight:600;">
-            60, GOGANG-RO 154BEON-GIL, BUCHON-CITY, KYONG KI-DO, KOREA<br>
-            TEL : 82-32-671-8100(REP) / FAX : 82-32-671-0259
-          </div>
-        </div>
-        <div class="kostat-doc-title">
-          <span style="font-size:16px; font-weight:800; letter-spacing:1px; border-bottom:2px solid #000; padding-bottom:2px;">계약검토서 (PROJECT REVIEW)</span>
-        </div>
-        <div class="kostat-approval-box">
-          <table class="kostat-approval-table">
+      <!-- 1. 상단 공식 타이틀 및 결재란 -->
+      <div class="contract-title-row">
+        <div class="contract-doc-title">계약 ( <span class="contract-set-target">${escapeHtml(reqSet)}</span> ) 의뢰서</div>
+        <div class="contract-approval-box">
+          <table class="contract-approval-table">
             <thead>
               <tr>
-                <th style="width:33%;">작 성</th>
-                <th style="width:33%;">검 토</th>
-                <th style="width:34%;">승 인</th>
+                <th style="width:25%;">WRITTEN BY</th>
+                <th style="width:25%;">REVIEWED BY</th>
+                <th style="width:25%;"></th>
+                <th style="width:25%;">APPROVED</th>
               </tr>
             </thead>
             <tbody>
-              <tr style="height:34px;">
-                <td>//</td><td>//</td><td>//</td>
+              <tr class="sign-row">
+                <td></td>
+                <td class="slash-cell"></td>
+                <td></td>
+                <td></td>
               </tr>
-              <tr style="height:15px;font-size:9px;border-top:1px solid #000;">
-                <td>${escapeHtml(found.date || '')}</td>
-                <td>${escapeHtml(found.date || '')}</td>
+              <tr class="date-row">
+                <td>${escapeHtml(dateFormatted)}</td>
+                <td>${escapeHtml(dateFormatted)}</td>
+                <td>//</td>
                 <td>//</td>
               </tr>
             </tbody>
@@ -4648,82 +4640,106 @@ function printContractReview(projectNo) {
         </div>
       </div>
 
-      <!-- 2. 메타 정보 3단 그리드 -->
-      <div class="print-meta-grid">
-        <div class="print-meta-col">
-          <div class="print-meta-row"><span class="print-meta-label">Project No :</span><span class="print-meta-val" style="font-weight:700;color:#1e3a8a;">${escapeHtml(found.project_no)}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Date :</span><span class="print-meta-val">${escapeHtml(found.date || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Status :</span><span class="print-meta-val">${escapeHtml(found.status || 'Document')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Priority :</span><span class="print-meta-val">${escapeHtml(found.priority || '1')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Item :</span><span class="print-meta-val">${escapeHtml(found.item || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Tool Type :</span><span class="print-meta-val">${escapeHtml(found.tool_type || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Country :</span><span class="print-meta-val">${escapeHtml(found.country || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Customer :</span><span class="print-meta-val" style="font-weight:700;">${escapeHtml(found.customer || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Material :</span><span class="print-meta-val">${escapeHtml(found.material || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Q'ty :</span><span class="print-meta-val">${escapeHtml(found.qty || '-')}</span></div>
+      <!-- 2. 문서 헤더 메타 테이블 -->
+      <table class="contract-header-table">
+        <tr>
+          <th style="width:68px;">작성부서</th>
+          <td style="width:140px;">${escapeHtml(deptName)}</td>
+          <th style="width:68px;">작성일자</th>
+          <td style="width:130px;">${escapeHtml(rawDate)}</td>
+          <th style="width:68px;">작 성 자</th>
+          <td>${escapeHtml(found.username || '')}</td>
+        </tr>
+        <tr>
+          <th>의뢰부서</th>
+          <td>${escapeHtml(found.req_dept || '')}</td>
+          <td colspan="2"></td>
+          <th>고&nbsp;&nbsp;&nbsp;&nbsp;객</th>
+          <td>${escapeHtml(found.customer || '')}</td>
+        </tr>
+        <tr>
+          <th>검토안건</th>
+          <td colspan="5" style="text-align:left; font-weight:700;">${escapeHtml(found.req_head || '')}</td>
+        </tr>
+      </table>
+
+      <!-- 3. 좌우 2단 본문 영역 -->
+      <div class="contract-main-body">
+        <!-- 좌측: 의뢰내용 (상세 메모 + 품목 스펙 테이블) -->
+        <div class="contract-col-left">
+          <div class="contract-section-header">의&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;용</div>
+          <div class="contract-memo-box">${escapeHtml(found.req_memo || '')}</div>
+          <table class="contract-spec-table">
+            <tr>
+              <th colspan="2" style="width:58%;">ITEM</th>
+              <td style="width:42%; font-weight:600;">${escapeHtml(found.item || '')}</td>
+            </tr>
+            <tr>
+              <th colspan="2">DWG NO.</th>
+              <td style="font-weight:600;">${escapeHtml(found.part_no || '')}</td>
+            </tr>
+            <tr>
+              <th rowspan="3" style="width:24%;">SAMPLE<br>INFO</th>
+              <th style="width:34%;">Temp(Length)</th>
+              <td>${escapeHtml(found.temp || '')}</td>
+            </tr>
+            <tr>
+              <th>Qty</th>
+              <td>${escapeHtml(found.qty || '')}</td>
+            </tr>
+            <tr>
+              <th>Due Date</th>
+              <td>${escapeHtml(found.due_date || '')}</td>
+            </tr>
+            <tr>
+              <th rowspan="3">TOOL</th>
+              <th>금형 수주가</th>
+              <td>${escapeHtml(found.tooling_cost && found.tooling_cost !== '.000' ? found.tooling_cost : '')}</td>
+            </tr>
+            <tr>
+              <th>TOOL TYPE</th>
+              <td>${escapeHtml(found.tool_type || '')}</td>
+            </tr>
+            <tr>
+              <th>PO #</th>
+              <td>${escapeHtml(found.tooling_po_no || '')}</td>
+            </tr>
+            <tr>
+              <th colspan="2">MATERIAL</th>
+              <td>${escapeHtml(found.material || '')}</td>
+            </tr>
+            <tr>
+              <th rowspan="2">FORECAST</th>
+              <th>Expecting PO Month</th>
+              <td>${escapeHtml(found.exp_po_yymm && found.exp_po_yymm !== '-' ? found.exp_po_yymm : '.')}</td>
+            </tr>
+            <tr>
+              <th>Monthly Forecast</th>
+              <td>${escapeHtml(found.monthly_amount && found.monthly_amount !== '.000' ? found.monthly_amount : '')}</td>
+            </tr>
+          </table>
         </div>
 
-        <div class="print-meta-col">
-          <div class="print-meta-row"><span class="print-meta-label">Part No :</span><span class="print-meta-val" style="font-weight:700;color:#0b7a28;">${escapeHtml(found.part_no || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Temp(Length) :</span><span class="print-meta-val">${escapeHtml(found.temp || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">ERP Code :</span><span class="print-meta-val">${escapeHtml(found.erp_code || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Monthly Amt :</span><span class="print-meta-val">${escapeHtml(found.monthly_amount || '.000')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Exp PO YYMM :</span><span class="print-meta-val">${escapeHtml(found.exp_po_yymm || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Tooling PO :</span><span class="print-meta-val">${escapeHtml(found.tooling_po_no || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Tooling Cost :</span><span class="print-meta-val">${escapeHtml(found.tooling_cost || '.000')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Mass Date :</span><span class="print-meta-val">${escapeHtml(found.mass_date || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Mass Amount :</span><span class="print-meta-val">${escapeHtml(found.mass_amount || '.000')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Due Date :</span><span class="print-meta-val">${escapeHtml(found.due_date || '-')}</span></div>
-        </div>
-
-        <div class="print-meta-col">
-          <div class="print-meta-row"><span class="print-meta-label">Update :</span><span class="print-meta-val">${escapeHtml(found.update || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Username :</span><span class="print-meta-val">${escapeHtml(found.username || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Dept No :</span><span class="print-meta-val">${escapeHtml(found.deptno || '-')}</span></div>
-          <div class="print-meta-row"><span class="print-meta-label">Finish :</span><span class="print-meta-val">${escapeHtml(found.finish || '미결재')}</span></div>
-          <div style="margin-top:6px;">
-            <div style="font-weight:700;font-size:10.5px;color:#334155;margin-bottom:2px;">Descript (비고)</div>
-            <div style="border:1px solid #7f9db9;background:#fff;padding:4px 6px;min-height:90px;font-size:10.5px;white-space:pre-wrap;word-break:break-all;">${escapeHtml(found.descript || '-')}</div>
-          </div>
+        <!-- 우측: 5대 부서 검토란 (설계팀, 생산부, Q.C, R/D, 자재부) -->
+        <div class="contract-col-right">
+          <div class="contract-section-header">의&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;용</div>
+          ${depts.map(d => `
+            <div class="contract-review-dept-box">
+              <div class="dept-tag">${escapeHtml(d)}</div>
+              <div class="reviewer-signature-slot">
+                <div class="reviewer-label">검토자</div>
+                <div class="reviewer-sign-cell"></div>
+              </div>
+            </div>
+          `).join('')}
         </div>
       </div>
 
-      <!-- 3. 의뢰 상세 정보 (Written Request) -->
-      <div class="print-section-title">의뢰 상세 정보 (Written Request)</div>
-      <div class="print-written-box">
-        <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;">
-          <tr>
-            <td style="width:18%;font-weight:700;background:#f1f5f9;padding:4px 8px;border:1px solid #cbd5e1;">의뢰구분</td>
-            <td style="width:32%;padding:4px 8px;border:1px solid #cbd5e1;">${escapeHtml(found.req_set || '검토')}</td>
-            <td style="width:18%;font-weight:700;background:#f1f5f9;padding:4px 8px;border:1px solid #cbd5e1;">의뢰부서</td>
-            <td style="width:32%;padding:4px 8px;border:1px solid #cbd5e1;">${escapeHtml(found.req_dept || '-')}</td>
-          </tr>
-          <tr>
-            <td style="font-weight:700;background:#f1f5f9;padding:4px 8px;border:1px solid #cbd5e1;">검토안건</td>
-            <td colspan="3" style="padding:4px 8px;border:1px solid #cbd5e1;font-weight:700;">${escapeHtml(found.req_head || '-')}</td>
-          </tr>
-        </table>
-        <div style="font-weight:700;font-size:11px;margin:6px 0 2px 0;">의뢰내용 (상세)</div>
-        <div style="border:1px solid #cbd5e1;background:#fafafa;padding:8px 10px;min-height:100px;font-size:11px;line-height:1.6;white-space:pre-wrap;word-break:break-word;">${escapeHtml(found.req_memo || '등록된 상세 의뢰 내용이 없습니다.')}</div>
+      <!-- 4. 최하단 공식 문서 규격 푸터 -->
+      <div class="contract-footer-row">
+        <div>F-P03-02-R.0</div>
+        <div>Kostat, Inc. A4</div>
       </div>
-
-      ${actionRows ? `
-        <!-- 4. Action Items -->
-        <div class="print-section-title" style="margin-top:12px;">Action Items</div>
-        <table class="print-table">
-          <thead><tr><th>일자</th><th>상태</th><th>도면(Drawing)</th><th>시뮬레이션</th><th>POD</th></tr></thead>
-          <tbody>${actionRows}</tbody>
-        </table>
-      ` : ''}
-
-      ${sampleRows ? `
-        <!-- 5. Sample Delivery -->
-        <div class="print-section-title" style="margin-top:12px;">Sample Delivery</div>
-        <table class="print-table">
-          <thead><tr><th>일자</th><th>Invoice</th><th>수량</th><th>예정일</th><th>발송일</th><th>설명</th><th>배송추적</th></tr></thead>
-          <tbody>${sampleRows}</tbody>
-        </table>
-      ` : ''}
     </div>
   `;
 
