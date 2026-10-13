@@ -1505,22 +1505,25 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-family: 'Batang', 'BatangChe', serif !important;
+  font-family: 'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important;
   font-size: 20.5pt !important;
-  font-weight: 500 !important;
+  font-weight: 800 !important;
   color: #000000 !important;
   letter-spacing: 0 !important;
 }
 
 .kostat-contract-print-sheet .contract-doc-title .paren {
+  font-family: 'Arial', sans-serif !important;
   font-size: 24pt !important;
+  font-weight: bold !important;
   margin: 0 4pt !important;
 }
 
 .kostat-contract-print-sheet .contract-doc-title .target-text {
   font-size: 20.5pt !important;
-  letter-spacing: 14pt !important;
-  padding-left: 14pt !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  margin: 0 20pt !important;
 }
 
 .kostat-contract-print-sheet .contract-approval-box {
@@ -1529,7 +1532,7 @@ html, body {
   top: 0 !important;
   width: 200.3pt !important;
   height: 65.3pt !important;
-  border-left: 1.44pt solid #000000 !important;
+  border-left: 2.2pt solid #000000 !important;
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;
@@ -1657,14 +1660,15 @@ html, body {
 
 .kostat-contract-print-sheet .contract-section-header-left {
   width: 401.2pt !important;
-  border-right: 1.44pt solid #000000 !important;
+  border-right: 2.2pt solid #000000 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  font-family: 'Gulim', 'Dotum', sans-serif !important;
   font-size: 12pt !important;
-  font-weight: bold !important;
-  letter-spacing: 14pt !important;
-  padding-left: 14pt !important;
+  font-weight: normal !important;
+  letter-spacing: 30.7pt !important;
+  padding-left: 30.7pt !important;
   color: #000000 !important;
   background: #ffffff !important;
 }
@@ -1674,10 +1678,11 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  font-family: 'Gulim', 'Dotum', sans-serif !important;
   font-size: 12pt !important;
-  font-weight: bold !important;
-  letter-spacing: 14pt !important;
-  padding-left: 14pt !important;
+  font-weight: normal !important;
+  letter-spacing: 30.7pt !important;
+  padding-left: 30.7pt !important;
   color: #000000 !important;
   background: #ffffff !important;
 }
@@ -1697,7 +1702,7 @@ html, body {
 .kostat-contract-print-sheet .contract-left-col {
   width: 401.2pt !important;
   height: 100% !important;
-  border-right: 1.44pt solid #000000 !important;
+  border-right: 2.2pt solid #000000 !important;
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;

@@ -4653,10 +4653,10 @@ function printContractReview(projectNo) {
         </table>
       </div>
 
-      <!-- 2. 상단 공식 서식 타이틀 (바탕체 20.5pt, 정중앙 배치) -->
+      <!-- 2. 상단 공식 서식 타이틀 (맑은 고딕 Bold 20.5pt, 정중앙 배치) -->
       <div class="contract-top-row">
         <div class="contract-doc-title">
-          계약 <span class="paren">(</span><span class="target-text">${escapeHtml(reqSet)}</span><span class="paren">)</span> 의뢰서
+          계약&nbsp;<span class="paren">(</span><span class="target-text">${escapeHtml(reqSet)}</span><span class="paren">)</span>&nbsp;의뢰서
         </div>
       </div>
 
@@ -4702,10 +4702,10 @@ function printContractReview(projectNo) {
         </tbody>
       </table>
 
-      <!-- 4. 본문 구분 헤더: 의 뢰 내 용 및 이중 실선 -->
+      <!-- 4. 본문 구분 헤더: 의뢰내용 및 이중 실선 -->
       <div class="contract-section-header-row">
-        <div class="contract-section-header-left">의&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;용</div>
-        <div class="contract-section-header-right">의&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;용</div>
+        <div class="contract-section-header-left">의뢰내용</div>
+        <div class="contract-section-header-right">의뢰내용</div>
       </div>
       <div class="contract-double-line"></div>
 
