@@ -1748,6 +1748,8 @@ html, body {
   white-space: pre-wrap !important;
   word-break: break-all !important;
   border-bottom: 1.44pt solid #000000 !important;
+  border-right: 3.5pt solid #000000 !important;
+  box-sizing: border-box !important;
   overflow: hidden !important;
   font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif !important;
   color: #000000 !important;
@@ -1759,6 +1761,7 @@ html, body {
   height: 244.6pt !important;
   border-collapse: collapse !important;
   table-layout: fixed !important;
+  box-sizing: border-box !important;
 }
 
 .kostat-contract-print-sheet .contract-spec-table th,
@@ -1772,7 +1775,7 @@ html, body {
 
 .kostat-contract-print-sheet .contract-spec-table th:last-child,
 .kostat-contract-print-sheet .contract-spec-table td:last-child {
-  border-right: none !important;
+  border-right: 3.5pt solid #000000 !important;
 }
 
 .kostat-contract-print-sheet .contract-spec-table tr:last-child td {
@@ -1795,6 +1798,7 @@ html, body {
 .kostat-contract-print-sheet .contract-right-col {
   width: 396.8pt !important;
   height: 100% !important;
+  border-left: 3.5pt solid #000000 !important;
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;
