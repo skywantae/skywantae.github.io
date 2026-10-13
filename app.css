@@ -1268,9 +1268,14 @@ html, body {
 
   #printContainer.landscape-mode,
   #printContainer:has(.kostat-contract-print-sheet) {
-    width: 297mm !important;
-    max-width: 297mm !important;
-    padding: 6mm 10mm !important;
+    width: 841.92pt !important;
+    height: 595.32pt !important;
+    max-width: 841.92pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
   }
 
   #printContainer .kostat-official-sheet {
@@ -1286,23 +1291,6 @@ html, body {
     min-width: 0 !important;
     page-break-inside: avoid;
     break-inside: avoid;
-  }
-
-  /* 계약검토서 공식 A4 인쇄 서식 */
-  #printContainer .kostat-contract-print-sheet {
-    border: 2px solid #000000 !important;
-    padding: 8px 12px 6px 12px !important;
-    background: #ffffff !important;
-    color: #000000 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
   }
 
   .kostat-red-title {
@@ -1479,255 +1467,372 @@ html, body {
 }
 
 /* ==========================================================================
-   CONTRACT REVIEW PRINT LAYOUT (A4 EIS0412 규격)
-   ========================================================================== */
-.kostat-contract-print-sheet {
-  background: #ffffff;
-  color: #000000;
-  border: 1.5px solid #000000;
-  padding: 16px 20px;
-  font-family: 'Arial', 'Noto Sans KR', sans-serif;
-  margin: 0 auto;
-  max-width: 820px;
-  box-sizing: border-box;
-}
-
-/* ==========================================================================
    공식 계약 ( 검토 ) 의뢰서 (F-P03-02-R.0) 원본 ERP 100% 동일 인쇄 포맷
    ========================================================================== */
 .kostat-contract-print-sheet {
-  width: 100%;
-  box-sizing: border-box;
-  font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif;
-  color: #000000;
-  background: #ffffff;
-  border: 2px solid #000000;
-  padding: 8px 12px 6px 12px;
+  position: absolute !important;
+  left: 20.2pt !important;
+  top: 45.7pt !important;
+  width: 798pt !important;
+  height: 501.9pt !important;
+  border: 1.44pt solid #000000 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
-.kostat-contract-print-sheet .contract-title-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 6px;
+.kostat-contract-print-sheet .contract-top-row {
+  position: relative !important;
+  height: 65.3pt !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .kostat-contract-print-sheet .contract-doc-title {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 4px;
-  color: #000000;
-  text-align: center;
-  flex: 1;
-  padding-left: 180px;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 597.7pt !important;
+  height: 65.3pt !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: 'Batang', 'BatangChe', serif !important;
+  font-size: 20.5pt !important;
+  font-weight: 500 !important;
+  color: #000000 !important;
+  letter-spacing: 0 !important;
 }
 
-.kostat-contract-print-sheet .contract-set-target {
-  letter-spacing: 8px;
-  padding: 0 4px;
+.kostat-contract-print-sheet .contract-doc-title .paren {
+  font-size: 24pt !important;
+  margin: 0 4pt !important;
+}
+
+.kostat-contract-print-sheet .contract-doc-title .target-text {
+  font-size: 20.5pt !important;
+  letter-spacing: 14pt !important;
+  padding-left: 14pt !important;
 }
 
 .kostat-contract-print-sheet .contract-approval-box {
-  width: 250px;
-  border: 1px solid #000000;
-  border-collapse: collapse;
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  width: 200.3pt !important;
+  height: 65.3pt !important;
+  border-left: 1.44pt solid #000000 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
 }
 
 .kostat-contract-print-sheet .contract-approval-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 9px;
-  text-align: center;
+  width: 100% !important;
+  height: 65.3pt !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+}
+
+.kostat-contract-print-sheet .contract-approval-table th,
+.kostat-contract-print-sheet .contract-approval-table td {
+  border-right: 0.72pt solid #000000 !important;
+  border-bottom: 0.72pt solid #000000 !important;
+  text-align: center !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+}
+
+.kostat-contract-print-sheet .contract-approval-table th:last-child,
+.kostat-contract-print-sheet .contract-approval-table td:last-child {
+  border-right: none !important;
+}
+
+.kostat-contract-print-sheet .contract-approval-table tr:last-child td {
+  border-bottom: none !important;
 }
 
 .kostat-contract-print-sheet .contract-approval-table th {
-  border: 1px solid #000000;
-  padding: 2px;
-  font-weight: 700;
-  height: 16px;
-  color: #000000;
-  background: #ffffff;
-  font-size: 8.5px;
-  letter-spacing: -0.2px;
-}
-
-.kostat-contract-print-sheet .contract-approval-table td {
-  border: 1px solid #000000;
-  padding: 0;
-  color: #000000;
-  background: #ffffff;
+  height: 16.7pt !important;
+  font-size: 7.8pt !important;
+  font-family: 'Arial', sans-serif !important;
+  font-weight: bold !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.3pt !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
 .kostat-contract-print-sheet .contract-approval-table .sign-row td {
-  height: 38px;
-  position: relative;
+  height: 48.6pt !important;
+  position: relative !important;
 }
 
 .kostat-contract-print-sheet .contract-approval-table .slash-cell {
-  background: linear-gradient(to top right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.75px), #000000 calc(50% + 0.75px), transparent calc(50% + 0.75px)) !important;
+  position: relative !important;
+}
+
+.kostat-contract-print-sheet .contract-approval-table .slash-cell svg {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .kostat-contract-print-sheet .contract-approval-table .date-row td {
-  height: 16px;
-  font-size: 9px;
-  border-top: 1px solid #000000;
+  height: 16.6pt !important;
+  font-size: 9pt !important;
+  font-family: 'Arial', sans-serif !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
 .kostat-contract-print-sheet .contract-header-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #000000;
-  margin-bottom: -1px;
-  font-size: 11px;
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+  border-top: 0.72pt solid #000000 !important;
+  margin: 0 !important;
+}
+
+.kostat-contract-print-sheet .contract-header-table th,
+.kostat-contract-print-sheet .contract-header-table td {
+  border-right: 0.72pt solid #000000 !important;
+  border-bottom: 0.72pt solid #000000 !important;
+  padding: 0 4pt !important;
+  vertical-align: middle !important;
 }
 
 .kostat-contract-print-sheet .contract-header-table th {
-  border: 1px solid #000000;
-  background: #ffffff;
-  font-weight: 700;
-  text-align: center;
-  padding: 3px 4px;
-  letter-spacing: 1px;
-  white-space: nowrap;
+  text-align: center !important;
+  font-weight: bold !important;
+  font-size: 12pt !important;
+  letter-spacing: 1pt !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
 .kostat-contract-print-sheet .contract-header-table td {
-  border: 1px solid #000000;
-  padding: 3px 6px;
-  color: #000000;
-  background: #ffffff;
-  font-weight: 500;
+  text-align: center !important;
+  font-size: 10.5pt !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
-.kostat-contract-print-sheet .contract-main-body {
-  display: flex;
-  border: 1px solid #000000;
-  width: 100%;
-  box-sizing: border-box;
+.kostat-contract-print-sheet .contract-header-table tr.header-row-1 {
+  height: 16.6pt !important;
 }
 
-.kostat-contract-print-sheet .contract-col-left {
-  width: 50%;
-  border-right: 1px solid #000000;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.kostat-contract-print-sheet .contract-header-table tr.header-row-2 {
+  height: 17.1pt !important;
 }
 
-.kostat-contract-print-sheet .contract-col-right {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.kostat-contract-print-sheet .contract-header-table tr.header-row-3 {
+  height: 18.9pt !important;
 }
 
-.kostat-contract-print-sheet .contract-section-header {
-  border-bottom: 1px solid #000000;
-  text-align: center;
-  font-weight: 700;
-  font-size: 11px;
-  padding: 3px 0;
-  letter-spacing: 8px;
-  background: #ffffff;
+.kostat-contract-print-sheet .contract-header-table tr.header-row-3 td {
+  text-align: left !important;
+  padding-left: 8pt !important;
+  font-size: 11pt !important;
+  font-weight: bold !important;
+  border-right: none !important;
 }
 
-.kostat-contract-print-sheet .contract-memo-box {
-  padding: 6px 8px;
-  font-size: 10px;
-  line-height: 1.45;
-  white-space: pre-wrap;
-  min-height: 115px;
-  border-bottom: 1px solid #000000;
-  color: #000000;
-  word-break: break-all;
-  font-family: 'Malgun Gothic', 'Dotum', sans-serif;
+.kostat-contract-print-sheet .contract-section-header-row {
+  display: flex !important;
+  height: 18.0pt !important;
+  width: 100% !important;
+  border-bottom: 0.72pt solid #000000 !important;
+}
+
+.kostat-contract-print-sheet .contract-section-header-left {
+  width: 401.2pt !important;
+  border-right: 1.44pt solid #000000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 12pt !important;
+  font-weight: bold !important;
+  letter-spacing: 14pt !important;
+  padding-left: 14pt !important;
+  color: #000000 !important;
+  background: #ffffff !important;
+}
+
+.kostat-contract-print-sheet .contract-section-header-right {
+  width: 396.8pt !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 12pt !important;
+  font-weight: bold !important;
+  letter-spacing: 14pt !important;
+  padding-left: 14pt !important;
+  color: #000000 !important;
+  background: #ffffff !important;
+}
+
+.kostat-contract-print-sheet .contract-double-line {
+  width: 100% !important;
+  height: 1.4pt !important;
+  border-bottom: 0.72pt solid #000000 !important;
+}
+
+.kostat-contract-print-sheet .contract-body-split {
+  display: flex !important;
+  width: 100% !important;
+  height: 364.6pt !important;
+}
+
+.kostat-contract-print-sheet .contract-left-col {
+  width: 401.2pt !important;
+  height: 100% !important;
+  border-right: 1.44pt solid #000000 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+}
+
+.kostat-contract-print-sheet .contract-memo-area {
+  height: 120.0pt !important;
+  padding: 3.5pt 4pt !important;
+  font-size: 11.5pt !important;
+  line-height: 1.35 !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+  border-bottom: 1.44pt solid #000000 !important;
+  overflow: hidden !important;
+  font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
 .kostat-contract-print-sheet .contract-spec-table {
-  width: 100%;
-  border-collapse: collapse;
-  flex: 1;
-  font-size: 10px;
+  width: 100% !important;
+  height: 244.6pt !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
 }
 
 .kostat-contract-print-sheet .contract-spec-table th,
 .kostat-contract-print-sheet .contract-spec-table td {
-  border: 1px solid #000000;
-  padding: 2px 4px;
-  height: 19px;
-  color: #000000;
+  border-right: 0.72pt solid #000000 !important;
+  border-bottom: 0.72pt solid #000000 !important;
+  text-align: center !important;
+  padding: 0 2pt !important;
+  vertical-align: middle !important;
+}
+
+.kostat-contract-print-sheet .contract-spec-table th:last-child,
+.kostat-contract-print-sheet .contract-spec-table td:last-child {
+  border-right: none !important;
+}
+
+.kostat-contract-print-sheet .contract-spec-table tr:last-child td {
+  border-bottom: none !important;
 }
 
 .kostat-contract-print-sheet .contract-spec-table th {
-  font-weight: 700;
-  text-align: center;
-  background: #ffffff;
+  font-size: 10.5pt !important;
+  font-weight: bold !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
 .kostat-contract-print-sheet .contract-spec-table td {
-  text-align: center;
-  background: #ffffff;
+  font-size: 10.5pt !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
-.kostat-contract-print-sheet .contract-review-dept-box {
-  border-bottom: 1px solid #000000;
-  flex: 1;
-  min-height: 52px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
+.kostat-contract-print-sheet .contract-right-col {
+  width: 396.8pt !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
 }
 
-.kostat-contract-print-sheet .contract-review-dept-box:last-child {
-  border-bottom: none;
+.kostat-contract-print-sheet .dept-review-box {
+  width: 100% !important;
+  border-bottom: 1.44pt solid #000000 !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+}
+
+.kostat-contract-print-sheet .dept-review-box:last-child {
+  border-bottom: none !important;
 }
 
 .kostat-contract-print-sheet .dept-tag {
-  width: 75px;
-  height: 17px;
-  line-height: 17px;
-  text-align: center;
-  font-size: 10px;
-  font-weight: 700;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  background: #ffffff;
+  width: 61.7pt !important;
+  height: 15.2pt !important;
+  border-right: 0.72pt solid #000000 !important;
+  border-bottom: 0.72pt solid #000000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10.5pt !important;
+  font-weight: bold !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
-.kostat-contract-print-sheet .reviewer-signature-slot {
-  align-self: flex-end;
-  display: flex;
-  border-top: 1px solid #000000;
-  border-left: 1px solid #000000;
+.kostat-contract-print-sheet .reviewer-container {
+  align-self: flex-end !important;
+  display: flex !important;
+  height: 13.0pt !important;
+  border-top: 0.72pt solid #000000 !important;
+  border-left: 0.72pt solid #000000 !important;
+  box-sizing: border-box !important;
 }
 
 .kostat-contract-print-sheet .reviewer-label {
-  width: 72px;
-  height: 17px;
-  line-height: 17px;
-  text-align: center;
-  font-size: 10px;
-  font-weight: 700;
-  border-right: 1px solid #000000;
-  background: #ffffff;
+  width: 56.4pt !important;
+  height: 100% !important;
+  border-right: 0.72pt solid #000000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10.5pt !important;
+  font-weight: bold !important;
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
-.kostat-contract-print-sheet .reviewer-sign-cell {
-  width: 75px;
-  height: 17px;
-  background: #ffffff;
+.kostat-contract-print-sheet .reviewer-sign {
+  width: 64.0pt !important;
+  height: 100% !important;
+  background: #ffffff !important;
 }
 
-.kostat-contract-print-sheet .contract-footer-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 700;
-  margin-top: 4px;
-  padding: 0 4px;
-  color: #000000;
-  font-family: 'Arial', sans-serif;
+.contract-footer-row {
+  position: absolute !important;
+  left: 20.2pt !important;
+  top: 550.0pt !important;
+  width: 798pt !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  padding: 0 13pt !important;
+  font-size: 11.5pt !important;
+  font-weight: bold !important;
+  font-family: 'Arial', sans-serif !important;
+  color: #000000 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
 }
 
 .quot-title-row {

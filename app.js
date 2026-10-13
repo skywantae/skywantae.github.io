@@ -4604,142 +4604,194 @@ function printContractReview(projectNo) {
   const dateFormatted = rawDate ? rawDate.slice(2).replace(/[-.]/g, '/') : '//';
   const deptName = (found.deptno === '1231' || !found.deptno) ? '해외영업부' : (found.deptno || '해외영업부');
   const reqSet = found.req_set || '검토';
-  const depts = ['설계팀', '생산부', 'Q.C', 'R/D', '자재부'];
+  const depts = [
+    { name: '설계팀', h: '71.3pt' },
+    { name: '생산부', h: '70.4pt' },
+    { name: 'Q.C', h: '71.3pt' },
+    { name: 'R/D', h: '71.3pt' },
+    { name: '자재부', h: '80.3pt' }
+  ];
+  const toolingCost = (found.tooling_cost && found.tooling_cost !== '.000') ? found.tooling_cost : '';
+  const expPoYymm = (found.exp_po_yymm && found.exp_po_yymm !== '-') ? found.exp_po_yymm : '.';
+  const monthlyAmount = (found.monthly_amount && found.monthly_amount !== '.000') ? found.monthly_amount : '';
+  const cleanMemo = (found.req_memo || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
 
-  // 공식 계약 ( 검토 ) 의뢰서 (F-P03-02-R.0) 원본 A4 규격 인쇄 서식 렌더링
+  // 공식 계약 ( 검토 ) 의뢰서 (F-P03-02-R.0) 원본 ERP 규격 인쇄 서식 렌더링
   printContainer.innerHTML = `
     <div class="kostat-contract-print-sheet">
-      <!-- 1. 상단 공식 타이틀 및 결재란 -->
-      <div class="contract-title-row">
-        <div class="contract-doc-title">계약 ( <span class="contract-set-target">${escapeHtml(reqSet)}</span> ) 의뢰서</div>
-        <div class="contract-approval-box">
-          <table class="contract-approval-table">
-            <thead>
-              <tr>
-                <th style="width:25%;">WRITTEN BY</th>
-                <th style="width:25%;">REVIEWED BY</th>
-                <th style="width:25%;"></th>
-                <th style="width:25%;">APPROVED</th>
-              </tr>
-            </thead>
+      <!-- 1. 결재란 (우측 상단 200.3pt x 65.3pt) -->
+      <div class="contract-approval-box">
+        <table class="contract-approval-table">
+          <colgroup>
+            <col style="width: 50.1pt;">
+            <col style="width: 50.3pt;">
+            <col style="width: 49.6pt;">
+            <col style="width: 50.3pt;">
+          </colgroup>
+          <thead>
+            <tr style="height: 16.7pt;">
+              <th style="font-size: 7.8pt; letter-spacing: -0.3pt;">WRITTEN BY</th>
+              <th style="font-size: 7.8pt; letter-spacing: -0.3pt;">REVIEWED BY</th>
+              <th></th>
+              <th style="font-size: 7.8pt; letter-spacing: -0.3pt;">APPROVED</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="sign-row" style="height: 48.6pt;">
+              <td></td>
+              <td class="slash-cell" style="padding:0; overflow:hidden;">
+                <div style="position:relative; width:100%; height:48.6pt;">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute; left:0; top:0; width:100%; height:100%;">
+                    <line x1="5" y1="95" x2="95" y2="5" stroke="#000" stroke-width="1.2" />
+                  </svg>
+                </div>
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2. 상단 공식 서식 타이틀 (바탕체 20.5pt, 정중앙 배치) -->
+      <div class="contract-top-row">
+        <div class="contract-doc-title">
+          계약 <span class="paren">(</span><span class="target-text">${escapeHtml(reqSet)}</span><span class="paren">)</span> 의뢰서
+        </div>
+      </div>
+
+      <!-- 3. 문서 헤더 메타 테이블 (3개 행 일체형 그리드) -->
+      <table class="contract-header-table">
+        <colgroup>
+          <col style="width: 66.8pt;">
+          <col style="width: 123.0pt;">
+          <col style="width: 66.7pt;">
+          <col style="width: 144.7pt;">
+          <col style="width: 66.8pt;">
+          <col style="width: 129.7pt;">
+          <col style="width: 50.1pt;">
+          <col style="width: 50.3pt;">
+          <col style="width: 49.6pt;">
+          <col style="width: 50.3pt;">
+        </colgroup>
+        <tbody>
+          <tr class="header-row-1">
+            <th>작성부서</th>
+            <td>${escapeHtml(deptName)}</td>
+            <th>작성일자</th>
+            <td>${escapeHtml(rawDate)}</td>
+            <th>작 성 자</th>
+            <td>${escapeHtml(found.username || '')}</td>
+            <td style="font-size:9pt; font-family:'Arial';">${escapeHtml(dateFormatted)}</td>
+            <td style="font-size:9pt; font-family:'Arial';">${escapeHtml(dateFormatted)}</td>
+            <td style="font-size:9pt; font-family:'Arial';">//</td>
+            <td style="font-size:9pt; font-family:'Arial'; border-right:none;">//</td>
+          </tr>
+          <tr class="header-row-2">
+            <th>의뢰부서</th>
+            <td>${escapeHtml(found.req_dept || '')}</td>
+            <td colspan="2"></td>
+            <th>고&nbsp;&nbsp;&nbsp;&nbsp;객</th>
+            <td>${escapeHtml(found.customer || '')}</td>
+            <td colspan="4" style="border-right:none;"></td>
+          </tr>
+          <tr class="header-row-3">
+            <th>검토안건</th>
+            <td colspan="9">${escapeHtml(found.req_head || '')}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 4. 본문 구분 헤더: 의 뢰 내 용 및 이중 실선 -->
+      <div class="contract-section-header-row">
+        <div class="contract-section-header-left">의&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;용</div>
+        <div class="contract-section-header-right">의&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;용</div>
+      </div>
+      <div class="contract-double-line"></div>
+
+      <!-- 5. 좌우 2단 본문 영역 (총 높이 364.6pt) -->
+      <div class="contract-body-split">
+        <!-- 좌측 컬럼 (401.2pt): 의뢰 상세 메모 (120pt) + 스펙 테이블 (244.6pt) -->
+        <div class="contract-left-col">
+          <div class="contract-memo-area" style="font-size: 11pt; line-height: 1.35; padding: 4pt 5pt;">${escapeHtml(cleanMemo)}</div>
+          <table class="contract-spec-table">
+            <colgroup>
+              <col style="width: 90.8pt;">
+              <col style="width: 156.0pt;">
+              <col style="width: 154.4pt;">
+            </colgroup>
             <tbody>
-              <tr class="sign-row">
-                <td></td>
-                <td class="slash-cell"></td>
-                <td></td>
-                <td></td>
+              <tr style="height: 17.3pt;">
+                <th colspan="2">ITEM</th>
+                <td>${escapeHtml(found.item || '')}</td>
               </tr>
-              <tr class="date-row">
-                <td>${escapeHtml(dateFormatted)}</td>
-                <td>${escapeHtml(dateFormatted)}</td>
-                <td>//</td>
-                <td>//</td>
+              <tr style="height: 18.0pt;">
+                <th colspan="2">DWG NO.</th>
+                <td>${escapeHtml(found.part_no || '')}</td>
+              </tr>
+              <tr style="height: 17.3pt;">
+                <th rowspan="3">SAMPLE<br>INFO</th>
+                <th>Temp(Length)</th>
+                <td>${escapeHtml(found.temp || '')}</td>
+              </tr>
+              <tr style="height: 17.1pt;">
+                <th>Qty</th>
+                <td>${escapeHtml(found.qty || '')}</td>
+              </tr>
+              <tr style="height: 18.0pt;">
+                <th>Due Date</th>
+                <td>${escapeHtml(found.due_date || '')}</td>
+              </tr>
+              <tr style="height: 17.3pt;">
+                <th rowspan="3">TOOL</th>
+                <th>금형 수주가</th>
+                <td>${escapeHtml(toolingCost)}</td>
+              </tr>
+              <tr style="height: 17.3pt;">
+                <th>TOOL TYPE</th>
+                <td>${escapeHtml(found.tool_type || '')}</td>
+              </tr>
+              <tr style="height: 18.0pt;">
+                <th>PO #</th>
+                <td>${escapeHtml(found.tooling_po_no || '')}</td>
+              </tr>
+              <tr style="height: 69.0pt;">
+                <th>MATERIAL</th>
+                <td></td>
+                <td>${escapeHtml(found.material || '')}</td>
+              </tr>
+              <tr style="height: 17.3pt;">
+                <th rowspan="2">FORECAST</th>
+                <th>Expecting PO Month</th>
+                <td>${escapeHtml(expPoYymm)}</td>
+              </tr>
+              <tr style="height: 18.0pt;">
+                <th>Monthly Forecast</th>
+                <td>${escapeHtml(monthlyAmount)}</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
 
-      <!-- 2. 문서 헤더 메타 테이블 -->
-      <table class="contract-header-table">
-        <tr>
-          <th style="width:68px;">작성부서</th>
-          <td style="width:140px;">${escapeHtml(deptName)}</td>
-          <th style="width:68px;">작성일자</th>
-          <td style="width:130px;">${escapeHtml(rawDate)}</td>
-          <th style="width:68px;">작 성 자</th>
-          <td>${escapeHtml(found.username || '')}</td>
-        </tr>
-        <tr>
-          <th>의뢰부서</th>
-          <td>${escapeHtml(found.req_dept || '')}</td>
-          <td colspan="2"></td>
-          <th>고&nbsp;&nbsp;&nbsp;&nbsp;객</th>
-          <td>${escapeHtml(found.customer || '')}</td>
-        </tr>
-        <tr>
-          <th>검토안건</th>
-          <td colspan="5" style="text-align:left; font-weight:700;">${escapeHtml(found.req_head || '')}</td>
-        </tr>
-      </table>
-
-      <!-- 3. 좌우 2단 본문 영역 -->
-      <div class="contract-main-body">
-        <!-- 좌측: 의뢰내용 (상세 메모 + 품목 스펙 테이블) -->
-        <div class="contract-col-left">
-          <div class="contract-section-header">의&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;용</div>
-          <div class="contract-memo-box">${escapeHtml(found.req_memo || '')}</div>
-          <table class="contract-spec-table">
-            <tr>
-              <th colspan="2" style="width:58%;">ITEM</th>
-              <td style="width:42%; font-weight:600;">${escapeHtml(found.item || '')}</td>
-            </tr>
-            <tr>
-              <th colspan="2">DWG NO.</th>
-              <td style="font-weight:600;">${escapeHtml(found.part_no || '')}</td>
-            </tr>
-            <tr>
-              <th rowspan="3" style="width:24%;">SAMPLE<br>INFO</th>
-              <th style="width:34%;">Temp(Length)</th>
-              <td>${escapeHtml(found.temp || '')}</td>
-            </tr>
-            <tr>
-              <th>Qty</th>
-              <td>${escapeHtml(found.qty || '')}</td>
-            </tr>
-            <tr>
-              <th>Due Date</th>
-              <td>${escapeHtml(found.due_date || '')}</td>
-            </tr>
-            <tr>
-              <th rowspan="3">TOOL</th>
-              <th>금형 수주가</th>
-              <td>${escapeHtml(found.tooling_cost && found.tooling_cost !== '.000' ? found.tooling_cost : '')}</td>
-            </tr>
-            <tr>
-              <th>TOOL TYPE</th>
-              <td>${escapeHtml(found.tool_type || '')}</td>
-            </tr>
-            <tr>
-              <th>PO #</th>
-              <td>${escapeHtml(found.tooling_po_no || '')}</td>
-            </tr>
-            <tr>
-              <th colspan="2">MATERIAL</th>
-              <td>${escapeHtml(found.material || '')}</td>
-            </tr>
-            <tr>
-              <th rowspan="2">FORECAST</th>
-              <th>Expecting PO Month</th>
-              <td>${escapeHtml(found.exp_po_yymm && found.exp_po_yymm !== '-' ? found.exp_po_yymm : '.')}</td>
-            </tr>
-            <tr>
-              <th>Monthly Forecast</th>
-              <td>${escapeHtml(found.monthly_amount && found.monthly_amount !== '.000' ? found.monthly_amount : '')}</td>
-            </tr>
-          </table>
-        </div>
-
-        <!-- 우측: 5대 부서 검토란 (설계팀, 생산부, Q.C, R/D, 자재부) -->
-        <div class="contract-col-right">
-          <div class="contract-section-header">의&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;뢰&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;내&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;용</div>
+        <!-- 우측 컬럼 (396.8pt): 5대 부서 검토란 (설계팀, 생산부, Q.C, R/D, 자재부) -->
+        <div class="contract-right-col">
           ${depts.map(d => `
-            <div class="contract-review-dept-box">
-              <div class="dept-tag">${escapeHtml(d)}</div>
-              <div class="reviewer-signature-slot">
+            <div class="dept-review-box" style="height: ${d.h};">
+              <div class="dept-tag">${escapeHtml(d.name)}</div>
+              <div class="reviewer-container">
                 <div class="reviewer-label">검토자</div>
-                <div class="reviewer-sign-cell"></div>
+                <div class="reviewer-sign"></div>
               </div>
             </div>
           `).join('')}
         </div>
       </div>
+    </div>
 
-      <!-- 4. 최하단 공식 문서 규격 푸터 -->
-      <div class="contract-footer-row">
-        <div>F-P03-02-R.0</div>
-        <div>Kostat, Inc. A4</div>
-      </div>
+    <!-- 6. 하단 공식 문서 규격 푸터 (박스 외측 하단 y: 550.0pt 배치) -->
+    <div class="contract-footer-row">
+      <div>F-P03-02-R.0</div>
+      <div>Kostat, Inc. A4</div>
     </div>
   `;
 
