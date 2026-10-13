@@ -4598,12 +4598,81 @@ function printContractReview(projectNo) {
     printPageStyle.id = 'dynamicPrintPageStyle';
     document.head.appendChild(printPageStyle);
   }
-  printPageStyle.textContent = `@media print { @page { size: A4 landscape !important; margin: 0 !important; } }`;
+  printPageStyle.textContent = `
+    @media print {
+      @page { size: A4 landscape !important; margin: 0 !important; }
+    }
+    .kostat-contract-print-sheet .contract-doc-title {
+      font-family: 'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important;
+      font-size: 21pt !important;
+      font-weight: 900 !important;
+      -webkit-text-stroke: 0.35pt #000000 !important;
+      color: #000000 !important;
+      letter-spacing: 0 !important;
+    }
+    .kostat-contract-print-sheet .contract-paren-box {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 10pt !important;
+    }
+    .kostat-contract-print-sheet .contract-paren-box .paren-char {
+      font-family: 'Arial', 'Malgun Gothic', sans-serif !important;
+      font-size: 25pt !important;
+      font-weight: 900 !important;
+      line-height: 1 !important;
+      -webkit-text-stroke: 0.35pt #000000 !important;
+    }
+    .kostat-contract-print-sheet .contract-paren-box .paren-content {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 16pt !important;
+      font-family: 'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important;
+      font-size: 21pt !important;
+      font-weight: 900 !important;
+      -webkit-text-stroke: 0.35pt #000000 !important;
+      text-align: center !important;
+    }
+    .kostat-contract-print-sheet .contract-section-header-left {
+      border-right: 3.5pt solid #000000 !important;
+      box-sizing: border-box !important;
+      font-family: 'Gulim', 'Dotum', sans-serif !important;
+      font-size: 12pt !important;
+      font-weight: normal !important;
+      letter-spacing: 30.7pt !important;
+      padding-left: 30.7pt !important;
+    }
+    .kostat-contract-print-sheet .contract-section-header-right {
+      box-sizing: border-box !important;
+      font-family: 'Gulim', 'Dotum', sans-serif !important;
+      font-size: 12pt !important;
+      font-weight: normal !important;
+      letter-spacing: 30.7pt !important;
+      padding-left: 30.7pt !important;
+    }
+    .kostat-contract-print-sheet .contract-left-col {
+      border-right: 3.5pt solid #000000 !important;
+      box-sizing: border-box !important;
+    }
+    .kostat-contract-print-sheet .contract-approval-box {
+      border-left: 3.5pt solid #000000 !important;
+      box-sizing: border-box !important;
+    }
+  `;
 
   const rawDate = found.date || '';
   const dateFormatted = rawDate ? rawDate.slice(2).replace(/[-.]/g, '/') : '//';
   const deptName = (found.deptno === '1231' || !found.deptno) ? '해외영업부' : (found.deptno || '해외영업부');
   const reqSet = found.req_set || '검토';
+  let displayReq = reqSet;
+  if (reqSet === '검토') {
+    displayReq = '검&nbsp;&nbsp;토';
+  } else if (reqSet && reqSet.length === 2) {
+    displayReq = `${escapeHtml(reqSet[0])}&nbsp;&nbsp;${escapeHtml(reqSet[1])}`;
+  } else {
+    displayReq = escapeHtml(reqSet);
+  }
   const depts = [
     { name: '설계팀', h: '71.3pt' },
     { name: '생산부', h: '70.4pt' },
@@ -4620,7 +4689,7 @@ function printContractReview(projectNo) {
   printContainer.innerHTML = `
     <div class="kostat-contract-print-sheet">
       <!-- 1. 결재란 (우측 상단 200.3pt x 65.3pt) -->
-      <div class="contract-approval-box">
+      <div class="contract-approval-box" style="border-left: 3.5pt solid #000000 !important; box-sizing: border-box !important;">
         <table class="contract-approval-table">
           <colgroup>
             <col style="width: 50.1pt;">
@@ -4653,10 +4722,16 @@ function printContractReview(projectNo) {
         </table>
       </div>
 
-      <!-- 2. 상단 공식 서식 타이틀 (맑은 고딕 Bold 20.5pt, 정중앙 배치) -->
+      <!-- 2. 상단 공식 서식 타이틀 (맑은 고딕 Ultra Bold 21pt, 괄호 내 정중앙 배치) -->
       <div class="contract-top-row">
-        <div class="contract-doc-title">
-          계약&nbsp;<span class="paren">(</span><span class="target-text">${escapeHtml(reqSet)}</span><span class="paren">)</span>&nbsp;의뢰서
+        <div class="contract-doc-title" style="display:flex; align-items:center; justify-content:center; font-family:'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important; font-size:21pt !important; font-weight:900 !important; -webkit-text-stroke:0.35pt #000000 !important; color:#000000 !important;">
+          <span>계약</span>
+          <div class="contract-paren-box" style="display:inline-flex; align-items:center; justify-content:center; margin:0 10pt;">
+            <span class="paren-char" style="font-family:'Arial', 'Malgun Gothic', sans-serif !important; font-size:25pt !important; font-weight:900 !important; line-height:1 !important; -webkit-text-stroke:0.35pt #000000 !important;">(</span>
+            <span class="paren-content" style="display:inline-flex; align-items:center; justify-content:center; padding:0 16pt; font-family:'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important; font-size:21pt !important; font-weight:900 !important; -webkit-text-stroke:0.35pt #000000 !important; text-align:center;">${displayReq}</span>
+            <span class="paren-char" style="font-family:'Arial', 'Malgun Gothic', sans-serif !important; font-size:25pt !important; font-weight:900 !important; line-height:1 !important; -webkit-text-stroke:0.35pt #000000 !important;">)</span>
+          </div>
+          <span>의뢰서</span>
         </div>
       </div>
 
@@ -4704,15 +4779,15 @@ function printContractReview(projectNo) {
 
       <!-- 4. 본문 구분 헤더: 의뢰내용 및 이중 실선 -->
       <div class="contract-section-header-row">
-        <div class="contract-section-header-left">의뢰내용</div>
-        <div class="contract-section-header-right">의뢰내용</div>
+        <div class="contract-section-header-left" style="border-right: 3.5pt solid #000000 !important; box-sizing: border-box !important; font-family:'Gulim', 'Dotum', sans-serif !important; font-size:12pt !important; font-weight:normal !important; letter-spacing:30.7pt !important; padding-left:30.7pt !important;">의뢰내용</div>
+        <div class="contract-section-header-right" style="box-sizing: border-box !important; font-family:'Gulim', 'Dotum', sans-serif !important; font-size:12pt !important; font-weight:normal !important; letter-spacing:30.7pt !important; padding-left:30.7pt !important;">의뢰내용</div>
       </div>
       <div class="contract-double-line"></div>
 
       <!-- 5. 좌우 2단 본문 영역 (총 높이 364.6pt) -->
       <div class="contract-body-split">
         <!-- 좌측 컬럼 (401.2pt): 의뢰 상세 메모 (120pt) + 스펙 테이블 (244.6pt) -->
-        <div class="contract-left-col">
+        <div class="contract-left-col" style="border-right: 3.5pt solid #000000 !important; box-sizing: border-box !important;">
           <div class="contract-memo-area" style="font-size: 11pt; line-height: 1.35; padding: 4pt 5pt;">${escapeHtml(cleanMemo)}</div>
           <table class="contract-spec-table">
             <colgroup>
