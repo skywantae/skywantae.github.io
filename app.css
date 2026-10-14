@@ -1474,13 +1474,13 @@ html, body {
   left: 20.2pt !important;
   top: 45.7pt !important;
   width: 798pt !important;
-  height: 501.9pt !important;
+  height: 504.8pt !important;
   border: 1.44pt solid #000000 !important;
   display: flex !important;
   flex-direction: column !important;
   padding: 0 !important;
   margin: 0 !important;
-  box-sizing: border-box !important;
+  box-sizing: content-box !important;
   background: #ffffff !important;
   color: #000000 !important;
   font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif !important;
@@ -1586,7 +1586,7 @@ html, body {
 
 .kostat-contract-print-sheet .contract-unified-header-table th:last-child,
 .kostat-contract-print-sheet .contract-unified-header-table td:last-child {
-  border-right: none !important;
+  border-right: 0.72pt solid #000000 !important;
 }
 
 .kostat-contract-print-sheet .contract-unified-header-table .contract-title-cell {
@@ -1871,7 +1871,7 @@ html, body {
 .contract-footer-row {
   position: absolute !important;
   left: 20.2pt !important;
-  top: 550.0pt !important;
+  top: 552.0pt !important;
   width: 798pt !important;
   display: flex !important;
   justify-content: space-between !important;
@@ -3930,3 +3930,974 @@ html, body {
   border-color: rgba(56, 189, 248, 0.3);
 }
 
+
+
+/* ==========================================================================
+   실험실 (Lab) - 스마트 캘린더 대시보드 (Catlendar 글로벌 워크스페이스)
+   ========================================================================== */
+.catlendar-layout {
+  display: flex;
+  min-height: 100%;
+  background: #fbf9f6;
+  color: #2d3748;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  box-sizing: border-box;
+}
+
+/* 좌측 미니 네비게이션 사이드바 */
+.catlendar-sidebar {
+  width: 68px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-right: 1px solid #ede8e1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.cat-logo-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #fff0f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ffccd2;
+}
+
+.cat-pink-plus-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #ff6b7a;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 10px rgba(255, 107, 122, 0.35);
+}
+
+.cat-pink-plus-btn:hover {
+  background: #f85465;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(255, 107, 122, 0.45);
+}
+
+.cat-nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+}
+
+.cat-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 54px;
+  height: 52px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #8c98a4;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.cat-nav-item:hover {
+  color: #ff6b7a;
+  background: #fff5f6;
+}
+
+.cat-nav-item.active {
+  background: #fff0f2;
+  color: #ff6b7a;
+}
+
+.cat-sidebar-footer {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cat-sidebar-footer-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.cat-sidebar-footer-btn:hover {
+  color: #4a5568;
+  background: #f7fafc;
+}
+
+/* 메인 대시보드 콘텐츠 */
+.catlendar-main {
+  flex: 1;
+  min-width: 0;
+  padding: 22px 26px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.cat-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cat-header-title-box {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.cat-page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #2d3748;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.cat-page-subtitle {
+  font-size: 13px;
+  color: #a0aec0;
+  font-weight: 500;
+}
+
+.cat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cat-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  border-radius: 9px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #4a5568;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.cat-btn-outline:hover {
+  border-color: #cbd5e0;
+  background: #f8fafc;
+  color: #2d3748;
+}
+
+.cat-btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cat-btn-icon:hover {
+  color: #2d3748;
+  border-color: #cbd5e0;
+  background: #f8fafc;
+}
+
+/* 온보딩 카드 (START 첫 걸음) */
+.cat-onboarding-card {
+  background: #ffffff;
+  border: 1px solid #ede8e1;
+  border-radius: 14px;
+  padding: 18px 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cat-onboarding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cat-onboarding-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cat-tag-pink {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ff6b7a;
+  letter-spacing: 0.8px;
+}
+
+.cat-onboarding-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #2d3748;
+  margin: 0;
+}
+
+.cat-text-btn {
+  background: transparent;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #a0aec0;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.15s;
+}
+
+.cat-text-btn:hover {
+  color: #4a5568;
+}
+
+.cat-onboarding-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cat-check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: #4a5568;
+  user-select: none;
+}
+
+.cat-check-item input[type='checkbox'] {
+  display: none;
+}
+
+.cat-checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cat-check-item input[type='checkbox']:checked + .cat-checkbox-custom {
+  background: #ff6b7a;
+  border-color: #ff6b7a;
+}
+
+.cat-check-item input[type='checkbox']:checked + .cat-checkbox-custom::after {
+  content: '';
+  width: 5px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.cat-check-item input[type='checkbox']:checked ~ .cat-check-text {
+  text-decoration: line-through;
+  color: #a0aec0;
+}
+
+.cat-check-status {
+  margin-left: auto;
+  font-size: 12px;
+  color: #a0aec0;
+  font-weight: 500;
+}
+
+.cat-check-status.done {
+  color: #ff6b7a;
+  font-weight: 700;
+}
+
+.cat-onboarding-footer {
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+/* 대시보드 2단 그리드 */
+.catlendar-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+@media (max-width: 1050px) {
+  .catlendar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .catlendar-sidebar {
+    display: none;
+  }
+  .catlendar-main {
+    padding: 16px 14px 30px;
+  }
+}
+
+/* 캘린더 카드 */
+.cat-calendar-card {
+  background: #ffffff;
+  border: 1px solid #ede8e1;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cat-cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cat-cal-title-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.cat-cal-month-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2d3748;
+}
+
+.cat-cal-nav-btns {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.cat-cal-nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cat-cal-nav-btn:hover {
+  background: #f7fafc;
+  color: #2d3748;
+  border-color: #cbd5e0;
+}
+
+.cat-cal-today-btn {
+  margin-left: auto;
+  padding: 5px 12px;
+  border-radius: 7px;
+  border: 1px solid #ffccd2;
+  background: #fff5f6;
+  color: #ff6b7a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cat-cal-today-btn:hover {
+  background: #ffe3e6;
+}
+
+/* 국가 연휴 틱 필터 영역 */
+.cat-country-filter-section {
+  padding: 12px 14px;
+  background: #faf7f2;
+  border-radius: 12px;
+  border: 1px solid #f0e9df;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cat-country-filter-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #718096;
+}
+
+.cat-country-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cat-country-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.cat-country-chip.active {
+  background: #ffffff;
+  border-color: #d8d0c5;
+  color: #2d3748;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.cat-country-chip.inactive {
+  background: #eeeae4;
+  color: #a0aec0;
+  border-color: transparent;
+  text-decoration: line-through;
+  opacity: 0.65;
+}
+
+.cat-country-chip .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* 캘린더 요일 및 날짜 그리드 */
+.cat-cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #718096;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0ede6;
+}
+
+.cat-cal-weekdays .sun {
+  color: #e53e3e;
+}
+
+.cat-cal-weekdays .sat {
+  color: #3182ce;
+}
+
+.cat-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cat-cal-day-cell {
+  min-height: 64px;
+  padding: 5px 4px;
+  border-radius: 9px;
+  border: 1.5px solid transparent;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.cat-cal-day-cell:hover {
+  background: #faf7f2;
+  border-color: #ede8e1;
+}
+
+.cat-cal-day-cell.other-month {
+  opacity: 0.35;
+}
+
+.cat-cal-day-cell.today {
+  border-color: #ff6b7a !important;
+  background: #fff5f6 !important;
+}
+
+.cat-cal-day-cell.selected {
+  box-shadow: 0 0 0 2px #ff6b7a;
+}
+
+.cat-day-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2d3748;
+  line-height: 1.2;
+}
+
+.cat-cal-day-cell.sun .cat-day-num {
+  color: #e53e3e;
+}
+
+.cat-cal-day-cell.sat .cat-day-num {
+  color: #3182ce;
+}
+
+.cat-holiday-badge-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 3px;
+  overflow: hidden;
+}
+
+.cat-cal-holiday-tag {
+  font-size: 9.5px;
+  line-height: 1.25;
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+/* 국가별 연휴 배지 테마 */
+.cat-tag-kr { background: #ffe4e6; color: #be123c; }
+.cat-tag-cn { background: #ffedd5; color: #c2410c; }
+.cat-tag-jp { background: #f3e8ff; color: #6b21a8; }
+.cat-tag-ph { background: #e0f2fe; color: #0369a1; }
+.cat-tag-tw { background: #d1fae5; color: #047857; }
+.cat-tag-us { background: #dbeafe; color: #1d4ed8; }
+.cat-tag-my { background: #fef3c7; color: #b45309; }
+.cat-tag-sg { background: #fee2e2; color: #b91c1c; }
+.cat-tag-vn { background: #fae8ff; color: #86198f; }
+
+/* 우측 위젯 컬럼 */
+.cat-widgets-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cat-widget-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 1200px) {
+  .cat-widget-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cat-widget-card {
+  background: #ffffff;
+  border: 1px solid #ede8e1;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.cat-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cat-widget-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #2d3748;
+}
+
+.cat-weather-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cat-weather-cur-text {
+  font-size: 12px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.cat-weather-select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 11.5px;
+  color: #4a5568;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.cat-weather-forecast-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 4px 4px;
+}
+
+.cat-weather-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.cat-weather-item-date {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #718096;
+}
+
+.cat-weather-item-temp {
+  font-size: 13px;
+  font-weight: 800;
+  color: #2d3748;
+}
+
+.cat-weather-item-low {
+  font-size: 11px;
+  color: #a0aec0;
+  font-weight: 500;
+}
+
+/* 빠른 입력 위젯 */
+.cat-quick-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.cat-quick-tab {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #718096;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cat-quick-tab.active {
+  background: #fff0f2;
+  border-color: #ffccd2;
+  color: #ff6b7a;
+  font-weight: 700;
+}
+
+.cat-quick-textarea {
+  width: 100%;
+  border: 1px solid #ede8e1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  resize: none;
+  background: #faf7f2;
+  color: #2d3748;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.cat-quick-textarea:focus {
+  border-color: #ffccd2;
+  background: #ffffff;
+}
+
+.cat-quick-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.cat-quick-label {
+  font-size: 12px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.cat-quick-save-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #ff6b7a;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(255, 107, 122, 0.4);
+}
+
+.cat-quick-save-btn:hover {
+  background: #f85465;
+  transform: translateY(-1px);
+}
+
+/* 할일 / 기록 / 일정 / 북마크 공통 */
+.cat-link-btn {
+  background: transparent;
+  border: none;
+  color: #ff6b7a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.cat-link-btn:hover {
+  text-decoration: underline;
+}
+
+.cat-badge-pill {
+  padding: 3px 9px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: #fff0f2;
+  color: #ff6b7a;
+}
+
+.cat-todo-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cat-todo-date-tag {
+  font-size: 12px;
+  color: #718096;
+  font-weight: 600;
+}
+
+.cat-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cat-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #faf7f2;
+  font-size: 12.5px;
+  color: #2d3748;
+}
+
+.cat-item-empty {
+  text-align: center;
+  padding: 24px 0;
+  font-size: 13px;
+  color: #a0aec0;
+}
+
+.cat-todo-add-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cat-todo-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ede8e1;
+  background: #faf7f2;
+  font-size: 12.5px;
+  outline: none;
+  color: #2d3748;
+}
+
+.cat-todo-input:focus {
+  background: #ffffff;
+  border-color: #ffccd2;
+}
+
+.cat-mini-add-btn {
+  padding: 0 14px;
+  border-radius: 8px;
+  border: none;
+  background: #ff6b7a;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cat-mini-add-btn:hover {
+  background: #f85465;
+}
+
+.cat-bookmark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.cat-bookmark-card {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ede8e1;
+  background: #faf7f2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.15s;
+  cursor: pointer;
+  position: relative;
+}
+
+.cat-bookmark-card:hover {
+  background: #ffffff;
+  border-color: #ffccd2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.cat-bm-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2d3748;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-bm-url {
+  font-size: 10.5px;
+  color: #a0aec0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 대시보드 모달 오버레이 */
+.cat-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.cat-modal-overlay.active {
+  display: flex;
+}
+
+.cat-modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  padding: 22px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.cat-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cat-modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #2d3748;
+  margin: 0;
+}
+
+.cat-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.cat-modal-close-btn:hover {
+  color: #4a5568;
+}

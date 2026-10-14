@@ -4679,6 +4679,24 @@ function printContractReview(projectNo) {
       border-left: 1.44pt solid #000000 !important;
       box-sizing: border-box !important;
     }
+    .kostat-contract-print-sheet {
+      position: absolute !important;
+      left: 20.2pt !important;
+      top: 45.7pt !important;
+      width: 798pt !important;
+      height: 504.8pt !important;
+      border: 1.44pt solid #000000 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      box-sizing: content-box !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      font-family: 'Malgun Gothic', 'Dotum', 'Arial', sans-serif !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
     .kostat-contract-print-sheet .contract-unified-header-table {
       width: 100% !important;
       border-collapse: collapse !important;
@@ -4703,7 +4721,7 @@ function printContractReview(projectNo) {
     }
     .kostat-contract-print-sheet .contract-unified-header-table th:last-child,
     .kostat-contract-print-sheet .contract-unified-header-table td:last-child {
-      border-right: none !important;
+      border-right: 0.72pt solid #000000 !important;
     }
     .kostat-contract-print-sheet .contract-unified-header-table .contract-title-cell {
       height: 65.3pt !important;
@@ -4779,7 +4797,22 @@ function printContractReview(projectNo) {
       font-size: 10.5pt !important;
       color: #000000 !important;
       background: #ffffff !important;
-      border-right: none !important;
+      border-right: 0.72pt solid #000000 !important;
+    }
+    .contract-footer-row {
+      position: absolute !important;
+      left: 20.2pt !important;
+      top: 552.0pt !important;
+      width: 798pt !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      padding: 0 13pt !important;
+      font-size: 11.5pt !important;
+      font-weight: bold !important;
+      font-family: 'Arial', sans-serif !important;
+      color: #000000 !important;
+      background: transparent !important;
+      box-sizing: border-box !important;
     }
   `;
 
@@ -4840,7 +4873,7 @@ function printContractReview(projectNo) {
             </td>
             <th class="written-by-th" style="height: 16.7pt; font-size: 7.2pt; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: -0.3pt; white-space: nowrap; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000; text-align: center;">WRITTEN BY</th>
             <th colspan="2" style="height: 16.7pt; font-size: 8.5pt; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: -0.2pt; white-space: nowrap; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000; text-align: center;">REVIEWED BY</th>
-            <th style="height: 16.7pt; font-size: 8.5pt; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: -0.2pt; white-space: nowrap; border-right: none; border-bottom: 0.72pt solid #000000; text-align: center;">APPROVED</th>
+            <th style="height: 16.7pt; font-size: 8.5pt; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: -0.2pt; white-space: nowrap; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000; text-align: center;">APPROVED</th>
           </tr>
 
           <!-- Row 2: 서명란 (높이 48.6pt, 2번째 셀 대각선 사선) -->
@@ -4854,7 +4887,7 @@ function printContractReview(projectNo) {
               </div>
             </td>
             <td style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;"></td>
-            <td style="border-right: none; border-bottom: 0.72pt solid #000000;"></td>
+            <td style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;"></td>
           </tr>
 
           <!-- Row 3: 작성부서/작성일자/작성자 메타 1행 + 결재일자 4개 열 일체 정렬 -->
@@ -4868,7 +4901,7 @@ function printContractReview(projectNo) {
             <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(dateFormatted)}</td>
             <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(dateFormatted)}</td>
             <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">//</td>
-            <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: none; border-bottom: 0.72pt solid #000000;">//</td>
+            <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">//</td>
           </tr>
 
           <!-- Row 4: 의뢰부서/고객 메타 2행 + 우측 여백 -->
@@ -4878,13 +4911,13 @@ function printContractReview(projectNo) {
             <td colspan="2" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;"></td>
             <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">고&nbsp;&nbsp;&nbsp;&nbsp;객</th>
             <td class="meta-val" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(found.customer || '')}</td>
-            <td colspan="4" style="border-right: none; border-bottom: 0.72pt solid #000000;"></td>
+            <td colspan="4" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;"></td>
           </tr>
 
           <!-- Row 5: 검토안건 메타 3행 -->
           <tr class="header-row-3" style="height: 18.9pt;">
             <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: none;">검토안건</th>
-            <td colspan="9" style="text-align: left; padding-left: 8pt; font-size: 10.5pt; color: #000000; border-right: none; border-bottom: none;">${escapeHtml(found.req_head || '')}</td>
+            <td colspan="9" style="text-align: left; padding-left: 8pt; font-size: 10.5pt; color: #000000; border-right: 0.72pt solid #000000; border-bottom: none;">${escapeHtml(found.req_head || '')}</td>
           </tr>
         </tbody>
       </table>
@@ -5138,6 +5171,10 @@ function switchViewerCard(targetId) {
     fetchRemoteArchive(true); // 탭 진입 시 최신 자료 실시간 동기화
   } else if (targetId === 'viewLab') {
     // 실험실 뷰 활성화
+    const labDashboardPanel = document.getElementById('labSubDashboard');
+    if (labDashboardPanel && labDashboardPanel.style.display !== 'none' && typeof initCatlendarDashboard === 'function') {
+      initCatlendarDashboard();
+    }
   }
 }
 
@@ -9059,18 +9096,23 @@ function switchLabSubTab(tabId, btn) {
   const panel = document.getElementById(tabId);
   if (panel) panel.style.display = '';
   if (btn) {
-    btn.style.background = '#2563eb';
+    const activeColor = (tabId === 'labSubDashboard' ? '#ff6b7a' : '#2563eb');
+    btn.style.background = activeColor;
     btn.style.color = '#ffffff';
-    btn.style.borderColor = '#2563eb';
+    btn.style.borderColor = activeColor;
     btn.style.fontWeight = '700';
     btn.classList.add('active');
   }
   const badge = document.getElementById('labStatusBadge');
   if (badge) {
     const t = APP_I18N[AppState.currentLang || 'ko'] || APP_I18N.ko;
-    if (tabId === 'labSubTools') badge.textContent = t.lab_tab_tools;
-    else if (tabId === 'labSubPH') badge.textContent = t.lab_tab_ph;
-    else if (tabId === 'labSubWeekly') badge.textContent = t.lab_tab_weekly;
+    if (tabId === 'labSubDashboard') badge.textContent = '스마트 대시보드 & 캘린더';
+    else if (tabId === 'labSubTools') badge.textContent = t.lab_tab_tools || '업무 자동화 도구';
+    else if (tabId === 'labSubPH') badge.textContent = t.lab_tab_ph || '필리핀 지사 리포트 & 프로젝트';
+    else if (tabId === 'labSubWeekly') badge.textContent = t.lab_tab_weekly || '주간보고서';
+  }
+  if (tabId === 'labSubDashboard' && typeof initCatlendarDashboard === 'function') {
+    initCatlendarDashboard();
   }
 }
 window.switchLabSubTab = switchLabSubTab;
@@ -11962,3 +12004,1269 @@ if (window.KostatAuth) {
   });
 }
 
+
+
+
+// ==========================================================================
+// 실험실 (Lab) - 스마트 캘린더 대시보드 (Catlendar 글로벌 워크스페이스)
+// ==========================================================================
+
+const CAT_HOLIDAYS_DB = {
+  // 1. 대한민국 (KR)
+  KR: {
+    name: '한국',
+    tagClass: 'cat-tag-kr',
+    dotColor: '#e11d48',
+    holidays: {
+      '2026-01-01': '신정',
+      '2026-02-16': '설날 연휴',
+      '2026-02-17': '설날',
+      '2026-02-18': '설날 연휴',
+      '2026-03-01': '삼일절',
+      '2026-03-02': '삼일절 대체공휴일',
+      '2026-05-05': '어린이날',
+      '2026-05-24': '부처님오신날',
+      '2026-05-25': '대체공휴일',
+      '2026-06-06': '현충일',
+      '2026-08-15': '광복절',
+      '2026-08-17': '광복절 대체공휴일',
+      '2026-09-24': '추석 연휴',
+      '2026-09-25': '추석',
+      '2026-09-26': '추석 연휴',
+      '2026-10-03': '개천절',
+      '2026-10-05': '개천절 대체공휴일',
+      '2026-10-09': '한글날',
+      '2026-12-25': '성탄절'
+    }
+  },
+  // 2. 중국 (CN - 태창 / 혜주 공장 및 고객사)
+  CN: {
+    name: '중국',
+    tagClass: 'cat-tag-cn',
+    dotColor: '#ea580c',
+    holidays: {
+      '2026-01-01': '원단(신정)',
+      '2026-01-02': '원단 연휴',
+      '2026-01-03': '원단 연휴',
+      '2026-02-16': '춘절(구정)',
+      '2026-02-17': '춘절(구정)',
+      '2026-02-18': '춘절(구정)',
+      '2026-02-19': '춘절(구정)',
+      '2026-02-20': '춘절(구정)',
+      '2026-02-21': '춘절(구정)',
+      '2026-02-22': '춘절(구정)',
+      '2026-02-23': '춘절(구정)',
+      '2026-04-04': '청명절',
+      '2026-04-05': '청명절',
+      '2026-04-06': '청명절',
+      '2026-05-01': '노동절',
+      '2026-05-02': '노동절',
+      '2026-05-03': '노동절',
+      '2026-05-04': '노동절',
+      '2026-05-05': '노동절',
+      '2026-06-19': '단오절',
+      '2026-06-20': '단오절',
+      '2026-06-21': '단오절',
+      '2026-09-25': '중추절',
+      '2026-09-26': '중추절',
+      '2026-09-27': '중추절',
+      '2026-10-01': '국경절 황금연휴',
+      '2026-10-02': '국경절 황금연휴',
+      '2026-10-03': '국경절 황금연휴',
+      '2026-10-04': '국경절 황금연휴',
+      '2026-10-05': '국경절 황금연휴',
+      '2026-10-06': '국경절 황금연휴',
+      '2026-10-07': '국경절 황금연휴'
+    }
+  },
+  // 3. 일본 (JP - 소니, 르네사스 등)
+  JP: {
+    name: '일본',
+    tagClass: 'cat-tag-jp',
+    dotColor: '#7c3aed',
+    holidays: {
+      '2026-01-01': '원단(신정)',
+      '2026-01-12': '성인의 날',
+      '2026-02-11': '건국기념의 날',
+      '2026-02-23': '천황탄생일',
+      '2026-03-20': '춘분의 날',
+      '2026-04-29': '쇼와의 날',
+      '2026-05-03': '헌법기념일',
+      '2026-05-04': '녹색의 날',
+      '2026-05-05': '어린이날',
+      '2026-05-06': '대체휴일',
+      '2026-07-20': '바다의 날',
+      '2026-08-11': '산의 날',
+      '2026-08-13': '오본 연휴',
+      '2026-08-14': '오본 연휴',
+      '2026-08-15': '오본 연휴',
+      '2026-08-16': '오본 연휴',
+      '2026-09-21': '경로의 날',
+      '2026-09-22': '추분의 날',
+      '2026-10-12': '스포츠의 날',
+      '2026-11-03': '문화의 날',
+      '2026-11-23': '근로감사의 날'
+    }
+  },
+  // 4. 필리핀 (PH - 암코르PH, TI-PH, SSPC 등 지사/고객사)
+  PH: {
+    name: '필리핀',
+    tagClass: 'cat-tag-ph',
+    dotColor: '#0284c7',
+    holidays: {
+      '2026-01-01': 'New Year',
+      '2026-02-17': 'Chinese New Year',
+      '2026-02-25': 'EDSA Revolution',
+      '2026-04-02': 'Maundy Thursday',
+      '2026-04-03': 'Good Friday',
+      '2026-04-04': 'Black Saturday',
+      '2026-04-09': 'Araw ng Kagitingan',
+      '2026-05-01': 'Labor Day',
+      '2026-06-12': 'Independence Day',
+      '2026-08-21': 'Ninoy Aquino Day',
+      '2026-08-31': 'National Heroes',
+      '2026-11-01': 'All Saints Day',
+      '2026-11-02': 'All Souls Day',
+      '2026-11-30': 'Bonifacio Day',
+      '2026-12-08': 'Immaculate Conception',
+      '2026-12-25': 'Christmas',
+      '2026-12-30': 'Rizal Day',
+      '2026-12-31': 'New Year Eve'
+    }
+  },
+  // 5. 대만 (TW - 암코르TW, SPIL, KYEC 등)
+  TW: {
+    name: '대만',
+    tagClass: 'cat-tag-tw',
+    dotColor: '#059669',
+    holidays: {
+      '2026-01-01': '개국기념일',
+      '2026-02-15': '춘절 연휴',
+      '2026-02-16': '춘절',
+      '2026-02-17': '춘절',
+      '2026-02-18': '춘절',
+      '2026-02-19': '춘절',
+      '2026-02-20': '춘절',
+      '2026-02-28': '228 평화기념일',
+      '2026-04-03': '어린이날',
+      '2026-04-04': '청명절',
+      '2026-05-01': '노동절',
+      '2026-06-19': '단오절',
+      '2026-09-25': '중추절',
+      '2026-10-10': '국경일(쌍십절)'
+    }
+  },
+  // 6. 미국 (US - 스카이웍스, ADI, 브로드컴 등)
+  US: {
+    name: '미국',
+    tagClass: 'cat-tag-us',
+    dotColor: '#2563eb',
+    holidays: {
+      '2026-01-01': 'New Year',
+      '2026-01-19': 'MLK Day',
+      '2026-02-16': 'Presidents Day',
+      '2026-05-25': 'Memorial Day',
+      '2026-06-19': 'Juneteenth',
+      '2026-07-04': 'Independence Day',
+      '2026-09-07': 'Labor Day',
+      '2026-10-12': 'Columbus Day',
+      '2026-11-11': 'Veterans Day',
+      '2026-11-26': 'Thanksgiving',
+      '2026-12-25': 'Christmas'
+    }
+  },
+  // 7. 말레이시아 (MY - 인피니언, 브로드컴MY, ASE-MY)
+  MY: {
+    name: '말레이시아',
+    tagClass: 'cat-tag-my',
+    dotColor: '#d97706',
+    holidays: {
+      '2026-01-01': 'New Year',
+      '2026-02-01': 'Federal Territory',
+      '2026-02-17': 'Chinese New Year',
+      '2026-02-18': 'Chinese New Year',
+      '2026-03-20': 'Hari Raya Aidilfitri',
+      '2026-03-21': 'Hari Raya Aidilfitri',
+      '2026-05-01': 'Labour Day',
+      '2026-05-31': 'Wesak Day',
+      '2026-06-01': 'Agongs Birthday',
+      '2026-08-31': 'Merdeka Day',
+      '2026-09-16': 'Malaysia Day',
+      '2026-11-08': 'Deepavali',
+      '2026-12-25': 'Christmas'
+    }
+  },
+  // 8. 싱가포르 (SG - 스카이웍스SG, UTAC 등)
+  SG: {
+    name: '싱가포르',
+    tagClass: 'cat-tag-sg',
+    dotColor: '#dc2626',
+    holidays: {
+      '2026-01-01': 'New Year',
+      '2026-02-17': 'Chinese New Year',
+      '2026-02-18': 'Chinese New Year',
+      '2026-03-21': 'Hari Raya Puasa',
+      '2026-04-03': 'Good Friday',
+      '2026-05-01': 'Labour Day',
+      '2026-05-27': 'Hari Raya Haji',
+      '2026-05-31': 'Vesak Day',
+      '2026-08-09': 'National Day',
+      '2026-11-08': 'Deepavali',
+      '2026-12-25': 'Christmas'
+    }
+  },
+  // 9. 베트남 (VN - KOSTAT 베트남 공장)
+  VN: {
+    name: '베트남',
+    tagClass: 'cat-tag-vn',
+    dotColor: '#b91c1c',
+    holidays: {
+      '2026-01-01': 'New Year',
+      '2026-02-16': 'Tet(설날)',
+      '2026-02-17': 'Tet(설날)',
+      '2026-02-18': 'Tet(설날)',
+      '2026-02-19': 'Tet(설날)',
+      '2026-02-20': 'Tet(설날)',
+      '2026-04-26': 'Hung Kings Day',
+      '2026-04-30': 'Reunification Day',
+      '2026-05-01': 'Labor Day',
+      '2026-09-02': 'National Day'
+    }
+  }
+};
+
+const CAT_WEATHER_DB = {
+  seoul: {
+    cityName: '서울 (본사)',
+    curTemp: '18°',
+    condition: '맑음',
+    high: '22°',
+    low: '14°',
+    forecast: [
+      { date: '10/14', icon: 'sun', high: '22°', low: '14°' },
+      { date: '10/15', icon: 'cloud-sun', high: '23°', low: '13°' },
+      { date: '10/16', icon: 'cloud', high: '20°', low: '12°' },
+      { date: '10/17', icon: 'rain', high: '18°', low: '11°' },
+      { date: '10/18', icon: 'sun', high: '21°', low: '13°' }
+    ]
+  },
+  shanghai: {
+    cityName: '상하이 (태창공장)',
+    curTemp: '22°',
+    condition: '구름조금',
+    high: '24°',
+    low: '17°',
+    forecast: [
+      { date: '10/14', icon: 'cloud-sun', high: '24°', low: '17°' },
+      { date: '10/15', icon: 'sun', high: '25°', low: '18°' },
+      { date: '10/16', icon: 'sun', high: '24°', low: '16°' },
+      { date: '10/17', icon: 'cloud', high: '22°', low: '15°' },
+      { date: '10/18', icon: 'rain', high: '21°', low: '15°' }
+    ]
+  },
+  huizhou: {
+    cityName: '혜주 (중국공장)',
+    curTemp: '26°',
+    condition: '맑음',
+    high: '28°',
+    low: '21°',
+    forecast: [
+      { date: '10/14', icon: 'sun', high: '28°', low: '21°' },
+      { date: '10/15', icon: 'sun', high: '29°', low: '22°' },
+      { date: '10/16', icon: 'cloud-sun', high: '28°', low: '21°' },
+      { date: '10/17', icon: 'cloud-sun', high: '27°', low: '20°' },
+      { date: '10/18', icon: 'sun', high: '28°', low: '21°' }
+    ]
+  },
+  tokyo: {
+    cityName: '도쿄 (일본)',
+    curTemp: '19°',
+    condition: '맑음',
+    high: '21°',
+    low: '15°',
+    forecast: [
+      { date: '10/14', icon: 'sun', high: '21°', low: '15°' },
+      { date: '10/15', icon: 'cloud-sun', high: '22°', low: '16°' },
+      { date: '10/16', icon: 'rain', high: '19°', low: '14°' },
+      { date: '10/17', icon: 'cloud', high: '20°', low: '14°' },
+      { date: '10/18', icon: 'sun', high: '21°', low: '15°' }
+    ]
+  },
+  manila: {
+    cityName: '마닐라 (필리핀)',
+    curTemp: '31°',
+    condition: '열대성 소나기',
+    high: '33°',
+    low: '26°',
+    forecast: [
+      { date: '10/14', icon: 'rain', high: '33°', low: '26°' },
+      { date: '10/15', icon: 'rain', high: '32°', low: '25°' },
+      { date: '10/16', icon: 'cloud-sun', high: '33°', low: '26°' },
+      { date: '10/17', icon: 'rain', high: '31°', low: '25°' },
+      { date: '10/18', icon: 'sun', high: '34°', low: '26°' }
+    ]
+  },
+  taipei: {
+    cityName: '타이베이 (대만)',
+    curTemp: '27°',
+    condition: '흐림',
+    high: '29°',
+    low: '23°',
+    forecast: [
+      { date: '10/14', icon: 'cloud', high: '29°', low: '23°' },
+      { date: '10/15', icon: 'cloud-sun', high: '30°', low: '24°' },
+      { date: '10/16', icon: 'sun', high: '30°', low: '23°' },
+      { date: '10/17', icon: 'rain', high: '28°', low: '22°' },
+      { date: '10/18', icon: 'cloud-sun', high: '29°', low: '23°' }
+    ]
+  },
+  kl: {
+    cityName: '쿠알라룸푸르',
+    curTemp: '32°',
+    condition: '구름많음',
+    high: '33°',
+    low: '25°',
+    forecast: [
+      { date: '10/14', icon: 'cloud-sun', high: '33°', low: '25°' },
+      { date: '10/15', icon: 'rain', high: '32°', low: '25°' },
+      { date: '10/16', icon: 'cloud', high: '33°', low: '25°' },
+      { date: '10/17', icon: 'rain', high: '31°', low: '24°' },
+      { date: '10/18', icon: 'sun', high: '34°', low: '25°' }
+    ]
+  },
+  singapore: {
+    cityName: '싱가포르',
+    curTemp: '30°',
+    condition: '소나기',
+    high: '32°',
+    low: '26°',
+    forecast: [
+      { date: '10/14', icon: 'rain', high: '32°', low: '26°' },
+      { date: '10/15', icon: 'cloud-sun', high: '32°', low: '26°' },
+      { date: '10/16', icon: 'rain', high: '31°', low: '25°' },
+      { date: '10/17', icon: 'sun', high: '33°', low: '26°' },
+      { date: '10/18', icon: 'cloud-sun', high: '32°', low: '26°' }
+    ]
+  },
+  hcm: {
+    cityName: '호치민 (베트남)',
+    curTemp: '31°',
+    condition: '구름많음',
+    high: '33°',
+    low: '25°',
+    forecast: [
+      { date: '10/14', icon: 'cloud-sun', high: '33°', low: '25°' },
+      { date: '10/15', icon: 'rain', high: '32°', low: '25°' },
+      { date: '10/16', icon: 'sun', high: '34°', low: '26°' },
+      { date: '10/17', icon: 'rain', high: '31°', low: '25°' },
+      { date: '10/18', icon: 'sun', high: '33°', low: '25°' }
+    ]
+  }
+};
+
+let CatDashboardState = {
+  initialized: false,
+  year: 2026,
+  month: 10,
+  selectedDate: '2026-10-14',
+  selectedCity: 'seoul',
+  quickType: 'schedule',
+  modalQuickType: 'schedule',
+  activeCountries: ['KR', 'CN', 'JP', 'PH', 'TW', 'US', 'MY', 'SG', 'VN'],
+  activeWidgets: {
+    weather: true,
+    quickInput: true,
+    upcoming: true,
+    notes: true,
+    todos: true,
+    bookmarks: true
+  }
+};
+
+function initCatlendarDashboard() {
+  if (CatDashboardState.initialized) return;
+  CatDashboardState.initialized = true;
+
+  // 로컬 스토리지 상태 복원
+  try {
+    const savedCountries = localStorage.getItem('kostat_cat_active_countries');
+    if (savedCountries) {
+      CatDashboardState.activeCountries = JSON.parse(savedCountries);
+    }
+    const savedCity = localStorage.getItem('kostat_cat_city');
+    if (savedCity && CAT_WEATHER_DB[savedCity]) {
+      CatDashboardState.selectedCity = savedCity;
+      const citySelect = document.getElementById('catWeatherCitySelect');
+      if (citySelect) citySelect.value = savedCity;
+    }
+    const savedWidgets = localStorage.getItem('kostat_cat_widgets');
+    if (savedWidgets) {
+      CatDashboardState.activeWidgets = Object.assign(CatDashboardState.activeWidgets, JSON.parse(savedWidgets));
+    }
+  } catch (e) {
+    console.warn('Catlendar localStorage parse error:', e);
+  }
+
+  // 초기 더미 데이터 셋업 (저장된 데이터 없을 시)
+  initCatDefaultStorage();
+
+  // 온보딩 카드 상태 복원
+  restoreCatOnboardingState();
+
+  // 렌더링
+  renderCatCountryChips();
+  renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
+  renderCatWeather(CatDashboardState.selectedCity);
+  renderCatUpcoming();
+  renderCatNotes();
+  renderCatTodos();
+  renderCatBookmarks();
+  applyCatWidgetVisibility();
+}
+window.initCatlendarDashboard = initCatlendarDashboard;
+
+function initCatDefaultStorage() {
+  if (!localStorage.getItem('kostat_cat_todos')) {
+    const defaultTodos = [
+      { id: 't1', date: '2026-10-14', text: '10월 수주 및 납기 출하계획 데이터 검토', done: false },
+      { id: 't2', date: '2026-10-14', text: '필리핀 및 혜주 공장 재고 보고서 확인', done: false },
+      { id: 't3', date: '2026-10-15', text: '해외영업 고객사 견적서 및 도면 승인 현황 점검', done: false }
+    ];
+    localStorage.setItem('kostat_cat_todos', JSON.stringify(defaultTodos));
+  }
+
+  if (!localStorage.getItem('kostat_cat_schedules')) {
+    const defaultSchedules = [
+      { id: 's1', date: '2026-10-15', time: '14:00', title: '고객사 수주 및 출하 주간 회의' },
+      { id: 's2', date: '2026-10-16', time: '10:00', title: '필리핀 지사 물동량 및 재고 점검' },
+      { id: 's3', date: '2026-10-20', time: '15:00', title: '신규 금형 및 계약검토서 세미나' },
+      { id: 's4', date: '2026-10-28', time: '11:00', title: '전사 월간 마감 및 출하 통계 리뷰' }
+    ];
+    localStorage.setItem('kostat_cat_schedules', JSON.stringify(defaultSchedules));
+  }
+
+  if (!localStorage.getItem('kostat_cat_notes')) {
+    const defaultNotes = [
+      { id: 'n1', date: '2026-10-14 09:30', text: 'ERP 10월 결산 마감 일정 및 고객사 휴무 일정 체크 완료' },
+      { id: 'n2', date: '2026-10-13 16:45', text: '태창 C/T 및 혜주 공장 Tray 재고 연동 현황 정상' }
+    ];
+    localStorage.setItem('kostat_cat_notes', JSON.stringify(defaultNotes));
+  }
+
+  if (!localStorage.getItem('kostat_cat_bookmarks')) {
+    const defaultBookmarks = [
+      { id: 'b1', title: 'KOSTAT ERP 웹앱', url: 'https://skywantae.github.io/' },
+      { id: 'b2', title: '사내 그룹웨어', url: 'http://gw.kostat.com/' },
+      { id: 'b3', title: '메일플러그 웹메일', url: 'https://mailplug.co.kr/' },
+      { id: 'b4', title: '고객사 전용 포털', url: 'https://skywantae.github.io/#customer' }
+    ];
+    localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(defaultBookmarks));
+  }
+}
+
+// -------------------------------------------------------------
+// 1. 국가 연휴 틱 필터 칩 렌더링 및 토글
+// -------------------------------------------------------------
+function renderCatCountryChips() {
+  const container = document.getElementById('catCountryChips');
+  if (!container) return;
+
+  const countryKeys = Object.keys(CAT_HOLIDAYS_DB);
+  let html = '';
+
+  countryKeys.forEach(code => {
+    const item = CAT_HOLIDAYS_DB[code];
+    const isActive = CatDashboardState.activeCountries.includes(code);
+    html += `
+      <div class="cat-country-chip ${isActive ? 'active' : 'inactive'}" 
+           onclick="toggleCatCountry('${code}')" 
+           title="${item.name} (${code}) 연휴 표시 토글">
+        <span class="dot" style="background:${item.dotColor};"></span>
+        <span>${item.name}</span>
+        <span style="font-size:9.5px; opacity:0.8;">${code}</span>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+window.renderCatCountryChips = renderCatCountryChips;
+
+function toggleCatCountry(code) {
+  const idx = CatDashboardState.activeCountries.indexOf(code);
+  if (idx >= 0) {
+    CatDashboardState.activeCountries.splice(idx, 1);
+  } else {
+    CatDashboardState.activeCountries.push(code);
+  }
+  localStorage.setItem('kostat_cat_active_countries', JSON.stringify(CatDashboardState.activeCountries));
+  renderCatCountryChips();
+  renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
+}
+window.toggleCatCountry = toggleCatCountry;
+
+// -------------------------------------------------------------
+// 2. 캘린더 그리드 렌더링 엔진
+// -------------------------------------------------------------
+function renderCatCalendar(year, month) {
+  const monthTitle = document.getElementById('catCalMonthTitle');
+  const grid = document.getElementById('catCalDaysGrid');
+  if (!grid) return;
+
+  if (monthTitle) {
+    monthTitle.textContent = `${year}년 ${month}월`;
+  }
+
+  // 1일의 요일 및 일수 계산
+  const firstDay = new Date(year, month - 1, 1).getDay(); // 0(Sun) ~ 6(Sat)
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const prevMonthDays = new Date(year, month - 1, 0).getDate();
+
+  let cellsHtml = '';
+
+  // 이전 달 날짜들 (faded)
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const prevDayNum = prevMonthDays - i;
+    cellsHtml += `
+      <div class="cat-cal-day-cell other-month">
+        <span class="cat-day-num">${prevDayNum}</span>
+      </div>
+    `;
+  }
+
+  // 이번 달 날짜들
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayStr = String(d).padStart(2, '0');
+    const monthStr = String(month).padStart(2, '0');
+    const fullDate = `${year}-${monthStr}-${dayStr}`;
+
+    const dateObj = new Date(year, month - 1, d);
+    const dayOfWeek = dateObj.getDay();
+
+    let cellClass = 'cat-cal-day-cell';
+    if (dayOfWeek === 0) cellClass += ' sun';
+    else if (dayOfWeek === 6) cellClass += ' sat';
+
+    // 오늘 하이라이트 (2026-10-14 또는 실제 오늘)
+    if (fullDate === '2026-10-14') {
+      cellClass += ' today';
+    }
+
+    if (fullDate === CatDashboardState.selectedDate) {
+      cellClass += ' selected';
+    }
+
+    // 활성화된 국가들의 연휴 검색
+    let holidayTags = '';
+    let dayHolidayList = [];
+
+    CatDashboardState.activeCountries.forEach(cCode => {
+      const cMeta = CAT_HOLIDAYS_DB[cCode];
+      if (cMeta && cMeta.holidays && cMeta.holidays[fullDate]) {
+        const hName = cMeta.holidays[fullDate];
+        dayHolidayList.push(`[${cCode}] ${hName}`);
+        holidayTags += `
+          <div class="cat-cal-holiday-tag ${cMeta.tagClass}" title="[${cMeta.name}] ${hName}">
+            ${hName.length > 3 ? hName.slice(0, 3) + '..' : hName}
+          </div>
+        `;
+      }
+    });
+
+    const holidayTooltip = dayHolidayList.length > 0 ? dayHolidayList.join(' / ') : '';
+
+    cellsHtml += `
+      <div class="${cellClass}" onclick="selectCatDate('${fullDate}')" title="${fullDate} ${holidayTooltip}">
+        <span class="cat-day-num">${d}</span>
+        <div class="cat-holiday-badge-wrap">
+          ${holidayTags}
+        </div>
+      </div>
+    `;
+  }
+
+  // 다음 달 날짜들 (그리드 완성 35 또는 42칸)
+  const totalCells = firstDay + daysInMonth;
+  const remainingCells = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7);
+  for (let n = 1; n <= remainingCells; n++) {
+    cellsHtml += `
+      <div class="cat-cal-day-cell other-month">
+        <span class="cat-day-num">${n}</span>
+      </div>
+    `;
+  }
+
+  grid.innerHTML = cellsHtml;
+}
+window.renderCatCalendar = renderCatCalendar;
+
+function changeCatCalMonth(delta) {
+  let y = CatDashboardState.year;
+  let m = CatDashboardState.month + delta;
+  if (m < 1) {
+    m = 12;
+    y -= 1;
+  } else if (m > 12) {
+    m = 1;
+    y += 1;
+  }
+  CatDashboardState.year = y;
+  CatDashboardState.month = m;
+  renderCatCalendar(y, m);
+}
+window.changeCatCalMonth = changeCatCalMonth;
+
+function goToCatCalToday() {
+  CatDashboardState.year = 2026;
+  CatDashboardState.month = 10;
+  CatDashboardState.selectedDate = '2026-10-14';
+  renderCatCalendar(2026, 10);
+  selectCatDate('2026-10-14');
+}
+window.goToCatCalToday = goToCatCalToday;
+
+function selectCatDate(fullDate) {
+  CatDashboardState.selectedDate = fullDate;
+  renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
+
+  // 할일 위젯의 날짜 태그 갱신 (예: 10월 14일)
+  const parts = fullDate.split('-');
+  if (parts.length === 3) {
+    const tag = document.getElementById('catTodoDateTag');
+    if (tag) tag.textContent = `${parseInt(parts[1], 10)}월 ${parseInt(parts[2], 10)}일`;
+  }
+
+  renderCatTodos();
+}
+window.selectCatDate = selectCatDate;
+
+// -------------------------------------------------------------
+// 3. 날씨 위젯 렌더링
+// -------------------------------------------------------------
+function renderCatWeather(cityKey) {
+  const cityData = CAT_WEATHER_DB[cityKey] || CAT_WEATHER_DB.seoul;
+  CatDashboardState.selectedCity = cityKey;
+  localStorage.setItem('kostat_cat_city', cityKey);
+
+  const curText = document.getElementById('catWeatherCurText');
+  if (curText) {
+    curText.textContent = `(현재: ${cityData.curTemp} ${cityData.condition} 최고 ${cityData.high} / 최저 ${cityData.low})`;
+  }
+
+  const forecastList = document.getElementById('catWeatherForecastList');
+  if (!forecastList) return;
+
+  const getWeatherSvg = (type) => {
+    if (type === 'sun') {
+      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+    } else if (type === 'cloud-sun') {
+      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round"><path d="M12 2v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M20 12h2"></path><path d="M19.07 4.93l-1.41 1.41"></path><path d="M15.95 9.05A6 6 0 0 0 7 15h11a4 4 0 0 0-.05-5.95z"></path></svg>`;
+    } else if (type === 'rain') {
+      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"><line x1="16" y1="13" x2="16" y2="21"></line><line x1="8" y1="13" x2="8" y2="21"></line><line x1="12" y1="15" x2="12" y2="23"></line><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>`;
+    } else {
+      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>`;
+    }
+  };
+
+  let html = '';
+  cityData.forecast.forEach(item => {
+    html += `
+      <div class="cat-weather-item">
+        <span class="cat-weather-item-date">${item.date}</span>
+        ${getWeatherSvg(item.icon)}
+        <span class="cat-weather-item-temp">${item.high}</span>
+        <span class="cat-weather-item-low">${item.low}</span>
+      </div>
+    `;
+  });
+  forecastList.innerHTML = html;
+}
+window.renderCatWeather = renderCatWeather;
+
+function onCatCityChange(cityKey) {
+  renderCatWeather(cityKey);
+}
+window.onCatCityChange = onCatCityChange;
+
+// -------------------------------------------------------------
+// 4. 빠른 입력 위젯
+// -------------------------------------------------------------
+function selectCatQuickType(type, btn) {
+  CatDashboardState.quickType = type;
+  document.querySelectorAll('.cat-quick-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const textarea = document.getElementById('catQuickInputText');
+  if (textarea) {
+    if (type === 'schedule') textarea.placeholder = '「내일 3시 회의」처럼 말하듯 적어요';
+    else if (type === 'todo') textarea.placeholder = '할일 내용을 적어주세요 (엔터로 빠른 등록)';
+    else if (type === 'note') textarea.placeholder = '자유로운 업무 메모나 미팅 기록을 남겨보세요';
+    else if (type === 'bookmark') textarea.placeholder = '사이트명: https://url 형태로 적어주세요';
+  }
+}
+window.selectCatQuickType = selectCatQuickType;
+
+function saveCatQuickInput() {
+  const textarea = document.getElementById('catQuickInputText');
+  if (!textarea) return;
+  const val = textarea.value.trim();
+  if (!val) {
+    alert('내용을 입력해주세요.');
+    return;
+  }
+
+  const type = CatDashboardState.quickType;
+
+  if (type === 'todo') {
+    const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+    list.unshift({
+      id: 't_' + Date.now(),
+      date: CatDashboardState.selectedDate,
+      text: val,
+      done: false
+    });
+    localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
+    renderCatTodos();
+    markCatOnboardingComplete('todo');
+  } else if (type === 'schedule') {
+    const list = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
+    list.unshift({
+      id: 's_' + Date.now(),
+      date: CatDashboardState.selectedDate,
+      time: '14:00',
+      title: val
+    });
+    localStorage.setItem('kostat_cat_schedules', JSON.stringify(list));
+    renderCatUpcoming();
+  } else if (type === 'note') {
+    const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
+    const nowStr = `${CatDashboardState.selectedDate} 10:00`;
+    list.unshift({
+      id: 'n_' + Date.now(),
+      date: nowStr,
+      text: val
+    });
+    localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
+    renderCatNotes();
+    markCatOnboardingComplete('note');
+  } else if (type === 'bookmark') {
+    const parts = val.split(':');
+    const title = parts[0].trim() || '바로가기';
+    const url = (parts.slice(1).join(':').trim()) || 'https://';
+    const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
+    list.push({
+      id: 'b_' + Date.now(),
+      title: title,
+      url: url
+    });
+    localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
+    renderCatBookmarks();
+  }
+
+  textarea.value = '';
+}
+window.saveCatQuickInput = saveCatQuickInput;
+
+// -------------------------------------------------------------
+// 5. 앞으로의 일정 위젯
+// -------------------------------------------------------------
+function renderCatUpcoming() {
+  const container = document.getElementById('catUpcomingList');
+  if (!container) return;
+
+  const list = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="cat-item-empty">앞으로 잡힌 일정이 없어요</div>';
+    return;
+  }
+
+  let html = '<div class="cat-item-list">';
+  list.slice(0, 4).forEach(item => {
+    const dateFormatted = item.date ? item.date.slice(5).replace('-', '/') : '';
+    html += `
+      <div class="cat-list-item">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:11px; font-weight:700; color:#ff6b7a; background:#fff0f2; padding:2px 6px; border-radius:4px;">${dateFormatted}</span>
+          <span style="font-weight:600; color:#2d3748;">${escapeHtml(item.title)}</span>
+        </div>
+        <button onclick="deleteCatSchedule('${item.id}')" style="background:transparent; border:none; color:#a0aec0; cursor:pointer; font-size:14px;">&times;</button>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+window.renderCatUpcoming = renderCatUpcoming;
+
+function deleteCatSchedule(id) {
+  let list = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
+  list = list.filter(it => it.id !== id);
+  localStorage.setItem('kostat_cat_schedules', JSON.stringify(list));
+  renderCatUpcoming();
+}
+window.deleteCatSchedule = deleteCatSchedule;
+
+function showAllCatSchedules() {
+  alert('앞으로의 전체 일정 목록을 조회합니다.');
+}
+window.showAllCatSchedules = showAllCatSchedules;
+
+// -------------------------------------------------------------
+// 6. 기록(노트) 위젯
+// -------------------------------------------------------------
+function renderCatNotes() {
+  const container = document.getElementById('catNotesList');
+  if (!container) return;
+
+  const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="cat-item-empty">첫 기록을 남겨보세요</div>';
+    return;
+  }
+
+  let html = '<div class="cat-item-list">';
+  list.slice(0, 3).forEach(item => {
+    html += `
+      <div class="cat-list-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <div style="display:flex; justify-content:space-between; width:100%;">
+          <span style="font-size:10.5px; color:#a0aec0; font-weight:600;">${item.date}</span>
+          <button onclick="deleteCatNote('${item.id}')" style="background:transparent; border:none; color:#a0aec0; cursor:pointer; font-size:14px;">&times;</button>
+        </div>
+        <div style="font-size:12.5px; color:#2d3748; line-height:1.35;">${escapeHtml(item.text)}</div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+window.renderCatNotes = renderCatNotes;
+
+function deleteCatNote(id) {
+  let list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
+  list = list.filter(it => it.id !== id);
+  localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
+  renderCatNotes();
+}
+window.deleteCatNote = deleteCatNote;
+
+function openCatNoteModal() {
+  const m = document.getElementById('modalCatNoteAdd');
+  if (m) m.classList.add('active');
+}
+window.openCatNoteModal = openCatNoteModal;
+
+function closeCatNoteModal() {
+  const m = document.getElementById('modalCatNoteAdd');
+  if (m) m.classList.remove('active');
+}
+window.closeCatNoteModal = closeCatNoteModal;
+
+function submitCatNoteModal() {
+  const t = document.getElementById('catNoteModalText');
+  if (!t || !t.value.trim()) return;
+  const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
+  list.unshift({
+    id: 'n_' + Date.now(),
+    date: `${CatDashboardState.selectedDate} 14:00`,
+    text: t.value.trim()
+  });
+  localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
+  t.value = '';
+  closeCatNoteModal();
+  renderCatNotes();
+  markCatOnboardingComplete('note');
+}
+window.submitCatNoteModal = submitCatNoteModal;
+
+// -------------------------------------------------------------
+// 7. 할일 위젯
+// -------------------------------------------------------------
+function renderCatTodos() {
+  const container = document.getElementById('catTodoList');
+  const countBadge = document.getElementById('catTodoCountBadge');
+  if (!container) return;
+
+  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+  const filtered = list.filter(it => it.date === CatDashboardState.selectedDate);
+
+  const doneCount = filtered.filter(it => it.done).length;
+  if (countBadge) {
+    countBadge.textContent = `${doneCount}/${filtered.length}`;
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="cat-item-empty" style="padding:16px 0;">등록된 할일이 없습니다</div>';
+    return;
+  }
+
+  let html = '<div class="cat-item-list">';
+  filtered.forEach(item => {
+    html += `
+      <div class="cat-list-item">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
+          <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatTodo('${item.id}')" style="accent-color:#ff6b7a;">
+          <span style="font-size:12.5px; ${item.done ? 'text-decoration:line-through; color:#a0aec0;' : 'color:#2d3748;'}">${escapeHtml(item.text)}</span>
+        </label>
+        <button onclick="deleteCatTodo('${item.id}')" style="background:transparent; border:none; color:#a0aec0; cursor:pointer; font-size:14px;">&times;</button>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+window.renderCatTodos = renderCatTodos;
+
+function addCatTodo() {
+  const input = document.getElementById('catNewTodoInput');
+  if (!input || !input.value.trim()) return;
+  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+  list.unshift({
+    id: 't_' + Date.now(),
+    date: CatDashboardState.selectedDate,
+    text: input.value.trim(),
+    done: false
+  });
+  localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
+  input.value = '';
+  renderCatTodos();
+}
+window.addCatTodo = addCatTodo;
+
+function toggleCatTodo(id) {
+  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+  const target = list.find(it => it.id === id);
+  if (target) {
+    target.done = !target.done;
+    localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
+    renderCatTodos();
+    if (target.done) markCatOnboardingComplete('todo');
+  }
+}
+window.toggleCatTodo = toggleCatTodo;
+
+function deleteCatTodo(id) {
+  let list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+  list = list.filter(it => it.id !== id);
+  localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
+  renderCatTodos();
+}
+window.deleteCatTodo = deleteCatTodo;
+
+// -------------------------------------------------------------
+// 8. 북마크 위젯
+// -------------------------------------------------------------
+function renderCatBookmarks() {
+  const container = document.getElementById('catBookmarkList');
+  if (!container) return;
+
+  const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="cat-item-empty">보관할 링크를 추가해 보세요</div>';
+    return;
+  }
+
+  let html = '<div class="cat-bookmark-grid">';
+  list.forEach(item => {
+    html += `
+      <div class="cat-bookmark-card" onclick="window.open('${item.url}', '_blank')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="cat-bm-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</span>
+          <button onclick="event.stopPropagation(); deleteCatBookmark('${item.id}')" style="background:transparent; border:none; color:#cbd5e0; cursor:pointer; font-size:12px;">&times;</button>
+        </div>
+        <span class="cat-bm-url">${escapeHtml(item.url)}</span>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+window.renderCatBookmarks = renderCatBookmarks;
+
+function openCatBookmarkModal() {
+  const m = document.getElementById('modalCatBookmarkAdd');
+  if (m) m.classList.add('active');
+}
+window.openCatBookmarkModal = openCatBookmarkModal;
+
+function closeCatBookmarkModal() {
+  const m = document.getElementById('modalCatBookmarkAdd');
+  if (m) m.classList.remove('active');
+}
+window.closeCatBookmarkModal = closeCatBookmarkModal;
+
+function submitCatBookmark() {
+  const t = document.getElementById('catBmInputTitle');
+  const u = document.getElementById('catBmInputUrl');
+  if (!t || !u || !t.value.trim() || !u.value.trim()) {
+    alert('제목과 URL을 모두 입력해주세요.');
+    return;
+  }
+  const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
+  list.push({
+    id: 'b_' + Date.now(),
+    title: t.value.trim(),
+    url: u.value.trim()
+  });
+  localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
+  t.value = '';
+  u.value = '';
+  closeCatBookmarkModal();
+  renderCatBookmarks();
+}
+window.submitCatBookmark = submitCatBookmark;
+
+function deleteCatBookmark(id) {
+  let list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
+  list = list.filter(it => it.id !== id);
+  localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
+  renderCatBookmarks();
+}
+window.deleteCatBookmark = deleteCatBookmark;
+
+// -------------------------------------------------------------
+// 9. 온보딩 첫 걸음 카드
+// -------------------------------------------------------------
+function restoreCatOnboardingState() {
+  const card = document.getElementById('catOnboardingCard');
+  if (!card) return;
+
+  const data = JSON.parse(localStorage.getItem('kostat_cat_onboarding') || '{}');
+  if (data.dismissed) {
+    card.style.display = 'none';
+    return;
+  }
+
+  ['todo', 'note', 'share'].forEach(key => {
+    const cb = document.getElementById(`catTask${key.charAt(0).toUpperCase() + key.slice(1)}`);
+    const st = document.getElementById(`catStatus${key.charAt(0).toUpperCase() + key.slice(1)}`);
+    if (cb && data[key]) {
+      cb.checked = true;
+      if (st) {
+        st.textContent = '완료';
+        st.classList.add('done');
+      }
+    }
+  });
+
+  if (data.todo && data.note && data.share) {
+    card.style.display = 'none';
+  }
+}
+
+function toggleCatOnboardingTask(taskKey, isChecked) {
+  const data = JSON.parse(localStorage.getItem('kostat_cat_onboarding') || '{}');
+  data[taskKey] = isChecked;
+  localStorage.setItem('kostat_cat_onboarding', JSON.stringify(data));
+
+  const st = document.getElementById(`catStatus${taskKey.charAt(0).toUpperCase() + taskKey.slice(1)}`);
+  if (st) {
+    st.textContent = isChecked ? '완료' : '아직 안 함';
+    if (isChecked) st.classList.add('done');
+    else st.classList.remove('done');
+  }
+
+  if (taskKey === 'share' && isChecked) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      alert('대시보드 링크가 클립보드에 복사되었습니다.');
+    }
+  }
+
+  if (data.todo && data.note && data.share) {
+    setTimeout(() => {
+      const card = document.getElementById('catOnboardingCard');
+      if (card) card.style.display = 'none';
+    }, 600);
+  }
+}
+window.toggleCatOnboardingTask = toggleCatOnboardingTask;
+
+function markCatOnboardingComplete(taskKey) {
+  const cb = document.getElementById(`catTask${taskKey.charAt(0).toUpperCase() + taskKey.slice(1)}`);
+  if (cb && !cb.checked) {
+    cb.checked = true;
+    toggleCatOnboardingTask(taskKey, true);
+  }
+}
+
+function dismissCatOnboarding() {
+  const card = document.getElementById('catOnboardingCard');
+  if (card) card.style.display = 'none';
+  const data = JSON.parse(localStorage.getItem('kostat_cat_onboarding') || '{}');
+  data.dismissed = true;
+  localStorage.setItem('kostat_cat_onboarding', JSON.stringify(data));
+}
+window.dismissCatOnboarding = dismissCatOnboarding;
+
+// -------------------------------------------------------------
+// 10. 위젯 노출/숨김 관리 모달
+// -------------------------------------------------------------
+function openCatWidgetModal() {
+  const m = document.getElementById('modalCatWidgetSettings');
+  const listContainer = document.getElementById('catWidgetCheckboxList');
+  if (!m || !listContainer) return;
+
+  const widgetLabels = {
+    weather: '날씨 예보 위젯',
+    quickInput: '빠른 입력 위젯',
+    upcoming: '앞으로의 일정 위젯',
+    notes: '기록(메모) 위젯',
+    todos: '할일 체크리스트 위젯',
+    bookmarks: '북마크 링크 위젯'
+  };
+
+  let html = '';
+  Object.keys(widgetLabels).forEach(k => {
+    const isChecked = CatDashboardState.activeWidgets[k] !== false;
+    html += `
+      <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:#2d3748; cursor:pointer;">
+        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCatWidgetVisibility('${k}', this.checked)" style="accent-color:#ff6b7a;">
+        <span>${widgetLabels[k]}</span>
+      </label>
+    `;
+  });
+  listContainer.innerHTML = html;
+  m.classList.add('active');
+}
+window.openCatWidgetModal = openCatWidgetModal;
+
+function closeCatWidgetModal() {
+  const m = document.getElementById('modalCatWidgetSettings');
+  if (m) m.classList.remove('active');
+}
+window.closeCatWidgetModal = closeCatWidgetModal;
+
+function toggleCatWidgetVisibility(widgetKey, isChecked) {
+  CatDashboardState.activeWidgets[widgetKey] = isChecked;
+  localStorage.setItem('kostat_cat_widgets', JSON.stringify(CatDashboardState.activeWidgets));
+  applyCatWidgetVisibility();
+}
+window.toggleCatWidgetVisibility = toggleCatWidgetVisibility;
+
+function applyCatWidgetVisibility() {
+  const widgetMap = {
+    weather: 'widgetWeather',
+    quickInput: 'widgetQuickInput',
+    upcoming: 'widgetUpcoming',
+    notes: 'widgetNotes',
+    todos: 'widgetTodos',
+    bookmarks: 'widgetBookmarks'
+  };
+
+  Object.keys(widgetMap).forEach(k => {
+    const el = document.getElementById(widgetMap[k]);
+    if (el) {
+      el.style.display = (CatDashboardState.activeWidgets[k] !== false) ? '' : 'none';
+    }
+  });
+}
+
+// -------------------------------------------------------------
+// 11. 빠른 추가 모달 (+)
+// -------------------------------------------------------------
+function openCatQuickAddModal() {
+  const m = document.getElementById('modalCatQuickAdd');
+  if (m) m.classList.add('active');
+}
+window.openCatQuickAddModal = openCatQuickAddModal;
+
+function closeCatQuickAddModal() {
+  const m = document.getElementById('modalCatQuickAdd');
+  if (m) m.classList.remove('active');
+}
+window.closeCatQuickAddModal = closeCatQuickAddModal;
+
+function setCatModalType(type) {
+  CatDashboardState.modalQuickType = type;
+  ['Schedule', 'Todo', 'Note', 'Bm'].forEach(t => {
+    const btn = document.getElementById(`catModalTab${t}`);
+    if (btn) btn.classList.remove('active');
+  });
+  const activeBtn = document.getElementById(`catModalTab${type.charAt(0).toUpperCase() + type.slice(1)}`) ||
+                    (type === 'bookmark' ? document.getElementById('catModalTabBm') : null);
+  if (activeBtn) activeBtn.classList.add('active');
+}
+window.setCatModalType = setCatModalType;
+
+function submitCatQuickModal() {
+  const t = document.getElementById('catQuickModalInputText');
+  if (!t || !t.value.trim()) return;
+  const val = t.value.trim();
+  const type = CatDashboardState.modalQuickType || 'schedule';
+
+  if (type === 'todo') {
+    const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+    list.unshift({ id: 't_' + Date.now(), date: CatDashboardState.selectedDate, text: val, done: false });
+    localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
+    renderCatTodos();
+    markCatOnboardingComplete('todo');
+  } else if (type === 'schedule') {
+    const list = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
+    list.unshift({ id: 's_' + Date.now(), date: CatDashboardState.selectedDate, time: '14:00', title: val });
+    localStorage.setItem('kostat_cat_schedules', JSON.stringify(list));
+    renderCatUpcoming();
+  } else if (type === 'note') {
+    const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
+    list.unshift({ id: 'n_' + Date.now(), date: `${CatDashboardState.selectedDate} 15:00`, text: val });
+    localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
+    renderCatNotes();
+    markCatOnboardingComplete('note');
+  } else if (type === 'bookmark') {
+    const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
+    list.push({ id: 'b_' + Date.now(), title: val, url: 'https://' });
+    localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
+    renderCatBookmarks();
+  }
+
+  t.value = '';
+  closeCatQuickAddModal();
+}
+window.submitCatQuickModal = submitCatQuickModal;
+
+// -------------------------------------------------------------
+// 12. 미니 사이드바 네비게이션 필터 & 토글
+// -------------------------------------------------------------
+function catNavFilter(type, btn) {
+  document.querySelectorAll('.cat-nav-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  if (type === 'calendar') {
+    const cal = document.getElementById('widgetCalendar');
+    if (cal) cal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (type === 'todo') {
+    const td = document.getElementById('widgetTodos');
+    if (td) td.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (type === 'note') {
+    const nt = document.getElementById('widgetNotes');
+    if (nt) nt.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (type === 'bookmark') {
+    const bm = document.getElementById('widgetBookmarks');
+    if (bm) bm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    const main = document.querySelector('.catlendar-main');
+    if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+window.catNavFilter = catNavFilter;
+
+function toggleCatSidebar(btn) {
+  const sb = document.querySelector('.catlendar-sidebar');
+  if (!sb) return;
+  if (sb.style.width === '0px') {
+    sb.style.width = '68px';
+    sb.style.display = 'flex';
+  } else {
+    sb.style.width = '0px';
+    sb.style.display = 'none';
+  }
+}
+window.toggleCatSidebar = toggleCatSidebar;
+
+// Catlendar 초기 자동 로딩
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => { if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); }, 200);
+  });
+} else {
+  setTimeout(() => { if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); }, 200);
+}

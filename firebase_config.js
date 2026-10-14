@@ -54,7 +54,7 @@
     { id: 'viewChatbot', name: 'FAQ 챗봇', defaultAllowed: true },
     { id: 'viewFaq', name: '사내 FAQ', defaultAllowed: true },
     { id: 'viewArchive', name: '자료실', defaultAllowed: true },
-    { id: 'viewLab', name: '실험실', defaultAllowed: false }
+    { id: 'viewLab', name: '실험실', defaultAllowed: true }
   ];
 
   // 최고 관리자 마스터 목록 (코드 레벨 영구 보호)
