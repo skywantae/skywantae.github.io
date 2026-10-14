@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.191" />
+  <link rel="stylesheet" href="app.css?v=1.0.192" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -901,7 +901,7 @@
 
         <!-- 최상위 세그먼트 서브탭 바 -->
         <div class="lab-main-segment-bar" style="display:flex; gap:8px; padding:10px 16px; background:var(--bg-card); border-bottom:1px solid var(--border-color); flex-wrap:wrap; flex-shrink:0;">
-          <button class="lab-main-tab-btn active" id="btnLabTabDashboard" onclick="switchLabSubTab('labSubDashboard', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #ff6b7a; background:#ff6b7a; color:#ffffff; cursor:pointer;">대시보드</button>
+          <button class="lab-main-tab-btn active" id="btnLabTabDashboard" onclick="switchLabSubTab('labSubDashboard', this)" style="padding:8px 16px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">대시보드</button>
           <button class="lab-main-tab-btn" id="btnLabTabTools" onclick="switchLabSubTab('labSubTools', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">업무 자동화 도구</button>
           <button class="lab-main-tab-btn" id="btnLabTabPH" onclick="switchLabSubTab('labSubPH', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">필리핀 지사 리포트 & 프로젝트</button>
           <button class="lab-main-tab-btn" id="btnLabTabWeekly" onclick="switchLabSubTab('labSubWeekly', this)" style="padding:8px 16px; font-size:12.5px; font-weight:600; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card-sub); color:var(--text-secondary); cursor:pointer;">주간보고서</button>
@@ -914,12 +914,12 @@
             <!-- 1. 좌측 미니 네비게이션 사이드바 -->
             <aside class="catlendar-sidebar">
               <div class="cat-logo-box" title="KOSTAT Catlendar">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6b7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
                   <line x1="3" y1="10" x2="21" y2="10"></line>
-                  <circle cx="12" cy="15" r="1.5" fill="#ff6b7a"></circle>
+                  <circle cx="12" cy="15" r="1.5" fill="#3b82f6"></circle>
                 </svg>
               </div>
               <button class="cat-pink-plus-btn" onclick="openCatQuickAddModal()" title="빠른 추가">
@@ -1684,7 +1684,7 @@
                     <h4>주간보고서</h4>
                   </div>
                   <div style="display:flex; gap:8px; align-items:center;">
-                    <a href="weekly_report_prototype.html?v=1.0.191_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+                    <a href="weekly_report_prototype.html?v=1.0.192_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
                       전체화면 새 창 열기
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
@@ -1697,7 +1697,7 @@
                   
                   <!-- 워크스페이스 임베드 컨테이너 -->
                   <div style="width:100%; height:840px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                    <iframe src="weekly_report_prototype.html?v=1.0.191_w39" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
+                    <iframe src="weekly_report_prototype.html?v=1.0.192_w39" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
                   </div>
                 </div>
               </div>
@@ -1827,7 +1827,7 @@
         <div class="setting-item">
           <label id="lblSettingVer">앱 버전 정보:</label>
           <div class="version-box">
-            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.191</strong></span>
+            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.192</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -2515,14 +2515,14 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="firebase_config.js?v=1.0.191"></script>
-  <script src="weekly_live_sync.js?v=1.0.191"></script>
+  <script src="firebase_config.js?v=1.0.192"></script>
+  <script src="weekly_live_sync.js?v=1.0.192"></script>
 
   <!-- 보안 인증 기반 동적 데이터 로더 (미인증 시 데이터 로드 차단) -->
-  <script src="xlsx.full.min.js?v=1.0.191"></script>
-  <script src="exceljs.min.js?v=1.0.191"></script>
-  <script src="updater.js?v=1.0.191"></script>
-  <script src="app.js?v=1.0.191"></script>
+  <script src="xlsx.full.min.js?v=1.0.192"></script>
+  <script src="exceljs.min.js?v=1.0.192"></script>
+  <script src="updater.js?v=1.0.192"></script>
+  <script src="app.js?v=1.0.192"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>

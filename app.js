@@ -9096,7 +9096,7 @@ function switchLabSubTab(tabId, btn) {
   const panel = document.getElementById(tabId);
   if (panel) panel.style.display = '';
   if (btn) {
-    const activeColor = (tabId === 'labSubDashboard' ? '#ff6b7a' : '#2563eb');
+    const activeColor = '#2563eb';
     btn.style.background = activeColor;
     btn.style.color = '#ffffff';
     btn.style.borderColor = activeColor;
@@ -12786,10 +12786,10 @@ function renderCatUpcoming() {
     html += `
       <div class="cat-list-item">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:11px; font-weight:700; color:#ff6b7a; background:#fff0f2; padding:2px 6px; border-radius:4px;">${dateFormatted}</span>
-          <span style="font-weight:600; color:#2d3748;">${escapeHtml(item.title)}</span>
+          <span style="font-size:11px; font-weight:700; color:#60a5fa; background:rgba(59,130,246,0.18); padding:2px 6px; border-radius:4px; border:1px solid rgba(59,130,246,0.3);">${dateFormatted}</span>
+          <span style="font-weight:600; color:var(--text-primary, #f1f5f9);">${escapeHtml(item.title)}</span>
         </div>
-        <button onclick="deleteCatSchedule('${item.id}')" style="background:transparent; border:none; color:#a0aec0; cursor:pointer; font-size:14px;">&times;</button>
+        <button onclick="deleteCatSchedule('${item.id}')" style="background:transparent; border:none; color:var(--text-muted, #64748b); cursor:pointer; font-size:14px;">&times;</button>
       </div>
     `;
   });
@@ -12829,10 +12829,10 @@ function renderCatNotes() {
     html += `
       <div class="cat-list-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
         <div style="display:flex; justify-content:space-between; width:100%;">
-          <span style="font-size:10.5px; color:#a0aec0; font-weight:600;">${item.date}</span>
-          <button onclick="deleteCatNote('${item.id}')" style="background:transparent; border:none; color:#a0aec0; cursor:pointer; font-size:14px;">&times;</button>
+          <span style="font-size:10.5px; color:var(--text-muted, #64748b); font-weight:600;">${item.date}</span>
+          <button onclick="deleteCatNote('${item.id}')" style="background:transparent; border:none; color:var(--text-muted, #64748b); cursor:pointer; font-size:14px;">&times;</button>
         </div>
-        <div style="font-size:12.5px; color:#2d3748; line-height:1.35;">${escapeHtml(item.text)}</div>
+        <div style="font-size:12.5px; color:var(--text-primary, #f1f5f9); line-height:1.35;">${escapeHtml(item.text)}</div>
       </div>
     `;
   });
@@ -12904,10 +12904,10 @@ function renderCatTodos() {
     html += `
       <div class="cat-list-item">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
-          <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatTodo('${item.id}')" style="accent-color:#ff6b7a;">
-          <span style="font-size:12.5px; ${item.done ? 'text-decoration:line-through; color:#a0aec0;' : 'color:#2d3748;'}">${escapeHtml(item.text)}</span>
+          <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatTodo('${item.id}')" style="accent-color:#2563eb;">
+          <span style="font-size:12.5px; ${item.done ? 'text-decoration:line-through; color:var(--text-muted, #64748b);' : 'color:var(--text-primary, #f1f5f9);'}">${escapeHtml(item.text)}</span>
         </label>
-        <button onclick="deleteCatTodo('${item.id}')" style="background:transparent; border:none; color:#a0aec0; cursor:pointer; font-size:14px;">&times;</button>
+        <button onclick="deleteCatTodo('${item.id}')" style="background:transparent; border:none; color:var(--text-muted, #64748b); cursor:pointer; font-size:14px;">&times;</button>
       </div>
     `;
   });
@@ -13119,8 +13119,8 @@ function openCatWidgetModal() {
   Object.keys(widgetLabels).forEach(k => {
     const isChecked = CatDashboardState.activeWidgets[k] !== false;
     html += `
-      <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:#2d3748; cursor:pointer;">
-        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCatWidgetVisibility('${k}', this.checked)" style="accent-color:#ff6b7a;">
+      <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-primary, #f1f5f9); cursor:pointer;">
+        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCatWidgetVisibility('${k}', this.checked)" style="accent-color:#2563eb;">
         <span>${widgetLabels[k]}</span>
       </label>
     `;
