@@ -12364,6 +12364,26 @@ const CAT_WEATHER_DB = {
   }
 };
 
+// ==========================================================================
+// 실험실 (Lab) - 스마트 캘린더 대시보드 (Catlendar 글로벌 워크스페이스 엔진)
+// KOSTAT 다크 글래스모피즘 테마 & 실시간 상호작용 & 위젯 레이아웃 변경 지원
+// ==========================================================================
+
+const DEFAULT_CAT_LAYOUT = {
+  colLeft: ['calendar'],
+  colRight: ['weather', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
+};
+
+const CAT_WIDGET_NAMES = {
+  calendar: '캘린더 & 글로벌 연휴',
+  weather: '실시간 날씨 예보',
+  quickInput: '빠른 입력',
+  upcoming: '앞으로의 일정',
+  notes: '기록 (메모)',
+  todos: '할일 체크리스트',
+  bookmarks: '사내 북마크'
+};
+
 let CatDashboardState = {
   initialized: false,
   year: 2026,
@@ -12372,6 +12392,7 @@ let CatDashboardState = {
   selectedCity: 'seoul',
   quickType: 'schedule',
   modalQuickType: 'schedule',
+  currentView: 'all',
   activeCountries: ['KR', 'CN', 'JP', 'PH', 'TW', 'US', 'MY', 'SG', 'VN'],
   activeWidgets: {
     weather: true,
@@ -12410,8 +12431,13 @@ function initCatlendarDashboard() {
   // 초기 더미 데이터 셋업 (저장된 데이터 없을 시)
   initCatDefaultStorage();
 
-  // 온보딩 카드 상태 복원
+  // 온보딩 카드 상태 및 타이틀 복원
   restoreCatOnboardingState();
+  restoreCatStartTitle();
+
+  // 레이아웃 복원
+  applyCatLayoutDOM();
+  initCatDragDrop();
 
   // 렌더링
   renderCatCountryChips();
@@ -12465,36 +12491,330 @@ function initCatDefaultStorage() {
 }
 
 // -------------------------------------------------------------
-// 1. 국가 연휴 틱 필터 칩 렌더링 및 토글
+// 1. 네비게이션 및 서브뷰 실시간 전환 & 동기화
+// -------------------------------------------------------------
+function catNavFilter(type, btn) {
+  CatDashboardState.currentView = type;
+  document.querySelectorAll('.cat-nav-item').forEach(b => b.classList.remove('active'));
+
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    const btnMap = {
+      all: 'catNavBtnHome',
+      calendar: 'catNavBtnCalendar',
+      todo: 'catNavBtnTodo',
+      note: 'catNavBtnNote',
+      bookmark: 'catNavBtnBookmark'
+    };
+    const targetBtn = document.getElementById(btnMap[type] || 'catNavBtnHome');
+    if (targetBtn) targetBtn.classList.add('active');
+  }
+
+  // 모든 서브뷰 비활성화
+  document.querySelectorAll('.cat-subview').forEach(v => v.classList.remove('active'));
+
+  const titleEl = document.getElementById('catMainHeaderTitle');
+  const subEl = document.getElementById('catMainHeaderSub');
+
+  const calWidget = document.getElementById('widgetCalendar');
+  const fullCalContainer = document.getElementById('catFullCalContainer');
+
+  if (type === 'calendar') {
+    const v = document.getElementById('catViewCalendar');
+    if (v) v.classList.add('active');
+    if (titleEl) titleEl.textContent = '캘린더 & 일정 관리';
+    if (subEl) subEl.textContent = '글로벌 고객사 휴무 및 사내 일정 상세 조회';
+    if (fullCalContainer && calWidget) {
+      fullCalContainer.appendChild(calWidget);
+    }
+    renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
+    renderCatCalendarFullView();
+  } else {
+    // 캘린더 전용 뷰에서 벗어날 때 캘린더 위젯을 홈 레이아웃으로 복귀
+    if (calWidget && calWidget.parentElement && calWidget.parentElement.id === 'catFullCalContainer') {
+      if (typeof CatLayoutEngine !== 'undefined' && typeof CatLayoutEngine.applyLayout === 'function') {
+        CatLayoutEngine.applyLayout();
+      }
+    }
+
+    if (type === 'todo') {
+      const v = document.getElementById('catViewTodos');
+      if (v) v.classList.add('active');
+      if (titleEl) titleEl.textContent = '할일 관리 센터';
+      if (subEl) subEl.textContent = '개인 및 팀 업무 체크리스트 실시간 연동';
+      renderCatManageTodosList();
+    } else if (type === 'note') {
+      const v = document.getElementById('catViewNotes');
+      if (v) v.classList.add('active');
+      if (titleEl) titleEl.textContent = '기록 & 업무 저널';
+      if (subEl) subEl.textContent = '주요 회의록 및 메모 보관함';
+      renderCatManageNotesList();
+    } else if (type === 'bookmark') {
+      const v = document.getElementById('catViewBookmarks');
+      if (v) v.classList.add('active');
+      if (titleEl) titleEl.textContent = '북마크 보관함';
+      if (subEl) subEl.textContent = '사내 포털 및 주요 고객사 링크 모음';
+      renderCatManageBookmarksList();
+    } else {
+      const v = document.getElementById('catViewHome');
+      if (v) v.classList.add('active');
+      if (titleEl) titleEl.textContent = '대시보드';
+      if (subEl) subEl.textContent = '글로벌 캘린더 & 스마트 워크스페이스';
+      // 홈 위젯 최신화 동기화
+      renderCatUpcoming();
+      renderCatNotes();
+      renderCatTodos();
+      renderCatBookmarks();
+      renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
+    }
+  }
+
+  const main = document.querySelector('.catlendar-main');
+  if (main) main.scrollTop = 0;
+}
+window.catNavFilter = catNavFilter;
+
+function toggleCatSidebar(btn) {
+  const sb = document.querySelector('.catlendar-sidebar');
+  if (!sb) return;
+  if (sb.style.width === '0px') {
+    sb.style.width = '68px';
+    sb.style.display = 'flex';
+  } else {
+    sb.style.width = '0px';
+    sb.style.display = 'none';
+  }
+}
+window.toggleCatSidebar = toggleCatSidebar;
+
+// -------------------------------------------------------------
+// 2. START 첫 걸음 위젯 이름 변경 로직
+// -------------------------------------------------------------
+function restoreCatStartTitle() {
+  const title = localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
+  const tag = localStorage.getItem('kostat_cat_start_tag') || 'START';
+  const tEl = document.getElementById('catOnboardingTitleText');
+  const tagEl = document.getElementById('catOnboardingTagText');
+  if (tEl) tEl.textContent = title;
+  if (tagEl) tagEl.textContent = tag;
+}
+window.restoreCatStartTitle = restoreCatStartTitle;
+
+function openCatRenameStartModal() {
+  const title = localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
+  const tag = localStorage.getItem('kostat_cat_start_tag') || 'START';
+  const tInput = document.getElementById('catInputStartTitle');
+  const tagInput = document.getElementById('catInputStartTag');
+  if (tInput) tInput.value = title;
+  if (tagInput) tagInput.value = tag;
+  const m = document.getElementById('modalCatRenameStart');
+  if (m) m.classList.add('active');
+}
+window.openCatRenameStartModal = openCatRenameStartModal;
+
+function closeCatRenameStartModal() {
+  const m = document.getElementById('modalCatRenameStart');
+  if (m) m.classList.remove('active');
+}
+window.closeCatRenameStartModal = closeCatRenameStartModal;
+
+function saveCatStartTitle() {
+  const tInput = document.getElementById('catInputStartTitle');
+  const tagInput = document.getElementById('catInputStartTag');
+  const title = (tInput && tInput.value.trim()) || '첫 걸음';
+  const tag = (tagInput && tagInput.value.trim()) || 'START';
+  localStorage.setItem('kostat_cat_start_title', title);
+  localStorage.setItem('kostat_cat_start_tag', tag);
+  restoreCatStartTitle();
+  closeCatRenameStartModal();
+}
+window.saveCatStartTitle = saveCatStartTitle;
+
+function resetCatStartTitle() {
+  localStorage.removeItem('kostat_cat_start_title');
+  localStorage.removeItem('kostat_cat_start_tag');
+  restoreCatStartTitle();
+  closeCatRenameStartModal();
+}
+window.resetCatStartTitle = resetCatStartTitle;
+
+// -------------------------------------------------------------
+// 3. 위젯 레이아웃 순서 및 위치 자유 변경 엔진
+// -------------------------------------------------------------
+function getCatLayoutOrder() {
+  try {
+    const saved = localStorage.getItem('kostat_cat_layout_order');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed.colLeft) && Array.isArray(parsed.colRight)) {
+        return parsed;
+      }
+    }
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_CAT_LAYOUT));
+}
+
+function saveCatLayoutOrder(layout) {
+  localStorage.setItem('kostat_cat_layout_order', JSON.stringify(layout));
+  applyCatLayoutDOM(layout);
+}
+
+function applyCatLayoutDOM(layout) {
+  const colLeft = document.getElementById('catColLeft');
+  const colRight = document.getElementById('catColRight');
+  if (!colLeft || !colRight) return;
+
+  layout = layout || getCatLayoutOrder();
+
+  layout.colLeft.forEach(wId => {
+    const el = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"]`);
+    if (el) colLeft.appendChild(el);
+  });
+
+  layout.colRight.forEach(wId => {
+    const el = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"]`);
+    if (el) colRight.appendChild(el);
+  });
+}
+window.applyCatLayoutDOM = applyCatLayoutDOM;
+
+function moveCatWidget(widgetId, delta) {
+  const layout = getCatLayoutOrder();
+  let colKey = layout.colLeft.includes(widgetId) ? 'colLeft' : (layout.colRight.includes(widgetId) ? 'colRight' : null);
+  if (!colKey) return;
+  const arr = layout[colKey];
+  const idx = arr.indexOf(widgetId);
+  if (idx === -1) return;
+  const newIdx = idx + delta;
+  if (newIdx < 0 || newIdx >= arr.length) return;
+
+  const temp = arr[idx];
+  arr[idx] = arr[newIdx];
+  arr[newIdx] = temp;
+  saveCatLayoutOrder(layout);
+}
+window.moveCatWidget = moveCatWidget;
+
+function swapCatWidgetColumn(widgetId) {
+  const layout = getCatLayoutOrder();
+  if (layout.colLeft.includes(widgetId)) {
+    layout.colLeft = layout.colLeft.filter(id => id !== widgetId);
+    layout.colRight.push(widgetId);
+  } else if (layout.colRight.includes(widgetId)) {
+    layout.colRight = layout.colRight.filter(id => id !== widgetId);
+    layout.colLeft.push(widgetId);
+  }
+  saveCatLayoutOrder(layout);
+}
+window.swapCatWidgetColumn = swapCatWidgetColumn;
+
+function openCatLayoutModal() {
+  const layout = getCatLayoutOrder();
+  const listL = document.getElementById('catLayoutListLeft');
+  const listR = document.getElementById('catLayoutListRight');
+  if (!listL || !listR) return;
+
+  const renderCol = (arr, isLeft) => {
+    if (arr.length === 0) return '<div class="cat-item-empty" style="padding:10px;">위젯 없음</div>';
+    return arr.map((wId, i) => `
+      <div class="cat-layout-item">
+        <span style="font-weight:600;">${CAT_WIDGET_NAMES[wId] || wId}</span>
+        <div class="cat-layout-item-btns">
+          <button class="cat-move-btn" onclick="moveCatWidget('${wId}', -1); openCatLayoutModal();" ${i === 0 ? 'disabled style="opacity:0.3;"' : ''} title="위로">▲</button>
+          <button class="cat-move-btn" onclick="moveCatWidget('${wId}', 1); openCatLayoutModal();" ${i === arr.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="아래로">▼</button>
+          <button class="cat-move-btn" onclick="swapCatWidgetColumn('${wId}'); openCatLayoutModal();" title="${isLeft ? '우측 열로 이동' : '좌측 열로 이동'}">⇄</button>
+        </div>
+      </div>
+    `).join('');
+  };
+
+  listL.innerHTML = renderCol(layout.colLeft, true);
+  listR.innerHTML = renderCol(layout.colRight, false);
+
+  const m = document.getElementById('modalCatLayoutSettings');
+  if (m) m.classList.add('active');
+}
+window.openCatLayoutModal = openCatLayoutModal;
+
+function closeCatLayoutModal() {
+  const m = document.getElementById('modalCatLayoutSettings');
+  if (m) m.classList.remove('active');
+}
+window.closeCatLayoutModal = closeCatLayoutModal;
+
+function resetCatLayoutOrder() {
+  saveCatLayoutOrder(JSON.parse(JSON.stringify(DEFAULT_CAT_LAYOUT)));
+  openCatLayoutModal();
+}
+window.resetCatLayoutOrder = resetCatLayoutOrder;
+
+let catDraggedWidgetId = null;
+
+function initCatDragDrop() {
+  document.querySelectorAll('.cat-widget-card[draggable="true"]').forEach(card => {
+    card.addEventListener('dragstart', (e) => {
+      catDraggedWidgetId = card.getAttribute('data-widget-id');
+      card.classList.add('dragging');
+      if (e.dataTransfer) e.dataTransfer.setData('text/plain', catDraggedWidgetId);
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.cat-widget-card').forEach(c => c.classList.remove('drag-over'));
+    });
+    card.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', () => {
+      card.classList.remove('drag-over');
+    });
+    card.addEventListener('drop', (e) => {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      const targetWidgetId = card.getAttribute('data-widget-id');
+      if (!catDraggedWidgetId || catDraggedWidgetId === targetWidgetId) return;
+
+      const layout = getCatLayoutOrder();
+      layout.colLeft = layout.colLeft.filter(id => id !== catDraggedWidgetId);
+      layout.colRight = layout.colRight.filter(id => id !== catDraggedWidgetId);
+
+      if (layout.colLeft.includes(targetWidgetId)) {
+        const idx = layout.colLeft.indexOf(targetWidgetId);
+        layout.colLeft.splice(idx, 0, catDraggedWidgetId);
+      } else if (layout.colRight.includes(targetWidgetId)) {
+        const idx = layout.colRight.indexOf(targetWidgetId);
+        layout.colRight.splice(idx, 0, catDraggedWidgetId);
+      }
+      saveCatLayoutOrder(layout);
+    });
+  });
+}
+
+// -------------------------------------------------------------
+// 4. 국가별 연휴 필터 (틱 기능)
 // -------------------------------------------------------------
 function renderCatCountryChips() {
   const container = document.getElementById('catCountryChips');
   if (!container) return;
 
   const countryKeys = Object.keys(CAT_HOLIDAYS_DB);
-  let html = '';
-
-  countryKeys.forEach(code => {
+  container.innerHTML = countryKeys.map(code => {
     const item = CAT_HOLIDAYS_DB[code];
     const isActive = CatDashboardState.activeCountries.includes(code);
-    html += `
-      <div class="cat-country-chip ${isActive ? 'active' : 'inactive'}" 
-           onclick="toggleCatCountry('${code}')" 
-           title="${item.name} (${code}) 연휴 표시 토글">
+    return `
+      <div class="cat-country-chip ${isActive ? 'active' : 'inactive'}" data-country="${code}" onclick="toggleCatCountry('${code}')">
         <span class="dot" style="background:${item.dotColor};"></span>
         <span>${item.name}</span>
         <span style="font-size:9.5px; opacity:0.8;">${code}</span>
       </div>
     `;
-  });
-
-  container.innerHTML = html;
+  }).join('');
 }
-window.renderCatCountryChips = renderCatCountryChips;
 
 function toggleCatCountry(code) {
   const idx = CatDashboardState.activeCountries.indexOf(code);
-  if (idx >= 0) {
+  if (idx > -1) {
     CatDashboardState.activeCountries.splice(idx, 1);
   } else {
     CatDashboardState.activeCountries.push(code);
@@ -12502,103 +12822,102 @@ function toggleCatCountry(code) {
   localStorage.setItem('kostat_cat_active_countries', JSON.stringify(CatDashboardState.activeCountries));
   renderCatCountryChips();
   renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
+  if (CatDashboardState.currentView === 'calendar') {
+    renderCatCalendarFullView();
+  }
 }
 window.toggleCatCountry = toggleCatCountry;
 
 // -------------------------------------------------------------
-// 2. 캘린더 그리드 렌더링 엔진
+// 5. 달력 렌더링 엔진
 // -------------------------------------------------------------
 function renderCatCalendar(year, month) {
-  const monthTitle = document.getElementById('catCalMonthTitle');
+  const titleEl = document.getElementById('catCalMonthTitle');
+  if (titleEl) titleEl.textContent = `${year}년 ${month}월`;
+
+  renderCatCalendarDays();
+}
+
+function renderCatCalendarDays() {
   const grid = document.getElementById('catCalDaysGrid');
   if (!grid) return;
 
-  if (monthTitle) {
-    monthTitle.textContent = `${year}년 ${month}월`;
-  }
+  const y = CatDashboardState.year;
+  const m = CatDashboardState.month;
 
-  // 1일의 요일 및 일수 계산
-  const firstDay = new Date(year, month - 1, 1).getDay(); // 0(Sun) ~ 6(Sat)
-  const daysInMonth = new Date(year, month, 0).getDate();
-  const prevMonthDays = new Date(year, month - 1, 0).getDate();
+  const firstDay = new Date(y, m - 1, 1).getDay();
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const prevMonthLastDate = new Date(y, m - 1, 0).getDate();
 
-  let cellsHtml = '';
+  let cells = [];
 
-  // 이전 달 날짜들 (faded)
   for (let i = firstDay - 1; i >= 0; i--) {
-    const prevDayNum = prevMonthDays - i;
-    cellsHtml += `
-      <div class="cat-cal-day-cell other-month">
-        <span class="cat-day-num">${prevDayNum}</span>
-      </div>
-    `;
+    const d = prevMonthLastDate - i;
+    const pm = m === 1 ? 12 : m - 1;
+    const py = m === 1 ? y - 1 : y;
+    const dateStr = `${py}-${String(pm).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    cells.push({ day: d, fullDate: dateStr, isOther: true });
   }
 
-  // 이번 달 날짜들
   for (let d = 1; d <= daysInMonth; d++) {
-    const dayStr = String(d).padStart(2, '0');
-    const monthStr = String(month).padStart(2, '0');
-    const fullDate = `${year}-${monthStr}-${dayStr}`;
+    const dateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    cells.push({ day: d, fullDate: dateStr, isOther: false });
+  }
 
-    const dateObj = new Date(year, month - 1, d);
-    const dayOfWeek = dateObj.getDay();
+  const remainder = (7 - (cells.length % 7)) % 7;
+  for (let i = 1; i <= remainder; i++) {
+    const nm = m === 12 ? 1 : m + 1;
+    const ny = m === 12 ? y + 1 : y;
+    const dateStr = `${ny}-${String(nm).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+    cells.push({ day: i, fullDate: dateStr, isOther: true });
+  }
 
-    let cellClass = 'cat-cal-day-cell';
-    if (dayOfWeek === 0) cellClass += ' sun';
-    else if (dayOfWeek === 6) cellClass += ' sat';
+  const schedules = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
 
-    // 오늘 하이라이트 (2026-10-14 또는 실제 오늘)
-    if (fullDate === '2026-10-14') {
-      cellClass += ' today';
-    }
+  let html = '';
+  cells.forEach((cell, idx) => {
+    const dayOfWeek = idx % 7;
+    let dayClass = '';
+    if (dayOfWeek === 0) dayClass = 'sun';
+    else if (dayOfWeek === 6) dayClass = 'sat';
 
-    if (fullDate === CatDashboardState.selectedDate) {
-      cellClass += ' selected';
-    }
+    const isToday = cell.fullDate === '2026-10-14';
+    const isSelected = cell.fullDate === CatDashboardState.selectedDate;
 
-    // 활성화된 국가들의 연휴 검색
-    let holidayTags = '';
-    let dayHolidayList = [];
+    let classes = ['cat-cal-day-cell'];
+    if (cell.isOther) classes.push('other-month');
+    if (isToday) classes.push('today');
+    if (isSelected) classes.push('selected');
+    if (dayClass) classes.push(dayClass);
 
+    // 연휴 태그
+    let holidayTags = [];
     CatDashboardState.activeCountries.forEach(cCode => {
-      const cMeta = CAT_HOLIDAYS_DB[cCode];
-      if (cMeta && cMeta.holidays && cMeta.holidays[fullDate]) {
-        const hName = cMeta.holidays[fullDate];
-        dayHolidayList.push(`[${cCode}] ${hName}`);
-        holidayTags += `
-          <div class="cat-cal-holiday-tag ${cMeta.tagClass}" title="[${cMeta.name}] ${hName}">
-            ${hName.length > 3 ? hName.slice(0, 3) + '..' : hName}
-          </div>
-        `;
+      const cInfo = CAT_HOLIDAYS_DB[cCode];
+      if (cInfo && cInfo.holidays[cell.fullDate]) {
+        holidayTags.push({ name: cInfo.holidays[cell.fullDate], tagClass: cInfo.tagClass, cCode: cCode });
       }
     });
 
-    const holidayTooltip = dayHolidayList.length > 0 ? dayHolidayList.join(' / ') : '';
+    // 일정 표시
+    const hasSchedule = schedules.some(s => s.date === cell.fullDate);
 
-    cellsHtml += `
-      <div class="${cellClass}" onclick="selectCatDate('${fullDate}')" title="${fullDate} ${holidayTooltip}">
-        <span class="cat-day-num">${d}</span>
+    html += `
+      <div class="${classes.join(' ')}" onclick="selectCatCalDate('${cell.fullDate}')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="cat-day-num">${cell.day}</span>
+          ${hasSchedule ? '<span style="width:5px; height:5px; border-radius:50%; background:#3b82f6;"></span>' : ''}
+        </div>
         <div class="cat-holiday-badge-wrap">
-          ${holidayTags}
+          ${holidayTags.slice(0, 2).map(h => `<span class="cat-cal-holiday-tag ${h.tagClass}" title="${h.name}">${h.name}</span>`).join('')}
+          ${holidayTags.length > 2 ? `<span style="font-size:8.5px; color:var(--text-muted);">+${holidayTags.length - 2}</span>` : ''}
         </div>
       </div>
     `;
-  }
+  });
 
-  // 다음 달 날짜들 (그리드 완성 35 또는 42칸)
-  const totalCells = firstDay + daysInMonth;
-  const remainingCells = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7);
-  for (let n = 1; n <= remainingCells; n++) {
-    cellsHtml += `
-      <div class="cat-cal-day-cell other-month">
-        <span class="cat-day-num">${n}</span>
-      </div>
-    `;
-  }
-
-  grid.innerHTML = cellsHtml;
+  grid.innerHTML = html;
 }
-window.renderCatCalendar = renderCatCalendar;
 
 function changeCatCalMonth(delta) {
   let y = CatDashboardState.year;
@@ -12613,6 +12932,9 @@ function changeCatCalMonth(delta) {
   CatDashboardState.year = y;
   CatDashboardState.month = m;
   renderCatCalendar(y, m);
+  if (CatDashboardState.currentView === 'calendar') {
+    renderCatCalendarFullView();
+  }
 }
 window.changeCatCalMonth = changeCatCalMonth;
 
@@ -12621,100 +12943,84 @@ function goToCatCalToday() {
   CatDashboardState.month = 10;
   CatDashboardState.selectedDate = '2026-10-14';
   renderCatCalendar(2026, 10);
-  selectCatDate('2026-10-14');
+  renderCatTodos();
+  if (CatDashboardState.currentView === 'calendar') {
+    renderCatCalendarFullView();
+  }
 }
 window.goToCatCalToday = goToCatCalToday;
 
-function selectCatDate(fullDate) {
+function selectCatCalDate(fullDate) {
   CatDashboardState.selectedDate = fullDate;
   renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
-
-  // 할일 위젯의 날짜 태그 갱신 (예: 10월 14일)
-  const parts = fullDate.split('-');
-  if (parts.length === 3) {
-    const tag = document.getElementById('catTodoDateTag');
-    if (tag) tag.textContent = `${parseInt(parts[1], 10)}월 ${parseInt(parts[2], 10)}일`;
-  }
-
   renderCatTodos();
+  if (CatDashboardState.currentView === 'calendar') {
+    renderCatCalendarFullView();
+  }
 }
-window.selectCatDate = selectCatDate;
+window.selectCatCalDate = selectCatCalDate;
 
 // -------------------------------------------------------------
-// 3. 날씨 위젯 렌더링
+// 6. 날씨 위젯
 // -------------------------------------------------------------
 function renderCatWeather(cityKey) {
   const cityData = CAT_WEATHER_DB[cityKey] || CAT_WEATHER_DB.seoul;
-  CatDashboardState.selectedCity = cityKey;
-  localStorage.setItem('kostat_cat_city', cityKey);
-
   const curText = document.getElementById('catWeatherCurText');
   if (curText) {
     curText.textContent = `(현재: ${cityData.curTemp} ${cityData.condition} 최고 ${cityData.high} / 최저 ${cityData.low})`;
   }
 
-  const forecastList = document.getElementById('catWeatherForecastList');
-  if (!forecastList) return;
+  const listEl = document.getElementById('catWeatherForecastList');
+  if (!listEl) return;
 
-  const getWeatherSvg = (type) => {
-    if (type === 'sun') {
-      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-    } else if (type === 'cloud-sun') {
-      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round"><path d="M12 2v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M20 12h2"></path><path d="M19.07 4.93l-1.41 1.41"></path><path d="M15.95 9.05A6 6 0 0 0 7 15h11a4 4 0 0 0-.05-5.95z"></path></svg>`;
-    } else if (type === 'rain') {
-      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"><line x1="16" y1="13" x2="16" y2="21"></line><line x1="8" y1="13" x2="8" y2="21"></line><line x1="12" y1="15" x2="12" y2="23"></line><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>`;
-    } else {
-      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>`;
-    }
+  const iconSvg = {
+    sun: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>',
+    cloud: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>',
+    'cloud-sun': '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M12 2v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M20 12h2"></path><path d="M19.07 4.93l-1.41 1.41"></path><path d="M15.5 17a5.5 5.5 0 1 0-7.8-7.8"></path><path d="M17 17a5 5 0 0 0-9.9-1"></path></svg>',
+    rain: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#3b82f6" stroke-width="2"><line x1="16" y1="13" x2="16" y2="21"></line><line x1="8" y1="13" x2="8" y2="21"></line><line x1="12" y1="15" x2="12" y2="23"></line><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>'
   };
 
-  let html = '';
-  cityData.forecast.forEach(item => {
-    html += `
-      <div class="cat-weather-item">
-        <span class="cat-weather-item-date">${item.date}</span>
-        ${getWeatherSvg(item.icon)}
-        <span class="cat-weather-item-temp">${item.high}</span>
-        <span class="cat-weather-item-low">${item.low}</span>
-      </div>
-    `;
-  });
-  forecastList.innerHTML = html;
+  listEl.innerHTML = cityData.forecast.map(item => `
+    <div class="cat-weather-item">
+      <span class="cat-weather-item-date">${item.date}</span>
+      <div style="height:26px; display:flex; align-items:center;">${iconSvg[item.icon] || iconSvg.sun}</div>
+      <span class="cat-weather-item-temp">${item.high}</span>
+      <span class="cat-weather-item-low">${item.low}</span>
+    </div>
+  `).join('');
 }
-window.renderCatWeather = renderCatWeather;
 
 function onCatCityChange(cityKey) {
+  CatDashboardState.selectedCity = cityKey;
+  localStorage.setItem('kostat_cat_city', cityKey);
   renderCatWeather(cityKey);
 }
 window.onCatCityChange = onCatCityChange;
 
 // -------------------------------------------------------------
-// 4. 빠른 입력 위젯
+// 7. 빠른 입력 위젯
 // -------------------------------------------------------------
 function selectCatQuickType(type, btn) {
-  CatDashboardState.quickType = type;
-  document.querySelectorAll('.cat-quick-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#widgetQuickInput .cat-quick-tab').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  CatDashboardState.quickType = type;
 
-  const textarea = document.getElementById('catQuickInputText');
-  if (textarea) {
-    if (type === 'schedule') textarea.placeholder = '「내일 3시 회의」처럼 말하듯 적어요';
-    else if (type === 'todo') textarea.placeholder = '할일 내용을 적어주세요 (엔터로 빠른 등록)';
-    else if (type === 'note') textarea.placeholder = '자유로운 업무 메모나 미팅 기록을 남겨보세요';
-    else if (type === 'bookmark') textarea.placeholder = '사이트명: https://url 형태로 적어주세요';
-  }
+  const t = document.getElementById('catQuickInputText');
+  if (!t) return;
+  const phMap = {
+    schedule: '「내일 3시 회의」처럼 말하듯 적어요',
+    todo: '오늘 해야 할 업무 체크리스트를 적어보세요',
+    note: '기억하고 싶은 사내 업무 메모를 적어보세요',
+    bookmark: '자주 찾는 웹사이트 링크 URL을 입력하세요'
+  };
+  t.placeholder = phMap[type] || phMap.schedule;
 }
 window.selectCatQuickType = selectCatQuickType;
 
 function saveCatQuickInput() {
-  const textarea = document.getElementById('catQuickInputText');
-  if (!textarea) return;
-  const val = textarea.value.trim();
-  if (!val) {
-    alert('내용을 입력해주세요.');
-    return;
-  }
-
+  const t = document.getElementById('catQuickInputText');
+  if (!t || !t.value.trim()) return;
+  const val = t.value.trim();
   const type = CatDashboardState.quickType;
 
   if (type === 'todo') {
@@ -12727,7 +13033,7 @@ function saveCatQuickInput() {
     });
     localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
     renderCatTodos();
-    markCatOnboardingComplete('todo');
+    renderCatManageTodosList();
   } else if (type === 'schedule') {
     const list = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
     list.unshift({
@@ -12738,6 +13044,8 @@ function saveCatQuickInput() {
     });
     localStorage.setItem('kostat_cat_schedules', JSON.stringify(list));
     renderCatUpcoming();
+    renderCatCalendarDays();
+    renderCatCalendarFullView();
   } else if (type === 'note') {
     const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
     const nowStr = `${CatDashboardState.selectedDate} 10:00`;
@@ -12748,27 +13056,26 @@ function saveCatQuickInput() {
     });
     localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
     renderCatNotes();
+    renderCatManageNotesList();
     markCatOnboardingComplete('note');
   } else if (type === 'bookmark') {
-    const parts = val.split(':');
-    const title = parts[0].trim() || '바로가기';
-    const url = (parts.slice(1).join(':').trim()) || 'https://';
     const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
     list.push({
       id: 'b_' + Date.now(),
-      title: title,
-      url: url
+      title: val.length > 20 ? val.slice(0, 20) + '...' : val,
+      url: val.startsWith('http') ? val : 'https://' + val
     });
     localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
     renderCatBookmarks();
+    renderCatManageBookmarksList();
   }
 
-  textarea.value = '';
+  t.value = '';
 }
 window.saveCatQuickInput = saveCatQuickInput;
 
 // -------------------------------------------------------------
-// 5. 앞으로의 일정 위젯
+// 8. 앞으로의 일정 & 캘린더 상세 뷰
 // -------------------------------------------------------------
 function renderCatUpcoming() {
   const container = document.getElementById('catUpcomingList');
@@ -12787,9 +13094,9 @@ function renderCatUpcoming() {
       <div class="cat-list-item">
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:11px; font-weight:700; color:#60a5fa; background:rgba(59,130,246,0.18); padding:2px 6px; border-radius:4px; border:1px solid rgba(59,130,246,0.3);">${dateFormatted}</span>
-          <span style="font-weight:600; color:var(--text-primary, #f1f5f9);">${escapeHtml(item.title)}</span>
+          <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(item.title)}</span>
         </div>
-        <button onclick="deleteCatSchedule('${item.id}')" style="background:transparent; border:none; color:var(--text-muted, #64748b); cursor:pointer; font-size:14px;">&times;</button>
+        <button onclick="deleteCatSchedule('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
       </div>
     `;
   });
@@ -12803,16 +13110,125 @@ function deleteCatSchedule(id) {
   list = list.filter(it => it.id !== id);
   localStorage.setItem('kostat_cat_schedules', JSON.stringify(list));
   renderCatUpcoming();
+  renderCatCalendarDays();
+  renderCatCalendarFullView();
 }
 window.deleteCatSchedule = deleteCatSchedule;
 
-function showAllCatSchedules() {
-  alert('앞으로의 전체 일정 목록을 조회합니다.');
+function renderCatCalendarFullView() {
+  const dateTitle = document.getElementById('catCalDetailDateTitle');
+  if (dateTitle) dateTitle.textContent = `${CatDashboardState.selectedDate} 일정 및 휴무`;
+
+  const detailList = document.getElementById('catCalDetailEventsList');
+  if (detailList) {
+    const schedules = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
+    const daySchedules = schedules.filter(s => s.date === CatDashboardState.selectedDate);
+
+    const dayHolidays = [];
+    CatDashboardState.activeCountries.forEach(cCode => {
+      const cInfo = CAT_HOLIDAYS_DB[cCode];
+      if (cInfo && cInfo.holidays[CatDashboardState.selectedDate]) {
+        dayHolidays.push({ name: cInfo.holidays[CatDashboardState.selectedDate], country: cInfo.name, code: cCode, tagClass: cInfo.tagClass });
+      }
+    });
+
+    const badge = document.getElementById('catCalDetailCountBadge');
+    if (badge) badge.textContent = `${daySchedules.length + dayHolidays.length}건`;
+
+    let html = '<div class="cat-item-list">';
+    dayHolidays.forEach(h => {
+      html += `
+        <div class="cat-list-item" style="border-left:3px solid #3b82f6;">
+          <span class="cat-cal-holiday-tag ${h.tagClass}">[${h.country}] ${h.name}</span>
+          <span style="font-size:11.5px; color:var(--text-muted);">공식 공휴일</span>
+        </div>
+      `;
+    });
+    daySchedules.forEach(s => {
+      html += `
+        <div class="cat-list-item">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:11px; font-weight:700; color:#60a5fa; background:rgba(59,130,246,0.18); padding:2px 6px; border-radius:4px;">${s.time || '종일'}</span>
+            <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(s.title)}</span>
+          </div>
+          <button onclick="deleteCatSchedule('${s.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
+        </div>
+      `;
+    });
+    if (dayHolidays.length === 0 && daySchedules.length === 0) {
+      html += `<div class="cat-item-empty">선택된 일자에 일정이 없습니다.</div>`;
+    }
+    html += '</div>';
+    detailList.innerHTML = html;
+  }
+
+  const allList = document.getElementById('catCalAllSchedulesList');
+  if (allList) {
+    const searchInput = document.getElementById('catCalScheduleSearchInput');
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    let schedules = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
+    if (query) {
+      schedules = schedules.filter(s => (s.title && s.title.toLowerCase().includes(query)) || (s.date && s.date.includes(query)));
+    }
+    if (schedules.length === 0) {
+      allList.innerHTML = '<div class="cat-item-empty">등록된 일정이 없습니다.</div>';
+    } else {
+      allList.innerHTML = schedules.map(s => `
+        <div class="cat-list-item" style="margin-bottom:6px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:11px; font-weight:700; color:#60a5fa; background:rgba(59,130,246,0.18); padding:2px 6px; border-radius:4px;">${s.date} ${s.time || ''}</span>
+            <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(s.title)}</span>
+          </div>
+          <button onclick="deleteCatSchedule('${s.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
+        </div>
+      `).join('');
+    }
+  }
 }
-window.showAllCatSchedules = showAllCatSchedules;
+window.renderCatCalendarFullView = renderCatCalendarFullView;
+
+function openCatScheduleAddModal(date) {
+  const dInput = document.getElementById('catSchedInputDate');
+  if (dInput) dInput.value = date || CatDashboardState.selectedDate;
+  const m = document.getElementById('modalCatScheduleAdd');
+  if (m) m.classList.add('active');
+}
+window.openCatScheduleAddModal = openCatScheduleAddModal;
+
+function closeCatScheduleAddModal() {
+  const m = document.getElementById('modalCatScheduleAdd');
+  if (m) m.classList.remove('active');
+}
+window.closeCatScheduleAddModal = closeCatScheduleAddModal;
+
+function submitCatScheduleModal() {
+  const dInput = document.getElementById('catSchedInputDate');
+  const tInput = document.getElementById('catSchedInputTime');
+  const titleInput = document.getElementById('catSchedInputTitle');
+  if (!titleInput || !titleInput.value.trim()) {
+    alert('일정 제목을 입력해주세요.');
+    return;
+  }
+  const list = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
+  list.push({
+    id: 's_' + Date.now(),
+    date: (dInput && dInput.value) || CatDashboardState.selectedDate,
+    time: (tInput && tInput.value) || '10:00',
+    title: titleInput.value.trim()
+  });
+  list.sort((a, b) => a.date.localeCompare(b.date));
+  localStorage.setItem('kostat_cat_schedules', JSON.stringify(list));
+  titleInput.value = '';
+  closeCatScheduleAddModal();
+
+  renderCatUpcoming();
+  renderCatCalendarDays();
+  renderCatCalendarFullView();
+}
+window.submitCatScheduleModal = submitCatScheduleModal;
 
 // -------------------------------------------------------------
-// 6. 기록(노트) 위젯
+// 9. 기록(노트) 위젯 & 전용 보드
 // -------------------------------------------------------------
 function renderCatNotes() {
   const container = document.getElementById('catNotesList');
@@ -12829,10 +13245,10 @@ function renderCatNotes() {
     html += `
       <div class="cat-list-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
         <div style="display:flex; justify-content:space-between; width:100%;">
-          <span style="font-size:10.5px; color:var(--text-muted, #64748b); font-weight:600;">${item.date}</span>
-          <button onclick="deleteCatNote('${item.id}')" style="background:transparent; border:none; color:var(--text-muted, #64748b); cursor:pointer; font-size:14px;">&times;</button>
+          <span style="font-size:10.5px; color:var(--text-muted); font-weight:600;">${item.date}</span>
+          <button onclick="deleteCatNote('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
         </div>
-        <div style="font-size:12.5px; color:var(--text-primary, #f1f5f9); line-height:1.35;">${escapeHtml(item.text)}</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.35;">${escapeHtml(item.text)}</div>
       </div>
     `;
   });
@@ -12846,6 +13262,7 @@ function deleteCatNote(id) {
   list = list.filter(it => it.id !== id);
   localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
   renderCatNotes();
+  renderCatManageNotesList();
 }
 window.deleteCatNote = deleteCatNote;
 
@@ -12874,24 +13291,75 @@ function submitCatNoteModal() {
   t.value = '';
   closeCatNoteModal();
   renderCatNotes();
+  renderCatManageNotesList();
   markCatOnboardingComplete('note');
 }
 window.submitCatNoteModal = submitCatNoteModal;
 
+function renderCatManageNotesList() {
+  const grid = document.getElementById('catManageNotesGrid');
+  if (!grid) return;
+  const searchInput = document.getElementById('catManageNoteSearch');
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+  let notes = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
+  const countEl = document.getElementById('catNotesCount');
+  if (countEl) countEl.textContent = notes.length;
+
+  if (query) {
+    notes = notes.filter(n => (n.text && n.text.toLowerCase().includes(query)) || (n.date && n.date.includes(query)));
+  }
+
+  if (notes.length === 0) {
+    grid.innerHTML = '<div class="cat-item-empty" style="grid-column:1/-1;">등록된 기록이 없습니다.</div>';
+    return;
+  }
+
+  grid.innerHTML = notes.map(item => `
+    <div class="cat-widget-card" style="padding:14px 16px; display:flex; flex-direction:column; gap:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; font-weight:600; color:var(--text-muted);">${item.date}</span>
+        <div style="display:flex; gap:6px;">
+          <button onclick="copyCatNoteText('${escapeHtml(item.text).replace(/'/g, "\\'")}')" class="cat-link-btn" style="font-size:11px;">복사</button>
+          <button onclick="deleteCatNote('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
+        </div>
+      </div>
+      <div style="font-size:13px; color:var(--text-primary); line-height:1.4; white-space:pre-wrap;">${escapeHtml(item.text)}</div>
+    </div>
+  `).join('');
+}
+window.renderCatManageNotesList = renderCatManageNotesList;
+
+function copyCatNoteText(txt) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt);
+    alert('기록 내용이 클립보드에 복사되었습니다.');
+  }
+}
+window.copyCatNoteText = copyCatNoteText;
+
 // -------------------------------------------------------------
-// 7. 할일 위젯
+// 10. 할일(Todos) 위젯 & 전용 관리 센터
 // -------------------------------------------------------------
+let catCurrentTodoFilter = 'all';
+
 function renderCatTodos() {
   const container = document.getElementById('catTodoList');
-  const countBadge = document.getElementById('catTodoCountBadge');
   if (!container) return;
+
+  const dateTag = document.getElementById('catTodoDateTag');
+  if (dateTag && CatDashboardState.selectedDate) {
+    const parts = CatDashboardState.selectedDate.split('-');
+    dateTag.textContent = `${parseInt(parts[1])}월 ${parseInt(parts[2])}일`;
+  }
 
   const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
   const filtered = list.filter(it => it.date === CatDashboardState.selectedDate);
 
-  const doneCount = filtered.filter(it => it.done).length;
-  if (countBadge) {
-    countBadge.textContent = `${doneCount}/${filtered.length}`;
+  const badge = document.getElementById('catTodoCountBadge');
+  if (badge) {
+    const doneCount = filtered.filter(it => it.done).length;
+    badge.textContent = `${doneCount}/${filtered.length}`;
   }
 
   if (filtered.length === 0) {
@@ -12905,9 +13373,9 @@ function renderCatTodos() {
       <div class="cat-list-item">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
           <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatTodo('${item.id}')" style="accent-color:#2563eb;">
-          <span style="font-size:12.5px; ${item.done ? 'text-decoration:line-through; color:var(--text-muted, #64748b);' : 'color:var(--text-primary, #f1f5f9);'}">${escapeHtml(item.text)}</span>
+          <span style="font-size:12.5px; ${item.done ? 'text-decoration:line-through; color:var(--text-muted);' : 'color:var(--text-primary);'}">${escapeHtml(item.text)}</span>
         </label>
-        <button onclick="deleteCatTodo('${item.id}')" style="background:transparent; border:none; color:var(--text-muted, #64748b); cursor:pointer; font-size:14px;">&times;</button>
+        <button onclick="deleteCatTodo('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
       </div>
     `;
   });
@@ -12929,6 +13397,7 @@ function addCatTodo() {
   localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
   input.value = '';
   renderCatTodos();
+  renderCatManageTodosList();
 }
 window.addCatTodo = addCatTodo;
 
@@ -12939,6 +13408,7 @@ function toggleCatTodo(id) {
     target.done = !target.done;
     localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
     renderCatTodos();
+    renderCatManageTodosList();
     if (target.done) markCatOnboardingComplete('todo');
   }
 }
@@ -12949,11 +13419,105 @@ function deleteCatTodo(id) {
   list = list.filter(it => it.id !== id);
   localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
   renderCatTodos();
+  renderCatManageTodosList();
 }
 window.deleteCatTodo = deleteCatTodo;
 
+function setCatTodoFilter(filterKey, btn) {
+  catCurrentTodoFilter = filterKey;
+  document.querySelectorAll('[data-todo-filter]').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCatManageTodosList();
+}
+window.setCatTodoFilter = setCatTodoFilter;
+
+function renderCatManageTodosList() {
+  const container = document.getElementById('catManageTodosFullList');
+  if (!container) return;
+
+  const searchInput = document.getElementById('catManageTodoSearch');
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+  const allTodos = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+
+  const todayStr = CatDashboardState.selectedDate || '2026-10-14';
+  const statAll = allTodos.length;
+  const statToday = allTodos.filter(t => t.date === todayStr).length;
+  const statPending = allTodos.filter(t => !t.done).length;
+  const statDone = allTodos.filter(t => t.done).length;
+
+  const elAll = document.getElementById('catStatTodoAll'); if (elAll) elAll.textContent = statAll;
+  const elToday = document.getElementById('catStatTodoToday'); if (elToday) elToday.textContent = statToday;
+  const elPending = document.getElementById('catStatTodoPending'); if (elPending) elPending.textContent = statPending;
+  const elDone = document.getElementById('catStatTodoDone'); if (elDone) elDone.textContent = statDone;
+
+  let filtered = allTodos;
+  if (catCurrentTodoFilter === 'today') {
+    filtered = filtered.filter(t => t.date === todayStr);
+  } else if (catCurrentTodoFilter === 'pending') {
+    filtered = filtered.filter(t => !t.done);
+  } else if (catCurrentTodoFilter === 'done') {
+    filtered = filtered.filter(t => t.done);
+  }
+
+  if (query) {
+    filtered = filtered.filter(t => (t.text && t.text.toLowerCase().includes(query)) || (t.date && t.date.includes(query)));
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="cat-item-empty">일치하는 할일이 없습니다.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => `
+    <div class="cat-list-item" style="padding:10px 14px;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; flex:1;">
+        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatManageTodo('${item.id}')" style="accent-color:#2563eb; width:16px; height:16px;">
+        <span style="font-size:11px; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.06); color:var(--text-muted);">${item.date || '날짜 미지정'}</span>
+        <span style="font-size:13px; ${item.done ? 'text-decoration:line-through; color:var(--text-muted);' : 'color:var(--text-primary);'}">${escapeHtml(item.text)}</span>
+      </label>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <button onclick="deleteCatManageTodo('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:16px;">&times;</button>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderCatManageTodosList = renderCatManageTodosList;
+
+function submitCatManageTodo() {
+  const textInput = document.getElementById('catManageTodoText');
+  const dateInput = document.getElementById('catManageTodoDate');
+  if (!textInput || !textInput.value.trim()) return;
+
+  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+  list.unshift({
+    id: 't_' + Date.now(),
+    date: (dateInput && dateInput.value) || CatDashboardState.selectedDate,
+    text: textInput.value.trim(),
+    done: false
+  });
+  localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
+  textInput.value = '';
+
+  renderCatManageTodosList();
+  renderCatTodos();
+}
+window.submitCatManageTodo = submitCatManageTodo;
+
+function toggleCatManageTodo(id) {
+  toggleCatTodo(id);
+  renderCatManageTodosList();
+}
+window.toggleCatManageTodo = toggleCatManageTodo;
+
+function deleteCatManageTodo(id) {
+  deleteCatTodo(id);
+  renderCatManageTodosList();
+}
+window.deleteCatManageTodo = deleteCatManageTodo;
+
 // -------------------------------------------------------------
-// 8. 북마크 위젯
+// 11. 북마크 위젯 & 전용 보관함
 // -------------------------------------------------------------
 function renderCatBookmarks() {
   const container = document.getElementById('catBookmarkList');
@@ -12971,7 +13535,7 @@ function renderCatBookmarks() {
       <div class="cat-bookmark-card" onclick="window.open('${item.url}', '_blank')">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span class="cat-bm-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</span>
-          <button onclick="event.stopPropagation(); deleteCatBookmark('${item.id}')" style="background:transparent; border:none; color:#cbd5e0; cursor:pointer; font-size:12px;">&times;</button>
+          <button onclick="event.stopPropagation(); deleteCatBookmark('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:12px;">&times;</button>
         </div>
         <span class="cat-bm-url">${escapeHtml(item.url)}</span>
       </div>
@@ -13012,6 +13576,7 @@ function submitCatBookmark() {
   u.value = '';
   closeCatBookmarkModal();
   renderCatBookmarks();
+  renderCatManageBookmarksList();
 }
 window.submitCatBookmark = submitCatBookmark;
 
@@ -13020,11 +13585,46 @@ function deleteCatBookmark(id) {
   list = list.filter(it => it.id !== id);
   localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
   renderCatBookmarks();
+  renderCatManageBookmarksList();
 }
 window.deleteCatBookmark = deleteCatBookmark;
 
+function renderCatManageBookmarksList() {
+  const grid = document.getElementById('catManageBookmarksGrid');
+  if (!grid) return;
+  const searchInput = document.getElementById('catManageBmSearch');
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+  let list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
+  const countEl = document.getElementById('catBookmarksCount');
+  if (countEl) countEl.textContent = list.length;
+
+  if (query) {
+    list = list.filter(b => (b.title && b.title.toLowerCase().includes(query)) || (b.url && b.url.toLowerCase().includes(query)));
+  }
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="cat-item-empty" style="grid-column:1/-1;">등록된 북마크가 없습니다.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(item => `
+    <div class="cat-bookmark-card" style="padding:14px 16px;" onclick="window.open('${item.url}', '_blank')">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <span class="cat-bm-title" style="font-size:13px;">${escapeHtml(item.title)}</span>
+        <button onclick="event.stopPropagation(); deleteCatBookmark('${item.id}'); renderCatManageBookmarksList();" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
+      </div>
+      <span class="cat-bm-url" style="margin-top:4px;">${escapeHtml(item.url)}</span>
+      <div style="margin-top:8px; display:flex; justify-content:flex-end;">
+        <span style="font-size:10.5px; color:#60a5fa;">새 탭 열기 &rarr;</span>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderCatManageBookmarksList = renderCatManageBookmarksList;
+
 // -------------------------------------------------------------
-// 9. 온보딩 첫 걸음 카드
+// 12. 온보딩 첫 걸음 카드 상태
 // -------------------------------------------------------------
 function restoreCatOnboardingState() {
   const card = document.getElementById('catOnboardingCard');
@@ -13099,7 +13699,7 @@ function dismissCatOnboarding() {
 window.dismissCatOnboarding = dismissCatOnboarding;
 
 // -------------------------------------------------------------
-// 10. 위젯 노출/숨김 관리 모달
+// 13. 위젯 노출/숨김 관리 모달
 // -------------------------------------------------------------
 function openCatWidgetModal() {
   const m = document.getElementById('modalCatWidgetSettings');
@@ -13144,7 +13744,7 @@ function toggleCatWidgetVisibility(widgetKey, isChecked) {
 window.toggleCatWidgetVisibility = toggleCatWidgetVisibility;
 
 function applyCatWidgetVisibility() {
-  const widgetMap = {
+  const idMap = {
     weather: 'widgetWeather',
     quickInput: 'widgetQuickInput',
     upcoming: 'widgetUpcoming',
@@ -13153,8 +13753,8 @@ function applyCatWidgetVisibility() {
     bookmarks: 'widgetBookmarks'
   };
 
-  Object.keys(widgetMap).forEach(k => {
-    const el = document.getElementById(widgetMap[k]);
+  Object.keys(idMap).forEach(k => {
+    const el = document.getElementById(idMap[k]);
     if (el) {
       el.style.display = (CatDashboardState.activeWidgets[k] !== false) ? '' : 'none';
     }
@@ -13162,11 +13762,12 @@ function applyCatWidgetVisibility() {
 }
 
 // -------------------------------------------------------------
-// 11. 빠른 추가 모달 (+)
+// 14. 빠른 추가 모달 (+)
 // -------------------------------------------------------------
 function openCatQuickAddModal() {
   const m = document.getElementById('modalCatQuickAdd');
   if (m) m.classList.add('active');
+  setCatModalType('schedule');
 }
 window.openCatQuickAddModal = openCatQuickAddModal;
 
@@ -13177,14 +13778,24 @@ function closeCatQuickAddModal() {
 window.closeCatQuickAddModal = closeCatQuickAddModal;
 
 function setCatModalType(type) {
-  CatDashboardState.modalQuickType = type;
-  ['Schedule', 'Todo', 'Note', 'Bm'].forEach(t => {
-    const btn = document.getElementById(`catModalTab${t}`);
-    if (btn) btn.classList.remove('active');
+  ['Schedule', 'Todo', 'Note', 'Bm'].forEach(name => {
+    const b = document.getElementById('catModalTab' + name);
+    if (b) b.classList.remove('active');
   });
-  const activeBtn = document.getElementById(`catModalTab${type.charAt(0).toUpperCase() + type.slice(1)}`) ||
-                    (type === 'bookmark' ? document.getElementById('catModalTabBm') : null);
-  if (activeBtn) activeBtn.classList.add('active');
+  const map = { schedule: 'Schedule', todo: 'Todo', note: 'Note', bookmark: 'Bm' };
+  const target = document.getElementById('catModalTab' + (map[type] || 'Schedule'));
+  if (target) target.classList.add('active');
+  CatDashboardState.modalQuickType = type;
+
+  const t = document.getElementById('catQuickModalInputText');
+  if (!t) return;
+  const phMap = {
+    schedule: '일정 제목 및 시간 (예: 내일 오후 2시 고객사 미팅)',
+    todo: '할일 내용을 입력하세요',
+    note: '기록할 업무 메모를 입력하세요',
+    bookmark: '북마크 링크 URL (예: https://example.com)'
+  };
+  t.placeholder = phMap[type] || '내용을 입력하세요.';
 }
 window.setCatModalType = setCatModalType;
 
@@ -13199,68 +13810,33 @@ function submitCatQuickModal() {
     list.unshift({ id: 't_' + Date.now(), date: CatDashboardState.selectedDate, text: val, done: false });
     localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
     renderCatTodos();
-    markCatOnboardingComplete('todo');
+    renderCatManageTodosList();
   } else if (type === 'schedule') {
     const list = JSON.parse(localStorage.getItem('kostat_cat_schedules') || '[]');
     list.unshift({ id: 's_' + Date.now(), date: CatDashboardState.selectedDate, time: '14:00', title: val });
     localStorage.setItem('kostat_cat_schedules', JSON.stringify(list));
     renderCatUpcoming();
+    renderCatCalendarDays();
+    renderCatCalendarFullView();
   } else if (type === 'note') {
     const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
     list.unshift({ id: 'n_' + Date.now(), date: `${CatDashboardState.selectedDate} 15:00`, text: val });
     localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
     renderCatNotes();
+    renderCatManageNotesList();
     markCatOnboardingComplete('note');
   } else if (type === 'bookmark') {
     const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
-    list.push({ id: 'b_' + Date.now(), title: val, url: 'https://' });
+    list.push({ id: 'b_' + Date.now(), title: val.length > 20 ? val.slice(0, 20) + '...' : val, url: val.startsWith('http') ? val : 'https://' + val });
     localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
     renderCatBookmarks();
+    renderCatManageBookmarksList();
   }
 
   t.value = '';
   closeCatQuickAddModal();
 }
 window.submitCatQuickModal = submitCatQuickModal;
-
-// -------------------------------------------------------------
-// 12. 미니 사이드바 네비게이션 필터 & 토글
-// -------------------------------------------------------------
-function catNavFilter(type, btn) {
-  document.querySelectorAll('.cat-nav-item').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-
-  if (type === 'calendar') {
-    const cal = document.getElementById('widgetCalendar');
-    if (cal) cal.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else if (type === 'todo') {
-    const td = document.getElementById('widgetTodos');
-    if (td) td.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (type === 'note') {
-    const nt = document.getElementById('widgetNotes');
-    if (nt) nt.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (type === 'bookmark') {
-    const bm = document.getElementById('widgetBookmarks');
-    if (bm) bm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else {
-    const main = document.querySelector('.catlendar-main');
-    if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-window.catNavFilter = catNavFilter;
-
-function toggleCatSidebar(btn) {
-  const sb = document.querySelector('.catlendar-sidebar');
-  if (!sb) return;
-  if (sb.style.width === '0px') {
-    sb.style.width = '68px';
-    sb.style.display = 'flex';
-  } else {
-    sb.style.width = '0px';
-    sb.style.display = 'none';
-  }
-}
-window.toggleCatSidebar = toggleCatSidebar;
 
 // Catlendar 초기 자동 로딩
 if (document.readyState === 'loading') {
