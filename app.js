@@ -4679,9 +4679,107 @@ function printContractReview(projectNo) {
       border-left: 1.44pt solid #000000 !important;
       box-sizing: border-box !important;
     }
-    .kostat-contract-print-sheet .contract-approval-box {
-      border-left: 1.44pt solid #000000 !important;
-      box-sizing: border-box !important;
+    .kostat-contract-print-sheet .contract-unified-header-table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: fixed !important;
+      margin: 0 !important;
+      border-bottom: 1.44pt solid #000000 !important;
+      background: #ffffff !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table th,
+    .kostat-contract-print-sheet .contract-unified-header-table td {
+      border-right: 0.72pt solid #000000 !important;
+      border-bottom: 0.72pt solid #000000 !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table tr:last-child th,
+    .kostat-contract-print-sheet .contract-unified-header-table tr:last-child td {
+      border-bottom: none !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table th:last-child,
+    .kostat-contract-print-sheet .contract-unified-header-table td:last-child {
+      border-right: none !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table .contract-title-cell {
+      height: 65.3pt !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      border-right: 0.72pt solid #000000 !important;
+      border-bottom: 0.72pt solid #000000 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table .appr-header-row th {
+      font-family: 'Arial', sans-serif !important;
+      font-size: 8.5pt !important;
+      font-weight: bold !important;
+      letter-spacing: -0.2pt !important;
+      white-space: nowrap !important;
+      color: #000000 !important;
+      background: #ffffff !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table .appr-header-row th.written-by-th {
+      font-size: 7.2pt !important;
+      letter-spacing: -0.3pt !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table .appr-sign-row td {
+      height: 48.6pt !important;
+      position: relative !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table .slash-cell {
+      position: relative !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table .slash-cell svg {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table th.meta-label {
+      font-family: 'Malgun Gothic', 'Dotum', sans-serif !important;
+      font-size: 11pt !important;
+      font-weight: bold !important;
+      letter-spacing: 1pt !important;
+      white-space: nowrap !important;
+      color: #000000 !important;
+      background: #ffffff !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table td.meta-val {
+      font-size: 10pt !important;
+      padding: 0 4pt !important;
+      color: #000000 !important;
+      background: #ffffff !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table .appr-date-cell {
+      font-size: 9pt !important;
+      font-family: 'Arial', sans-serif !important;
+      color: #000000 !important;
+      background: #ffffff !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table tr.header-row-1 {
+      height: 16.6pt !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table tr.header-row-2 {
+      height: 17.1pt !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table tr.header-row-3 {
+      height: 18.9pt !important;
+    }
+    .kostat-contract-print-sheet .contract-unified-header-table tr.header-row-3 td {
+      text-align: left !important;
+      padding-left: 8pt !important;
+      font-size: 10.5pt !important;
+      color: #000000 !important;
+      background: #ffffff !important;
+      border-right: none !important;
     }
   `;
 
@@ -4712,55 +4810,8 @@ function printContractReview(projectNo) {
   // 공식 계약 ( 검토 ) 의뢰서 (F-P03-02-R.0) 원본 ERP 규격 인쇄 서식 렌더링
   printContainer.innerHTML = `
     <div class="kostat-contract-print-sheet">
-      <!-- 1. 결재란 (우측 상단 200.3pt x 65.3pt) -->
-      <div class="contract-approval-box" style="border-left: 3.5pt solid #000000 !important; box-sizing: border-box !important;">
-        <table class="contract-approval-table">
-          <colgroup>
-            <col style="width: 50.1pt;">
-            <col style="width: 50.3pt;">
-            <col style="width: 49.6pt;">
-            <col style="width: 50.3pt;">
-          </colgroup>
-          <thead>
-            <tr style="height: 16.7pt;">
-              <th style="font-size: 7.8pt; letter-spacing: -0.3pt;">WRITTEN BY</th>
-              <th style="font-size: 7.8pt; letter-spacing: -0.3pt;">REVIEWED BY</th>
-              <th></th>
-              <th style="font-size: 7.8pt; letter-spacing: -0.3pt;">APPROVED</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="sign-row" style="height: 48.6pt;">
-              <td></td>
-              <td class="slash-cell" style="padding:0; overflow:hidden;">
-                <div style="position:relative; width:100%; height:48.6pt;">
-                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute; left:0; top:0; width:100%; height:100%;">
-                    <line x1="5" y1="95" x2="95" y2="5" stroke="#000" stroke-width="1.2" />
-                  </svg>
-                </div>
-              </td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 2. 상단 공식 서식 타이틀 (맑은 고딕 Ultra Bold 21pt, 괄호 내 정중앙 배치) -->
-      <div class="contract-top-row">
-        <div class="contract-doc-title" style="display:flex; align-items:center; justify-content:center; font-family:'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important; font-size:21pt !important; font-weight:900 !important; -webkit-text-stroke:0.35pt #000000 !important; color:#000000 !important;">
-          <span>계약</span>
-          <div class="contract-paren-box" style="display:inline-flex; align-items:center; justify-content:center; margin:0 10pt;">
-            <span class="paren-char" style="font-family:'Arial', 'Malgun Gothic', sans-serif !important; font-size:25pt !important; font-weight:900 !important; line-height:1 !important; -webkit-text-stroke:0.35pt #000000 !important;">(</span>
-            <span class="paren-content" style="display:inline-flex; align-items:center; justify-content:center; padding:0 16pt; font-family:'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important; font-size:21pt !important; font-weight:900 !important; -webkit-text-stroke:0.35pt #000000 !important; text-align:center;">${displayReq}</span>
-            <span class="paren-char" style="font-family:'Arial', 'Malgun Gothic', sans-serif !important; font-size:25pt !important; font-weight:900 !important; line-height:1 !important; -webkit-text-stroke:0.35pt #000000 !important;">)</span>
-          </div>
-          <span>의뢰서</span>
-        </div>
-      </div>
-
-      <!-- 3. 문서 헤더 메타 테이블 (3개 행 일체형 그리드) -->
-      <table class="contract-header-table">
+      <!-- 1. 일체형 공식 헤더 & 결재란 (10열 통일 그리드) -->
+      <table class="contract-unified-header-table">
         <colgroup>
           <col style="width: 66.8pt;">
           <col style="width: 123.0pt;">
@@ -4774,29 +4825,66 @@ function printContractReview(projectNo) {
           <col style="width: 50.3pt;">
         </colgroup>
         <tbody>
-          <tr class="header-row-1">
-            <th>작성부서</th>
-            <td>${escapeHtml(deptName)}</td>
-            <th>작성일자</th>
-            <td>${escapeHtml(rawDate)}</td>
-            <th>작 성 자</th>
-            <td>${escapeHtml(found.username || '')}</td>
-            <td style="font-size:9pt; font-family:'Arial';">${escapeHtml(dateFormatted)}</td>
-            <td style="font-size:9pt; font-family:'Arial';">${escapeHtml(dateFormatted)}</td>
-            <td style="font-size:9pt; font-family:'Arial';">//</td>
-            <td style="font-size:9pt; font-family:'Arial'; border-right:none;">//</td>
+          <!-- Row 1: 타이틀(rowspan 2) + 결재란 헤더(WRITTEN BY, REVIEWED BY, APPROVED) -->
+          <tr class="appr-header-row" style="height: 16.7pt;">
+            <td colspan="6" rowspan="2" class="contract-title-cell">
+              <div class="contract-doc-title" style="display:flex; align-items:center; justify-content:center; font-family:'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important; font-size:21pt !important; font-weight:900 !important; -webkit-text-stroke:0.35pt #000000 !important; color:#000000 !important;">
+                <span>계약</span>
+                <div class="contract-paren-box" style="display:inline-flex; align-items:center; justify-content:center; margin:0 10pt;">
+                  <span class="paren-char" style="font-family:'Arial', 'Malgun Gothic', sans-serif !important; font-size:25pt !important; font-weight:900 !important; line-height:1 !important; -webkit-text-stroke:0.35pt #000000 !important;">(</span>
+                  <span class="paren-content" style="display:inline-flex; align-items:center; justify-content:center; padding:0 16pt; font-family:'Malgun Gothic', 'Dotum', 'Apple SD Gothic Neo', sans-serif !important; font-size:21pt !important; font-weight:900 !important; -webkit-text-stroke:0.35pt #000000 !important; text-align:center;">${displayReq}</span>
+                  <span class="paren-char" style="font-family:'Arial', 'Malgun Gothic', sans-serif !important; font-size:25pt !important; font-weight:900 !important; line-height:1 !important; -webkit-text-stroke:0.35pt #000000 !important;">)</span>
+                </div>
+                <span>의뢰서</span>
+              </div>
+            </td>
+            <th class="written-by-th" style="height: 16.7pt; font-size: 7.2pt; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: -0.3pt; white-space: nowrap; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000; text-align: center;">WRITTEN BY</th>
+            <th colspan="2" style="height: 16.7pt; font-size: 8.5pt; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: -0.2pt; white-space: nowrap; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000; text-align: center;">REVIEWED BY</th>
+            <th style="height: 16.7pt; font-size: 8.5pt; font-family: 'Arial', sans-serif; font-weight: bold; letter-spacing: -0.2pt; white-space: nowrap; border-right: none; border-bottom: 0.72pt solid #000000; text-align: center;">APPROVED</th>
           </tr>
-          <tr class="header-row-2">
-            <th>의뢰부서</th>
-            <td>${escapeHtml(found.req_dept || '')}</td>
-            <td colspan="2"></td>
-            <th>고&nbsp;&nbsp;&nbsp;&nbsp;객</th>
-            <td>${escapeHtml(found.customer || '')}</td>
-            <td colspan="4" style="border-right:none;"></td>
+
+          <!-- Row 2: 서명란 (높이 48.6pt, 2번째 셀 대각선 사선) -->
+          <tr class="appr-sign-row" style="height: 48.6pt;">
+            <td style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;"></td>
+            <td class="slash-cell" style="padding:0; overflow:hidden; position:relative; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">
+              <div style="position:relative; width:100%; height:48.6pt;">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute; left:0; top:0; width:100%; height:100%;">
+                  <line x1="5" y1="95" x2="95" y2="5" stroke="#000000" stroke-width="1.0" />
+                </svg>
+              </div>
+            </td>
+            <td style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;"></td>
+            <td style="border-right: none; border-bottom: 0.72pt solid #000000;"></td>
           </tr>
-          <tr class="header-row-3">
-            <th>검토안건</th>
-            <td colspan="9">${escapeHtml(found.req_head || '')}</td>
+
+          <!-- Row 3: 작성부서/작성일자/작성자 메타 1행 + 결재일자 4개 열 일체 정렬 -->
+          <tr class="header-row-1" style="height: 16.6pt;">
+            <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">작성부서</th>
+            <td class="meta-val" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(deptName)}</td>
+            <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">작성일자</th>
+            <td class="meta-val" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(rawDate)}</td>
+            <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">작 성 자</th>
+            <td class="meta-val" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(found.username || '')}</td>
+            <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(dateFormatted)}</td>
+            <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(dateFormatted)}</td>
+            <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">//</td>
+            <td class="appr-date-cell" style="font-size:9pt; font-family:'Arial'; border-right: none; border-bottom: 0.72pt solid #000000;">//</td>
+          </tr>
+
+          <!-- Row 4: 의뢰부서/고객 메타 2행 + 우측 여백 -->
+          <tr class="header-row-2" style="height: 17.1pt;">
+            <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">의뢰부서</th>
+            <td class="meta-val" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(found.req_dept || '')}</td>
+            <td colspan="2" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;"></td>
+            <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">고&nbsp;&nbsp;&nbsp;&nbsp;객</th>
+            <td class="meta-val" style="border-right: 0.72pt solid #000000; border-bottom: 0.72pt solid #000000;">${escapeHtml(found.customer || '')}</td>
+            <td colspan="4" style="border-right: none; border-bottom: 0.72pt solid #000000;"></td>
+          </tr>
+
+          <!-- Row 5: 검토안건 메타 3행 -->
+          <tr class="header-row-3" style="height: 18.9pt;">
+            <th class="meta-label" style="border-right: 0.72pt solid #000000; border-bottom: none;">검토안건</th>
+            <td colspan="9" style="text-align: left; padding-left: 8pt; font-size: 10.5pt; color: #000000; border-right: none; border-bottom: none;">${escapeHtml(found.req_head || '')}</td>
           </tr>
         </tbody>
       </table>
