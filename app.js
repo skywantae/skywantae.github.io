@@ -11594,6 +11594,7 @@ function handleLandingSignIn() {
       showToast('Authentication successful.', 'success');
       setTimeout(() => {
         syncTabVisibility();
+        switchViewerCard('viewDashboard');
       }, 300);
     })
     .catch(err => {
@@ -12393,13 +12394,18 @@ const CAT_WEATHER_DB = {
 // ==========================================================================
 
 const DEFAULT_CAT_LAYOUT = {
-  colLeft: ['calendar'],
-  colRight: ['weather', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
+  colFull: [],
+  colLeft: ['calendar', 'widgetSalesProjects', 'widgetSalesQuality'],
+  colRight: ['weather', 'widgetSalesSamples', 'widgetSalesBriefing', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
 };
 
 const CAT_WIDGET_NAMES = {
   calendar: '캘린더 & 글로벌 연휴',
   weather: '실시간 날씨 예보',
+  widgetSalesProjects: '영업사항 - 프로젝트 개발 현황',
+  widgetSalesSamples: '영업사항 - 해외영업 샘플 현황',
+  widgetSalesQuality: '영업사항 - Quality Issue (품질 불량)',
+  widgetSalesBriefing: '영업사항 - 고객사별 현황 브리핑',
   quickInput: '빠른 입력',
   upcoming: '앞으로의 일정',
   notes: '기록 (메모)',
@@ -12418,13 +12424,19 @@ let CatDashboardState = {
   currentView: 'all',
   activeCountries: ['KR', 'CN', 'JP', 'PH', 'TW', 'US', 'MY', 'SG', 'VN'],
   activeWidgets: {
+    calendar: true,
     weather: true,
+    widgetSalesProjects: true,
+    widgetSalesSamples: true,
+    widgetSalesQuality: true,
+    widgetSalesBriefing: true,
     quickInput: true,
     upcoming: true,
     notes: true,
     todos: true,
     bookmarks: true
-  }
+  },
+  widgetSizes: {}
 };
 
 // -------------------------------------------------------------
@@ -12533,6 +12545,21 @@ function loadCatUserPreferences(user, profile) {
     localStorage.setItem('kostat_cat_start_tag_' + userKey, profile.dashboardStartTag);
   }
 
+  // 6. 위젯 크기 설정 복원
+  let widgetSizes = null;
+  if (profile && profile.dashboardWidgetSizes && typeof profile.dashboardWidgetSizes === 'object') {
+    widgetSizes = profile.dashboardWidgetSizes;
+  } else {
+    try {
+      const saved = localStorage.getItem('kostat_cat_widget_sizes_' + userKey) || localStorage.getItem('kostat_cat_widget_sizes');
+      if (saved) widgetSizes = JSON.parse(saved);
+    } catch (_) {}
+  }
+  if (widgetSizes) {
+    CatDashboardState.widgetSizes = Object.assign({}, widgetSizes);
+    localStorage.setItem('kostat_cat_widget_sizes_' + userKey, JSON.stringify(CatDashboardState.widgetSizes));
+  }
+
   // DOM 반영
   applyCatLayoutDOM(layout);
   applyCatWidgetVisibility();
@@ -12572,6 +12599,10 @@ function initCatlendarDashboard() {
   renderCatNotes();
   renderCatTodos();
   renderCatBookmarks();
+  if (typeof renderCatSalesProjects === 'function') renderCatSalesProjects();
+  if (typeof renderCatSalesSamples === 'function') renderCatSalesSamples();
+  if (typeof renderCatSalesQuality === 'function') renderCatSalesQuality();
+  if (typeof renderCatSalesBriefing === 'function') renderCatSalesBriefing();
   applyCatWidgetVisibility();
 }
 window.initCatlendarDashboard = initCatlendarDashboard;
@@ -12775,8 +12806,63 @@ function resetCatStartTitle() {
 window.resetCatStartTitle = resetCatStartTitle;
 
 // -------------------------------------------------------------
-// 3. 위젯 레이아웃 순서 및 위치 자유 변경 엔진
+// 3. 위젯 크기 조절 & 전폭/1열 변경 & 레이아웃 순서 관리 엔진
 // -------------------------------------------------------------
+function getCatWidgetSize(widgetId) {
+  return (CatDashboardState.widgetSizes && CatDashboardState.widgetSizes[widgetId]) || 'normal';
+}
+window.getCatWidgetSize = getCatWidgetSize;
+
+function setCatWidgetSize(widgetId, size) {
+  const userKey = getCatUserKey();
+  if (!CatDashboardState.widgetSizes) CatDashboardState.widgetSizes = {};
+  CatDashboardState.widgetSizes[widgetId] = size;
+  localStorage.setItem('kostat_cat_widget_sizes_' + userKey, JSON.stringify(CatDashboardState.widgetSizes));
+  localStorage.setItem('kostat_cat_widget_sizes', JSON.stringify(CatDashboardState.widgetSizes));
+  syncCatUserPreferencesCloud({ dashboardWidgetSizes: CatDashboardState.widgetSizes });
+  applyCatWidgetSizeDOM(widgetId, size);
+}
+window.setCatWidgetSize = setCatWidgetSize;
+
+function cycleCatWidgetHeight(widgetId) {
+  const cur = getCatWidgetSize(widgetId);
+  const next = cur === 'normal' ? 'large' : (cur === 'large' ? 'compact' : 'normal');
+  setCatWidgetSize(widgetId, next);
+  const labelMap = { compact: '크기: 소형', normal: '크기: 보통', large: '크기: 대형' };
+  const btn = document.querySelector(`.cat-widget-card[data-widget-id="${widgetId}"] .cat-height-btn`);
+  if (btn) btn.textContent = labelMap[next] || '크기: 보통';
+  showToast(`${CAT_WIDGET_NAMES[widgetId] || widgetId} 크기가 [${labelMap[next]}]으로 변경되었습니다.`, 'info');
+}
+window.cycleCatWidgetHeight = cycleCatWidgetHeight;
+
+function toggleCatWidgetWidth(widgetId) {
+  const layout = getCatLayoutOrder();
+  if (!layout.colFull) layout.colFull = [];
+  if (!layout.colLeft) layout.colLeft = [];
+  if (!layout.colRight) layout.colRight = [];
+
+  if (layout.colFull.includes(widgetId)) {
+    layout.colFull = layout.colFull.filter(id => id !== widgetId);
+    layout.colRight.push(widgetId);
+    showToast(`${CAT_WIDGET_NAMES[widgetId] || widgetId} 위젯이 1열 표준 너비로 축소되었습니다.`, 'info');
+  } else {
+    layout.colLeft = layout.colLeft.filter(id => id !== widgetId);
+    layout.colRight = layout.colRight.filter(id => id !== widgetId);
+    layout.colFull.push(widgetId);
+    showToast(`${CAT_WIDGET_NAMES[widgetId] || widgetId} 위젯이 전폭(2열)으로 확장되었습니다.`, 'info');
+  }
+  saveCatLayoutOrder(layout);
+}
+window.toggleCatWidgetWidth = toggleCatWidgetWidth;
+
+function applyCatWidgetSizeDOM(widgetId, size) {
+  const el = document.querySelector(`.cat-widget-card[data-widget-id="${widgetId}"]`);
+  if (!el) return;
+  el.classList.remove('cat-size-compact', 'cat-size-normal', 'cat-size-large');
+  el.classList.add(`cat-size-${size || 'normal'}`);
+}
+window.applyCatWidgetSizeDOM = applyCatWidgetSizeDOM;
+
 function getCatLayoutOrder() {
   const userKey = getCatUserKey();
   try {
@@ -12784,6 +12870,7 @@ function getCatLayoutOrder() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed.colLeft) && Array.isArray(parsed.colRight)) {
+        if (!Array.isArray(parsed.colFull)) parsed.colFull = [];
         return parsed;
       }
     }
@@ -12800,11 +12887,22 @@ function saveCatLayoutOrder(layout) {
 }
 
 function applyCatLayoutDOM(layout) {
+  const colFullTop = document.getElementById('catColFullTop');
   const colLeft = document.getElementById('catColLeft');
   const colRight = document.getElementById('catColRight');
   if (!colLeft || !colRight) return;
 
   layout = layout || getCatLayoutOrder();
+  if (!layout.colFull) layout.colFull = [];
+  if (!layout.colLeft) layout.colLeft = [];
+  if (!layout.colRight) layout.colRight = [];
+
+  if (colFullTop) {
+    layout.colFull.forEach(wId => {
+      const el = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"]`);
+      if (el) colFullTop.appendChild(el);
+    });
+  }
 
   layout.colLeft.forEach(wId => {
     const el = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"]`);
@@ -12815,12 +12913,33 @@ function applyCatLayoutDOM(layout) {
     const el = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"]`);
     if (el) colRight.appendChild(el);
   });
+
+  // 위젯 크기 스타일 및 툴바 텍스트 일괄 적용
+  Object.keys(CAT_WIDGET_NAMES).forEach(wId => {
+    const size = getCatWidgetSize(wId);
+    applyCatWidgetSizeDOM(wId, size);
+
+    const isFull = layout.colFull && layout.colFull.includes(wId);
+    const wBtn = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"] .cat-width-btn`);
+    if (wBtn) {
+      wBtn.textContent = isFull ? '1열' : '전폭';
+      wBtn.title = isFull ? '1열 표준 너비로 축소' : '전폭 2열로 확장';
+    }
+    const hBtn = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"] .cat-height-btn`);
+    if (hBtn) {
+      const labelMap = { compact: '크기: 소형', normal: '크기: 보통', large: '크기: 대형' };
+      hBtn.textContent = labelMap[size] || '크기: 보통';
+    }
+  });
 }
 window.applyCatLayoutDOM = applyCatLayoutDOM;
 
 function moveCatWidget(widgetId, delta) {
   const layout = getCatLayoutOrder();
-  let colKey = layout.colLeft.includes(widgetId) ? 'colLeft' : (layout.colRight.includes(widgetId) ? 'colRight' : null);
+  if (!layout.colFull) layout.colFull = [];
+  let colKey = layout.colFull.includes(widgetId) ? 'colFull' :
+               (layout.colLeft.includes(widgetId) ? 'colLeft' :
+               (layout.colRight.includes(widgetId) ? 'colRight' : null));
   if (!colKey) return;
   const arr = layout[colKey];
   const idx = arr.indexOf(widgetId);
@@ -12837,11 +12956,15 @@ window.moveCatWidget = moveCatWidget;
 
 function swapCatWidgetColumn(widgetId) {
   const layout = getCatLayoutOrder();
+  if (!layout.colFull) layout.colFull = [];
   if (layout.colLeft.includes(widgetId)) {
     layout.colLeft = layout.colLeft.filter(id => id !== widgetId);
     layout.colRight.push(widgetId);
   } else if (layout.colRight.includes(widgetId)) {
     layout.colRight = layout.colRight.filter(id => id !== widgetId);
+    layout.colLeft.push(widgetId);
+  } else if (layout.colFull.includes(widgetId)) {
+    layout.colFull = layout.colFull.filter(id => id !== widgetId);
     layout.colLeft.push(widgetId);
   }
   saveCatLayoutOrder(layout);
@@ -12850,26 +12973,38 @@ window.swapCatWidgetColumn = swapCatWidgetColumn;
 
 function openCatLayoutModal() {
   const layout = getCatLayoutOrder();
+  if (!layout.colFull) layout.colFull = [];
+  if (!layout.colLeft) layout.colLeft = [];
+  if (!layout.colRight) layout.colRight = [];
+
+  const listFull = document.getElementById('catLayoutListFull');
   const listL = document.getElementById('catLayoutListLeft');
   const listR = document.getElementById('catLayoutListRight');
   if (!listL || !listR) return;
 
-  const renderCol = (arr, isLeft) => {
-    if (arr.length === 0) return '<div class="cat-item-empty" style="padding:10px;">위젯 없음</div>';
-    return arr.map((wId, i) => `
-      <div class="cat-layout-item">
-        <span style="font-weight:600;">${CAT_WIDGET_NAMES[wId] || wId}</span>
-        <div class="cat-layout-item-btns">
+  const renderCol = (arr, colType) => {
+    if (arr.length === 0) return '<div class="cat-item-empty" style="padding:10px;">배치된 위젯 없음</div>';
+    return arr.map((wId, i) => {
+      const size = getCatWidgetSize(wId);
+      const sizeLabel = size === 'compact' ? '소' : (size === 'large' ? '대' : '보통');
+      return `
+      <div class="cat-layout-item" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:rgba(30,41,59,0.5); border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+        <span style="font-weight:600; font-size:12.5px;">${CAT_WIDGET_NAMES[wId] || wId}</span>
+        <div class="cat-layout-item-btns" style="display:flex; gap:4px; align-items:center;">
           <button class="cat-move-btn" onclick="moveCatWidget('${wId}', -1); openCatLayoutModal();" ${i === 0 ? 'disabled style="opacity:0.3;"' : ''} title="위로">▲</button>
           <button class="cat-move-btn" onclick="moveCatWidget('${wId}', 1); openCatLayoutModal();" ${i === arr.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="아래로">▼</button>
-          <button class="cat-move-btn" onclick="swapCatWidgetColumn('${wId}'); openCatLayoutModal();" title="${isLeft ? '우측 열로 이동' : '좌측 열로 이동'}">⇄</button>
+          <button class="cat-move-btn" onclick="toggleCatWidgetWidth('${wId}'); openCatLayoutModal();" title="${colType === 'full' ? '1열로 축소' : '전폭(2열)으로 확장'}">${colType === 'full' ? '1열' : '전폭'}</button>
+          ${colType !== 'full' ? `<button class="cat-move-btn" onclick="swapCatWidgetColumn('${wId}'); openCatLayoutModal();" title="반대 열로 이동">⇄</button>` : ''}
+          <button class="cat-move-btn" onclick="cycleCatWidgetHeight('${wId}'); openCatLayoutModal();" title="크기 변경 (소/중/대)">${sizeLabel}</button>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   };
 
-  listL.innerHTML = renderCol(layout.colLeft, true);
-  listR.innerHTML = renderCol(layout.colRight, false);
+  if (listFull) listFull.innerHTML = renderCol(layout.colFull, 'full');
+  listL.innerHTML = renderCol(layout.colLeft, 'left');
+  listR.innerHTML = renderCol(layout.colRight, 'right');
 
   const m = document.getElementById('modalCatLayoutSettings');
   if (m) m.classList.add('active');
@@ -12883,8 +13018,17 @@ function closeCatLayoutModal() {
 window.closeCatLayoutModal = closeCatLayoutModal;
 
 function resetCatLayoutOrder() {
-  saveCatLayoutOrder(JSON.parse(JSON.stringify(DEFAULT_CAT_LAYOUT)));
+  const userKey = getCatUserKey();
+  localStorage.removeItem('kostat_cat_layout_order_' + userKey);
+  localStorage.removeItem('kostat_cat_layout_order');
+  localStorage.removeItem('kostat_cat_widget_sizes_' + userKey);
+  localStorage.removeItem('kostat_cat_widget_sizes');
+  CatDashboardState.widgetSizes = {};
+  const def = JSON.parse(JSON.stringify(DEFAULT_CAT_LAYOUT));
+  saveCatLayoutOrder(def);
+  syncCatUserPreferencesCloud({ dashboardLayout: def, dashboardWidgetSizes: {} });
   openCatLayoutModal();
+  showToast('대시보드 레이아웃 및 크기가 기본값으로 초기화되었습니다.', 'info');
 }
 window.resetCatLayoutOrder = resetCatLayoutOrder;
 
@@ -13852,7 +13996,12 @@ function openCatWidgetModal() {
   if (!m || !listContainer) return;
 
   const widgetLabels = {
+    calendar: '캘린더 & 글로벌 연휴 위젯',
     weather: '날씨 예보 위젯',
+    widgetSalesProjects: '영업사항 - 프로젝트 개발 현황 위젯',
+    widgetSalesSamples: '영업사항 - 해외영업 샘플 현황 위젯',
+    widgetSalesQuality: '영업사항 - Quality Issue 위젯',
+    widgetSalesBriefing: '영업사항 - 고객사 브리핑 위젯',
     quickInput: '빠른 입력 위젯',
     upcoming: '앞으로의 일정 위젯',
     notes: '기록(메모) 위젯',
@@ -13893,7 +14042,12 @@ window.toggleCatWidgetVisibility = toggleCatWidgetVisibility;
 
 function applyCatWidgetVisibility() {
   const idMap = {
+    calendar: 'widgetCalendar',
     weather: 'widgetWeather',
+    widgetSalesProjects: 'widgetSalesProjects',
+    widgetSalesSamples: 'widgetSalesSamples',
+    widgetSalesQuality: 'widgetSalesQuality',
+    widgetSalesBriefing: 'widgetSalesBriefing',
     quickInput: 'widgetQuickInput',
     upcoming: 'widgetUpcoming',
     notes: 'widgetNotes',
@@ -13987,6 +14141,191 @@ function submitCatQuickModal() {
 window.submitCatQuickModal = submitCatQuickModal;
 
 // Catlendar 초기 자동 로딩
+
+
+// -------------------------------------------------------------
+// 15. 영업사항 연동 렌더링 & 서브탭 즉시 전환 엔진
+// -------------------------------------------------------------
+function goToSalesTab(subtab) {
+  switchViewerCard('viewSalesNotes');
+  setTimeout(() => {
+    const iframe = document.getElementById('salesNotesIframe');
+    if (iframe && iframe.contentWindow) {
+      try {
+        if (typeof iframe.contentWindow.switchBizSubtab === 'function') {
+          const btnId = subtab === 'project' ? 'btnSubtabProject' :
+                        (subtab === 'sample' ? 'btnSubtabSample' :
+                        (subtab === 'quality' ? 'btnSubtabQuality' : 'btnSubtabReport'));
+          const btn = iframe.contentDocument ? iframe.contentDocument.getElementById(btnId) : null;
+          iframe.contentWindow.switchBizSubtab(subtab, btn);
+        }
+      } catch (_) {}
+    }
+  }, 200);
+}
+window.goToSalesTab = goToSalesTab;
+
+function renderCatSalesProjects(filterText) {
+  const tbody = document.getElementById('catSalesProjTbody');
+  const countBadge = document.getElementById('catSalesProjCountBadge');
+  if (!tbody) return;
+
+  const db = window.LIVE_DB || {};
+  let allProjects = [];
+  (db.members || []).forEach(m => {
+    (m.projects || []).forEach(p => {
+      allProjects.push({ ...p, memberName: m.name, memberId: m.id });
+    });
+  });
+
+  if (countBadge) countBadge.textContent = `${allProjects.length}건`;
+
+  if (filterText) {
+    const q = filterText.toLowerCase().trim();
+    allProjects = allProjects.filter(p => 
+      (p.customer && p.customer.toLowerCase().includes(q)) ||
+      (p.pn && p.pn.toLowerCase().includes(q)) ||
+      (p.po_no && p.po_no.toLowerCase().includes(q)) ||
+      (p.item && p.item.toLowerCase().includes(q))
+    );
+  }
+
+  if (allProjects.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:#94a3b8;">등록된 프로젝트가 없거나 검색 결과가 없습니다.</td></tr>';
+    return;
+  }
+
+  const pillClass = (tt) => {
+    if (!tt) return 'new';
+    const s = tt.toLowerCase();
+    if (s.includes('close') || s.includes('완료')) return 'close';
+    if (s.includes('progress') || s.includes('진행')) return 'in-progress';
+    if (s.includes('hold') || s.includes('보류')) return 'hold';
+    return 'new';
+  };
+
+  tbody.innerHTML = allProjects.slice(0, 15).map(p => `
+    <tr onclick="goToSalesTab('project')" title="영업사항 프로젝트 탭으로 이동">
+      <td style="font-weight:700; color:#60a5fa;">${p.customer || '-'}</td>
+      <td style="color:#cbd5e1;">${p.country || 'PH'}</td>
+      <td style="color:#cbd5e1;">${p.item || '-'}</td>
+      <td style="font-family:monospace; font-weight:600; color:#f8fafc;">${p.pn || '-'}</td>
+      <td><span class="cat-status-pill ${pillClass(p.tool_type)}">${p.tool_type || 'New'}</span></td>
+      <td style="color:#94a3b8;">${p.po_no || '-'}</td>
+      <td style="color:#94a3b8;">${p.ship_date || '-'}</td>
+    </tr>
+  `).join('');
+}
+window.renderCatSalesProjects = renderCatSalesProjects;
+
+function renderCatSalesSamples() {
+  const container = document.getElementById('catSalesSampleList');
+  if (!container) return;
+
+  const samples = window.KOSTAT_OVERSEAS_SAMPLES_DATA || [
+    { customer: 'TONGHSING', item: 'IC Tray', pn: 'KS-871591', date: '2025-09-17', status: '승인 완료' },
+    { customer: 'TONGHSING', item: 'TF Tray', pn: 'KS-M8376', date: '2026-03-04', status: '진행중' },
+    { customer: 'TONGHSING', item: 'PS Carrier', pn: 'KS-1612-845', date: '2026-05-27', status: '승인 완료' },
+    { customer: 'TONGHSING', item: 'PS Carrier', pn: 'KS-2416-792', date: '07월 10일', status: '승인 완료' },
+    { customer: 'TONGHSING', item: 'PS Carrier', pn: 'KS-2416-797', date: '09월 17일', status: '승인 완료' },
+    { customer: 'SONY', item: 'IC Tray', pn: 'KS-880220', date: '09월 15일', status: '승인 완료' }
+  ];
+
+  container.innerHTML = samples.slice(0, 5).map(s => `
+    <div class="cat-sales-card-item" onclick="goToSalesTab('sample')" title="영업사항 샘플 리스트로 이동">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:700; color:#60a5fa; font-size:12.5px;">${s.customer || '-'}</span>
+        <span class="cat-status-pill ${s.status && s.status.includes('승인') ? 'close' : 'in-progress'}">${s.status || '진행중'}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1;">
+        <span>${s.item || '-'} &middot; <strong style="color:#f1f5f9;">${s.pn || '-'}</strong></span>
+        <span style="color:#94a3b8;">${s.date || s.request_date || '-'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderCatSalesSamples = renderCatSalesSamples;
+
+function renderCatSalesQuality() {
+  const container = document.getElementById('catSalesQualityList');
+  const countBadge = document.getElementById('catSalesQualityCountBadge');
+  if (!container) return;
+
+  const db = window.LIVE_DB || {};
+  let issues = [];
+  (db.members || []).forEach(m => {
+    (m.quality_issues || []).forEach(q => {
+      issues.push({ ...q, memberName: m.name });
+    });
+  });
+
+  if (countBadge) countBadge.textContent = `${issues.length}건`;
+
+  if (issues.length === 0) {
+    container.innerHTML = `
+      <div class="cat-sales-card-item" onclick="goToSalesTab('quality')" style="text-align:center; padding:18px;">
+        <span style="color:#86efac; font-weight:600; font-size:12.5px;">현재 등록된 품질 불량 이슈가 없습니다.</span>
+        <span style="color:#94a3b8; font-size:11.5px; margin-top:4px;">클릭하여 Quality Issue 탭으로 바로 이동</span>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = issues.slice(0, 4).map(q => `
+    <div class="cat-sales-card-item" onclick="goToSalesTab('quality')" title="영업사항 Quality Issue 탭으로 이동">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:700; color:#f87171; font-size:12.5px;">${q.customer || '-'} [${q.defect_type || '품질 이슈'}]</span>
+        <span class="cat-status-pill ${q.status && q.status.includes('완료') ? 'close' : 'hold'}">${q.status || '조치중'}</span>
+      </div>
+      <div style="font-size:12px; color:#cbd5e1; line-height:1.4;">
+        ${q.comment || q.details || '원인 분석 및 조치 대책 수립 진행'}
+      </div>
+      <div style="font-size:11px; color:#94a3b8; display:flex; justify-content:space-between; margin-top:2px;">
+        <span>담당: ${q.memberName || '-'}</span>
+        <span>${q.date || '-'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderCatSalesQuality = renderCatSalesQuality;
+
+function renderCatSalesBriefing() {
+  const container = document.getElementById('catSalesBriefingList');
+  if (!container) return;
+
+  const briefings = [
+    {
+      region: 'Philippines (PH) - TongHsing / ATP / SSPC',
+      content: 'TongHsing 신규 20개 프로젝트(IC Tray 10건, PS Carrier 6건, Blister Mold 4건) 진행 중. 10건 이상 승인 완료 및 양산 진행 대기.',
+      date: '2026-10-15'
+    },
+    {
+      region: 'Japan (JP) - SONY / Renesas',
+      content: 'SONY 신규 트레이 금형 개발 완료 및 승인 샘플 납품 진행. Renesas 차세대 패키징 트레이 견적 협의.',
+      date: '2026-10-14'
+    },
+    {
+      region: 'Global Sales Achievement',
+      content: '9월 마감 달성률 101.0% 초과 달성. 10월 목표 대비 출하 계획 및 해외 4대 공장 재고 실시간 연동 모니터링.',
+      date: '2026-10-14'
+    }
+  ];
+
+  container.innerHTML = briefings.map(b => `
+    <div class="cat-sales-card-item" onclick="goToSalesTab('report')" title="영업사항 영업현황보고로 이동">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:700; color:#38bdf8; font-size:12.5px;">${b.region}</span>
+        <span style="font-size:11px; color:#94a3b8;">${b.date}</span>
+      </div>
+      <div style="font-size:12px; color:#cbd5e1; line-height:1.4;">
+        ${b.content}
+      </div>
+    </div>
+  `).join('');
+}
+window.renderCatSalesBriefing = renderCatSalesBriefing;
+
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); }, 200);
