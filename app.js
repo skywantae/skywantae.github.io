@@ -12424,18 +12424,19 @@ let CatDashboardState = {
   currentView: 'all',
   activeCountries: ['KR', 'CN', 'JP', 'PH', 'TW', 'US', 'MY', 'SG', 'VN'],
   activeWidgets: {
-    calendar: true,
-    weather: true,
-    widgetSalesProjects: true,
-    widgetSalesSamples: true,
-    widgetSalesQuality: true,
-    widgetSalesBriefing: true,
-    quickInput: true,
-    upcoming: true,
-    notes: true,
-    todos: true,
-    bookmarks: true
+    calendar: false,
+    weather: false,
+    widgetSalesProjects: false,
+    widgetSalesSamples: false,
+    widgetSalesQuality: false,
+    widgetSalesBriefing: false,
+    quickInput: false,
+    upcoming: false,
+    notes: false,
+    todos: false,
+    bookmarks: false
   },
+  customSizes: {},
   widgetSizes: {}
 };
 
@@ -12492,19 +12493,35 @@ function loadCatUserPreferences(user, profile) {
   }
   localStorage.setItem('kostat_cat_layout_order_' + userKey, JSON.stringify(layout));
 
-  // 2. 활성 위젯 설정 복원
+  // 2. 활성 위젯 설정 복원 (사용자가 직접 수정한 적이 있으면 복원, 없으면 클린 캔버스 유지)
   let widgets = null;
-  if (profile && profile.dashboardWidgets && typeof profile.dashboardWidgets === 'object') {
-    widgets = profile.dashboardWidgets;
-  } else {
-    try {
-      const saved = localStorage.getItem('kostat_cat_widgets_' + userKey) || localStorage.getItem('kostat_cat_widgets');
-      if (saved) widgets = JSON.parse(saved);
-    } catch (_) {}
+  const isCustomized = localStorage.getItem('kostat_cat_customized_v4_' + userKey);
+  if (isCustomized) {
+    if (profile && profile.dashboardWidgets && typeof profile.dashboardWidgets === 'object') {
+      widgets = profile.dashboardWidgets;
+    } else {
+      try {
+        const saved = localStorage.getItem('kostat_cat_widgets_' + userKey);
+        if (saved) widgets = JSON.parse(saved);
+      } catch (_) {}
+    }
   }
-  if (widgets) {
+  if (widgets && typeof widgets === 'object') {
     CatDashboardState.activeWidgets = Object.assign({}, CatDashboardState.activeWidgets, widgets);
-    localStorage.setItem('kostat_cat_widgets_' + userKey, JSON.stringify(CatDashboardState.activeWidgets));
+  } else {
+    CatDashboardState.activeWidgets = {
+      calendar: false,
+      weather: false,
+      widgetSalesProjects: false,
+      widgetSalesSamples: false,
+      widgetSalesQuality: false,
+      widgetSalesBriefing: false,
+      quickInput: false,
+      upcoming: false,
+      notes: false,
+      todos: false,
+      bookmarks: false
+    };
   }
 
   // 3. 활성 국가 연휴 칩 복원
@@ -12537,27 +12554,18 @@ function loadCatUserPreferences(user, profile) {
     if (citySelect) citySelect.value = city;
   }
 
-  // 5. 첫 걸음 위젯 커스텀 타이틀 복원
-  if (profile && profile.dashboardStartTitle) {
-    localStorage.setItem('kostat_cat_start_title_' + userKey, profile.dashboardStartTitle);
-  }
-  if (profile && profile.dashboardStartTag) {
-    localStorage.setItem('kostat_cat_start_tag_' + userKey, profile.dashboardStartTag);
-  }
-
-  // 6. 위젯 크기 설정 복원
-  let widgetSizes = null;
-  if (profile && profile.dashboardWidgetSizes && typeof profile.dashboardWidgetSizes === 'object') {
-    widgetSizes = profile.dashboardWidgetSizes;
+  // 5. 위젯 커스텀 크기(테두리 드래그 크기) 복원
+  let customSizes = null;
+  if (profile && profile.dashboardCustomSizes && typeof profile.dashboardCustomSizes === 'object') {
+    customSizes = profile.dashboardCustomSizes;
   } else {
     try {
-      const saved = localStorage.getItem('kostat_cat_widget_sizes_' + userKey) || localStorage.getItem('kostat_cat_widget_sizes');
-      if (saved) widgetSizes = JSON.parse(saved);
+      const saved = localStorage.getItem('kostat_cat_custom_sizes_' + userKey) || localStorage.getItem('kostat_cat_custom_sizes');
+      if (saved) customSizes = JSON.parse(saved);
     } catch (_) {}
   }
-  if (widgetSizes) {
-    CatDashboardState.widgetSizes = Object.assign({}, widgetSizes);
-    localStorage.setItem('kostat_cat_widget_sizes_' + userKey, JSON.stringify(CatDashboardState.widgetSizes));
+  if (customSizes && typeof customSizes === 'object') {
+    CatDashboardState.customSizes = Object.assign({}, customSizes);
   }
 
   // DOM 반영
@@ -12565,7 +12573,8 @@ function loadCatUserPreferences(user, profile) {
   applyCatWidgetVisibility();
   if (typeof renderCatCountryChips === 'function') renderCatCountryChips();
   if (typeof renderCatWeather === 'function') renderCatWeather(CatDashboardState.selectedCity);
-  if (typeof restoreCatStartTitle === 'function') restoreCatStartTitle();
+  if (typeof restoreCatCardCustomSizes === 'function') restoreCatCardCustomSizes();
+  if (typeof initCatWidgetResizing === 'function') initCatWidgetResizing();
 }
 window.loadCatUserPreferences = loadCatUserPreferences;
 
@@ -12583,13 +12592,12 @@ function initCatlendarDashboard() {
   // 초기 더미 데이터 셋업 (저장된 데이터 없을 시)
   initCatDefaultStorage();
 
-  // 온보딩 카드 상태 및 타이틀 복원
-  restoreCatOnboardingState();
-  restoreCatStartTitle();
+  // 위젯 커스텀 크기 복원 및 테두리 마우스 리사이즈 엔진 초기화
+  restoreCatCardCustomSizes();
+  initCatWidgetResizing();
 
   // 레이아웃 복원
   applyCatLayoutDOM();
-  initCatDragDrop();
 
   // 렌더링
   renderCatCountryChips();
@@ -12687,10 +12695,11 @@ function catNavFilter(type, btn) {
     renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
     renderCatCalendarFullView();
   } else {
-    // 캘린더 전용 뷰에서 벗어날 때 캘린더 위젯을 홈 레이아웃으로 복귀
+    // 캘린더 전용 뷰에서 벗어날 때 캘린더 위젯을 홈 레이아웃으로 안전하게 복귀
     if (calWidget && calWidget.parentElement && calWidget.parentElement.id === 'catFullCalContainer') {
-      if (typeof CatLayoutEngine !== 'undefined' && typeof CatLayoutEngine.applyLayout === 'function') {
-        CatLayoutEngine.applyLayout();
+      const leftCol = document.getElementById('catColLeft');
+      if (leftCol) {
+        leftCol.prepend(calWidget);
       }
     }
 
@@ -12718,6 +12727,9 @@ function catNavFilter(type, btn) {
       if (titleEl) titleEl.textContent = '대시보드';
       if (subEl) subEl.textContent = '글로벌 캘린더 & 스마트 워크스페이스';
       // 홈 위젯 최신화 동기화
+      applyCatWidgetVisibility();
+      restoreCatCardCustomSizes();
+      initCatWidgetResizing();
       renderCatUpcoming();
       renderCatNotes();
       renderCatTodos();
@@ -12745,65 +12757,137 @@ function toggleCatSidebar(btn) {
 window.toggleCatSidebar = toggleCatSidebar;
 
 // -------------------------------------------------------------
-// 2. START 첫 걸음 위젯 이름 변경 로직
+// 2. 직관적인 카드 테두리 마우스 리사이즈 엔진 (Drag-to-Resize)
 // -------------------------------------------------------------
-function restoreCatStartTitle() {
-  const userKey = getCatUserKey();
-  const title = localStorage.getItem('kostat_cat_start_title_' + userKey) || localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
-  const tag = localStorage.getItem('kostat_cat_start_tag_' + userKey) || localStorage.getItem('kostat_cat_start_tag') || 'START';
-  const tEl = document.getElementById('catOnboardingTitleText');
-  const tagEl = document.getElementById('catOnboardingTagText');
-  if (tEl) tEl.textContent = title;
-  if (tagEl) tagEl.textContent = tag;
+function initCatWidgetResizing() {
+  const cards = document.querySelectorAll('.catlendar-grid .cat-widget-card');
+  cards.forEach(card => {
+    setupCardResizeEvents(card);
+  });
 }
-window.restoreCatStartTitle = restoreCatStartTitle;
+window.initCatWidgetResizing = initCatWidgetResizing;
 
-function openCatRenameStartModal() {
-  const userKey = getCatUserKey();
-  const title = localStorage.getItem('kostat_cat_start_title_' + userKey) || localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
-  const tag = localStorage.getItem('kostat_cat_start_tag_' + userKey) || localStorage.getItem('kostat_cat_start_tag') || 'START';
-  const tInput = document.getElementById('catInputStartTitle');
-  const tagInput = document.getElementById('catInputStartTag');
-  if (tInput) tInput.value = title;
-  if (tagInput) tagInput.value = tag;
-  const m = document.getElementById('modalCatRenameStart');
-  if (m) m.classList.add('active');
-}
-window.openCatRenameStartModal = openCatRenameStartModal;
+function setupCardResizeEvents(card) {
+  if (!card || card._catResizeInitialized) return;
+  card._catResizeInitialized = true;
 
-function closeCatRenameStartModal() {
-  const m = document.getElementById('modalCatRenameStart');
-  if (m) m.classList.remove('active');
-}
-window.closeCatRenameStartModal = closeCatRenameStartModal;
+  // 우측 핸들 (좌우 너비 조절)
+  if (!card.querySelector('.cat-resize-handle-r')) {
+    const handleR = document.createElement('div');
+    handleR.className = 'cat-resize-handle cat-resize-handle-r';
+    handleR.title = '좌우로 드래그하여 카드 너비 조절';
+    card.appendChild(handleR);
+    attachHandleDrag(card, handleR, 'width');
+  }
 
-function saveCatStartTitle() {
-  const userKey = getCatUserKey();
-  const tInput = document.getElementById('catInputStartTitle');
-  const tagInput = document.getElementById('catInputStartTag');
-  const title = (tInput && tInput.value.trim()) || '첫 걸음';
-  const tag = (tagInput && tagInput.value.trim()) || 'START';
-  localStorage.setItem('kostat_cat_start_title_' + userKey, title);
-  localStorage.setItem('kostat_cat_start_tag_' + userKey, tag);
-  localStorage.setItem('kostat_cat_start_title', title);
-  localStorage.setItem('kostat_cat_start_tag', tag);
-  restoreCatStartTitle();
-  closeCatRenameStartModal();
-  syncCatUserPreferencesCloud({ dashboardStartTitle: title, dashboardStartTag: tag });
-}
-window.saveCatStartTitle = saveCatStartTitle;
+  // 하단 핸들 (상하 높이 조절)
+  if (!card.querySelector('.cat-resize-handle-b')) {
+    const handleB = document.createElement('div');
+    handleB.className = 'cat-resize-handle cat-resize-handle-b';
+    handleB.title = '상하로 드래그하여 카드 높이 조절';
+    card.appendChild(handleB);
+    attachHandleDrag(card, handleB, 'height');
+  }
 
-function resetCatStartTitle() {
-  const userKey = getCatUserKey();
-  localStorage.removeItem('kostat_cat_start_title_' + userKey);
-  localStorage.removeItem('kostat_cat_start_tag_' + userKey);
-  localStorage.removeItem('kostat_cat_start_title');
-  localStorage.removeItem('kostat_cat_start_tag');
-  restoreCatStartTitle();
-  closeCatRenameStartModal();
-  syncCatUserPreferencesCloud({ dashboardStartTitle: '첫 걸음', dashboardStartTag: 'START' });
+  // 우측 하단 모서리 핸들 (너비 및 높이 동시 조절)
+  if (!card.querySelector('.cat-resize-handle-br')) {
+    const handleBR = document.createElement('div');
+    handleBR.className = 'cat-resize-handle cat-resize-handle-br';
+    handleBR.title = '대각선으로 드래그하여 카드 크기 조절';
+    handleBR.innerHTML = '<svg viewBox="0 0 10 10" width="10" height="10" fill="currentColor" style="position:absolute; right:2px; bottom:2px; opacity:0.6;"><circle cx="8" cy="8" r="1"></circle><circle cx="5" cy="8" r="1"></circle><circle cx="8" cy="5" r="1"></circle><circle cx="2" cy="8" r="1"></circle><circle cx="5" cy="5" r="1"></circle><circle cx="8" cy="2" r="1"></circle></svg>';
+    card.appendChild(handleBR);
+    attachHandleDrag(card, handleBR, 'both');
+  }
 }
-window.resetCatStartTitle = resetCatStartTitle;
+
+function attachHandleDrag(card, handleEl, direction) {
+  handleEl.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startW = card.offsetWidth;
+    const startH = card.offsetHeight;
+    const widgetId = card.getAttribute('data-widget-id') || card.id;
+
+    handleEl.classList.add('active');
+    document.body.style.userSelect = 'none';
+    if (direction === 'width') document.body.style.cursor = 'ew-resize';
+    else if (direction === 'height') document.body.style.cursor = 'ns-resize';
+    else document.body.style.cursor = 'se-resize';
+
+    function onMouseMove(moveEvent) {
+      if (direction === 'width' || direction === 'both') {
+        const deltaX = moveEvent.clientX - startX;
+        const newW = Math.max(300, Math.min(window.innerWidth - 80, startW + deltaX));
+        card.style.width = newW + 'px';
+        card.style.flex = '0 0 ' + newW + 'px';
+        card.style.maxWidth = '100%';
+      }
+      if (direction === 'height' || direction === 'both') {
+        const deltaY = moveEvent.clientY - startY;
+        const newH = Math.max(160, startH + deltaY);
+        card.style.height = newH + 'px';
+        card.style.maxHeight = 'none';
+      }
+    }
+
+    function onMouseUp() {
+      handleEl.classList.remove('active');
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+
+      saveCatCardCustomSize(widgetId, card.style.width, card.style.height);
+    }
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+function saveCatCardCustomSize(widgetId, width, height) {
+  if (!widgetId) return;
+  const userKey = getCatUserKey();
+  if (!CatDashboardState.customSizes) {
+    CatDashboardState.customSizes = {};
+  }
+  CatDashboardState.customSizes[widgetId] = { width, height };
+  localStorage.setItem('kostat_cat_custom_sizes_' + userKey, JSON.stringify(CatDashboardState.customSizes));
+  localStorage.setItem('kostat_cat_custom_sizes', JSON.stringify(CatDashboardState.customSizes));
+  syncCatUserPreferencesCloud({ dashboardCustomSizes: CatDashboardState.customSizes });
+}
+window.saveCatCardCustomSize = saveCatCardCustomSize;
+
+function restoreCatCardCustomSizes() {
+  const userKey = getCatUserKey();
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem('kostat_cat_custom_sizes_' + userKey) || localStorage.getItem('kostat_cat_custom_sizes'));
+  } catch (_) {}
+
+  if (saved && typeof saved === 'object') {
+    CatDashboardState.customSizes = saved;
+    Object.keys(saved).forEach(wId => {
+      const card = document.querySelector(`.cat-widget-card[data-widget-id="${wId}"]`) || document.getElementById(wId);
+      if (card && saved[wId]) {
+        if (saved[wId].width) {
+          card.style.width = saved[wId].width;
+          card.style.flex = '0 0 ' + saved[wId].width;
+          card.style.maxWidth = '100%';
+        }
+        if (saved[wId].height) {
+          card.style.height = saved[wId].height;
+          card.style.maxHeight = 'none';
+        }
+      }
+    });
+  }
+}
+window.restoreCatCardCustomSizes = restoreCatCardCustomSizes;
 
 // -------------------------------------------------------------
 // 3. 위젯 크기 조절 & 전폭/1열 변경 & 레이아웃 순서 관리 엔진
@@ -13570,10 +13654,12 @@ window.closeCatNoteModal = closeCatNoteModal;
 function submitCatNoteModal() {
   const t = document.getElementById('catNoteModalText');
   if (!t || !t.value.trim()) return;
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
   list.unshift({
     id: 'n_' + Date.now(),
-    date: `${CatDashboardState.selectedDate} 14:00`,
+    date: dateStr,
     text: t.value.trim()
   });
   localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
@@ -13581,9 +13667,26 @@ function submitCatNoteModal() {
   closeCatNoteModal();
   renderCatNotes();
   renderCatManageNotesList();
-  markCatOnboardingComplete('note');
 }
 window.submitCatNoteModal = submitCatNoteModal;
+
+function submitCatInlineNote() {
+  const input = document.getElementById('catInlineNoteInput');
+  if (!input || !input.value.trim()) return;
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const list = JSON.parse(localStorage.getItem('kostat_cat_notes') || '[]');
+  list.unshift({
+    id: 'n_' + Date.now(),
+    date: dateStr,
+    text: input.value.trim()
+  });
+  localStorage.setItem('kostat_cat_notes', JSON.stringify(list));
+  input.value = '';
+  renderCatNotes();
+  renderCatManageNotesList();
+}
+window.submitCatInlineNote = submitCatInlineNote;
 
 function renderCatManageNotesList() {
   const grid = document.getElementById('catManageNotesGrid');
@@ -13643,7 +13746,13 @@ function renderCatTodos() {
   }
 
   const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-  const filtered = list.filter(it => it.date === CatDashboardState.selectedDate);
+  const selDate = CatDashboardState.selectedDate;
+  // 선택된 날짜의 할일 또는 아직 완료되지 않은 진행중 할일 전체 노출
+  const filtered = list.filter(it => it.date === selDate || !it.done);
+  filtered.sort((a, b) => {
+    if (a.done === b.done) return (b.id || '').localeCompare(a.id || '');
+    return a.done ? 1 : -1;
+  });
 
   const badge = document.getElementById('catTodoCountBadge');
   if (badge) {
@@ -13658,12 +13767,14 @@ function renderCatTodos() {
 
   let html = '<div class="cat-item-list">';
   filtered.forEach(item => {
+    const isToday = item.date === selDate;
     html += `
       <div class="cat-list-item">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
           <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatTodo('${item.id}')" style="accent-color:#2563eb;">
           <span style="font-size:12.5px; ${item.done ? 'text-decoration:line-through; color:var(--text-muted);' : 'color:var(--text-primary);'}">${escapeHtml(item.text)}</span>
         </label>
+        <span style="font-size:10.5px; color:var(--text-muted); margin-right:4px;">${isToday ? '오늘' : item.date}</span>
         <button onclick="deleteCatTodo('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
       </div>
     `;
@@ -13698,7 +13809,6 @@ function toggleCatTodo(id) {
     localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
     renderCatTodos();
     renderCatManageTodosList();
-    if (target.done) markCatOnboardingComplete('todo');
   }
 }
 window.toggleCatTodo = toggleCatTodo;
@@ -13854,11 +13964,15 @@ function submitCatBookmark() {
     alert('제목과 URL을 모두 입력해주세요.');
     return;
   }
+  let url = u.value.trim();
+  if (!/^https?:\/\//i.test(url)) {
+    url = 'https://' + url;
+  }
   const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
   list.push({
     id: 'b_' + Date.now(),
     title: t.value.trim(),
-    url: u.value.trim()
+    url: url
   });
   localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
   t.value = '';
@@ -13913,82 +14027,7 @@ function renderCatManageBookmarksList() {
 window.renderCatManageBookmarksList = renderCatManageBookmarksList;
 
 // -------------------------------------------------------------
-// 12. 온보딩 첫 걸음 카드 상태
-// -------------------------------------------------------------
-function restoreCatOnboardingState() {
-  const card = document.getElementById('catOnboardingCard');
-  if (!card) return;
-
-  const data = JSON.parse(localStorage.getItem('kostat_cat_onboarding') || '{}');
-  if (data.dismissed) {
-    card.style.display = 'none';
-    return;
-  }
-
-  ['todo', 'note', 'share'].forEach(key => {
-    const cb = document.getElementById(`catTask${key.charAt(0).toUpperCase() + key.slice(1)}`);
-    const st = document.getElementById(`catStatus${key.charAt(0).toUpperCase() + key.slice(1)}`);
-    if (cb && data[key]) {
-      cb.checked = true;
-      if (st) {
-        st.textContent = '완료';
-        st.classList.add('done');
-      }
-    }
-  });
-
-  if (data.todo && data.note && data.share) {
-    card.style.display = 'none';
-  }
-}
-
-function toggleCatOnboardingTask(taskKey, isChecked) {
-  const data = JSON.parse(localStorage.getItem('kostat_cat_onboarding') || '{}');
-  data[taskKey] = isChecked;
-  localStorage.setItem('kostat_cat_onboarding', JSON.stringify(data));
-
-  const st = document.getElementById(`catStatus${taskKey.charAt(0).toUpperCase() + taskKey.slice(1)}`);
-  if (st) {
-    st.textContent = isChecked ? '완료' : '아직 안 함';
-    if (isChecked) st.classList.add('done');
-    else st.classList.remove('done');
-  }
-
-  if (taskKey === 'share' && isChecked) {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      alert('대시보드 링크가 클립보드에 복사되었습니다.');
-    }
-  }
-
-  if (data.todo && data.note && data.share) {
-    setTimeout(() => {
-      const card = document.getElementById('catOnboardingCard');
-      if (card) card.style.display = 'none';
-    }, 600);
-  }
-}
-window.toggleCatOnboardingTask = toggleCatOnboardingTask;
-
-function markCatOnboardingComplete(taskKey) {
-  const cb = document.getElementById(`catTask${taskKey.charAt(0).toUpperCase() + taskKey.slice(1)}`);
-  if (cb && !cb.checked) {
-    cb.checked = true;
-    toggleCatOnboardingTask(taskKey, true);
-  }
-}
-
-function dismissCatOnboarding() {
-  const card = document.getElementById('catOnboardingCard');
-  if (card) card.style.display = 'none';
-  const data = JSON.parse(localStorage.getItem('kostat_cat_onboarding') || '{}');
-  data.dismissed = true;
-  localStorage.setItem('kostat_cat_onboarding', JSON.stringify(data));
-}
-window.dismissCatOnboarding = dismissCatOnboarding;
-
-// -------------------------------------------------------------
-// 13. 위젯 노출/숨김 관리 모달
+// 13. 위젯 노출/숨김 관리 모달 및 커스터마이징 엔진
 // -------------------------------------------------------------
 function openCatWidgetModal() {
   const m = document.getElementById('modalCatWidgetSettings');
@@ -13997,24 +14036,24 @@ function openCatWidgetModal() {
 
   const widgetLabels = {
     calendar: '캘린더 & 글로벌 연휴 위젯',
-    weather: '날씨 예보 위젯',
     widgetSalesProjects: '영업사항 - 프로젝트 개발 현황 위젯',
-    widgetSalesSamples: '영업사항 - 해외영업 샘플 현황 위젯',
     widgetSalesQuality: '영업사항 - Quality Issue 위젯',
+    widgetSalesSamples: '영업사항 - 해외영업 샘플 현황 위젯',
     widgetSalesBriefing: '영업사항 - 고객사 브리핑 위젯',
-    quickInput: '빠른 입력 위젯',
-    upcoming: '앞으로의 일정 위젯',
-    notes: '기록(메모) 위젯',
     todos: '할일 체크리스트 위젯',
-    bookmarks: '북마크 링크 위젯'
+    notes: '기록(메모) 위젯',
+    bookmarks: '북마크 링크 위젯',
+    weather: '날씨 예보 위젯',
+    upcoming: '앞으로의 일정 위젯',
+    quickInput: '빠른 입력 위젯'
   };
 
   let html = '';
   Object.keys(widgetLabels).forEach(k => {
-    const isChecked = CatDashboardState.activeWidgets[k] !== false;
+    const isChecked = CatDashboardState.activeWidgets[k] === true;
     html += `
       <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-primary, #f1f5f9); cursor:pointer;">
-        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCatWidgetVisibility('${k}', this.checked)" style="accent-color:#2563eb;">
+        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCatWidgetVisibility('${k}', this.checked)" style="accent-color:#2563eb; width:16px; height:16px;">
         <span>${widgetLabels[k]}</span>
       </label>
     `;
@@ -14032,13 +14071,64 @@ window.closeCatWidgetModal = closeCatWidgetModal;
 
 function toggleCatWidgetVisibility(widgetKey, isChecked) {
   const userKey = getCatUserKey();
-  CatDashboardState.activeWidgets[widgetKey] = isChecked;
+  CatDashboardState.activeWidgets[widgetKey] = !!isChecked;
+  localStorage.setItem('kostat_cat_customized_v4_' + userKey, 'true');
   localStorage.setItem('kostat_cat_widgets_' + userKey, JSON.stringify(CatDashboardState.activeWidgets));
   localStorage.setItem('kostat_cat_widgets', JSON.stringify(CatDashboardState.activeWidgets));
   syncCatUserPreferencesCloud({ dashboardWidgets: CatDashboardState.activeWidgets });
   applyCatWidgetVisibility();
+  initCatWidgetResizing();
 }
 window.toggleCatWidgetVisibility = toggleCatWidgetVisibility;
+
+function selectCatAllWidgets(selectAll) {
+  const userKey = getCatUserKey();
+  const keys = [
+    'calendar', 'weather', 'widgetSalesProjects', 'widgetSalesSamples',
+    'widgetSalesQuality', 'widgetSalesBriefing', 'quickInput',
+    'upcoming', 'notes', 'todos', 'bookmarks'
+  ];
+  keys.forEach(k => {
+    CatDashboardState.activeWidgets[k] = !!selectAll;
+  });
+  localStorage.setItem('kostat_cat_customized_v4_' + userKey, 'true');
+  localStorage.setItem('kostat_cat_widgets_' + userKey, JSON.stringify(CatDashboardState.activeWidgets));
+  localStorage.setItem('kostat_cat_widgets', JSON.stringify(CatDashboardState.activeWidgets));
+  syncCatUserPreferencesCloud({ dashboardWidgets: CatDashboardState.activeWidgets });
+  applyCatWidgetVisibility();
+  initCatWidgetResizing();
+  openCatWidgetModal();
+}
+window.selectCatAllWidgets = selectCatAllWidgets;
+
+function selectCatDefaultWidgets() {
+  const userKey = getCatUserKey();
+  const defaults = {
+    calendar: true,
+    widgetSalesProjects: true,
+    todos: true,
+    notes: true,
+    bookmarks: true,
+    weather: false,
+    widgetSalesSamples: false,
+    widgetSalesQuality: false,
+    widgetSalesBriefing: false,
+    quickInput: false,
+    upcoming: false
+  };
+  CatDashboardState.activeWidgets = Object.assign({}, defaults);
+  localStorage.setItem('kostat_cat_customized_v4_' + userKey, 'true');
+  localStorage.setItem('kostat_cat_widgets_' + userKey, JSON.stringify(CatDashboardState.activeWidgets));
+  localStorage.setItem('kostat_cat_widgets', JSON.stringify(CatDashboardState.activeWidgets));
+  syncCatUserPreferencesCloud({ dashboardWidgets: CatDashboardState.activeWidgets });
+  applyCatWidgetVisibility();
+  initCatWidgetResizing();
+  const modal = document.getElementById('modalCatWidgetSettings');
+  if (modal && modal.classList.contains('active')) {
+    openCatWidgetModal();
+  }
+}
+window.selectCatDefaultWidgets = selectCatDefaultWidgets;
 
 function applyCatWidgetVisibility() {
   const idMap = {
@@ -14055,13 +14145,22 @@ function applyCatWidgetVisibility() {
     bookmarks: 'widgetBookmarks'
   };
 
+  let activeCount = 0;
   Object.keys(idMap).forEach(k => {
     const el = document.getElementById(idMap[k]);
     if (el) {
-      el.style.display = (CatDashboardState.activeWidgets[k] !== false) ? '' : 'none';
+      const isVisible = CatDashboardState.activeWidgets[k] === true;
+      el.style.display = isVisible ? '' : 'none';
+      if (isVisible) activeCount++;
     }
   });
+
+  const emptyEl = document.getElementById('catEmptyDashboardNotice');
+  if (emptyEl) {
+    emptyEl.style.display = (activeCount === 0) ? 'flex' : 'none';
+  }
 }
+window.applyCatWidgetVisibility = applyCatWidgetVisibility;
 
 // -------------------------------------------------------------
 // 14. 빠른 추가 모달 (+)

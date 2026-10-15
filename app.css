@@ -4268,18 +4268,19 @@ html, body {
   color: var(--text-muted, #64748b);
 }
 
-/* 대시보드 2단 그리드 */
+/* 대시보드 유연 반응형 flex 그리드 */
 .catlendar-grid {
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 22px;
-  align-items: start;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 20px !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-@media (max-width: 1050px) {
-  .catlendar-grid {
-    grid-template-columns: 1fr;
-  }
+.cat-column,
+.cat-full-container {
+  display: contents !important;
 }
 
 @media (max-width: 768px) {
@@ -4550,6 +4551,7 @@ html, body {
 }
 
 .cat-widget-card {
+  position: relative !important;
   background: var(--bg-card, rgba(30, 35, 51, 0.75));
   border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
   border-radius: 14px;
@@ -4559,7 +4561,156 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-sizing: border-box !important;
+  min-width: 320px;
+  min-height: 180px;
+  width: calc(50% - 10px);
+  flex: 0 0 calc(50% - 10px);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+@media (max-width: 1050px) {
+  .cat-widget-card {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+}
+
+/* 카드 테두리 마우스 리사이즈 핸들 */
+.cat-resize-handle {
+  position: absolute;
+  z-index: 25;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cat-resize-handle-r {
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 100%;
+  cursor: ew-resize;
+  border-right: 2px solid transparent;
+}
+
+.cat-resize-handle-b {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  cursor: ns-resize;
+  border-bottom: 2px solid transparent;
+}
+
+.cat-resize-handle-br {
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  cursor: se-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted, #64748b);
+  border-bottom-right-radius: 14px;
+}
+
+.cat-resize-handle-r:hover,
+.cat-resize-handle-r.active {
+  background: rgba(59, 130, 246, 0.35);
+  border-right-color: #3b82f6;
+}
+
+.cat-resize-handle-b:hover,
+.cat-resize-handle-b.active {
+  background: rgba(59, 130, 246, 0.35);
+  border-bottom-color: #3b82f6;
+}
+
+.cat-resize-handle-br:hover,
+.cat-resize-handle-br.active {
+  background: rgba(59, 130, 246, 0.65);
+  color: #ffffff;
+  border-top-left-radius: 6px;
+}
+
+.cat-card-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #94a3b8);
+  font-size: 19px;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cat-card-close-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* 대시보드 비어있을 때 클린 안내 상태 */
+.cat-empty-dashboard {
+  width: 100%;
+  min-height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
   box-sizing: border-box;
+}
+
+.cat-empty-content-box {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  background: rgba(30, 35, 51, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 40px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.cat-empty-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.cat-empty-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary, #f1f5f9);
+  margin: 0;
+}
+
+.cat-empty-desc {
+  font-size: 13.5px;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cat-empty-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .cat-widget-header {

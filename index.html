@@ -279,7 +279,7 @@
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                   <span>북마크</span>
                 </button>
-                <button class="cat-nav-item" onclick="openCatWidgetModal()">
+                <button class="cat-nav-item" id="catNavBtnSettings" onclick="catNavFilter('all'); openCatWidgetModal();">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                   <span>설정</span>
                 </button>
@@ -316,51 +316,29 @@
               <!-- 서브뷰 1: 홈 대시보드 (전체 위젯 종합 화면) -->
               <!-- ========================================================= -->
               <div class="cat-subview active" id="catViewHome">
-                <!-- 상단 슬롯 (Top Slot: 첫걸음 온보딩 또는 전폭 위젯) -->
-                <div id="catSlotTop" class="cat-layout-slot-top">
-                  <!-- 상단 온보딩 첫 걸음 카드 -->
-                  <div class="cat-onboarding-card cat-widget-card" id="catOnboardingCard" data-widget-id="onboarding" draggable="true">
-                    <div class="cat-onboarding-header">
-                      <div class="cat-onboarding-title-group">
-                        <span class="cat-tag-pink" id="catOnboardingTagText">START</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <h3 class="cat-onboarding-title" id="catOnboardingTitleText">첫 걸음</h3>
-                          <button class="cat-btn-rename-pill" onclick="openCatRenameStartModal()" title="위젯 이름 변경">이름 변경</button>
-                        </div>
-                      </div>
-                      <div class="cat-card-tools">
-                        <button class="cat-move-btn" onclick="moveCatWidget('onboarding', -1)" title="위로 이동">▲</button>
-                        <button class="cat-move-btn" onclick="moveCatWidget('onboarding', 1)" title="아래로 이동">▼</button>
-                        <button class="cat-move-btn" onclick="swapCatWidgetColumn('onboarding')" title="열 이동">⇄</button>
-                        <button class="cat-text-btn" onclick="dismissCatOnboarding()" style="margin-left:6px;">숨기기</button>
-                      </div>
-                    </div>
-                    <div class="cat-onboarding-list">
-                      <label class="cat-check-item">
-                        <input type="checkbox" id="catTaskTodo" onchange="toggleCatOnboardingTask('todo', this.checked)">
-                        <span class="cat-checkbox-custom"></span>
-                        <span class="cat-check-text">할일 1개 완료하기</span>
-                        <span class="cat-check-status" id="catStatusTodo">아직 안 함</span>
-                      </label>
-                      <label class="cat-check-item">
-                        <input type="checkbox" id="catTaskNote" onchange="toggleCatOnboardingTask('note', this.checked)">
-                        <span class="cat-checkbox-custom"></span>
-                        <span class="cat-check-text">기록 1장 남기기</span>
-                        <span class="cat-check-status" id="catStatusNote">아직 안 함</span>
-                      </label>
-                      <label class="cat-check-item">
-                        <input type="checkbox" id="catTaskShare" onchange="toggleCatOnboardingTask('share', this.checked)">
-                        <span class="cat-checkbox-custom"></span>
-                        <span class="cat-check-text">친구와 캘린더 공유하기</span>
-                        <span class="cat-check-status" id="catStatusShare">아직 안 함</span>
-                      </label>
-                    </div>
-                    <div class="cat-onboarding-footer">세 가지를 다 하면 이 카드는 사라져요.</div>
-                  </div>
-                </div>
-
-                <!-- 2단 동적 레이아웃 그리드 (상단 전폭 / 좌측 / 우측 / 하단 전폭) -->
+                <!-- 2단 동적 레이아웃 그리드 (동적 가변 flex 레이아웃) -->
                 <div class="catlendar-grid">
+                  <!-- 대시보드 비어있을 때 안내 (클린 캔버스) -->
+                  <div id="catEmptyDashboardNotice" class="cat-empty-dashboard" style="display:none;">
+                    <div class="cat-empty-content-box">
+                      <div class="cat-empty-icon-wrap">
+                        <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <line x1="12" y1="8" x2="12" y2="16"></line>
+                          <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                      </div>
+                      <h3 class="cat-empty-title">나만의 대시보드를 직접 구성해 보세요</h3>
+                      <p class="cat-empty-desc">
+                        현재 활성화된 위젯이 없습니다. 우측 상단의 <strong>'+ 위젯 추가'</strong> 버튼을 클릭하여 원하는 업무 위젯(캘린더, 영업현황, 할일, 메모, 북마크 등)을 자유롭게 배치할 수 있습니다.
+                      </p>
+                      <div class="cat-empty-actions">
+                        <button class="cat-mini-add-btn" style="padding:10px 22px; font-size:13.5px;" onclick="openCatWidgetModal()">+ 위젯 추가하기</button>
+                        <button class="cat-btn-outline" style="padding:10px 18px; font-size:13px;" onclick="selectCatDefaultWidgets()">추천 위젯 세트 불러오기</button>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- 상단 전폭 위젯 컨테이너 (사용자가 전폭 확대한 위젯 배치) -->
                   <div class="cat-full-container" id="catColFullTop"></div>
 
@@ -381,12 +359,9 @@
                           </div>
                           <button class="cat-cal-today-btn" onclick="goToCatCalToday()">오늘</button>
                         </div>
-                        <div class="cat-card-tools">
-                          <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('calendar')" title="너비 변경 (1열/전폭)">전폭</button>
-                          <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('calendar')" title="크기 변경 (소/중/대)">보통</button>
-                          <button class="cat-move-btn" onclick="moveCatWidget('calendar', -1)" title="위로 이동">▲</button>
-                          <button class="cat-move-btn" onclick="moveCatWidget('calendar', 1)" title="아래로 이동">▼</button>
-                          <button class="cat-move-btn" onclick="swapCatWidgetColumn('calendar')" title="반대 열로 이동">⇄</button>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                          <button class="cat-mini-add-btn" onclick="openCatScheduleAddModal(CatDashboardState.selectedDate)">+ 새 일정</button>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('calendar', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
 
@@ -424,13 +399,7 @@
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                           <button class="cat-link-btn" onclick="goToSalesTab('project')">영업사항 바로가기</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('widgetSalesProjects')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('widgetSalesProjects')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesProjects', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesProjects', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('widgetSalesProjects')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('widgetSalesProjects', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div style="display:flex; gap:8px; align-items:center;">
@@ -466,13 +435,7 @@
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                           <button class="cat-link-btn" onclick="goToSalesTab('quality')">영업사항 바로가기</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('widgetSalesQuality')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('widgetSalesQuality')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesQuality', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesQuality', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('widgetSalesQuality')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('widgetSalesQuality', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-widget-content" id="catSalesQualityList" style="max-height:220px; overflow-y:auto;">
@@ -502,13 +465,7 @@
                             <option value="singapore">싱가포르</option>
                             <option value="hcm">호치민 (베트남)</option>
                           </select>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('weather')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('weather')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('weather', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('weather', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('weather')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('weather', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-weather-forecast-list" id="catWeatherForecastList">
@@ -525,13 +482,7 @@
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                           <button class="cat-link-btn" onclick="goToSalesTab('sample')">영업사항 바로가기</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('widgetSalesSamples')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('widgetSalesSamples')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesSamples', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesSamples', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('widgetSalesSamples')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('widgetSalesSamples', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-widget-content" id="catSalesSampleList" style="max-height:220px; overflow-y:auto;">
@@ -548,13 +499,7 @@
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                           <button class="cat-link-btn" onclick="goToSalesTab('report')">영업사항 바로가기</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('widgetSalesBriefing')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('widgetSalesBriefing')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesBriefing', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('widgetSalesBriefing', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('widgetSalesBriefing')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('widgetSalesBriefing', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-widget-content" id="catSalesBriefingList" style="max-height:220px; overflow-y:auto;">
@@ -573,13 +518,7 @@
                             <button class="cat-quick-tab" data-type="note" onclick="selectCatQuickType('note', this)">기록</button>
                             <button class="cat-quick-tab" data-type="bookmark" onclick="selectCatQuickType('bookmark', this)">북마크</button>
                           </div>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('quickInput')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('quickInput')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('quickInput', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('quickInput', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('quickInput')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('quickInput', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-quick-input-body">
@@ -599,13 +538,7 @@
                         <span class="cat-widget-title">앞으로의 일정</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                           <button class="cat-link-btn" onclick="catNavFilter('calendar')">전체 보기</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('upcoming')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('upcoming')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('upcoming', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('upcoming', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('upcoming')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('upcoming', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-widget-content" id="catUpcomingList">
@@ -618,18 +551,17 @@
                       <div class="cat-widget-header">
                         <span class="cat-widget-title">기록</span>
                         <div style="display:flex; align-items:center; gap:8px;">
+                          <button class="cat-mini-add-btn" onclick="openCatNoteModal()">+ 작성</button>
                           <button class="cat-link-btn" onclick="catNavFilter('note')">더보기</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('notes')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('notes')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('notes', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('notes', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('notes')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('notes', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-widget-content" id="catNotesList">
                         <!-- JS 기록 리스트 -->
+                      </div>
+                      <div class="cat-note-add-row" style="display:flex; gap:6px; margin-top:10px;">
+                        <input type="text" id="catInlineNoteInput" class="cat-todo-input" placeholder="+ 빠른 업무 메모 남기기 (Enter)" onkeydown="if(event.key==='Enter') submitCatInlineNote()" style="flex:1;">
+                        <button class="cat-mini-add-btn" onclick="submitCatInlineNote()">기록</button>
                       </div>
                     </div>
 
@@ -643,13 +575,7 @@
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                           <button class="cat-link-btn" onclick="catNavFilter('todo')">관리</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('todos')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('todos')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('todos', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('todos', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('todos')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('todos', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-widget-content" id="catTodoList">
@@ -668,13 +594,7 @@
                         <div style="display:flex; align-items:center; gap:8px;">
                           <button class="cat-link-btn" onclick="openCatBookmarkModal()">추가</button>
                           <button class="cat-link-btn" onclick="catNavFilter('bookmark')">관리</button>
-                          <div class="cat-card-tools">
-                            <button class="cat-move-btn cat-width-btn" onclick="toggleCatWidgetWidth('bookmarks')" title="너비 변경">전폭</button>
-                            <button class="cat-move-btn cat-height-btn" onclick="cycleCatWidgetHeight('bookmarks')" title="크기 변경">보통</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('bookmarks', -1)" title="위로 이동">▲</button>
-                            <button class="cat-move-btn" onclick="moveCatWidget('bookmarks', 1)" title="아래로 이동">▼</button>
-                            <button class="cat-move-btn" onclick="swapCatWidgetColumn('bookmarks')" title="열 이동">⇄</button>
-                          </div>
+                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('bookmarks', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
                       <div class="cat-widget-content" id="catBookmarkList">
@@ -839,30 +759,6 @@
           <!-- 모달 대화상자 목록 -->
           <!-- ========================================================= -->
 
-          <!-- 모달 0: START 첫 걸음 위젯 이름 변경 모달 -->
-          <div class="cat-modal-overlay" id="modalCatRenameStart" onclick="if(event.target===this) closeCatRenameStartModal()">
-            <div class="cat-modal-box">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title">첫 걸음 위젯 이름 변경</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatRenameStartModal()">&times;</button>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:12px;">
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);">위젯 상단 태그
-                  <input type="text" id="catInputStartTag" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="START" placeholder="예: START, NOTICE, 핵심업무">
-                </label>
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);">위젯 메인 이름
-                  <input type="text" id="catInputStartTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 오늘의 핵심 업무, 출하 점검 체크리스트">
-                </label>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                <button class="cat-text-btn" onclick="resetCatStartTitle()">기본값으로 복원</button>
-                <div style="display:flex; gap:8px;">
-                  <button class="cat-btn-outline" onclick="closeCatRenameStartModal()">취소</button>
-                  <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="saveCatStartTitle()">저장</button>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- 모달 0-2: 위젯 순서 및 위치 변경 (레이아웃 설정 모달) -->
           <div class="cat-modal-overlay" id="modalCatLayoutSettings" onclick="if(event.target===this) closeCatLayoutModal()">
@@ -918,6 +814,11 @@
                 <button class="cat-modal-close-btn" onclick="closeCatWidgetModal()">&times;</button>
               </div>
               <p style="font-size:12.5px; color:var(--text-secondary); margin:0;">대시보드에 표시할 위젯을 선택하세요.</p>
+              <div style="display:flex; gap:8px; margin-top:4px;">
+                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatAllWidgets(true)">모두 선택</button>
+                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatAllWidgets(false)">모두 해제 (비우기)</button>
+                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatDefaultWidgets()">추천 세트</button>
+              </div>
               <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;" id="catWidgetCheckboxList">
                 <!-- JS 생성 -->
               </div>
