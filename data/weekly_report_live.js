@@ -1,8 +1,8 @@
-window.KOSTAT_WEEKLY_REPORT_LIVE = {
+window.LIVE_DB = {
   "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서",
   "week_label": "9월 4주차 (0921-0925)",
-  "last_updated_at": "2026-10-01 06:33:52",
-  "last_updated_by": "한준희",
+  "last_updated_at": "2026-10-15T16:45:00Z",
+  "last_updated_by": "김완태 사원",
   "kpi": {
     "target": 2404602,
     "current": 937933,
@@ -1000,6 +1000,246 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
         }
       ],
       "projects": [
+        {
+          "id": "prj_kwt_th_1",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "KS-871591",
+          "tool_type": "Close",
+          "po_no": "KSY250714-01",
+          "ship_date": "2025-09-17",
+          "status": "2025-11-14 승인",
+          "remarks": "TH P/N: DSMC-TXRX25-047 | PKG: LGA 8X8 | Material: MPPO BK | Mold: O"
+        },
+        {
+          "id": "prj_kwt_th_2",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "DSSP-V3RX25-028",
+          "tool_type": "Hold",
+          "po_no": "KSY-250806-01",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: DSSP-V3RX25-028 | PKG: BGA 5.559MM X 5.602MM | Material: MPPO BK | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_3",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "TF Tray",
+          "pn": "KS-M8376",
+          "tool_type": "In-Progress",
+          "po_no": "KSY250811-02",
+          "ship_date": "-",
+          "status": "진행중",
+          "remarks": "TH P/N: DSSP KURS25 082 | PKG: - | Material: - | Mold: O"
+        },
+        {
+          "id": "prj_kwt_th_4",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "PS Carrier",
+          "pn": "KS-1612-817",
+          "tool_type": "Hold",
+          "po_no": "KSY250901-01",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 6.786MM X 6.84MM | Material: - | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_5",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "PS Carrier",
+          "pn": "KS-1612-818",
+          "tool_type": "Hold",
+          "po_no": "KSY250901-01",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 5.559MM X 5.602MM | Material: - | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_6",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "TF Tray",
+          "pn": "KS-M8385",
+          "tool_type": "Hold",
+          "po_no": "KSZ260304-01",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Bottom PP C/B | Material: - | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_7",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "TF Tray",
+          "pn": "KS-M8385",
+          "tool_type": "Hold",
+          "po_no": "KSZ260304-01",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Bottom PS C/B | Material: - | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_8",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "TF Tray",
+          "pn": "KS-M8386",
+          "tool_type": "Hold",
+          "po_no": "KSZ260304-01",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Cover PP C/B | Material: - | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_9",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "TF Tray",
+          "pn": "KS-M8386",
+          "tool_type": "Hold",
+          "po_no": "KSZ260304-01",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Cover PS C/B | Material: - | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_10",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "KS-1612-845",
+          "tool_type": "Close",
+          "po_no": "KSZ260527-04",
+          "ship_date": "2026-07-13 승인",
+          "status": "2026-07-13 승인",
+          "remarks": "TH P/N: TBA | PKG: 7MM X 7MM X 2.56MM | Material: - | Mold: O"
+        },
+        {
+          "id": "prj_kwt_th_11",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "KS-2416-792",
+          "tool_type": "Close",
+          "po_no": "KSZ260527-03",
+          "ship_date": "07월 10일",
+          "status": "2026-06-18 승인",
+          "remarks": "TH P/N: TBA | PKG: 10.019MM X 6.019MM | Material: - | Mold: O"
+        },
+        {
+          "id": "prj_kwt_th_12",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "KS-2412-266",
+          "tool_type": "Close",
+          "po_no": "KSZ260527-05",
+          "ship_date": "07월 10일",
+          "status": "2026-06-18 승인",
+          "remarks": "TH P/N: TBA | PKG: 8MM X 10MM X 1MM | Material: - | Mold: O"
+        },
+        {
+          "id": "prj_kwt_th_13",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "TBA (6.739MM X 6.793MM)",
+          "tool_type": "Hold",
+          "po_no": "KSZ260608-04",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 6.739MM X 6.793MM | Material: MPPO BK | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_14",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "TBA (5.559MM X 5.602MM)",
+          "tool_type": "Hold",
+          "po_no": "KSZ260608-03",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 5.559MM X 5.602MM | Material: MPPO BK | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_15",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "TBA (10.019MM X 6.019MM)",
+          "tool_type": "Hold",
+          "po_no": "KSZ260608-02",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 10.019MM X 6.019MM | Material: MPPO BK | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_16",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "KS-881817",
+          "tool_type": "Hold",
+          "po_no": "KSZ260707-05",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 7X7X2.65MM | Material: MPPO BK | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_17",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "IC Tray",
+          "pn": "KS-871667",
+          "tool_type": "Hold",
+          "po_no": "KSZ260707-06",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 8MM X 10 MM | Material: MPPO BK | Mold: X"
+        },
+        {
+          "id": "prj_kwt_th_18",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "PS Carrier",
+          "pn": "KS-2416-797",
+          "tool_type": "Close",
+          "po_no": "KSZ260814-02",
+          "ship_date": "09월 17일",
+          "status": "2026-09-18 승인",
+          "remarks": "TH P/N: TBA | PKG: 12MM X 12MM X 1.8MM | Material: - | Mold: O"
+        },
+        {
+          "id": "prj_kwt_th_19",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "PS Carrier",
+          "pn": "KS-3216-131",
+          "tool_type": "Close",
+          "po_no": "KSZ260814-02",
+          "ship_date": "09월 17일",
+          "status": "2026-09-18 승인",
+          "remarks": "TH P/N: TBA | PKG: 9.8MM X 17.2MM X 1.7MM | Material: - | Mold: O"
+        },
+        {
+          "id": "prj_kwt_th_20",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "item": "PS Carrier",
+          "pn": "KS-1612-292",
+          "tool_type": "New",
+          "po_no": "KSZ261013-03",
+          "ship_date": "-",
+          "status": "검토대기",
+          "remarks": "TH P/N: TBA | PKG: 8MM X 8MM X 1.4MM | Material: - | Mold: TBA"
+        },
         {
           "id": "prj_kwt_1",
           "customer": "SONY",
@@ -2515,3 +2755,4 @@ window.KOSTAT_WEEKLY_REPORT_LIVE = {
     }
   }
 };
+window.KOSTAT_WEEKLY_REPORT_LIVE = window.LIVE_DB;
