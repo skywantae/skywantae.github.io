@@ -537,21 +537,22 @@
                       </div>
                     </div>
 
-                    <!-- 위젯 5: 할일 -->
+                    <!-- 위젯 5: 할일 플로우보드 -->
                     <div class="cat-widget-card" id="widgetTodos" data-widget-id="todos" draggable="true">
                       <div class="cat-widget-header">
                         <div class="cat-todo-title-wrap">
-                          <span class="cat-widget-title">할일</span>
+                          <span class="cat-widget-title" id="catWidgetTitleTodos">할일 플로우보드</span>
                           <span class="cat-todo-date-tag" id="catTodoDateTag">10월 14일</span>
                           <span class="cat-badge-pill" id="catTodoCountBadge">0/0</span>
                         </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <button class="cat-link-btn" onclick="catNavFilter('todo')">관리</button>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                          <button class="cat-link-btn" id="catWidgetTodoViewToggle" onclick="toggleFlowboardViewMode('widget')">보기: 칸반</button>
+                          <button class="cat-link-btn" onclick="catNavFilter('todo')">전체화면</button>
                           <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('todos', false)" title="위젯 숨기기">&times;</button>
                         </div>
                       </div>
-                      <div class="cat-widget-content" id="catTodoList">
-                        <!-- JS 할일 리스트 -->
+                      <div class="cat-widget-content flowboard-compact" id="catTodoList">
+                        <!-- JS 플로우보드 칸반/리스트 렌더링 -->
                       </div>
                       <div class="cat-todo-add-row">
                         <input type="text" id="catNewTodoInput" class="cat-todo-input" placeholder="+ 할일 추가..." onkeydown="if(event.key==='Enter') addCatTodo()">
@@ -642,7 +643,7 @@
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
                       <span class="cat-back-home-text">홈 대시보드</span>
                     </button>
-                    <h3 class="cat-subview-title" id="catSubTitleTodos">할일 관리 센터</h3>
+                    <h3 class="cat-subview-title" id="catSubTitleTodos">할일 플로우보드 센터</h3>
                   </div>
                   <div class="cat-filter-tabs">
                     <button class="cat-filter-tab active" data-todo-filter="all" onclick="setCatTodoFilter('all', this)"><span id="catTabTodoTextAll">전체</span> (<span id="catStatTodoAll">0</span>)</button>
@@ -653,19 +654,42 @@
                 </div>
 
                 <!-- 할일 신규 등록 바 -->
-                <div class="cat-subview-toolbar">
-                  <input type="date" id="catManageTodoDate" class="cat-todo-input" style="max-width:150px;" value="2026-10-14">
-                  <input type="text" id="catManageTodoText" class="cat-todo-input" placeholder="새로운 할일을 입력하세요..." onkeydown="if(event.key==='Enter') submitCatManageTodo()">
-                  <button class="cat-mini-add-btn" style="padding:9px 18px;" onclick="submitCatManageTodo()" id="catManageTodoAddBtn">할일 등록</button>
+                <div class="cat-subview-toolbar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                  <input type="date" id="catManageTodoDate" class="cat-todo-input" style="max-width:140px;" value="2026-10-14">
+                  <select id="catManageTodoLaneSelect" class="cat-todo-input" style="max-width:140px;">
+                    <option value="todo">할일 (Todo)</option>
+                    <option value="backlog">백로그 (Backlog)</option>
+                    <option value="active">집중 진행 (Active)</option>
+                    <option value="slow">보류 (Slow)</option>
+                    <option value="done">완료 (Done)</option>
+                  </select>
+                  <select id="catManageTodoPrioritySelect" class="cat-todo-input" style="max-width:110px;">
+                    <option value="">우선순위</option>
+                    <option value="P1">P1 긴급</option>
+                    <option value="P2">P2 높음</option>
+                    <option value="P3">P3 보통</option>
+                    <option value="P4">P4 낮음</option>
+                  </select>
+                  <input type="text" id="catManageTodoText" class="cat-todo-input" placeholder="새로운 카드 내용을 입력하세요..." onkeydown="if(event.key==='Enter') submitCatManageTodo()" style="flex:1; min-width:180px;">
+                  <button class="cat-mini-add-btn" style="padding:9px 18px;" onclick="submitCatManageTodo()" id="catManageTodoAddBtn">카드 등록</button>
                 </div>
 
-                <!-- 할일 검색 및 목록 카드 -->
-                <div class="cat-widget-card" style="padding:16px 20px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-size:13px; font-weight:700; color:var(--text-secondary);" id="catManageTodoListTitle">할일 목록</span>
-                    <input type="text" id="catManageTodoSearch" class="cat-search-input" style="max-width:220px;" placeholder="할일 키워드 검색..." oninput="renderCatManageTodosList()">
+                <!-- 플로우보드 스튜디오 메인 카드 -->
+                <div class="cat-widget-card" style="padding:16px 20px; flex:1; display:flex; flex-direction:column;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                      <span style="font-size:14px; font-weight:700; color:var(--text-primary);" id="catManageTodoListTitle">업무 플로우보드</span>
+                      <div class="flowboard-controls-wrapper">
+                        <button class="flowboard-view-btn active" id="flowboardBtnKanban" onclick="setFlowboardViewMode('kanban')">칸반 보기</button>
+                        <button class="flowboard-view-btn" id="flowboardBtnList" onclick="setFlowboardViewMode('list')">리스트 보기</button>
+                        <button class="flowboard-view-btn" onclick="openFlowboardAddLaneModal()">+ 새 레인 추가</button>
+                      </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <input type="text" id="catManageTodoSearch" class="flowboard-search-input" placeholder="카드 키워드 검색..." oninput="renderCatManageTodosList()">
+                    </div>
                   </div>
-                  <div id="catManageTodosFullList" style="display:flex; flex-direction:column; gap:8px;">
+                  <div id="catManageTodosFullList" style="flex:1; overflow:hidden; min-height:480px; display:flex; flex-direction:column;">
                     <!-- JS 동적 렌더링 -->
                   </div>
                 </div>
@@ -2842,6 +2866,30 @@
               <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
                 <button class="cat-btn-outline" onclick="closeCatScheduleAddModal()" id="catModalSchedBtnCancel">취소</button>
                 <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatScheduleModal()" id="catModalSchedBtnSubmit">등록</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 6: 플로우보드 새 레인 추가 모달 -->
+          <div class="cat-modal-overlay" id="modalFlowboardAddLane" onclick="if(event.target===this) closeFlowboardAddLaneModal()">
+            <div class="cat-modal-box">
+              <div class="cat-modal-header">
+                <h3 class="cat-modal-title" id="flowboardModalLaneTitle">새 레인 추가</h3>
+                <button class="cat-modal-close-btn" onclick="closeFlowboardAddLaneModal()">&times;</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);">레인 이름
+                  <input type="text" id="flowboardNewLaneInput" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 검토 대기, 품질 검사 등" onkeydown="if(event.key==='Enter') submitFlowboardAddLane()">
+                </label>
+                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);">레인 위치 (상위 레인)
+                  <select id="flowboardNewLaneParentSelect" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;">
+                    <option value="">최상위 레인 (Root Lane)</option>
+                  </select>
+                </label>
+              </div>
+              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                <button class="cat-btn-outline" onclick="closeFlowboardAddLaneModal()">취소</button>
+                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitFlowboardAddLane()">레인 생성</button>
               </div>
             </div>
           </div>

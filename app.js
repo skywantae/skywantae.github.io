@@ -14274,9 +14274,539 @@ function copyCatNoteText(txt) {
 window.copyCatNoteText = copyCatNoteText;
 
 // -------------------------------------------------------------
-// 10. 할일(Todos) 위젯 & 전용 관리 센터
+// 10. 할일(Todos) 플로우보드 위젯 & 전용 스튜디오 (Flowboard Engine)
 // -------------------------------------------------------------
 let catCurrentTodoFilter = 'all';
+let catFlowboardViewMode = localStorage.getItem('kostat_flowboard_view_mode') || 'kanban';
+let catWidgetFlowboardViewMode = localStorage.getItem('kostat_widget_flowboard_view_mode') || 'kanban';
+let catFlowboardEditingCardId = null;
+let catFlowboardEditingLaneId = null;
+
+const FLOWBOARD_DEFAULT_PRIORITIES = [
+  { name: 'P1', color: '#ef4444', label: '긴급' },
+  { name: 'P2', color: '#f97316', label: '높음' },
+  { name: 'P3', color: '#3b82f6', label: '보통' },
+  { name: 'P4', color: '#10b981', label: '낮음' }
+];
+
+function getFlowboardData() {
+  let board = null;
+  try {
+    const raw = localStorage.getItem('kostat_flowboard_data');
+    if (raw) board = JSON.parse(raw);
+  } catch (e) {
+    console.error('Failed to parse kostat_flowboard_data', e);
+  }
+
+  if (!board || !board.lanes || !Array.isArray(board.lanes) || board.lanes.length === 0) {
+    const legacy = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
+    const backlogCards = [];
+    const todoCards = [];
+    const activeCards = [];
+    const doneCards = [];
+
+    legacy.forEach(item => {
+      const card = {
+        id: item.id || ('c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)),
+        content: item.text || '',
+        date: item.date || CatDashboardState.selectedDate || '2026-10-14',
+        priority: item.priority || (item.text && item.text.includes('긴급') ? 'P1' : ''),
+        done: !!item.done
+      };
+      if (item.done) {
+        doneCards.push(card);
+      } else if (item.laneId === 'lane_backlog' || item.laneId === 'backlog') {
+        backlogCards.push(card);
+      } else if (item.laneId === 'lane_active' || item.laneId === 'active') {
+        activeCards.push(card);
+      } else {
+        todoCards.push(card);
+      }
+    });
+
+    board = {
+      title: '업무 플로우보드',
+      settings: {
+        priorities: FLOWBOARD_DEFAULT_PRIORITIES,
+        laneWidth: 260,
+        dateFormat: 'YYYY-MM-DD'
+      },
+      lanes: [
+        { id: 'lane_backlog', title: 'Backlog', cards: backlogCards },
+        { id: 'lane_todo', title: 'Todo', cards: todoCards },
+        {
+          id: 'lane_inprogress',
+          title: 'In Progress',
+          cards: [],
+          subLanes: [
+            { id: 'lane_active', title: 'Active', cards: activeCards },
+            { id: 'lane_slow', title: 'Slow', cards: [] }
+          ]
+        },
+        { id: 'lane_done', title: 'Done', cards: doneCards }
+      ]
+    };
+    saveFlowboardData(board);
+  }
+
+  if (!board.settings) board.settings = {};
+  if (!board.settings.priorities || board.settings.priorities.length === 0) {
+    board.settings.priorities = FLOWBOARD_DEFAULT_PRIORITIES;
+  }
+
+  return board;
+}
+window.getFlowboardData = getFlowboardData;
+
+function saveFlowboardData(board) {
+  if (!board) return;
+  localStorage.setItem('kostat_flowboard_data', JSON.stringify(board));
+
+  const flattened = [];
+  function extractCards(lanes) {
+    for (const lane of lanes) {
+      for (const card of (lane.cards || [])) {
+        flattened.push({
+          id: card.id,
+          date: card.date || CatDashboardState.selectedDate || '2026-10-14',
+          text: card.content || '',
+          done: !!card.done,
+          priority: card.priority || '',
+          laneId: lane.id,
+          laneTitle: lane.title
+        });
+      }
+      if (lane.subLanes && lane.subLanes.length > 0) {
+        extractCards(lane.subLanes);
+      }
+    }
+  }
+  extractCards(board.lanes || []);
+  localStorage.setItem('kostat_cat_todos', JSON.stringify(flattened));
+}
+window.saveFlowboardData = saveFlowboardData;
+
+function findLaneRecursively(lanes, laneId) {
+  for (const lane of lanes) {
+    if (lane.id === laneId) return lane;
+    if (lane.subLanes && lane.subLanes.length > 0) {
+      const found = findLaneRecursively(lane.subLanes, laneId);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+window.findLaneRecursively = findLaneRecursively;
+
+function findAndRemoveCard(lanes, cardId) {
+  for (const lane of lanes) {
+    const idx = (lane.cards || []).findIndex(c => c.id === cardId);
+    if (idx !== -1) {
+      const card = lane.cards.splice(idx, 1)[0];
+      return { card, lane, index: idx };
+    }
+    if (lane.subLanes && lane.subLanes.length > 0) {
+      const found = findAndRemoveCard(lane.subLanes, cardId);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+window.findAndRemoveCard = findAndRemoveCard;
+
+function moveCard(board, cardId, targetLaneId, targetIndex) {
+  const found = findAndRemoveCard(board.lanes, cardId);
+  if (!found) return board;
+
+  const { card, lane: sourceLane, index: cardIndex } = found;
+  const targetLane = findLaneRecursively(board.lanes, targetLaneId);
+  if (targetLane) {
+    if (!targetLane.cards) targetLane.cards = [];
+    const insertIdx = (typeof targetIndex === 'number' && targetIndex >= 0)
+      ? Math.min(targetIndex, targetLane.cards.length)
+      : targetLane.cards.length;
+    targetLane.cards.splice(insertIdx, 0, card);
+
+    const isDoneLane = (targetLane.id === 'lane_done' || targetLane.title.toLowerCase() === 'done' || targetLane.title.includes('완료'));
+    if (isDoneLane) {
+      card.done = true;
+    } else {
+      const sourceIsDone = (sourceLane.id === 'lane_done' || sourceLane.title.toLowerCase() === 'done' || sourceLane.title.includes('완료'));
+      if (sourceIsDone) {
+        card.done = false;
+      }
+    }
+  } else {
+    sourceLane.cards.splice(cardIndex, 0, card);
+  }
+  return board;
+}
+window.moveCard = moveCard;
+
+function updateCard(board, cardId, newContent) {
+  function updateInLanes(lanes) {
+    for (const lane of lanes) {
+      const card = (lane.cards || []).find(c => c.id === cardId);
+      if (card) {
+        card.content = newContent;
+        return true;
+      }
+      if (lane.subLanes && updateInLanes(lane.subLanes)) return true;
+    }
+    return false;
+  }
+  updateInLanes(board.lanes);
+  return board;
+}
+window.updateCard = updateCard;
+
+function duplicateCard(board, cardId) {
+  function dupInLanes(lanes) {
+    for (const lane of lanes) {
+      const idx = (lane.cards || []).findIndex(c => c.id === cardId);
+      if (idx !== -1) {
+        const orig = lane.cards[idx];
+        const copy = JSON.parse(JSON.stringify(orig));
+        copy.id = 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+        copy.content = copy.content + ' (복사본)';
+        lane.cards.splice(idx + 1, 0, copy);
+        return true;
+      }
+      if (lane.subLanes && dupInLanes(lane.subLanes)) return true;
+    }
+    return false;
+  }
+  dupInLanes(board.lanes);
+  return board;
+}
+window.duplicateCard = duplicateCard;
+
+function removeCardRecursively(lanes, cardId) {
+  for (const lane of lanes) {
+    lane.cards = (lane.cards || []).filter(c => c.id !== cardId);
+    if (lane.subLanes && lane.subLanes.length > 0) {
+      removeCardRecursively(lane.subLanes, cardId);
+    }
+  }
+}
+window.removeCardRecursively = removeCardRecursively;
+
+function getFlowboardDragAfterElement(container, y) {
+  const draggableElements = [...container.querySelectorAll('.flowboard-card:not(.flowboard-card-dragging)')];
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    } else {
+      return closest;
+    }
+  }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+}
+
+function toggleFlowboardViewMode(target) {
+  if (target === 'widget') {
+    catWidgetFlowboardViewMode = (catWidgetFlowboardViewMode === 'kanban') ? 'list' : 'kanban';
+    localStorage.setItem('kostat_widget_flowboard_view_mode', catWidgetFlowboardViewMode);
+    const btn = document.getElementById('catWidgetTodoViewToggle');
+    if (btn) btn.textContent = (catWidgetFlowboardViewMode === 'kanban') ? '보기: 칸반' : '보기: 리스트';
+    renderCatTodos();
+  } else {
+    catFlowboardViewMode = (catFlowboardViewMode === 'kanban') ? 'list' : 'kanban';
+    localStorage.setItem('kostat_flowboard_view_mode', catFlowboardViewMode);
+    setFlowboardViewMode(catFlowboardViewMode);
+  }
+}
+window.toggleFlowboardViewMode = toggleFlowboardViewMode;
+
+function setFlowboardViewMode(mode) {
+  catFlowboardViewMode = mode;
+  localStorage.setItem('kostat_flowboard_view_mode', mode);
+  const btnK = document.getElementById('flowboardBtnKanban');
+  const btnL = document.getElementById('flowboardBtnList');
+  if (btnK) btnK.classList.toggle('active', mode === 'kanban');
+  if (btnL) btnL.classList.toggle('active', mode === 'list');
+  renderCatManageTodosList();
+}
+window.setFlowboardViewMode = setFlowboardViewMode;
+
+function renderFlowboard(containerId, isCompact) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const board = getFlowboardData();
+  const isEn = (AppState && AppState.currentLang === 'en');
+  const viewMode = isCompact ? catWidgetFlowboardViewMode : catFlowboardViewMode;
+
+  const searchInput = document.getElementById('catManageTodoSearch');
+  const query = (!isCompact && searchInput && typeof searchInput.value === 'string')
+    ? searchInput.value.trim().toLowerCase()
+    : '';
+
+  const selDate = CatDashboardState.selectedDate || '2026-10-14';
+
+  function filterCard(card) {
+    if (query) {
+      const matchText = (card.content || '').toLowerCase().includes(query);
+      const matchDate = (card.date || '').toLowerCase().includes(query);
+      if (!matchText && !matchDate) return false;
+    }
+    if (!isCompact && catCurrentTodoFilter !== 'all') {
+      if (catCurrentTodoFilter === 'today' && card.date !== selDate) return false;
+      if (catCurrentTodoFilter === 'pending' && card.done) return false;
+      if (catCurrentTodoFilter === 'done' && !card.done) return false;
+    }
+    return true;
+  }
+
+  if (viewMode === 'list') {
+    renderFlowboardListView(container, board, isCompact, filterCard, isEn);
+    return;
+  }
+
+  // Kanban Board Rendering
+  let html = `<div class="flowboard-board-container ${isCompact ? 'flowboard-compact' : ''}">`;
+  html += `<div class="flowboard-board">`;
+  html += `<div class="flowboard-lanes">`;
+
+  function renderLaneRecursive(lane, depth) {
+    const isOverLimit = false;
+    const cards = (lane.cards || []).filter(filterCard);
+    const count = cards.length;
+    const isDone = (lane.id === 'lane_done' || lane.title.toLowerCase() === 'done' || lane.title.includes('완료'));
+
+    let laneHtml = `
+      <div class="flowboard-lane depth-${depth}" data-lane-id="${escapeHtml(lane.id)}">
+        <div class="flowboard-lane-header">
+          <div class="flowboard-lane-title" onclick="editFlowboardLaneTitle('${escapeHtml(lane.id)}')">${escapeHtml(lane.title)}</div>
+          <div class="flowboard-lane-header-right">
+            <span class="flowboard-lane-count ${isOverLimit ? 'flowboard-wip-over' : ''}">${count}</span>
+            <button class="flowboard-lane-add-icon" onclick="addFlowboardQuickCard('${escapeHtml(lane.id)}')" title="카드 추가">+</button>
+            <button class="flowboard-lane-menu-btn" onclick="openFlowboardLaneMenu(event, '${escapeHtml(lane.id)}')" title="레인 메뉴">&vellip;</button>
+          </div>
+        </div>
+        <div class="flowboard-cards" data-lane-id="${escapeHtml(lane.id)}">
+    `;
+
+    cards.forEach((card, idx) => {
+      const isEditing = (catFlowboardEditingCardId === card.id);
+      const pClass = card.priority ? card.priority.toLowerCase() : '';
+      const priorityLabel = card.priority || '';
+
+      laneHtml += `
+        <div class="flowboard-card ${isEditing ? 'flowboard-card-editing' : ''} ${card.done || isDone ? 'is-completed' : ''}" 
+             draggable="${!isEditing}" 
+             data-card-id="${escapeHtml(card.id)}" 
+             data-lane-id="${escapeHtml(lane.id)}" 
+             data-index="${idx}">
+          <div class="flowboard-card-top">
+            <input type="checkbox" class="flowboard-card-checkbox" ${card.done ? 'checked' : ''} 
+                   onchange="toggleFlowboardCardDone('${escapeHtml(card.id)}', this.checked)">
+            <div class="flowboard-card-content">
+              ${isEditing ? `
+                <textarea class="flowboard-card-textarea" id="flowboardTextarea_${escapeHtml(card.id)}" 
+                          onkeydown="handleFlowboardCardKey(event, '${escapeHtml(card.id)}')">${escapeHtml(card.content)}</textarea>
+                <div style="display:flex; justify-content:flex-end; gap:4px; margin-top:4px;">
+                  <button class="cat-link-btn" style="font-size:11px;" onclick="cancelFlowboardEditCard()">취소</button>
+                  <button class="cat-mini-add-btn" style="padding:2px 8px; font-size:11px;" onclick="saveFlowboardEditCard('${escapeHtml(card.id)}')">저장</button>
+                </div>
+              ` : `
+                <div class="flowboard-card-text" onclick="editFlowboardCard('${escapeHtml(card.id)}')">${escapeHtml(card.content || (isEn ? '(Empty Card)' : '(내용 없음)'))}</div>
+              `}
+            </div>
+          </div>
+          <div class="flowboard-card-meta-container">
+            <div style="display:flex; align-items:center; gap:4px;">
+              ${priorityLabel ? `
+                <span class="flowboard-priority-badge ${pClass}" onclick="openFlowboardPriorityMenu(event, '${escapeHtml(card.id)}')">${priorityLabel}</span>
+              ` : `
+                <span class="flowboard-card-btn" style="opacity:0.6;" onclick="openFlowboardPriorityMenu(event, '${escapeHtml(card.id)}')">우선순위</span>
+              `}
+              ${card.date ? `
+                <span class="flowboard-card-date" onclick="editFlowboardCardDate('${escapeHtml(card.id)}')">${escapeHtml(card.date)}</span>
+              ` : ''}
+            </div>
+            <div class="flowboard-card-actions">
+              <button class="flowboard-card-btn" onclick="duplicateFlowboardCard('${escapeHtml(card.id)}')" title="복제">복제</button>
+              <button class="flowboard-card-btn delete" onclick="deleteFlowboardCard('${escapeHtml(card.id)}')" title="삭제">&times;</button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    laneHtml += `</div>`; // .flowboard-cards
+
+    // Sub-swimlanes (depth-3 nested)
+    if (lane.subLanes && lane.subLanes.length > 0) {
+      laneHtml += `<div class="flowboard-sub-lanes">`;
+      for (const subLane of lane.subLanes) {
+        laneHtml += renderLaneRecursive(subLane, depth + 1);
+      }
+      laneHtml += `</div>`;
+    }
+
+    laneHtml += `
+      <div class="flowboard-add-card" onclick="addFlowboardQuickCard('${escapeHtml(lane.id)}')">+ 카드 추가</div>
+    </div>`; // .flowboard-lane
+
+    return laneHtml;
+  }
+
+  for (const lane of board.lanes) {
+    html += renderLaneRecursive(lane, 2);
+  }
+
+  if (!isCompact) {
+    html += `
+      <div class="flowboard-add-lane" onclick="openFlowboardAddLaneModal()">
+        <span>+ 새 레인 추가</span>
+      </div>
+    `;
+  }
+
+  html += `</div></div></div>`; // .flowboard-lanes, .flowboard-board, .flowboard-board-container
+  container.innerHTML = html;
+
+  attachFlowboardDragDrop(container);
+}
+
+function renderFlowboardListView(container, board, isCompact, filterCard, isEn) {
+  let html = `<div class="flowboard-list-container">`;
+
+  function renderGroup(lane) {
+    const cards = (lane.cards || []).filter(filterCard);
+    let groupHtml = `
+      <div class="flowboard-list-group">
+        <div class="flowboard-list-group-header">
+          <span>${escapeHtml(lane.title)}</span>
+          <span class="flowboard-lane-count">${cards.length}</span>
+        </div>
+        <div class="flowboard-list-items">
+    `;
+
+    if (cards.length === 0) {
+      groupHtml += `<div class="cat-item-empty" style="padding:8px 0; font-size:12px;">${isEn ? 'No cards in this lane' : '해당 레인에 카드가 없습니다'}</div>`;
+    } else {
+      cards.forEach(card => {
+        const pClass = card.priority ? card.priority.toLowerCase() : '';
+        groupHtml += `
+          <div class="flowboard-list-row">
+            <label style="display:flex; align-items:center; gap:8px; flex:1; cursor:pointer;">
+              <input type="checkbox" class="flowboard-card-checkbox" ${card.done ? 'checked' : ''} 
+                     onchange="toggleFlowboardCardDone('${escapeHtml(card.id)}', this.checked)">
+              <span class="flowboard-card-text" style="${card.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}">${escapeHtml(card.content)}</span>
+            </label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${card.priority ? `<span class="flowboard-priority-badge ${pClass}">${escapeHtml(card.priority)}</span>` : ''}
+              <span style="font-size:11px; color:var(--text-muted);">${escapeHtml(card.date || '')}</span>
+              <button class="flowboard-card-btn delete" onclick="deleteFlowboardCard('${escapeHtml(card.id)}')">&times;</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    groupHtml += `</div></div>`;
+
+    if (lane.subLanes && lane.subLanes.length > 0) {
+      for (const sub of lane.subLanes) {
+        groupHtml += renderGroup(sub);
+      }
+    }
+    return groupHtml;
+  }
+
+  for (const lane of board.lanes) {
+    html += renderGroup(lane);
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function attachFlowboardDragDrop(container) {
+  let draggedCardId = null;
+
+  const cards = container.querySelectorAll('.flowboard-card');
+  cards.forEach(cardEl => {
+    cardEl.addEventListener('dragstart', (e) => {
+      draggedCardId = cardEl.getAttribute('data-card-id');
+      if (e.dataTransfer) {
+        e.dataTransfer.setData('text/plain', draggedCardId);
+        e.dataTransfer.effectAllowed = 'move';
+      }
+      cardEl.classList.add('flowboard-card-dragging');
+    });
+
+    cardEl.addEventListener('dragend', () => {
+      cardEl.classList.remove('flowboard-card-dragging');
+      removeExistingPlaceholder();
+      container.querySelectorAll('.flowboard-lane').forEach(l => l.classList.remove('flowboard-lane-drag-over'));
+      draggedCardId = null;
+    });
+  });
+
+  const lanes = container.querySelectorAll('.flowboard-lane');
+  lanes.forEach(laneEl => {
+    laneEl.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      laneEl.classList.add('flowboard-lane-drag-over');
+
+      const cardsContainer = laneEl.querySelector('.flowboard-cards');
+      if (cardsContainer) {
+        let placeholder = container.querySelector('.flowboard-card-placeholder');
+        if (!placeholder) {
+          placeholder = document.createElement('div');
+          placeholder.className = 'flowboard-card-placeholder';
+        }
+        const afterElement = getFlowboardDragAfterElement(cardsContainer, e.clientY);
+        if (afterElement == null) {
+          cardsContainer.appendChild(placeholder);
+        } else {
+          cardsContainer.insertBefore(placeholder, afterElement);
+        }
+      }
+    });
+
+    laneEl.addEventListener('dragleave', (e) => {
+      const rel = e.relatedTarget;
+      if (rel && laneEl.contains(rel)) return;
+      laneEl.classList.remove('flowboard-lane-drag-over');
+    });
+
+    laneEl.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      laneEl.classList.remove('flowboard-lane-drag-over');
+
+      const cardId = e.dataTransfer ? e.dataTransfer.getData('text/plain') : draggedCardId;
+      const targetLaneId = laneEl.getAttribute('data-lane-id');
+      const cardsContainer = laneEl.querySelector('.flowboard-cards');
+
+      if (cardId && targetLaneId && cardsContainer) {
+        const afterElement = getFlowboardDragAfterElement(cardsContainer, e.clientY);
+        const index = afterElement == null
+          ? 9999
+          : parseInt(afterElement.getAttribute('data-index') || '0', 10);
+
+        const board = getFlowboardData();
+        moveCard(board, cardId, targetLaneId, index);
+        saveFlowboardData(board);
+
+        removeExistingPlaceholder();
+        renderCatTodos();
+        renderCatManageTodosList();
+      }
+    });
+  });
+
+  function removeExistingPlaceholder() {
+    const placeholders = container.querySelectorAll('.flowboard-card-placeholder');
+    placeholders.forEach(p => p.remove());
+  }
+}
 
 function renderCatTodos() {
   const container = document.getElementById('catTodoList');
@@ -14289,102 +14819,32 @@ function renderCatTodos() {
     dateTag.textContent = isEn ? `${parseInt(parts[1])}/${parseInt(parts[2])}` : `${parseInt(parts[1])}월 ${parseInt(parts[2])}일`;
   }
 
-  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-  const selDate = CatDashboardState.selectedDate;
-  // 선택된 날짜의 할일 또는 아직 완료되지 않은 진행중 할일 전체 노출
-  const filtered = list.filter(it => it.date === selDate || !it.done);
-  filtered.sort((a, b) => {
-    if (a.done === b.done) return (b.id || '').localeCompare(a.id || '');
-    return a.done ? 1 : -1;
-  });
+  const btnToggle = document.getElementById('catWidgetTodoViewToggle');
+  if (btnToggle) {
+    btnToggle.textContent = (catWidgetFlowboardViewMode === 'kanban') ? '보기: 칸반' : '보기: 리스트';
+  }
 
+  const allTodos = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
   const badge = document.getElementById('catTodoCountBadge');
   if (badge) {
-    const doneCount = filtered.filter(it => it.done).length;
-    badge.textContent = `${doneCount}/${filtered.length}`;
+    const doneCount = allTodos.filter(it => it.done).length;
+    badge.textContent = `${doneCount}/${allTodos.length}`;
   }
 
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="cat-item-empty" style="padding:16px 0;">${isEn ? 'No tasks registered' : '등록된 할일이 없습니다'}</div>`;
-    return;
-  }
-
-  let html = '<div class="cat-item-list">';
-  filtered.forEach(item => {
-    const isToday = item.date === selDate;
-    html += `
-      <div class="cat-list-item">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;">
-          <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatTodo('${item.id}')" style="accent-color:#2563eb;">
-          <span style="font-size:12.5px; ${item.done ? 'text-decoration:line-through; color:var(--text-muted);' : 'color:var(--text-primary);'}">${escapeHtml(item.text)}</span>
-        </label>
-        <span style="font-size:10.5px; color:var(--text-muted); margin-right:4px;">${isToday ? (isEn ? 'Today' : '오늘') : item.date}</span>
-        <button onclick="deleteCatTodo('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
-      </div>
-    `;
-  });
-  html += '</div>';
-  container.innerHTML = html;
+  renderFlowboard('catTodoList', true);
 }
 window.renderCatTodos = renderCatTodos;
-
-function addCatTodo() {
-  const input = document.getElementById('catNewTodoInput');
-  if (!input || !input.value.trim()) return;
-  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-  list.unshift({
-    id: 't_' + Date.now(),
-    date: CatDashboardState.selectedDate,
-    text: input.value.trim(),
-    done: false
-  });
-  localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
-  input.value = '';
-  renderCatTodos();
-  renderCatManageTodosList();
-}
-window.addCatTodo = addCatTodo;
-
-function toggleCatTodo(id) {
-  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-  const target = list.find(it => it.id === id);
-  if (target) {
-    target.done = !target.done;
-    localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
-    renderCatTodos();
-    renderCatManageTodosList();
-  }
-}
-window.toggleCatTodo = toggleCatTodo;
-
-function deleteCatTodo(id) {
-  let list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-  list = list.filter(it => it.id !== id);
-  localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
-  renderCatTodos();
-  renderCatManageTodosList();
-}
-window.deleteCatTodo = deleteCatTodo;
-
-function setCatTodoFilter(filterKey, btn) {
-  catCurrentTodoFilter = filterKey;
-  document.querySelectorAll('[data-todo-filter]').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderCatManageTodosList();
-}
-window.setCatTodoFilter = setCatTodoFilter;
 
 function renderCatManageTodosList() {
   const container = document.getElementById('catManageTodosFullList');
   if (!container) return;
-  const isEn = (AppState && AppState.currentLang === 'en');
 
   const searchInput = document.getElementById('catManageTodoSearch');
   const query = (searchInput && typeof searchInput.value === 'string') ? searchInput.value.trim().toLowerCase() : '';
 
   const allTodos = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-
   const todayStr = CatDashboardState.selectedDate || '2026-10-14';
+
   const statAll = allTodos.length;
   const statToday = allTodos.filter(t => t.date === todayStr).length;
   const statPending = allTodos.filter(t => !t.done).length;
@@ -14395,70 +14855,440 @@ function renderCatManageTodosList() {
   const elPending = document.getElementById('catStatTodoPending'); if (elPending) elPending.textContent = statPending;
   const elDone = document.getElementById('catStatTodoDone'); if (elDone) elDone.textContent = statDone;
 
-  let filtered = allTodos;
-  if (catCurrentTodoFilter === 'today') {
-    filtered = filtered.filter(t => t.date === todayStr);
-  } else if (catCurrentTodoFilter === 'pending') {
-    filtered = filtered.filter(t => !t.done);
-  } else if (catCurrentTodoFilter === 'done') {
-    filtered = filtered.filter(t => t.done);
-  }
+  const btnK = document.getElementById('flowboardBtnKanban');
+  const btnL = document.getElementById('flowboardBtnList');
+  if (btnK) btnK.classList.toggle('active', catFlowboardViewMode === 'kanban');
+  if (btnL) btnL.classList.toggle('active', catFlowboardViewMode === 'list');
 
-  if (query) {
-    filtered = filtered.filter(t => (t.text && t.text.toLowerCase().includes(query)) || (t.date && t.date.includes(query)));
-  }
-
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="cat-item-empty">${isEn ? 'No matching todos.' : '일치하는 할일이 없습니다.'}</div>`;
-    return;
-  }
-
-  container.innerHTML = filtered.map(item => `
-    <div class="cat-list-item" style="padding:10px 14px;">
-      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; flex:1;">
-        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCatManageTodo('${item.id}')" style="accent-color:#2563eb; width:16px; height:16px;">
-        <span style="font-size:11px; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.06); color:var(--text-muted);">${item.date || (isEn ? 'No Date' : '날짜 미지정')}</span>
-        <span style="font-size:13px; ${item.done ? 'text-decoration:line-through; color:var(--text-muted);' : 'color:var(--text-primary);'}">${escapeHtml(item.text)}</span>
-      </label>
-      <div style="display:flex; align-items:center; gap:6px;">
-        <button onclick="deleteCatManageTodo('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:16px;">&times;</button>
-      </div>
-    </div>
-  `).join('');
+  renderFlowboard('catManageTodosFullList', false);
 }
 window.renderCatManageTodosList = renderCatManageTodosList;
+
+function addCatTodo() {
+  const input = document.getElementById('catNewTodoInput');
+  if (!input || !input.value.trim()) return;
+
+  const board = getFlowboardData();
+  const newCard = {
+    id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+    content: input.value.trim(),
+    date: CatDashboardState.selectedDate || '2026-10-14',
+    priority: '',
+    done: false
+  };
+
+  const todoLane = findLaneRecursively(board.lanes, 'lane_todo') || board.lanes[0];
+  if (todoLane) {
+    if (!todoLane.cards) todoLane.cards = [];
+    todoLane.cards.unshift(newCard);
+    saveFlowboardData(board);
+  }
+
+  input.value = '';
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.addCatTodo = addCatTodo;
 
 function submitCatManageTodo() {
   const textInput = document.getElementById('catManageTodoText');
   const dateInput = document.getElementById('catManageTodoDate');
+  const laneSelect = document.getElementById('catManageTodoLaneSelect');
+  const prioritySelect = document.getElementById('catManageTodoPrioritySelect');
+
   if (!textInput || !textInput.value.trim()) return;
 
-  const list = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-  list.unshift({
-    id: 't_' + Date.now(),
-    date: (dateInput && dateInput.value) || CatDashboardState.selectedDate,
-    text: textInput.value.trim(),
-    done: false
-  });
-  localStorage.setItem('kostat_cat_todos', JSON.stringify(list));
+  const targetLaneKey = laneSelect ? laneSelect.value : 'todo';
+  const targetPriority = prioritySelect ? prioritySelect.value : '';
+  const targetDate = (dateInput && dateInput.value) || CatDashboardState.selectedDate || '2026-10-14';
+
+  const board = getFlowboardData();
+  const laneIdMap = {
+    backlog: 'lane_backlog',
+    todo: 'lane_todo',
+    active: 'lane_active',
+    slow: 'lane_slow',
+    done: 'lane_done'
+  };
+  const targetLaneId = laneIdMap[targetLaneKey] || ('lane_' + targetLaneKey);
+  let targetLane = findLaneRecursively(board.lanes, targetLaneId);
+  if (!targetLane) targetLane = board.lanes[0];
+
+  const newCard = {
+    id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+    content: textInput.value.trim(),
+    date: targetDate,
+    priority: targetPriority,
+    done: (targetLaneKey === 'done')
+  };
+
+  if (!targetLane.cards) targetLane.cards = [];
+  targetLane.cards.unshift(newCard);
+
+  saveFlowboardData(board);
   textInput.value = '';
 
-  renderCatManageTodosList();
   renderCatTodos();
+  renderCatManageTodosList();
 }
 window.submitCatManageTodo = submitCatManageTodo;
 
+function toggleCatTodo(id) {
+  toggleFlowboardCardDone(id);
+}
+window.toggleCatTodo = toggleCatTodo;
+
 function toggleCatManageTodo(id) {
-  toggleCatTodo(id);
-  renderCatManageTodosList();
+  toggleFlowboardCardDone(id);
 }
 window.toggleCatManageTodo = toggleCatManageTodo;
 
+function deleteCatTodo(id) {
+  deleteFlowboardCard(id);
+}
+window.deleteCatTodo = deleteCatTodo;
+
 function deleteCatManageTodo(id) {
-  deleteCatTodo(id);
-  renderCatManageTodosList();
+  deleteFlowboardCard(id);
 }
 window.deleteCatManageTodo = deleteCatManageTodo;
+
+function setCatTodoFilter(filterKey, btn) {
+  catCurrentTodoFilter = filterKey;
+  document.querySelectorAll('[data-todo-filter]').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCatManageTodosList();
+}
+window.setCatTodoFilter = setCatTodoFilter;
+
+function toggleFlowboardCardDone(cardId, isChecked) {
+  const board = getFlowboardData();
+  let targetCard = null;
+
+  function findCard(lanes) {
+    for (const lane of lanes) {
+      const c = (lane.cards || []).find(it => it.id === cardId);
+      if (c) return { card: c, lane };
+      if (lane.subLanes) {
+        const found = findCard(lane.subLanes);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  const found = findCard(board.lanes);
+  if (found) {
+    const { card, lane } = found;
+    card.done = (typeof isChecked === 'boolean') ? isChecked : !card.done;
+
+    // Flowboard automatic lane transit: if marked done, move to Done lane; if unmarked, move to Todo lane
+    if (card.done && lane.id !== 'lane_done') {
+      moveCard(board, card.id, 'lane_done', 0);
+    } else if (!card.done && lane.id === 'lane_done') {
+      moveCard(board, card.id, 'lane_todo', 0);
+    }
+
+    saveFlowboardData(board);
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
+}
+window.toggleFlowboardCardDone = toggleFlowboardCardDone;
+
+function addFlowboardQuickCard(laneId) {
+  const board = getFlowboardData();
+  const lane = findLaneRecursively(board.lanes, laneId);
+  if (!lane) return;
+
+  const newCard = {
+    id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+    content: '',
+    date: CatDashboardState.selectedDate || '2026-10-14',
+    priority: '',
+    done: (lane.id === 'lane_done')
+  };
+
+  if (!lane.cards) lane.cards = [];
+  lane.cards.push(newCard);
+  catFlowboardEditingCardId = newCard.id;
+  saveFlowboardData(board);
+
+  renderCatTodos();
+  renderCatManageTodosList();
+
+  setTimeout(() => {
+    const ta = document.getElementById('flowboardTextarea_' + newCard.id);
+    if (ta) ta.focus();
+  }, 50);
+}
+window.addFlowboardQuickCard = addFlowboardQuickCard;
+
+function editFlowboardCard(cardId) {
+  catFlowboardEditingCardId = cardId;
+  renderCatTodos();
+  renderCatManageTodosList();
+  setTimeout(() => {
+    const ta = document.getElementById('flowboardTextarea_' + cardId);
+    if (ta) {
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+    }
+  }, 50);
+}
+window.editFlowboardCard = editFlowboardCard;
+
+function saveFlowboardEditCard(cardId) {
+  const ta = document.getElementById('flowboardTextarea_' + cardId);
+  if (!ta) return;
+  const content = ta.value.trim();
+
+  const board = getFlowboardData();
+  if (!content) {
+    removeCardRecursively(board.lanes, cardId);
+  } else {
+    updateCard(board, cardId, content);
+  }
+  catFlowboardEditingCardId = null;
+  saveFlowboardData(board);
+
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.saveFlowboardEditCard = saveFlowboardEditCard;
+
+function cancelFlowboardEditCard() {
+  catFlowboardEditingCardId = null;
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.cancelFlowboardEditCard = cancelFlowboardEditCard;
+
+function handleFlowboardCardKey(e, cardId) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    saveFlowboardEditCard(cardId);
+  } else if (e.key === 'Escape') {
+    cancelFlowboardEditCard();
+  }
+}
+window.handleFlowboardCardKey = handleFlowboardCardKey;
+
+function deleteFlowboardCard(cardId) {
+  const board = getFlowboardData();
+  removeCardRecursively(board.lanes, cardId);
+  saveFlowboardData(board);
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.deleteFlowboardCard = deleteFlowboardCard;
+
+function duplicateFlowboardCard(cardId) {
+  const board = getFlowboardData();
+  duplicateCard(board, cardId);
+  saveFlowboardData(board);
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.duplicateFlowboardCard = duplicateFlowboardCard;
+
+function editFlowboardCardDate(cardId) {
+  const board = getFlowboardData();
+  let card = null;
+  function find(lanes) {
+    for (const l of lanes) {
+      const c = (l.cards || []).find(it => it.id === cardId);
+      if (c) return c;
+      if (l.subLanes) {
+        const found = find(l.subLanes);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+  card = find(board.lanes);
+  if (!card) return;
+
+  const current = card.date || CatDashboardState.selectedDate || '2026-10-14';
+  const newDate = prompt('카드 마감일자를 입력하세요 (YYYY-MM-DD):', current);
+  if (newDate !== null) {
+    card.date = newDate.trim();
+    saveFlowboardData(board);
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
+}
+window.editFlowboardCardDate = editFlowboardCardDate;
+
+function editFlowboardLaneTitle(laneId) {
+  const board = getFlowboardData();
+  const lane = findLaneRecursively(board.lanes, laneId);
+  if (!lane) return;
+
+  const newTitle = prompt('레인 이름을 입력하세요:', lane.title);
+  if (newTitle && newTitle.trim()) {
+    lane.title = newTitle.trim();
+    saveFlowboardData(board);
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
+}
+window.editFlowboardLaneTitle = editFlowboardLaneTitle;
+
+function openFlowboardPriorityMenu(e, cardId) {
+  e.stopPropagation();
+  const existing = document.getElementById('flowboardPriorityPopover');
+  if (existing) existing.remove();
+
+  const menu = document.createElement('div');
+  menu.id = 'flowboardPriorityPopover';
+  menu.className = 'flowboard-priority-menu';
+
+  const priorities = [
+    { name: '', label: '우선순위 해제', color: 'transparent' },
+    { name: 'P1', label: 'P1 긴급', color: '#ef4444' },
+    { name: 'P2', label: 'P2 높음', color: '#f97316' },
+    { name: 'P3', label: 'P3 보통', color: '#3b82f6' },
+    { name: 'P4', label: 'P4 낮음', color: '#10b981' }
+  ];
+
+  priorities.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'flowboard-priority-option';
+    btn.innerHTML = `
+      <span style="width:10px; height:10px; border-radius:50%; background:${p.color}; border:1px solid rgba(255,255,255,0.2);"></span>
+      <span>${p.label}</span>
+    `;
+    btn.onclick = () => {
+      setFlowboardCardPriority(cardId, p.name);
+      menu.remove();
+    };
+    menu.appendChild(btn);
+  });
+
+  document.body.appendChild(menu);
+  const rect = e.target.getBoundingClientRect();
+  menu.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  menu.style.left = Math.min(rect.left + window.scrollX, window.innerWidth - 180) + 'px';
+
+  const closeHandler = (ev) => {
+    if (!menu.contains(ev.target)) {
+      menu.remove();
+      document.removeEventListener('click', closeHandler);
+    }
+  };
+  setTimeout(() => document.addEventListener('click', closeHandler), 10);
+}
+window.openFlowboardPriorityMenu = openFlowboardPriorityMenu;
+
+function setFlowboardCardPriority(cardId, priority) {
+  const board = getFlowboardData();
+  function setP(lanes) {
+    for (const l of lanes) {
+      const c = (l.cards || []).find(it => it.id === cardId);
+      if (c) {
+        c.priority = priority;
+        return true;
+      }
+      if (l.subLanes && setP(l.subLanes)) return true;
+    }
+    return false;
+  }
+  setP(board.lanes);
+  saveFlowboardData(board);
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.setFlowboardCardPriority = setFlowboardCardPriority;
+
+function openFlowboardLaneMenu(e, laneId) {
+  e.stopPropagation();
+  const board = getFlowboardData();
+  const lane = findLaneRecursively(board.lanes, laneId);
+  if (!lane) return;
+
+  const choice = confirm(`레인 '${lane.title}'을 삭제하시겠습니까?\n(레인 안에 카드가 있는 경우 카드가 함께 삭제됩니다)`);
+  if (choice) {
+    function removeLane(lanes) {
+      return lanes.filter(l => {
+        if (l.id === laneId) return false;
+        if (l.subLanes) l.subLanes = removeLane(l.subLanes);
+        return true;
+      });
+    }
+    board.lanes = removeLane(board.lanes);
+    saveFlowboardData(board);
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
+}
+window.openFlowboardLaneMenu = openFlowboardLaneMenu;
+
+function openFlowboardAddLaneModal() {
+  const modal = document.getElementById('modalFlowboardAddLane');
+  if (!modal) return;
+
+  const input = document.getElementById('flowboardNewLaneInput');
+  if (input) input.value = '';
+
+  const parentSelect = document.getElementById('flowboardNewLaneParentSelect');
+  if (parentSelect) {
+    const board = getFlowboardData();
+    let optHtml = `<option value="">최상위 레인 (Root Lane)</option>`;
+    for (const lane of board.lanes) {
+      optHtml += `<option value="${escapeHtml(lane.id)}">${escapeHtml(lane.title)} (하위 서브 레인)</option>`;
+    }
+    parentSelect.innerHTML = optHtml;
+  }
+
+  modal.classList.add('active');
+  if (input) setTimeout(() => input.focus(), 50);
+}
+window.openFlowboardAddLaneModal = openFlowboardAddLaneModal;
+
+function closeFlowboardAddLaneModal() {
+  const modal = document.getElementById('modalFlowboardAddLane');
+  if (modal) modal.classList.remove('active');
+}
+window.closeFlowboardAddLaneModal = closeFlowboardAddLaneModal;
+
+function submitFlowboardAddLane() {
+  const input = document.getElementById('flowboardNewLaneInput');
+  const parentSelect = document.getElementById('flowboardNewLaneParentSelect');
+  if (!input || !input.value.trim()) return;
+
+  const title = input.value.trim();
+  const parentId = parentSelect ? parentSelect.value : '';
+
+  const board = getFlowboardData();
+  const newLane = {
+    id: 'lane_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+    title: title,
+    cards: []
+  };
+
+  if (parentId) {
+    const parentLane = findLaneRecursively(board.lanes, parentId);
+    if (parentLane) {
+      if (!parentLane.subLanes) parentLane.subLanes = [];
+      parentLane.subLanes.push(newLane);
+    }
+  } else {
+    // Insert before Done lane if it exists, otherwise append
+    const doneIdx = board.lanes.findIndex(l => l.id === 'lane_done' || l.title.toLowerCase() === 'done');
+    if (doneIdx !== -1) {
+      board.lanes.splice(doneIdx, 0, newLane);
+    } else {
+      board.lanes.push(newLane);
+    }
+  }
+
+  saveFlowboardData(board);
+  closeFlowboardAddLaneModal();
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.submitFlowboardAddLane = submitFlowboardAddLane;
 
 // -------------------------------------------------------------
 // 11. 북마크 위젯 & 전용 보관함

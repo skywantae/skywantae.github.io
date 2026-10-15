@@ -5542,4 +5542,547 @@ html, body {
   transform: translateY(-1px);
 }
 
+/* ==========================================================================
+   Flowboard Kanban & Todo Studio Integration (based on flowboard)
+   ========================================================================== */
+.flowboard-board-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.flowboard-board {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.flowboard-header {
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.flowboard-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flowboard-title {
+  margin: 0;
+  font-size: 1.15em;
+  font-weight: 700;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.flowboard-controls-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.flowboard-search-input {
+  background: var(--bg-input, rgba(15, 23, 42, 0.6));
+  color: var(--text-primary, #f1f5f9);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  width: 180px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.flowboard-search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.flowboard-view-btn {
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary, #94a3b8);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.flowboard-view-btn:hover, .flowboard-view-btn.active {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.flowboard-lanes {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 14px 2px;
+  flex: 1;
+  min-height: 240px;
+}
+
+/* Compact lanes inside widget */
+.flowboard-compact .flowboard-lanes {
+  gap: 10px;
+  padding-bottom: 8px;
+  min-height: 180px;
+}
+
+.flowboard-lane {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  min-width: var(--lane-width, 240px);
+  width: var(--lane-width, 240px);
+  max-width: 320px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.flowboard-compact .flowboard-lane {
+  min-width: 200px;
+  width: 200px;
+  padding: 8px;
+}
+
+.flowboard-lane-drag-over {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border: 1px dashed #3b82f6 !important;
+}
+
+.flowboard-lane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 6px 8px 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.flowboard-lane-title {
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary, #cbd5e1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.flowboard-lane-title:hover {
+  color: #60a5fa;
+}
+
+.flowboard-lane-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flowboard-lane-count {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 7px;
+  border-radius: 12px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.flowboard-lane-add-icon {
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-muted, #94a3b8);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.flowboard-lane-add-icon:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.flowboard-lane-menu-btn {
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: var(--text-muted, #94a3b8);
+  font-size: 13px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+}
+
+.flowboard-lane-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+}
+
+.flowboard-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 2px;
+  flex-grow: 1;
+  flex-shrink: 0;
+  min-height: 28px;
+  overflow-y: auto;
+  max-height: calc(100vh - 360px);
+}
+
+.flowboard-compact .flowboard-cards {
+  max-height: 220px;
+}
+
+.flowboard-lane-drag-over > .flowboard-cards:empty {
+  min-height: 52px;
+  padding: 4px;
+}
+
+.flowboard-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  overflow: hidden;
+  user-select: none;
+}
+
+.flowboard-card:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.flowboard-card.flowboard-card-dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+  border: 1px dashed #3b82f6;
+}
+
+.flowboard-card.is-completed {
+  opacity: 0.75;
+}
+
+.flowboard-card.is-completed .flowboard-card-text {
+  text-decoration: line-through;
+  color: var(--text-muted, #64748b);
+}
+
+.flowboard-card-placeholder {
+  height: 38px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px dashed #3b82f6;
+  border-radius: 6px;
+  margin: 2px 0;
+  transition: height 0.15s ease;
+}
+
+.flowboard-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.flowboard-card-checkbox {
+  cursor: pointer;
+  accent-color: #3b82f6;
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.flowboard-card-content {
+  flex-grow: 1;
+  font-size: 12.5px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.flowboard-card-text {
+  font-size: 12.5px;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.flowboard-card-textarea {
+  flex-grow: 1;
+  width: 100%;
+  min-height: 60px;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-primary, #f1f5f9);
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  resize: vertical;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.flowboard-card-meta-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.flowboard-priority-badge {
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.1;
+  display: inline-flex;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  border: none;
+}
+
+.flowboard-priority-badge.p1 { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+.flowboard-priority-badge.p2 { background: rgba(249, 115, 22, 0.25); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.4); }
+.flowboard-priority-badge.p3 { background: rgba(59, 130, 246, 0.25); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+.flowboard-priority-badge.p4 { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+.flowboard-card-date {
+  font-size: 10.5px;
+  color: var(--text-muted, #94a3b8);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.flowboard-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+}
+
+.flowboard-card:hover .flowboard-card-actions {
+  opacity: 1;
+}
+
+.flowboard-card-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+  padding: 1px 4px;
+  font-size: 11px;
+  border-radius: 3px;
+  transition: all 0.12s ease;
+}
+
+.flowboard-card-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+}
+
+.flowboard-card-btn.delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+/* Sub-swimlanes (depth-3 nested under In Progress) */
+.flowboard-sub-lanes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.flowboard-lane.depth-3 {
+  min-width: 100%;
+  width: 100%;
+  background: rgba(20, 30, 48, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.flowboard-lane.depth-3 .flowboard-lane-title {
+  font-size: 11px;
+  color: #93c5fd;
+}
+
+.flowboard-add-card {
+  margin-top: 6px;
+  padding: 6px 10px;
+  color: var(--text-muted, #94a3b8);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  transition: all 0.15s ease;
+}
+
+.flowboard-add-card:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+.flowboard-add-lane {
+  background: rgba(15, 23, 42, 0.35);
+  border-radius: 8px;
+  min-width: 220px;
+  width: 220px;
+  padding: 12px;
+  color: var(--text-muted, #94a3b8);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: fit-content;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.flowboard-add-lane:hover {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
+/* List View */
+.flowboard-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.flowboard-list-group {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.flowboard-list-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary, #cbd5e1);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.flowboard-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flowboard-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  gap: 10px;
+  transition: background 0.12s ease;
+}
+
+.flowboard-list-row:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+/* Priority Selector Popover */
+.flowboard-priority-menu {
+  position: absolute;
+  z-index: 1000;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.flowboard-priority-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #f1f5f9;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+
+.flowboard-priority-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+
 
