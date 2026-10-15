@@ -106,9 +106,13 @@
     onAuthStateChanged: function (callback) {
       if (typeof callback === 'function') {
         this.authListeners.push(callback);
-        // 이미 로드된 상태면 즉시 1회 호출
+        // 이미 로드된 상태면 즉시 1회 안전 호출
         if (this.currentUser !== undefined) {
-          callback(this.currentUser, this.userProfile);
+          try {
+            callback(this.currentUser, this.userProfile);
+          } catch (e) {
+            console.error('[onAuthStateChanged immediate callback error]', e);
+          }
         }
       }
     },

@@ -76,7 +76,62 @@ const AdminState = window.AdminState = {
   latestDetectedDate: '',
   parsedShipRows: null,
   sourceFileName: '',
-  sourceFileSize: 0
+};
+
+// ==========================================================================
+// 대시보드 (Catlendar) 전역 레이아웃 및 상태 객체 (최상단 안전 선제 선언)
+// Temporal Dead Zone(TDZ) 방지를 위해 스크립트 최상단에 영구 초기화
+// ==========================================================================
+const DEFAULT_CAT_LAYOUT = window.DEFAULT_CAT_LAYOUT = {
+  colFull: [],
+  colLeft: ['calendar', 'widgetSalesProjects'],
+  colRight: ['weather', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
+};
+
+const CAT_WIDGET_NAMES = window.CAT_WIDGET_NAMES = {
+  calendar: '캘린더 & 글로벌 연휴',
+  weather: '실시간 날씨 예보',
+  widgetSalesProjects: '영업사항 - 프로젝트 개발 현황',
+  quickInput: '빠른 입력',
+  upcoming: '앞으로의 일정',
+  notes: '기록 (메모)',
+  todos: '할일 체크리스트',
+  bookmarks: '사내 북마크'
+};
+
+const CAT_WIDGET_NAMES_EN = window.CAT_WIDGET_NAMES_EN = {
+  calendar: 'Calendar & Global Holidays',
+  weather: 'Real-time Weather',
+  widgetSalesProjects: 'Sales - Project Development Status',
+  quickInput: 'Quick Input',
+  upcoming: 'Upcoming Schedules',
+  notes: 'Notes & Journal',
+  todos: 'Todo Checklist',
+  bookmarks: 'Company Bookmarks'
+};
+
+let CatDashboardState = window.CatDashboardState = {
+  initialized: false,
+  year: 2026,
+  month: 10,
+  selectedDate: '2026-10-14',
+  selectedCity: 'seoul',
+  quickType: 'schedule',
+  modalQuickType: 'schedule',
+  currentView: 'all',
+  activeCountries: ['KR', 'CN', 'JP', 'PH', 'TW', 'US', 'MY', 'SG', 'VN'],
+  activeWidgets: {
+    calendar: false,
+    weather: false,
+    widgetSalesProjects: false,
+    quickInput: false,
+    upcoming: false,
+    notes: false,
+    todos: false,
+    bookmarks: false
+  },
+  customSizes: {},
+  widgetSizes: {}
 };
 
 // 관리자 마스터 보안 해시 (소스코드 내 평문 PIN 완전 은닉)
@@ -2723,52 +2778,93 @@ function updateAuthModalLanguage(lang) {
 }
 window.updateAuthModalLanguage = updateAuthModalLanguage;
 
+// -------------------------------------------------------------
+// 뷰어 네비게이션 탭 바인딩 및 영구 클릭 보장 엔진
+// -------------------------------------------------------------
+function setupViewerTabs() {
+  // 1. 직접 버튼 이벤트 바인딩
+  document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
+    if (!btn._tabClickBound) {
+      btn._tabClickBound = true;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = btn.getAttribute('data-target');
+        switchViewerCard(targetId);
+      });
+    }
+  });
+
+  // 2. 도큐먼트 위임(Delegation) 클릭 보장 (영구 안전장치)
+  if (!window._viewerTabDelegationBound) {
+    window._viewerTabDelegationBound = true;
+    document.addEventListener('click', (e) => {
+      const tabBtn = e.target.closest('.viewer-tab-btn');
+      if (tabBtn) {
+        e.preventDefault();
+        const targetId = tabBtn.getAttribute('data-target');
+        switchViewerCard(targetId);
+      }
+    });
+  }
+}
+window.setupViewerTabs = setupViewerTabs;
+try { setupViewerTabs(); } catch (_) {}
+
 // --- UI 이벤트 바인딩 ---
 function initUI() {
-  initAppLanguage();
-  initFeedbackBoardEvents();
-  initFaqEvents();
-  initLabEvents();
-  initArchiveEvents();
+  // 최우선순위: 탭 네비게이션 즉시 바인딩 (어떠한 하위 모듈 에러가 있어도 탭은 100% 동작 보장)
+  try {
+    setupViewerTabs();
+  } catch (err) {
+    console.error('[initUI] setupViewerTabs error:', err);
+  }
+
+  // 모바일 반응형 패널 전환기
+  try {
+    if (DOM.btnNavChat && !DOM.btnNavChat._bound) {
+      DOM.btnNavChat._bound = true;
+      DOM.btnNavChat.addEventListener('click', () => switchMobilePanel('chat'));
+    }
+    if (DOM.btnNavViewer && !DOM.btnNavViewer._bound) {
+      DOM.btnNavViewer._bound = true;
+      DOM.btnNavViewer.addEventListener('click', () => switchMobilePanel('viewer'));
+    }
+  } catch (err) {
+    console.error('[initUI] mobile switcher error:', err);
+  }
+
+  // 하위 모듈 독립적 try-catch 격리 초기화
+  try { initAppLanguage(); } catch (err) { console.error('[initUI] initAppLanguage error:', err); }
+  try { initFeedbackBoardEvents(); } catch (err) { console.error('[initUI] initFeedbackBoardEvents error:', err); }
+  try { initFaqEvents(); } catch (err) { console.error('[initUI] initFaqEvents error:', err); }
+  try { initLabEvents(); } catch (err) { console.error('[initUI] initLabEvents error:', err); }
+  try { initArchiveEvents(); } catch (err) { console.error('[initUI] initArchiveEvents error:', err); }
 
   // 챗봇 입력
-  DOM.chatForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const msg = DOM.chatInput.value.trim();
-    if (!msg) return;
-    DOM.chatInput.value = '';
-    handleLocalChatCommand(msg);
-  });
+  if (DOM.chatForm) {
+    DOM.chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const msg = DOM.chatInput ? DOM.chatInput.value.trim() : '';
+      if (!msg) return;
+      if (DOM.chatInput) DOM.chatInput.value = '';
+      handleLocalChatCommand(msg);
+    });
+  }
 
   // 퀵 액션 칩
   document.querySelectorAll('.quick-chip').forEach(btn => {
     btn.addEventListener('click', () => {
       const cmd = btn.getAttribute('data-cmd');
-      if (cmd.endsWith(' ')) {
-        DOM.chatInput.value = cmd;
-        DOM.chatInput.focus();
-      } else {
+      if (cmd && cmd.endsWith(' ')) {
+        if (DOM.chatInput) {
+          DOM.chatInput.value = cmd;
+          DOM.chatInput.focus();
+        }
+      } else if (cmd) {
         handleLocalChatCommand(cmd);
       }
     });
   });
-
-  // 우측 뷰어 상단 탭
-  document.querySelectorAll('.viewer-tab-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const targetId = btn.getAttribute('data-target');
-      switchViewerCard(targetId);
-    });
-  });
-
-  // [모바일 반응형] 100% 풀스크린 탭 전환기 바인딩
-  if (DOM.btnNavChat) {
-    DOM.btnNavChat.addEventListener('click', () => switchMobilePanel('chat'));
-  }
-  if (DOM.btnNavViewer) {
-    DOM.btnNavViewer.addEventListener('click', () => switchMobilePanel('viewer'));
-  }
 
   
   // 견적서 검색 이벤트 (아래 404~435에서 올바르게 등록됨)
@@ -12160,9 +12256,17 @@ window.handleDeleteUserRecord = handleDeleteUserRecord;
 // 인증 상태 리스너 구독 및 탭 제어 자동 초기화 & 사용자 맞춤 대시보드 복원
 if (window.KostatAuth) {
   window.KostatAuth.onAuthStateChanged(function (user, profile) {
-    syncTabVisibility();
-    if (typeof loadCatUserPreferences === 'function') {
-      loadCatUserPreferences(user, profile);
+    try {
+      syncTabVisibility();
+    } catch (e) {
+      console.error('[syncTabVisibility error]', e);
+    }
+    try {
+      if (typeof loadCatUserPreferences === 'function') {
+        loadCatUserPreferences(user, profile);
+      }
+    } catch (e) {
+      console.error('[loadCatUserPreferences error]', e);
     }
   });
 }
@@ -12532,70 +12636,21 @@ const CAT_WEATHER_DB = {
 // KOSTAT 다크 글래스모피즘 테마 & 실시간 상호작용 & 위젯 레이아웃 변경 지원
 // ==========================================================================
 
-const DEFAULT_CAT_LAYOUT = {
-  colFull: [],
-  colLeft: ['calendar', 'widgetSalesProjects'],
-  colRight: ['weather', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
-};
-
-const CAT_WIDGET_NAMES = {
-  calendar: '캘린더 & 글로벌 연휴',
-  weather: '실시간 날씨 예보',
-  widgetSalesProjects: '영업사항 - 프로젝트 개발 현황',
-  quickInput: '빠른 입력',
-  upcoming: '앞으로의 일정',
-  notes: '기록 (메모)',
-  todos: '할일 체크리스트',
-  bookmarks: '사내 북마크'
-};
-
-const CAT_WIDGET_NAMES_EN = {
-  calendar: 'Calendar & Global Holidays',
-  weather: 'Real-time Weather',
-  widgetSalesProjects: 'Sales - Project Development Status',
-  quickInput: 'Quick Input',
-  upcoming: 'Upcoming Schedules',
-  notes: 'Notes & Journal',
-  todos: 'Todo Checklist',
-  bookmarks: 'Company Bookmarks'
-};
+// DEFAULT_CAT_LAYOUT, CAT_WIDGET_NAMES, CAT_WIDGET_NAMES_EN, CatDashboardState는 파일 최상단에 선제 정의 완료됨
 
 function getCatWidgetName(id) {
   const isEn = (AppState && AppState.currentLang === 'en');
-  if (isEn && CAT_WIDGET_NAMES_EN[id]) return CAT_WIDGET_NAMES_EN[id];
-  return CAT_WIDGET_NAMES[id] || id;
+  if (isEn && CAT_WIDGET_NAMES_EN && CAT_WIDGET_NAMES_EN[id]) return CAT_WIDGET_NAMES_EN[id];
+  return (CAT_WIDGET_NAMES && CAT_WIDGET_NAMES[id]) || id;
 }
 window.getCatWidgetName = getCatWidgetName;
-
-let CatDashboardState = {
-  initialized: false,
-  year: 2026,
-  month: 10,
-  selectedDate: '2026-10-14',
-  selectedCity: 'seoul',
-  quickType: 'schedule',
-  modalQuickType: 'schedule',
-  currentView: 'all',
-  activeCountries: ['KR', 'CN', 'JP', 'PH', 'TW', 'US', 'MY', 'SG', 'VN'],
-  activeWidgets: {
-    calendar: false,
-    weather: false,
-    widgetSalesProjects: false,
-    quickInput: false,
-    upcoming: false,
-    notes: false,
-    todos: false,
-    bookmarks: false
-  },
-  customSizes: {},
-  widgetSizes: {}
-};
 
 // -------------------------------------------------------------
 // 대시보드(Catlendar) 실시간 다국어 번역 엔진
 // -------------------------------------------------------------
 function applyCatDashboardLanguage(lang) {
   const isEn = (lang === 'en');
+  if (typeof CatDashboardState === 'undefined' || !CatDashboardState) return;
 
   // 1. 메인 헤더 & 네비게이션 탭
   const titleEl = document.getElementById('catMainHeaderTitle');
@@ -12904,6 +12959,7 @@ function syncCatUserPreferencesCloud(patch) {
 }
 
 function loadCatUserPreferences(user, profile) {
+  if (typeof DEFAULT_CAT_LAYOUT === 'undefined' || typeof CatDashboardState === 'undefined' || !CatDashboardState) return;
   const userKey = getCatUserKey();
 
   // 1. 레이아웃 순서 복원
@@ -13015,6 +13071,7 @@ window.loadCatUserPreferences = loadCatUserPreferences;
 
 
 function initCatlendarDashboard() {
+  if (typeof CatDashboardState === 'undefined' || !CatDashboardState) return;
   if (CatDashboardState.initialized) return;
   CatDashboardState.initialized = true;
 
