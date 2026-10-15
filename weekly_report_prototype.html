@@ -1844,6 +1844,32 @@
       border-color: #60a5fa !important;
       box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3) !important;
     }
+    /* 영업사항 전용 모드 (mode=sales) */
+    body.mode-sales .kpi-summary-bar,
+    body.mode-sales .sales-featured-card,
+    body.mode-sales .analytics-section,
+    body.mode-sales .period-nav-group,
+    body.mode-sales .lock-status-pill,
+    body.mode-sales .export-unified {
+      display: none !important;
+    }
+    body.mode-sales .main-container {
+      padding-top: 8px;
+      padding-bottom: 24px;
+    }
+    body.mode-sales .columns-grid {
+      gap: 0;
+    }
+    body.mode-sales .column-card {
+      border-color: #3b82f6;
+      min-height: calc(100vh - 120px);
+    }
+    body.mode-sales #bizPanelProject,
+    body.mode-sales #bizPanelQuality,
+    body.mode-sales #bizPanelReport,
+    body.mode-sales #bizPanelSample {
+      max-height: calc(100vh - 210px) !important;
+    }
 
   </style>
   <!-- Google Firebase SDK (v10 compat) for Live Collaboration -->
@@ -6959,6 +6985,22 @@
       renderPeriodWeekButtons();
       renderLockStatus();
       renderMemberView();
+
+      // 영업사항 전용 탭 모드 (?mode=sales) 활성화 처리
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'sales' || urlParams.get('focus') === 'sales') {
+          document.body.classList.add('mode-sales');
+          const appTitleEl = document.querySelector('.app-title');
+          if (appTitleEl) appTitleEl.textContent = '영업사항 (Sales Matters)';
+          const btnProj = document.getElementById('btnSubtabProject');
+          if (btnProj && typeof switchBizSubtab === 'function') {
+            switchBizSubtab('project', btnProj);
+          }
+        }
+      } catch (e) {
+        console.warn('[SalesMode] init error:', e);
+      }
 
       // Google Firestore 실시간 동시 협업 구독 (타 사용자 수정 시 0.05초 즉각 화면 갱신)
       try {

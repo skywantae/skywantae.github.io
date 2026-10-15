@@ -905,8 +905,10 @@ const APP_I18N = {
     
     // Viewer Tabs
     tab_shipplan: '출하 계획',
+    tab_dashboard: '대시보드',
     tab_quotations: '견적서',
     tab_contract: '계약검토서',
+    tab_sales_notes: '영업사항',
     tab_drawings: '도면',
     tab_stock: '재고 현황리스트',
     tab_feedback: '기능 요청',
@@ -918,6 +920,10 @@ const APP_I18N = {
     // Card Titles & Subtitles
     shipplan_title: '출하 계획 현황',
     shipplan_sub: '사내 ERP 출하 마스터 데이터 실시간 조회',
+    dashboard_title: '글로벌 스마트 대시보드',
+    dashboard_sub: '글로벌 캘린더 & 스마트 워크스페이스',
+    sales_notes_title: '영업사항 (Sales Matters)',
+    sales_notes_sub: '프로젝트, 샘플 리스트, Quality Issue, 영업현황보고 통합 워크스페이스',
     quotations_title: '견적서 관리 현황',
     quotations_sub: '견적 번호 및 고객사 검색',
     contract_title: '계약검토서 관리 현황',
@@ -1302,8 +1308,10 @@ const APP_I18N = {
 
     // Viewer Tabs
     tab_shipplan: 'Ship Plan',
+    tab_dashboard: 'Dashboard',
     tab_quotations: 'Quotation',
     tab_contract: 'Project',
+    tab_sales_notes: 'Sales Matters',
     tab_drawings: 'Drawings',
     tab_stock: 'Stocklists',
     tab_feedback: 'Feature Request',
@@ -1315,6 +1323,10 @@ const APP_I18N = {
     // Card Titles & Subtitles
     shipplan_title: 'Shipment Plan Status',
     shipplan_sub: 'Enterprise ERP Shipment Master Data Real-time View',
+    dashboard_title: 'Global Smart Dashboard',
+    dashboard_sub: 'Global Calendar & Smart Workspace',
+    sales_notes_title: 'Sales Matters',
+    sales_notes_sub: 'Projects, Sample List, Quality Issues, Sales Status Reports',
     quotations_title: 'Quotation Management',
     quotations_sub: 'Search Quotations by Number & Customer',
     contract_title: 'Contract Review Management',
@@ -1792,8 +1804,10 @@ function applyAppLanguage(lang) {
   // 5. 뷰어 상단 탭 버튼
   const tabMap = {
     viewShipPlan: t.tab_shipplan,
+    viewDashboard: t.tab_dashboard,
     viewQuotations: t.tab_quotations,
     viewContractReviews: t.tab_contract,
+    viewSalesNotes: t.tab_sales_notes,
     viewDrawings: t.tab_drawings,
     viewStock: t.tab_stock,
     viewFeedback: t.tab_feedback,
@@ -5134,6 +5148,10 @@ function switchViewerCard(targetId) {
       AppState.shipPlanFilteredRows = AppState.shipPlanData || [];
     }
     renderShipPlanPage(AppState.shipPlanCurrentPage || 1);
+  } else if (targetId === 'viewDashboard') {
+    if (typeof initCatlendarDashboard === 'function') {
+      initCatlendarDashboard();
+    }
   } else if (targetId === 'viewQuotations') {
     if (!AppState.quotFilteredRows || AppState.quotFilteredRows.length === 0) {
       AppState.quotFilteredRows = AppState.quotationsData || [];
@@ -5144,6 +5162,8 @@ function switchViewerCard(targetId) {
       AppState.contractFilteredRows = AppState.contractReviewsData || [];
     }
     renderContractReviewsPage(AppState.contractCurrentPage || 1);
+  } else if (targetId === 'viewSalesNotes') {
+    // 영업사항 뷰 활성화
   } else if (targetId === 'viewDrawings') {
     if (!AppState.drawingsFilteredRows || AppState.drawingsFilteredRows.length === 0) {
       AppState.drawingsFilteredRows = AppState.drawingsData || [];
@@ -11997,10 +12017,13 @@ function handleDeleteUserRecord() {
 }
 window.handleDeleteUserRecord = handleDeleteUserRecord;
 
-// 인증 상태 리스너 구독 및 탭 제어 자동 초기화
+// 인증 상태 리스너 구독 및 탭 제어 자동 초기화 & 사용자 맞춤 대시보드 복원
 if (window.KostatAuth) {
   window.KostatAuth.onAuthStateChanged(function (user, profile) {
     syncTabVisibility();
+    if (typeof loadCatUserPreferences === 'function') {
+      loadCatUserPreferences(user, profile);
+    }
   });
 }
 
@@ -12404,29 +12427,131 @@ let CatDashboardState = {
   }
 };
 
+// -------------------------------------------------------------
+// 계정별 대시보드 맞춤 설정 영구 보존 엔진 (Firestore + LocalStorage)
+// -------------------------------------------------------------
+function getCatUserKey() {
+  if (window.KostatAuth && window.KostatAuth.currentUser) {
+    const u = window.KostatAuth.currentUser;
+    return u.uid || (u.email ? u.email.toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
+  }
+  return 'guest';
+}
+window.getCatUserKey = getCatUserKey;
+
+let _catCloudSyncTimer = null;
+let _catPendingCloudPrefs = {};
+
+function syncCatUserPreferencesCloud(patch) {
+  if (!window.KostatAuth || !window.KostatAuth.currentUser) return;
+  const uid = window.KostatAuth.currentUser.uid;
+  if (!uid) return;
+  Object.assign(_catPendingCloudPrefs, patch);
+  if (_catCloudSyncTimer) clearTimeout(_catCloudSyncTimer);
+  _catCloudSyncTimer = setTimeout(() => {
+    try {
+      if (window.firebase && firebase.firestore) {
+        const db = firebase.firestore();
+        db.collection('users').doc(uid).set(_catPendingCloudPrefs, { merge: true }).catch(err => {
+          console.warn('[Catlendar] Firestore user pref save error:', err);
+        });
+      }
+    } catch (e) {
+      console.warn('[Catlendar] cloud sync exception:', e);
+    }
+  }, 500);
+}
+
+function loadCatUserPreferences(user, profile) {
+  const userKey = getCatUserKey();
+
+  // 1. 레이아웃 순서 복원
+  let layout = null;
+  if (profile && profile.dashboardLayout && Array.isArray(profile.dashboardLayout.colLeft)) {
+    layout = profile.dashboardLayout;
+  } else {
+    try {
+      const saved = localStorage.getItem('kostat_cat_layout_order_' + userKey) || localStorage.getItem('kostat_cat_layout_order');
+      if (saved) layout = JSON.parse(saved);
+    } catch (_) {}
+  }
+  if (!layout || !Array.isArray(layout.colLeft)) {
+    layout = JSON.parse(JSON.stringify(DEFAULT_CAT_LAYOUT));
+  }
+  localStorage.setItem('kostat_cat_layout_order_' + userKey, JSON.stringify(layout));
+
+  // 2. 활성 위젯 설정 복원
+  let widgets = null;
+  if (profile && profile.dashboardWidgets && typeof profile.dashboardWidgets === 'object') {
+    widgets = profile.dashboardWidgets;
+  } else {
+    try {
+      const saved = localStorage.getItem('kostat_cat_widgets_' + userKey) || localStorage.getItem('kostat_cat_widgets');
+      if (saved) widgets = JSON.parse(saved);
+    } catch (_) {}
+  }
+  if (widgets) {
+    CatDashboardState.activeWidgets = Object.assign({}, CatDashboardState.activeWidgets, widgets);
+    localStorage.setItem('kostat_cat_widgets_' + userKey, JSON.stringify(CatDashboardState.activeWidgets));
+  }
+
+  // 3. 활성 국가 연휴 칩 복원
+  let countries = null;
+  if (profile && Array.isArray(profile.dashboardCountries)) {
+    countries = profile.dashboardCountries;
+  } else {
+    try {
+      const saved = localStorage.getItem('kostat_cat_active_countries_' + userKey) || localStorage.getItem('kostat_cat_active_countries');
+      if (saved) countries = JSON.parse(saved);
+    } catch (_) {}
+  }
+  if (countries && Array.isArray(countries)) {
+    CatDashboardState.activeCountries = countries;
+    localStorage.setItem('kostat_cat_active_countries_' + userKey, JSON.stringify(countries));
+  }
+
+  // 4. 선택 도시 복원
+  let city = null;
+  if (profile && profile.dashboardCity && CAT_WEATHER_DB[profile.dashboardCity]) {
+    city = profile.dashboardCity;
+  } else {
+    const saved = localStorage.getItem('kostat_cat_city_' + userKey) || localStorage.getItem('kostat_cat_city');
+    if (saved && CAT_WEATHER_DB[saved]) city = saved;
+  }
+  if (city) {
+    CatDashboardState.selectedCity = city;
+    localStorage.setItem('kostat_cat_city_' + userKey, city);
+    const citySelect = document.getElementById('catWeatherCitySelect');
+    if (citySelect) citySelect.value = city;
+  }
+
+  // 5. 첫 걸음 위젯 커스텀 타이틀 복원
+  if (profile && profile.dashboardStartTitle) {
+    localStorage.setItem('kostat_cat_start_title_' + userKey, profile.dashboardStartTitle);
+  }
+  if (profile && profile.dashboardStartTag) {
+    localStorage.setItem('kostat_cat_start_tag_' + userKey, profile.dashboardStartTag);
+  }
+
+  // DOM 반영
+  applyCatLayoutDOM(layout);
+  applyCatWidgetVisibility();
+  if (typeof renderCatCountryChips === 'function') renderCatCountryChips();
+  if (typeof renderCatWeather === 'function') renderCatWeather(CatDashboardState.selectedCity);
+  if (typeof restoreCatStartTitle === 'function') restoreCatStartTitle();
+}
+window.loadCatUserPreferences = loadCatUserPreferences;
+
+
 function initCatlendarDashboard() {
   if (CatDashboardState.initialized) return;
   CatDashboardState.initialized = true;
 
-  // 로컬 스토리지 상태 복원
-  try {
-    const savedCountries = localStorage.getItem('kostat_cat_active_countries');
-    if (savedCountries) {
-      CatDashboardState.activeCountries = JSON.parse(savedCountries);
-    }
-    const savedCity = localStorage.getItem('kostat_cat_city');
-    if (savedCity && CAT_WEATHER_DB[savedCity]) {
-      CatDashboardState.selectedCity = savedCity;
-      const citySelect = document.getElementById('catWeatherCitySelect');
-      if (citySelect) citySelect.value = savedCity;
-    }
-    const savedWidgets = localStorage.getItem('kostat_cat_widgets');
-    if (savedWidgets) {
-      CatDashboardState.activeWidgets = Object.assign(CatDashboardState.activeWidgets, JSON.parse(savedWidgets));
-    }
-  } catch (e) {
-    console.warn('Catlendar localStorage parse error:', e);
-  }
+  // 계정별 사용자 맞춤 설정 및 레이아웃 복원
+  loadCatUserPreferences(
+    window.KostatAuth ? window.KostatAuth.currentUser : null,
+    window.KostatAuth ? window.KostatAuth.userProfile : null
+  );
 
   // 초기 더미 데이터 셋업 (저장된 데이터 없을 시)
   initCatDefaultStorage();
@@ -12592,8 +12717,9 @@ window.toggleCatSidebar = toggleCatSidebar;
 // 2. START 첫 걸음 위젯 이름 변경 로직
 // -------------------------------------------------------------
 function restoreCatStartTitle() {
-  const title = localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
-  const tag = localStorage.getItem('kostat_cat_start_tag') || 'START';
+  const userKey = getCatUserKey();
+  const title = localStorage.getItem('kostat_cat_start_title_' + userKey) || localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
+  const tag = localStorage.getItem('kostat_cat_start_tag_' + userKey) || localStorage.getItem('kostat_cat_start_tag') || 'START';
   const tEl = document.getElementById('catOnboardingTitleText');
   const tagEl = document.getElementById('catOnboardingTagText');
   if (tEl) tEl.textContent = title;
@@ -12602,8 +12728,9 @@ function restoreCatStartTitle() {
 window.restoreCatStartTitle = restoreCatStartTitle;
 
 function openCatRenameStartModal() {
-  const title = localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
-  const tag = localStorage.getItem('kostat_cat_start_tag') || 'START';
+  const userKey = getCatUserKey();
+  const title = localStorage.getItem('kostat_cat_start_title_' + userKey) || localStorage.getItem('kostat_cat_start_title') || '첫 걸음';
+  const tag = localStorage.getItem('kostat_cat_start_tag_' + userKey) || localStorage.getItem('kostat_cat_start_tag') || 'START';
   const tInput = document.getElementById('catInputStartTitle');
   const tagInput = document.getElementById('catInputStartTag');
   if (tInput) tInput.value = title;
@@ -12620,22 +12747,30 @@ function closeCatRenameStartModal() {
 window.closeCatRenameStartModal = closeCatRenameStartModal;
 
 function saveCatStartTitle() {
+  const userKey = getCatUserKey();
   const tInput = document.getElementById('catInputStartTitle');
   const tagInput = document.getElementById('catInputStartTag');
   const title = (tInput && tInput.value.trim()) || '첫 걸음';
   const tag = (tagInput && tagInput.value.trim()) || 'START';
+  localStorage.setItem('kostat_cat_start_title_' + userKey, title);
+  localStorage.setItem('kostat_cat_start_tag_' + userKey, tag);
   localStorage.setItem('kostat_cat_start_title', title);
   localStorage.setItem('kostat_cat_start_tag', tag);
   restoreCatStartTitle();
   closeCatRenameStartModal();
+  syncCatUserPreferencesCloud({ dashboardStartTitle: title, dashboardStartTag: tag });
 }
 window.saveCatStartTitle = saveCatStartTitle;
 
 function resetCatStartTitle() {
+  const userKey = getCatUserKey();
+  localStorage.removeItem('kostat_cat_start_title_' + userKey);
+  localStorage.removeItem('kostat_cat_start_tag_' + userKey);
   localStorage.removeItem('kostat_cat_start_title');
   localStorage.removeItem('kostat_cat_start_tag');
   restoreCatStartTitle();
   closeCatRenameStartModal();
+  syncCatUserPreferencesCloud({ dashboardStartTitle: '첫 걸음', dashboardStartTag: 'START' });
 }
 window.resetCatStartTitle = resetCatStartTitle;
 
@@ -12643,8 +12778,9 @@ window.resetCatStartTitle = resetCatStartTitle;
 // 3. 위젯 레이아웃 순서 및 위치 자유 변경 엔진
 // -------------------------------------------------------------
 function getCatLayoutOrder() {
+  const userKey = getCatUserKey();
   try {
-    const saved = localStorage.getItem('kostat_cat_layout_order');
+    const saved = localStorage.getItem('kostat_cat_layout_order_' + userKey) || localStorage.getItem('kostat_cat_layout_order');
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed.colLeft) && Array.isArray(parsed.colRight)) {
@@ -12656,8 +12792,11 @@ function getCatLayoutOrder() {
 }
 
 function saveCatLayoutOrder(layout) {
+  const userKey = getCatUserKey();
+  localStorage.setItem('kostat_cat_layout_order_' + userKey, JSON.stringify(layout));
   localStorage.setItem('kostat_cat_layout_order', JSON.stringify(layout));
   applyCatLayoutDOM(layout);
+  syncCatUserPreferencesCloud({ dashboardLayout: layout });
 }
 
 function applyCatLayoutDOM(layout) {
@@ -12813,13 +12952,16 @@ function renderCatCountryChips() {
 }
 
 function toggleCatCountry(code) {
+  const userKey = getCatUserKey();
   const idx = CatDashboardState.activeCountries.indexOf(code);
   if (idx > -1) {
     CatDashboardState.activeCountries.splice(idx, 1);
   } else {
     CatDashboardState.activeCountries.push(code);
   }
+  localStorage.setItem('kostat_cat_active_countries_' + userKey, JSON.stringify(CatDashboardState.activeCountries));
   localStorage.setItem('kostat_cat_active_countries', JSON.stringify(CatDashboardState.activeCountries));
+  syncCatUserPreferencesCloud({ dashboardCountries: CatDashboardState.activeCountries });
   renderCatCountryChips();
   renderCatCalendar(CatDashboardState.year, CatDashboardState.month);
   if (CatDashboardState.currentView === 'calendar') {
@@ -12991,8 +13133,11 @@ function renderCatWeather(cityKey) {
 }
 
 function onCatCityChange(cityKey) {
+  const userKey = getCatUserKey();
   CatDashboardState.selectedCity = cityKey;
+  localStorage.setItem('kostat_cat_city_' + userKey, cityKey);
   localStorage.setItem('kostat_cat_city', cityKey);
+  syncCatUserPreferencesCloud({ dashboardCity: cityKey });
   renderCatWeather(cityKey);
 }
 window.onCatCityChange = onCatCityChange;
@@ -13737,8 +13882,11 @@ function closeCatWidgetModal() {
 window.closeCatWidgetModal = closeCatWidgetModal;
 
 function toggleCatWidgetVisibility(widgetKey, isChecked) {
+  const userKey = getCatUserKey();
   CatDashboardState.activeWidgets[widgetKey] = isChecked;
+  localStorage.setItem('kostat_cat_widgets_' + userKey, JSON.stringify(CatDashboardState.activeWidgets));
   localStorage.setItem('kostat_cat_widgets', JSON.stringify(CatDashboardState.activeWidgets));
+  syncCatUserPreferencesCloud({ dashboardWidgets: CatDashboardState.activeWidgets });
   applyCatWidgetVisibility();
 }
 window.toggleCatWidgetVisibility = toggleCatWidgetVisibility;

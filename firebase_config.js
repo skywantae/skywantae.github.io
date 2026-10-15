@@ -45,8 +45,10 @@
   // 2. 전체 탭 목록 정의 (시스템 기준)
   const SYSTEM_TABS = [
     { id: 'viewShipPlan', name: '출하 계획', defaultAllowed: true },
+    { id: 'viewDashboard', name: '대시보드', defaultAllowed: true },
     { id: 'viewQuotations', name: '견적서', defaultAllowed: true },
     { id: 'viewContractReviews', name: '계약검토서', defaultAllowed: false },
+    { id: 'viewSalesNotes', name: '영업사항', defaultAllowed: true },
     { id: 'viewDrawings', name: '도면 (Drawings)', defaultAllowed: false },
     { id: 'viewStock', name: '재고 현황리스트', defaultAllowed: true },
     { id: 'viewWeeklyReport', name: '주간보고서', defaultAllowed: true },
