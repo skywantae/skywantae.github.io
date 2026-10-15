@@ -12534,17 +12534,14 @@ const CAT_WEATHER_DB = {
 
 const DEFAULT_CAT_LAYOUT = {
   colFull: [],
-  colLeft: ['calendar', 'widgetSalesProjects', 'widgetSalesQuality'],
-  colRight: ['weather', 'widgetSalesSamples', 'widgetSalesBriefing', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
+  colLeft: ['calendar', 'widgetSalesProjects'],
+  colRight: ['weather', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
 };
 
 const CAT_WIDGET_NAMES = {
   calendar: '캘린더 & 글로벌 연휴',
   weather: '실시간 날씨 예보',
   widgetSalesProjects: '영업사항 - 프로젝트 개발 현황',
-  widgetSalesSamples: '영업사항 - 해외영업 샘플 현황',
-  widgetSalesQuality: '영업사항 - Quality Issue (품질 불량)',
-  widgetSalesBriefing: '영업사항 - 고객사별 현황 브리핑',
   quickInput: '빠른 입력',
   upcoming: '앞으로의 일정',
   notes: '기록 (메모)',
@@ -12556,9 +12553,6 @@ const CAT_WIDGET_NAMES_EN = {
   calendar: 'Calendar & Global Holidays',
   weather: 'Real-time Weather',
   widgetSalesProjects: 'Sales - Project Development Status',
-  widgetSalesSamples: 'Sales - Overseas Sample Status',
-  widgetSalesQuality: 'Sales - Quality Issues',
-  widgetSalesBriefing: 'Sales - Customer Briefings',
   quickInput: 'Quick Input',
   upcoming: 'Upcoming Schedules',
   notes: 'Notes & Journal',
@@ -12587,9 +12581,6 @@ let CatDashboardState = {
     calendar: false,
     weather: false,
     widgetSalesProjects: false,
-    widgetSalesSamples: false,
-    widgetSalesQuality: false,
-    widgetSalesBriefing: false,
     quickInput: false,
     upcoming: false,
     notes: false,
@@ -12663,14 +12654,11 @@ function applyCatDashboardLanguage(lang) {
   const emptyBtnPreset = document.getElementById('catEmptyBtnPreset');
   if (emptyBtnPreset) emptyBtnPreset.textContent = isEn ? 'Load Recommended Widgets' : '추천 위젯 세트 불러오기';
 
-  // 3. 11개 위젯 카드 제목 동기화
+  // 3. 위젯 카드 제목 동기화
   const widgetTitleMap = {
     widgetCalendar: { ko: '글로벌 일정 & 캘린더', en: 'Calendar & Global Holidays' },
     widgetSalesProjects: { ko: '영업사항 - 프로젝트 개발 현황', en: 'Sales - Project Development Status' },
-    widgetSalesQuality: { ko: '영업사항 - Quality Issue', en: 'Sales - Quality Issues' },
     widgetWeather: { ko: '날씨', en: 'Weather' },
-    widgetSalesSamples: { ko: '영업사항 - 해외영업 샘플 현황', en: 'Sales - Overseas Sample Status' },
-    widgetSalesBriefing: { ko: '영업사항 - 주요 고객사 브리핑', en: 'Sales - Customer Briefings' },
     widgetQuickInput: { ko: '빠른 입력', en: 'Quick Input' },
     widgetUpcoming: { ko: '앞으로의 일정', en: 'Upcoming Schedules' },
     widgetNotes: { ko: '기록', en: 'Notes' },
@@ -12963,9 +12951,6 @@ function loadCatUserPreferences(user, profile) {
       calendar: false,
       weather: false,
       widgetSalesProjects: false,
-      widgetSalesSamples: false,
-      widgetSalesQuality: false,
-      widgetSalesBriefing: false,
       quickInput: false,
       upcoming: false,
       notes: false,
@@ -13058,10 +13043,25 @@ function initCatlendarDashboard() {
   renderCatTodos();
   renderCatBookmarks();
   if (typeof renderCatSalesProjects === 'function') renderCatSalesProjects();
-  if (typeof renderCatSalesSamples === 'function') renderCatSalesSamples();
-  if (typeof renderCatSalesQuality === 'function') renderCatSalesQuality();
-  if (typeof renderCatSalesBriefing === 'function') renderCatSalesBriefing();
   applyCatWidgetVisibility();
+
+  // 헤더 모달 버튼 이벤트 명시적 바인딩 (직접 클릭 확실 작동 보장)
+  const btnLayout = document.getElementById('catBtnLayout');
+  if (btnLayout && !btnLayout._catBound) {
+    btnLayout._catBound = true;
+    btnLayout.addEventListener('click', (e) => {
+      e.preventDefault();
+      openCatLayoutModal();
+    });
+  }
+  const btnAddWidget = document.getElementById('catBtnAddWidget');
+  if (btnAddWidget && !btnAddWidget._catBound) {
+    btnAddWidget._catBound = true;
+    btnAddWidget.addEventListener('click', (e) => {
+      e.preventDefault();
+      openCatWidgetModal();
+    });
+  }
 
   // 다국어 언어 동기화 적용
   applyCatDashboardLanguage(AppState.currentLang || 'ko');
@@ -13429,6 +13429,9 @@ function getCatLayoutOrder() {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed.colLeft) && Array.isArray(parsed.colRight)) {
         if (!Array.isArray(parsed.colFull)) parsed.colFull = [];
+        parsed.colFull = parsed.colFull.filter(id => !!CAT_WIDGET_NAMES[id]);
+        parsed.colLeft = parsed.colLeft.filter(id => !!CAT_WIDGET_NAMES[id]);
+        parsed.colRight = parsed.colRight.filter(id => !!CAT_WIDGET_NAMES[id]);
         return parsed;
       }
     }
@@ -13549,10 +13552,10 @@ function openCatLayoutModal() {
       <div class="cat-layout-item" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:rgba(30,41,59,0.5); border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
         <span style="font-weight:600; font-size:12.5px;">${CAT_WIDGET_NAMES[wId] || wId}</span>
         <div class="cat-layout-item-btns" style="display:flex; gap:4px; align-items:center;">
-          <button class="cat-move-btn" onclick="moveCatWidget('${wId}', -1); openCatLayoutModal();" ${i === 0 ? 'disabled style="opacity:0.3;"' : ''} title="위로">▲</button>
-          <button class="cat-move-btn" onclick="moveCatWidget('${wId}', 1); openCatLayoutModal();" ${i === arr.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="아래로">▼</button>
+          <button class="cat-move-btn" onclick="moveCatWidget('${wId}', -1); openCatLayoutModal();" ${i === 0 ? 'disabled style="opacity:0.3;"' : ''} title="위로">위로</button>
+          <button class="cat-move-btn" onclick="moveCatWidget('${wId}', 1); openCatLayoutModal();" ${i === arr.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="아래로">아래로</button>
           <button class="cat-move-btn" onclick="toggleCatWidgetWidth('${wId}'); openCatLayoutModal();" title="${colType === 'full' ? '1열로 축소' : '전폭(2열)으로 확장'}">${colType === 'full' ? '1열' : '전폭'}</button>
-          ${colType !== 'full' ? `<button class="cat-move-btn" onclick="swapCatWidgetColumn('${wId}'); openCatLayoutModal();" title="반대 열로 이동">⇄</button>` : ''}
+          ${colType !== 'full' ? `<button class="cat-move-btn" onclick="swapCatWidgetColumn('${wId}'); openCatLayoutModal();" title="반대 열로 이동">이동</button>` : ''}
           <button class="cat-move-btn" onclick="cycleCatWidgetHeight('${wId}'); openCatLayoutModal();" title="크기 변경 (소/중/대)">${sizeLabel}</button>
         </div>
       </div>
@@ -14574,8 +14577,7 @@ window.toggleCatWidgetVisibility = toggleCatWidgetVisibility;
 function selectCatAllWidgets(selectAll) {
   const userKey = getCatUserKey();
   const keys = [
-    'calendar', 'weather', 'widgetSalesProjects', 'widgetSalesSamples',
-    'widgetSalesQuality', 'widgetSalesBriefing', 'quickInput',
+    'calendar', 'weather', 'widgetSalesProjects', 'quickInput',
     'upcoming', 'notes', 'todos', 'bookmarks'
   ];
   keys.forEach(k => {
@@ -14600,9 +14602,6 @@ function selectCatDefaultWidgets() {
     notes: true,
     bookmarks: true,
     weather: false,
-    widgetSalesSamples: false,
-    widgetSalesQuality: false,
-    widgetSalesBriefing: false,
     quickInput: false,
     upcoming: false
   };
@@ -14625,9 +14624,6 @@ function applyCatWidgetVisibility() {
     calendar: 'widgetCalendar',
     weather: 'widgetWeather',
     widgetSalesProjects: 'widgetSalesProjects',
-    widgetSalesSamples: 'widgetSalesSamples',
-    widgetSalesQuality: 'widgetSalesQuality',
-    widgetSalesBriefing: 'widgetSalesBriefing',
     quickInput: 'widgetQuickInput',
     upcoming: 'widgetUpcoming',
     notes: 'widgetNotes',
@@ -14742,11 +14738,8 @@ function goToSalesTab(subtab) {
     if (iframe && iframe.contentWindow) {
       try {
         if (typeof iframe.contentWindow.switchBizSubtab === 'function') {
-          const btnId = subtab === 'project' ? 'btnSubtabProject' :
-                        (subtab === 'sample' ? 'btnSubtabSample' :
-                        (subtab === 'quality' ? 'btnSubtabQuality' : 'btnSubtabReport'));
-          const btn = iframe.contentDocument ? iframe.contentDocument.getElementById(btnId) : null;
-          iframe.contentWindow.switchBizSubtab(subtab, btn);
+          const btn = iframe.contentDocument ? iframe.contentDocument.getElementById('btnSubtabProject') : null;
+          iframe.contentWindow.switchBizSubtab('project', btn);
         }
       } catch (_) {}
     }
@@ -14759,11 +14752,21 @@ function renderCatSalesProjects(filterText) {
   const countBadge = document.getElementById('catSalesProjCountBadge');
   if (!tbody) return;
 
-  const db = window.LIVE_DB || {};
+  const db = (window.LIVE_DB && window.LIVE_DB.members) ? window.LIVE_DB : (function() {
+    try {
+      const c = localStorage.getItem('kostat_weekly_report_live_cache_v12');
+      if (c) return JSON.parse(c);
+    } catch(e) {}
+    return window.KOSTAT_WEEKLY_REPORT_LIVE || {};
+  })();
+
   let allProjects = [];
   (db.members || []).forEach(m => {
     (m.projects || []).forEach(p => {
-      allProjects.push({ ...p, memberName: m.name, memberId: m.id });
+      const cust = (p.customer || '').toLowerCase().replace(/\s+/g, '');
+      if (cust.includes('tonghsing')) {
+        allProjects.push({ ...p, memberName: m.name, memberId: m.id });
+      }
     });
   });
 
@@ -14780,7 +14783,7 @@ function renderCatSalesProjects(filterText) {
   }
 
   if (allProjects.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:#94a3b8;">등록된 프로젝트가 없거나 검색 결과가 없습니다.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:#94a3b8;">등록된 TONGHSING 프로젝트가 없거나 검색 결과가 없습니다.</td></tr>';
     return;
   }
 
@@ -14796,7 +14799,7 @@ function renderCatSalesProjects(filterText) {
   tbody.innerHTML = allProjects.slice(0, 15).map(p => `
     <tr onclick="goToSalesTab('project')" title="영업사항 프로젝트 탭으로 이동">
       <td style="font-weight:700; color:#60a5fa;">${p.customer || '-'}</td>
-      <td style="color:#cbd5e1;">${p.country || 'PH'}</td>
+      <td style="color:#cbd5e1;">${p.country || 'TW'}</td>
       <td style="color:#cbd5e1;">${p.item || '-'}</td>
       <td style="font-family:monospace; font-weight:600; color:#f8fafc;">${p.pn || '-'}</td>
       <td><span class="cat-status-pill ${pillClass(p.tool_type)}">${p.tool_type || 'New'}</span></td>

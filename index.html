@@ -301,11 +301,11 @@
                   <span class="cat-page-subtitle" id="catMainHeaderSub">글로벌 캘린더 & 스마트 워크스페이스</span>
                 </div>
                 <div class="cat-header-actions">
-                  <button class="cat-btn-outline" onclick="openCatLayoutModal()" title="위젯 순서 및 위치 변경">
+                  <button id="catBtnLayout" class="cat-btn-outline" onclick="openCatLayoutModal()" title="위젯 순서 및 위치 변경">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><polyline points="4 8 4 3 9 3"></polyline></svg>
                     <span id="catBtnLayoutText">레이아웃 변경</span>
                   </button>
-                  <button class="cat-btn-outline" onclick="openCatWidgetModal()" title="위젯 노출 설정">
+                  <button id="catBtnAddWidget" class="cat-btn-outline" onclick="openCatWidgetModal()" title="위젯 노출 설정">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     <span id="catBtnAddWidgetText">위젯 추가</span>
                   </button>
@@ -448,23 +448,6 @@
                         </table>
                       </div>
                     </div>
-
-                    <!-- 위젯: 영업사항 - Quality Issue (품질 불량) -->
-                    <div class="cat-widget-card" id="widgetSalesQuality" data-widget-id="widgetSalesQuality" draggable="true">
-                      <div class="cat-widget-header">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <span class="cat-widget-title">영업사항 - Quality Issue</span>
-                          <span class="cat-badge-pill" id="catSalesQualityCountBadge">0건</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <button class="cat-link-btn" onclick="goToSalesTab('quality')">영업사항 바로가기</button>
-                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('widgetSalesQuality', false)" title="위젯 숨기기">&times;</button>
-                        </div>
-                      </div>
-                      <div class="cat-widget-content" id="catSalesQualityList" style="max-height:220px; overflow-y:auto;">
-                        <!-- JS 렌더링 -->
-                      </div>
-                    </div>
                   </div>
 
                   <!-- 우측 컬럼 컨테이너 -->
@@ -493,40 +476,6 @@
                       </div>
                       <div class="cat-weather-forecast-list" id="catWeatherForecastList">
                         <!-- JS 5일 예보 카드 -->
-                      </div>
-                    </div>
-
-                    <!-- 위젯: 영업사항 - 해외영업 샘플 현황 -->
-                    <div class="cat-widget-card" id="widgetSalesSamples" data-widget-id="widgetSalesSamples" draggable="true">
-                      <div class="cat-widget-header">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <span class="cat-widget-title">영업사항 - 해외영업 샘플 현황</span>
-                          <span class="cat-badge-pill" id="catSalesSampleCountBadge">진행중</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <button class="cat-link-btn" onclick="goToSalesTab('sample')">영업사항 바로가기</button>
-                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('widgetSalesSamples', false)" title="위젯 숨기기">&times;</button>
-                        </div>
-                      </div>
-                      <div class="cat-widget-content" id="catSalesSampleList" style="max-height:220px; overflow-y:auto;">
-                        <!-- JS 렌더링 -->
-                      </div>
-                    </div>
-
-                    <!-- 위젯: 영업사항 - 주요 고객사 브리핑 -->
-                    <div class="cat-widget-card" id="widgetSalesBriefing" data-widget-id="widgetSalesBriefing" draggable="true">
-                      <div class="cat-widget-header">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <span class="cat-widget-title">영업사항 - 주요 고객사 브리핑</span>
-                          <span class="cat-badge-pill" id="catSalesBriefingBadge">실시간</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <button class="cat-link-btn" onclick="goToSalesTab('report')">영업사항 바로가기</button>
-                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('widgetSalesBriefing', false)" title="위젯 숨기기">&times;</button>
-                        </div>
-                      </div>
-                      <div class="cat-widget-content" id="catSalesBriefingList" style="max-height:220px; overflow-y:auto;">
-                        <!-- JS 렌더링 -->
                       </div>
                     </div>
 
@@ -778,161 +727,6 @@
             </main>
           </div>
 
-          <!-- ========================================================= -->
-          <!-- 모달 대화상자 목록 -->
-          <!-- ========================================================= -->
-
-
-          <!-- 모달 0-2: 위젯 순서 및 위치 변경 (레이아웃 설정 모달) -->
-          <div class="cat-modal-overlay" id="modalCatLayoutSettings" onclick="if(event.target===this) closeCatLayoutModal()">
-            <div class="cat-modal-box" style="max-width:540px;">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title">위젯 레이아웃 & 위치 변경</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatLayoutModal()">&times;</button>
-              </div>
-              <p style="font-size:12.5px; color:var(--text-secondary); margin:0;">
-                각 위젯의 위/아래 순서를 변경하거나 좌측/우측 열로 자유롭게 이동할 수 있습니다.
-              </p>
-
-              <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
-                <!-- 전폭(2열) 위젯 순서 -->
-                <div class="cat-layout-col-box">
-                  <div class="cat-layout-col-title">전폭 위젯 (2열 전체 100% 가로폭)</div>
-                  <div id="catLayoutListFull" style="display:flex; flex-direction:column; gap:6px;">
-                    <!-- JS 생성 -->
-                  </div>
-                </div>
-
-                <!-- 좌측 컬럼 순서 -->
-                <div class="cat-layout-col-box">
-                  <div class="cat-layout-col-title">좌측 컬럼 위젯</div>
-                  <div id="catLayoutListLeft" style="display:flex; flex-direction:column; gap:6px;">
-                    <!-- JS 생성 -->
-                  </div>
-                </div>
-
-                <!-- 우측 컬럼 순서 -->
-                <div class="cat-layout-col-box">
-                  <div class="cat-layout-col-title">우측 컬럼 위젯</div>
-                  <div id="catLayoutListRight" style="display:flex; flex-direction:column; gap:6px;">
-                    <!-- JS 생성 -->
-                  </div>
-                </div>
-              </div>
-
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                <button class="cat-text-btn" onclick="resetCatLayoutOrder()">기본 배치로 복원</button>
-                <div style="display:flex; gap:8px;">
-                  <button class="cat-btn-outline" onclick="closeCatLayoutModal()">닫기</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 모달 1: 위젯 노출/숨김 관리 모달 -->
-          <div class="cat-modal-overlay" id="modalCatWidgetSettings" onclick="if(event.target===this) closeCatWidgetModal()">
-            <div class="cat-modal-box">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title" id="catModalWidgetTitle">위젯 노출 설정</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatWidgetModal()">&times;</button>
-              </div>
-              <p style="font-size:12.5px; color:var(--text-secondary); margin:0;" id="catModalWidgetDesc">대시보드에 표시할 위젯을 선택하세요.</p>
-              <div style="display:flex; gap:8px; margin-top:4px;">
-                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatAllWidgets(true)" id="catModalBtnSelectAll">모두 선택</button>
-                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatAllWidgets(false)" id="catModalBtnClearAll">모두 해제 (비우기)</button>
-                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatDefaultWidgets()" id="catModalBtnPreset">추천 세트</button>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;" id="catWidgetCheckboxList">
-                <!-- JS 생성 -->
-              </div>
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-                <button class="cat-btn-outline" onclick="closeCatWidgetModal()" id="catModalBtnClose">닫기</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 모달 2: 북마크 추가 모달 -->
-          <div class="cat-modal-overlay" id="modalCatBookmarkAdd" onclick="if(event.target===this) closeCatBookmarkModal()">
-            <div class="cat-modal-box">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title" id="catModalBmTitle">북마크 추가</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatBookmarkModal()">&times;</button>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:10px;">
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalBmLabelTitle">링크 제목</span>
-                  <input type="text" id="catBmInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 해외법인 ERP Portal">
-                </label>
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalBmLabelUrl">URL 링크</span>
-                  <input type="text" id="catBmInputUrl" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="https://example.com">
-                </label>
-              </div>
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-                <button class="cat-btn-outline" onclick="closeCatBookmarkModal()" id="catModalBmBtnCancel">취소</button>
-                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatBookmark()" id="catModalBmBtnSubmit">등록</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 모달 3: 기록(노트) 작성 모달 -->
-          <div class="cat-modal-overlay" id="modalCatNoteAdd" onclick="if(event.target===this) closeCatNoteModal()">
-            <div class="cat-modal-box">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title" id="catModalNoteTitle">새 기록 남기기</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatNoteModal()">&times;</button>
-              </div>
-              <textarea id="catNoteModalText" class="cat-quick-textarea" rows="4" placeholder="업무 메모나 중요 기록을 남겨보세요."></textarea>
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-                <button class="cat-btn-outline" onclick="closeCatNoteModal()" id="catModalNoteBtnCancel">취소</button>
-                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatNoteModal()" id="catModalNoteBtnSubmit">저장</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 모달 4: 빠른 추가 모달 (+) -->
-          <div class="cat-modal-overlay" id="modalCatQuickAdd" onclick="if(event.target===this) closeCatQuickAddModal()">
-            <div class="cat-modal-box">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title" id="catModalQuickTitle">빠른 항목 추가</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatQuickAddModal()">&times;</button>
-              </div>
-              <div class="cat-quick-tabs" style="margin-bottom:8px;">
-                <button class="cat-quick-tab active" id="catModalTabSchedule" onclick="setCatModalType('schedule')">일정</button>
-                <button class="cat-quick-tab" id="catModalTabTodo" onclick="setCatModalType('todo')">할일</button>
-                <button class="cat-quick-tab" id="catModalTabNote" onclick="setCatModalType('note')">기록</button>
-                <button class="cat-quick-tab" id="catModalTabBm" onclick="setCatModalType('bookmark')">북마크</button>
-              </div>
-              <textarea id="catQuickModalInputText" class="cat-quick-textarea" rows="3" placeholder="내용을 입력하세요."></textarea>
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-                <button class="cat-btn-outline" onclick="closeCatQuickAddModal()" id="catModalQuickBtnCancel">취소</button>
-                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatQuickModal()" id="catModalQuickBtnSubmit">확인 저장</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 모달 5: 상세 일정 등록 모달 -->
-          <div class="cat-modal-overlay" id="modalCatScheduleAdd" onclick="if(event.target===this) closeCatScheduleAddModal()">
-            <div class="cat-modal-box">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title" id="catModalSchedTitle">새 일정 등록</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatScheduleAddModal()">&times;</button>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:10px;">
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelDate">일정 일자</span>
-                  <input type="date" id="catSchedInputDate" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="2026-10-14">
-                </label>
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTime">일정 시간</span>
-                  <input type="time" id="catSchedInputTime" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="10:00">
-                </label>
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTitle">일정 제목</span>
-                  <input type="text" id="catSchedInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 고객사 주간 화상 회의">
-                </label>
-              </div>
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-                <button class="cat-btn-outline" onclick="closeCatScheduleAddModal()" id="catModalSchedBtnCancel">취소</button>
-                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatScheduleModal()" id="catModalSchedBtnSubmit">등록</button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -2891,6 +2685,166 @@
       </div>
     </div>
   </div>
+
+
+  <!-- ========================================================= -->
+  <!-- 대시보드 모달 (루트 레벨 전역 오버레이) -->
+  <!-- ========================================================= -->
+  <!-- ========================================================= -->
+          <!-- 모달 대화상자 목록 -->
+          <!-- ========================================================= -->
+
+
+          <!-- 모달 0-2: 위젯 순서 및 위치 변경 (레이아웃 설정 모달) -->
+          <div class="cat-modal-overlay" id="modalCatLayoutSettings" onclick="if(event.target===this) closeCatLayoutModal()">
+            <div class="cat-modal-box" style="max-width:540px;">
+              <div class="cat-modal-header">
+                <h3 class="cat-modal-title">위젯 레이아웃 & 위치 변경</h3>
+                <button class="cat-modal-close-btn" onclick="closeCatLayoutModal()">&times;</button>
+              </div>
+              <p style="font-size:12.5px; color:var(--text-secondary); margin:0;">
+                각 위젯의 위/아래 순서를 변경하거나 좌측/우측 열로 자유롭게 이동할 수 있습니다.
+              </p>
+
+              <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+                <!-- 전폭(2열) 위젯 순서 -->
+                <div class="cat-layout-col-box">
+                  <div class="cat-layout-col-title">전폭 위젯 (2열 전체 100% 가로폭)</div>
+                  <div id="catLayoutListFull" style="display:flex; flex-direction:column; gap:6px;">
+                    <!-- JS 생성 -->
+                  </div>
+                </div>
+
+                <!-- 좌측 컬럼 순서 -->
+                <div class="cat-layout-col-box">
+                  <div class="cat-layout-col-title">좌측 컬럼 위젯</div>
+                  <div id="catLayoutListLeft" style="display:flex; flex-direction:column; gap:6px;">
+                    <!-- JS 생성 -->
+                  </div>
+                </div>
+
+                <!-- 우측 컬럼 순서 -->
+                <div class="cat-layout-col-box">
+                  <div class="cat-layout-col-title">우측 컬럼 위젯</div>
+                  <div id="catLayoutListRight" style="display:flex; flex-direction:column; gap:6px;">
+                    <!-- JS 생성 -->
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                <button class="cat-text-btn" onclick="resetCatLayoutOrder()">기본 배치로 복원</button>
+                <div style="display:flex; gap:8px;">
+                  <button class="cat-btn-outline" onclick="closeCatLayoutModal()">닫기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 1: 위젯 노출/숨김 관리 모달 -->
+          <div class="cat-modal-overlay" id="modalCatWidgetSettings" onclick="if(event.target===this) closeCatWidgetModal()">
+            <div class="cat-modal-box">
+              <div class="cat-modal-header">
+                <h3 class="cat-modal-title" id="catModalWidgetTitle">위젯 노출 설정</h3>
+                <button class="cat-modal-close-btn" onclick="closeCatWidgetModal()">&times;</button>
+              </div>
+              <p style="font-size:12.5px; color:var(--text-secondary); margin:0;" id="catModalWidgetDesc">대시보드에 표시할 위젯을 선택하세요.</p>
+              <div style="display:flex; gap:8px; margin-top:4px;">
+                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatAllWidgets(true)" id="catModalBtnSelectAll">모두 선택</button>
+                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatAllWidgets(false)" id="catModalBtnClearAll">모두 해제 (비우기)</button>
+                <button class="cat-btn-outline" style="padding:4px 10px; font-size:11.5px;" onclick="selectCatDefaultWidgets()" id="catModalBtnPreset">추천 세트</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;" id="catWidgetCheckboxList">
+                <!-- JS 생성 -->
+              </div>
+              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+                <button class="cat-btn-outline" onclick="closeCatWidgetModal()" id="catModalBtnClose">닫기</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 2: 북마크 추가 모달 -->
+          <div class="cat-modal-overlay" id="modalCatBookmarkAdd" onclick="if(event.target===this) closeCatBookmarkModal()">
+            <div class="cat-modal-box">
+              <div class="cat-modal-header">
+                <h3 class="cat-modal-title" id="catModalBmTitle">북마크 추가</h3>
+                <button class="cat-modal-close-btn" onclick="closeCatBookmarkModal()">&times;</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalBmLabelTitle">링크 제목</span>
+                  <input type="text" id="catBmInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 해외법인 ERP Portal">
+                </label>
+                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalBmLabelUrl">URL 링크</span>
+                  <input type="text" id="catBmInputUrl" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="https://example.com">
+                </label>
+              </div>
+              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+                <button class="cat-btn-outline" onclick="closeCatBookmarkModal()" id="catModalBmBtnCancel">취소</button>
+                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatBookmark()" id="catModalBmBtnSubmit">등록</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 3: 기록(노트) 작성 모달 -->
+          <div class="cat-modal-overlay" id="modalCatNoteAdd" onclick="if(event.target===this) closeCatNoteModal()">
+            <div class="cat-modal-box">
+              <div class="cat-modal-header">
+                <h3 class="cat-modal-title" id="catModalNoteTitle">새 기록 남기기</h3>
+                <button class="cat-modal-close-btn" onclick="closeCatNoteModal()">&times;</button>
+              </div>
+              <textarea id="catNoteModalText" class="cat-quick-textarea" rows="4" placeholder="업무 메모나 중요 기록을 남겨보세요."></textarea>
+              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+                <button class="cat-btn-outline" onclick="closeCatNoteModal()" id="catModalNoteBtnCancel">취소</button>
+                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatNoteModal()" id="catModalNoteBtnSubmit">저장</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 4: 빠른 추가 모달 (+) -->
+          <div class="cat-modal-overlay" id="modalCatQuickAdd" onclick="if(event.target===this) closeCatQuickAddModal()">
+            <div class="cat-modal-box">
+              <div class="cat-modal-header">
+                <h3 class="cat-modal-title" id="catModalQuickTitle">빠른 항목 추가</h3>
+                <button class="cat-modal-close-btn" onclick="closeCatQuickAddModal()">&times;</button>
+              </div>
+              <div class="cat-quick-tabs" style="margin-bottom:8px;">
+                <button class="cat-quick-tab active" id="catModalTabSchedule" onclick="setCatModalType('schedule')">일정</button>
+                <button class="cat-quick-tab" id="catModalTabTodo" onclick="setCatModalType('todo')">할일</button>
+                <button class="cat-quick-tab" id="catModalTabNote" onclick="setCatModalType('note')">기록</button>
+                <button class="cat-quick-tab" id="catModalTabBm" onclick="setCatModalType('bookmark')">북마크</button>
+              </div>
+              <textarea id="catQuickModalInputText" class="cat-quick-textarea" rows="3" placeholder="내용을 입력하세요."></textarea>
+              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+                <button class="cat-btn-outline" onclick="closeCatQuickAddModal()" id="catModalQuickBtnCancel">취소</button>
+                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatQuickModal()" id="catModalQuickBtnSubmit">확인 저장</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 5: 상세 일정 등록 모달 -->
+          <div class="cat-modal-overlay" id="modalCatScheduleAdd" onclick="if(event.target===this) closeCatScheduleAddModal()">
+            <div class="cat-modal-box">
+              <div class="cat-modal-header">
+                <h3 class="cat-modal-title" id="catModalSchedTitle">새 일정 등록</h3>
+                <button class="cat-modal-close-btn" onclick="closeCatScheduleAddModal()">&times;</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelDate">일정 일자</span>
+                  <input type="date" id="catSchedInputDate" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="2026-10-14">
+                </label>
+                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTime">일정 시간</span>
+                  <input type="time" id="catSchedInputTime" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="10:00">
+                </label>
+                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTitle">일정 제목</span>
+                  <input type="text" id="catSchedInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 고객사 주간 화상 회의">
+                </label>
+              </div>
+              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+                <button class="cat-btn-outline" onclick="closeCatScheduleAddModal()" id="catModalSchedBtnCancel">취소</button>
+                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatScheduleModal()" id="catModalSchedBtnSubmit">등록</button>
+              </div>
+            </div>
+          </div>
 
   <!-- Google Firebase SDK (v10 compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>

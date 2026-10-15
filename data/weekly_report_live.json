@@ -282,18 +282,7 @@
           "note": "9/30 출하 예정 (진행중)"
         }
       ],
-      "projects": [
-        {
-          "id": "prj_hjh_1",
-          "customer": "SKYWORKS",
-          "item": "IC Tray",
-          "pn": "KS-880220",
-          "tool_type": "Close",
-          "po_no": "SKY000000111",
-          "ship_date": "09월 15일",
-          "status": "Close"
-        }
-      ],
+      "projects": [],
       "quality_issues": [
         {
           "id": "qual_1790577091023",
@@ -436,18 +425,7 @@
           "note": "ONGOING 신규 샘플 진행"
         }
       ],
-      "projects": [
-        {
-          "id": "prj_ksm_1",
-          "customer": "BROADCOM",
-          "item": "IC Tray",
-          "pn": "KS-880220",
-          "tool_type": "Close",
-          "po_no": "SKY000000111",
-          "ship_date": "09월 15일",
-          "status": "Close"
-        }
-      ],
+      "projects": [],
       "quality_issues": []
     },
     {
@@ -603,18 +581,7 @@
           "note": "ONGOING 샘플 진행"
         }
       ],
-      "projects": [
-        {
-          "id": "prj_lgj_1",
-          "customer": "AMKOR",
-          "item": "IC Tray",
-          "pn": "KS-880220",
-          "tool_type": "Close",
-          "po_no": "SKY000000111",
-          "ship_date": "09월 15일",
-          "status": "Close"
-        }
-      ],
+      "projects": [],
       "quality_issues": []
     },
     {
@@ -801,18 +768,7 @@
           "note": "금형 완료, 내부 Test용"
         }
       ],
-      "projects": [
-        {
-          "id": "prj_lsc_1",
-          "customer": "SKYWORKS",
-          "item": "IC Tray",
-          "pn": "KS-880220",
-          "tool_type": "Close",
-          "po_no": "SKY000000111",
-          "ship_date": "09월 15일",
-          "status": "Close"
-        }
-      ],
+      "projects": [],
       "quality_issues": []
     },
     {
@@ -1239,16 +1195,6 @@
           "ship_date": "-",
           "status": "검토대기",
           "remarks": "TH P/N: TBA | PKG: 8MM X 8MM X 1.4MM | Material: - | Mold: TBA"
-        },
-        {
-          "id": "prj_kwt_1",
-          "customer": "SONY",
-          "item": "IC Tray",
-          "pn": "KS-880220",
-          "tool_type": "Close",
-          "po_no": "SKY000000111",
-          "ship_date": "09월 15일",
-          "status": "Close"
         }
       ],
       "quality_issues": []

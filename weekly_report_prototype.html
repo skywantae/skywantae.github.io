@@ -1995,12 +1995,9 @@
           </div>
         </div>
 
-        <!-- 영업사항 서브탭: 1) 프로젝트 / 2) 샘플 리스트 / 3) Quality Issue / 4) 영업현황보고 -->
+        <!-- 영업사항 서브탭: 프로젝트 전용 유지 -->
         <div class="biz-subtab-nav">
-          <button class="biz-subtab-btn active" id="btnSubtabProject" onclick="switchBizSubtab('project', this)">1) 프로젝트</button>
-          <button class="biz-subtab-btn" id="btnSubtabSample" onclick="switchBizSubtab('sample', this)">2) 샘플 리스트</button>
-          <button class="biz-subtab-btn" id="btnSubtabQuality" onclick="switchBizSubtab('quality', this)">3) Quality Issue</button>
-          <button class="biz-subtab-btn" id="btnSubtabReport" onclick="switchBizSubtab('report', this)">4) 영업현황보고</button>
+          <button class="biz-subtab-btn active" id="btnSubtabProject" onclick="switchBizSubtab('project', this)">프로젝트</button>
         </div>
 
         <!-- 3-1. 프로젝트 패널 -->
@@ -3225,11 +3222,27 @@
       }
     } catch(e) {}
 
+    // 영업사항 프로젝트 고객사 Tong Hsing 전용 엄격 강제
+    function enforceTongHsingProjectsOnly(db) {
+      if (!db || !db.members) return;
+      db.members.forEach(m => {
+        if (Array.isArray(m.projects)) {
+          m.projects = m.projects.filter(p => {
+            if (!p || !p.customer) return false;
+            const c = p.customer.toLowerCase().replace(/\s+/g, '');
+            return c.includes('tonghsing');
+          });
+        }
+      });
+    }
+
     applyOfficialRegions(LIVE_DB);
+    enforceTongHsingProjectsOnly(LIVE_DB);
 
     // 주차별 예측 필드 및 고객사 매핑 누락 보완
     function ensureWeeklyForecasts(db) {
       if (!db || !db.members) return;
+      enforceTongHsingProjectsOnly(db);
       db.members.forEach(m => {
         // 1. 매출 주차별 예측 구조 보완
         (m.sales || []).forEach(s => {
@@ -3639,28 +3652,21 @@
       updateRevCountBadge();
     }
 
-        function switchBizSubtab(subtab, btnEl) {
-      ACTIVE_BIZ_SUBTAB = subtab;
+    function switchBizSubtab(subtab, btnEl) {
+      ACTIVE_BIZ_SUBTAB = 'project';
       document.querySelectorAll('.biz-subtab-btn').forEach(b => b.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
+      const btn = document.getElementById('btnSubtabProject');
+      if (btn) btn.classList.add('active');
 
       const pPrj = document.getElementById('bizPanelProject');
       const pQual = document.getElementById('bizPanelQuality');
       const pRep = document.getElementById('bizPanelReport');
       const pSample = document.getElementById('bizPanelSample');
 
-      if (pPrj) pPrj.style.display = (subtab === 'project') ? 'flex' : 'none';
-      if (pQual) pQual.style.display = (subtab === 'quality') ? 'flex' : 'none';
-      if (pRep) pRep.style.display = (subtab === 'report') ? 'flex' : 'none';
-      if (pSample) {
-        pSample.style.display = (subtab === 'sample') ? 'flex' : 'none';
-        if (subtab === 'sample') {
-          const currentData = getActiveDataset();
-          const isAll = (ACTIVE_MEMBER_ID === 'ALL');
-          const m = (currentData.members || []).find(x => x.id === ACTIVE_MEMBER_ID);
-          renderSampleTable(isAll, m, currentData);
-        }
-      }
+      if (pPrj) pPrj.style.display = 'flex';
+      if (pQual) pQual.style.display = 'none';
+      if (pRep) pRep.style.display = 'none';
+      if (pSample) pSample.style.display = 'none';
     }
 
     // --- (A) 2. 매출 패널 렌더링 (국가 Drop-Down 탑재) ---
@@ -4087,15 +4093,23 @@
       if (isAll) {
         (dataContext.members || []).forEach(mem => {
           (mem.projects || []).forEach((p, idx) => {
-            prjList.push({ ...p, memberId: mem.id, memberName: mem.name, prjIdx: idx });
+            const cust = (p.customer || '').toLowerCase().replace(/\s+/g, '');
+            if (cust.includes('tonghsing')) {
+              prjList.push({ ...p, memberId: mem.id, memberName: mem.name, prjIdx: idx });
+            }
           });
         });
       } else if (member) {
-        prjList = (member.projects || []).map((p, idx) => ({ ...p, memberId: member.id, memberName: member.name, prjIdx: idx }));
+        (member.projects || []).forEach((p, idx) => {
+          const cust = (p.customer || '').toLowerCase().replace(/\s+/g, '');
+          if (cust.includes('tonghsing')) {
+            prjList.push({ ...p, memberId: member.id, memberName: member.name, prjIdx: idx });
+          }
+        });
       }
 
       if (prjList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 TONGHSING 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
         return;
       }
 
@@ -4108,7 +4122,7 @@
           </td>
           <td style="text-align:center;">
             <select class="select-dropdown-red" style="width:75px; text-align:center;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'country', this.value)">
-              ${getCountryOptionsHtml(p.country || 'US')}
+              ${getCountryOptionsHtml(p.country || 'TW')}
             </select>
           </td>
           <td>
@@ -4155,16 +4169,21 @@
     function deleteProject(memId, prjIdx) {
       if (notifyLocked()) return;
       if (!confirm('해당 프로젝트를 삭제하시겠습니까?')) return;
-      // 1. LIVE_DB 영구 삭제
-      const liveMem = (LIVE_DB.members || []).find(x => x.id === memId);
-      if (liveMem && liveMem.projects) {
-        liveMem.projects.splice(prjIdx, 1);
-      }
-      // 2. currentData 제거
       const currentData = getActiveDataset();
       const mem = (currentData.members || []).find(x => x.id === memId);
-      if (!mem || !mem.projects) return;
-      mem.projects.splice(prjIdx, 1);
+      if (mem && mem.projects && mem.projects[prjIdx]) {
+        mem.projects.splice(prjIdx, 1);
+      }
+      if (currentData !== LIVE_DB) {
+        const liveMem = (LIVE_DB.members || []).find(x => x.id === memId);
+        if (liveMem && liveMem.projects && liveMem.projects[prjIdx]) {
+          liveMem.projects.splice(prjIdx, 1);
+        }
+      }
+      enforceTongHsingProjectsOnly(LIVE_DB);
+      LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      LIVE_DB.last_updated_by = CURRENT_USER_NAME;
+      localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(LIVE_DB));
       renderMemberView();
       triggerAutoSave(`${CURRENT_USER_NAME}님이 프로젝트 항목을 삭제했습니다.`);
     }
@@ -4182,14 +4201,14 @@
       const ship = document.getElementById('modalPrjShipDate');
       const mem = document.getElementById('modalPrjMember');
 
-      if (cust) cust.value = 'SKYWORKS';
-      if (ctry) ctry.value = 'US';
+      if (cust) cust.value = 'TONGHSING';
+      if (ctry) ctry.value = 'TW';
       if (item) item.value = 'IC Tray';
-      if (pn) pn.value = 'KS-880220';
+      if (pn) pn.value = 'KS-871591';
       if (tt) tt.value = 'Close';
-      if (po) po.value = 'SKY000000111';
-      if (ship) ship.value = '09월 15일';
-      if (mem) mem.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'hjh' : ACTIVE_MEMBER_ID;
+      if (po) po.value = 'TH2026-001';
+      if (ship) ship.value = '09월 30일';
+      if (mem) mem.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'kwt' : ACTIVE_MEMBER_ID;
 
       if (modal) modal.classList.add('active');
     }
@@ -4200,14 +4219,14 @@
     }
 
     function submitAddProjectModal() {
-      const cust = document.getElementById('modalPrjCustomer').value || 'SKYWORKS';
-      const country = (document.getElementById('modalPrjCountry') ? document.getElementById('modalPrjCountry').value : 'US') || 'US';
+      const cust = document.getElementById('modalPrjCustomer').value || 'TONGHSING';
+      const country = (document.getElementById('modalPrjCountry') ? document.getElementById('modalPrjCountry').value : 'TW') || 'TW';
       const item = document.getElementById('modalPrjItem').value || 'IC Tray';
-      const pn = document.getElementById('modalPrjPn').value.trim() || 'KS-880220';
+      const pn = document.getElementById('modalPrjPn').value.trim() || 'KS-871591';
       const tt = document.getElementById('modalPrjToolType').value || 'Close';
       const po = document.getElementById('modalPrjPoNo').value.trim() || '';
       const ship = document.getElementById('modalPrjShipDate').value.trim() || '';
-      const targetMemId = document.getElementById('modalPrjMember').value || 'hjh';
+      const targetMemId = document.getElementById('modalPrjMember').value || 'kwt';
 
       const currentData = getActiveDataset();
       const mem = (currentData.members || []).find(x => x.id === targetMemId);
@@ -4225,6 +4244,11 @@
         ship_date: ship,
         status: tt
       });
+
+      enforceTongHsingProjectsOnly(LIVE_DB);
+      LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      LIVE_DB.last_updated_by = CURRENT_USER_NAME;
+      localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(LIVE_DB));
 
       closeAddProjectModal();
       renderMemberView();
