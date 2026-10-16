@@ -14250,14 +14250,123 @@ function renderCatCalendarFullView() {
 }
 window.renderCatCalendarFullView = renderCatCalendarFullView;
 
+let _catSchedCurrentAmPm = 'AM';
+
+function setCatSchedAmPm(ampm) {
+  _catSchedCurrentAmPm = (ampm === 'PM') ? 'PM' : 'AM';
+  const btnAm = document.getElementById('catSchedBtnAm');
+  const btnPm = document.getElementById('catSchedBtnPm');
+  if (btnAm) btnAm.classList.toggle('active', _catSchedCurrentAmPm === 'AM');
+  if (btnPm) btnPm.classList.toggle('active', _catSchedCurrentAmPm === 'PM');
+  updateCatSchedTimePreview();
+}
+window.setCatSchedAmPm = setCatSchedAmPm;
+
+function setCatSchedTimePreset(ampm, hour, minute) {
+  const checkAllDay = document.getElementById('catSchedCheckAllDay');
+  if (checkAllDay && checkAllDay.checked) {
+    checkAllDay.checked = false;
+    toggleCatSchedAllDay(false);
+  }
+  setCatSchedAmPm(ampm);
+  const hSel = document.getElementById('catSchedSelectHour');
+  const mSel = document.getElementById('catSchedSelectMinute');
+  if (hSel) hSel.value = String(hour);
+  if (mSel) mSel.value = String(minute).padStart(2, '0');
+  updateCatSchedTimePreview();
+}
+window.setCatSchedTimePreset = setCatSchedTimePreset;
+
+function toggleCatSchedAllDay(isAllDay) {
+  const pickerRow = document.getElementById('catSchedTimePickerRow');
+  if (pickerRow) {
+    pickerRow.style.opacity = isAllDay ? '0.35' : '1';
+    pickerRow.style.pointerEvents = isAllDay ? 'none' : 'auto';
+  }
+  updateCatSchedTimePreview();
+}
+window.toggleCatSchedAllDay = toggleCatSchedAllDay;
+
+function updateCatSchedTimePreview() {
+  const preview = document.getElementById('catSchedTimePreview');
+  if (!preview) return;
+  const isEn = (AppState && AppState.currentLang === 'en');
+
+  const checkAllDay = document.getElementById('catSchedCheckAllDay');
+  if (checkAllDay && checkAllDay.checked) {
+    preview.textContent = isEn ? 'All Day' : '종일 (시간 미지정)';
+    return;
+  }
+
+  const hSel = document.getElementById('catSchedSelectHour');
+  const mSel = document.getElementById('catSchedSelectMinute');
+  const hour12 = parseInt((hSel && hSel.value) || '10', 10);
+  const minStr = String((mSel && mSel.value) || '00').padStart(2, '0');
+
+  let hour24 = hour12;
+  if (_catSchedCurrentAmPm === 'AM') {
+    if (hour12 === 12) hour24 = 0;
+  } else {
+    if (hour12 !== 12) hour24 += 12;
+  }
+  const time24Str = `${String(hour24).padStart(2, '0')}:${minStr}`;
+  const ampmText = _catSchedCurrentAmPm === 'AM' ? (isEn ? 'AM' : '오전') : (isEn ? 'PM' : '오후');
+  preview.textContent = `${ampmText} ${String(hour12).padStart(2, '0')}:${minStr} (${time24Str})`;
+}
+window.updateCatSchedTimePreview = updateCatSchedTimePreview;
+
+function getCatSchedFormattedTime() {
+  const checkAllDay = document.getElementById('catSchedCheckAllDay');
+  if (checkAllDay && checkAllDay.checked) {
+    return '종일';
+  }
+  const hSel = document.getElementById('catSchedSelectHour');
+  const mSel = document.getElementById('catSchedSelectMinute');
+  const hour12 = parseInt((hSel && hSel.value) || '10', 10);
+  const minStr = String((mSel && mSel.value) || '00').padStart(2, '0');
+
+  let hour24 = hour12;
+  if (_catSchedCurrentAmPm === 'AM') {
+    if (hour12 === 12) hour24 = 0;
+  } else {
+    if (hour12 !== 12) hour24 += 12;
+  }
+  return `${String(hour24).padStart(2, '0')}:${minStr}`;
+}
+window.getCatSchedFormattedTime = getCatSchedFormattedTime;
+
 function openCatScheduleAddModal(date) {
   const targetDate = date || CatDashboardState.selectedDate || getCatTodayStr();
   const dInput = document.getElementById('catSchedInputDate');
   if (dInput) dInput.value = targetDate;
-  const tInput = document.getElementById('catSchedInputTime');
-  if (tInput && !tInput.value) tInput.value = '10:00';
   const titleInput = document.getElementById('catSchedInputTitle');
   if (titleInput) titleInput.value = '';
+
+  // 현재 시간 기반으로 오전/오후 및 기본 시:분 설정
+  const now = new Date();
+  const curH = now.getHours();
+  if (curH >= 12) {
+    _catSchedCurrentAmPm = 'PM';
+    const h12 = curH === 12 ? 12 : curH - 12;
+    const hSel = document.getElementById('catSchedSelectHour');
+    if (hSel) hSel.value = String(h12 || 2);
+  } else {
+    _catSchedCurrentAmPm = 'AM';
+    const hSel = document.getElementById('catSchedSelectHour');
+    if (hSel) hSel.value = String(curH === 0 ? 12 : curH || 10);
+  }
+  setCatSchedAmPm(_catSchedCurrentAmPm);
+
+  const mSel = document.getElementById('catSchedSelectMinute');
+  if (mSel) mSel.value = '00';
+
+  const checkAllDay = document.getElementById('catSchedCheckAllDay');
+  if (checkAllDay) {
+    checkAllDay.checked = false;
+    toggleCatSchedAllDay(false);
+  }
+
+  updateCatSchedTimePreview();
 
   const m = document.getElementById('modalCatScheduleAdd');
   if (m) {
@@ -14277,7 +14386,6 @@ window.closeCatScheduleAddModal = closeCatScheduleAddModal;
 
 function submitCatScheduleModal() {
   const dInput = document.getElementById('catSchedInputDate');
-  const tInput = document.getElementById('catSchedInputTime');
   const titleInput = document.getElementById('catSchedInputTitle');
   if (!titleInput || !titleInput.value.trim()) {
     if (typeof showToast === 'function') {
@@ -14289,7 +14397,7 @@ function submitCatScheduleModal() {
     return;
   }
   const dateVal = (dInput && dInput.value) || CatDashboardState.selectedDate || getCatTodayStr();
-  const timeVal = (tInput && tInput.value) || '10:00';
+  const timeVal = getCatSchedFormattedTime();
   const titleVal = titleInput.value.trim();
 
   let list = [];

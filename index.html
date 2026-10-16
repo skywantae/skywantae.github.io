@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="KOSTAT ERP">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <link rel="stylesheet" href="app.css?v=1.0.194" />
+  <link rel="stylesheet" href="app.css?v=1.0.195" />
   <!-- Google Fonts: Inter & Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -857,14 +857,14 @@
             <span class="count-badge" id="salesNotesStatusBadge">프로젝트 &middot; 샘플 &middot; 품질 이슈 &middot; 영업보고</span>
           </div>
           <div class="viewer-tools">
-            <a href="weekly_report_prototype.html?v=1.0.194_w39&mode=sales" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+            <a href="weekly_report_prototype.html?v=1.0.195_w39&mode=sales" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
               전체화면 새 창 열기
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </a>
           </div>
         </div>
         <div style="width:100%; height:calc(100% - 55px); overflow:hidden;">
-          <iframe id="salesNotesIframe" src="weekly_report_prototype.html?v=1.0.194_w39&mode=sales" style="width:100%; height:100%; border:none;" title="영업사항"></iframe>
+          <iframe id="salesNotesIframe" src="weekly_report_prototype.html?v=1.0.195_w39&mode=sales" style="width:100%; height:100%; border:none;" title="영업사항"></iframe>
         </div>
       </div>
 
@@ -1891,7 +1891,7 @@
                     <h4>주간보고서</h4>
                   </div>
                   <div style="display:flex; gap:8px; align-items:center;">
-                    <a href="weekly_report_prototype.html?v=1.0.194_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+                    <a href="weekly_report_prototype.html?v=1.0.195_w39" target="_blank" class="action-btn-sm primary" style="text-decoration:none; padding:5px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
                       전체화면 새 창 열기
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
@@ -1904,7 +1904,7 @@
                   
                   <!-- 워크스페이스 임베드 컨테이너 -->
                   <div style="width:100%; height:840px; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--bg-secondary);">
-                    <iframe src="weekly_report_prototype.html?v=1.0.194_w39" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
+                    <iframe src="weekly_report_prototype.html?v=1.0.195_w39" style="width:100%; height:100%; border:none;" title="주간보고서"></iframe>
                   </div>
                 </div>
               </div>
@@ -2034,7 +2034,7 @@
         <div class="setting-item">
           <label id="lblSettingVer">앱 버전 정보:</label>
           <div class="version-box">
-            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.194</strong></span>
+            <span><span id="lblCurrentVerPrefix">현재 버전:</span> <strong id="currentAppVersion">v1.0.195</strong></span>
             <button class="action-btn-sm" id="btnCheckAppUpdate">업데이트 확인</button>
           </div>
           <div class="update-status-msg" id="updateStatusMsg"></div>
@@ -2864,9 +2864,67 @@
                 <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelDate">일정 일자</span>
                   <input type="date" id="catSchedInputDate" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;">
                 </label>
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTime">일정 시간</span>
-                  <input type="time" id="catSchedInputTime" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="10:00">
-                </label>
+                <!-- 직관적인 일정 시간 선택기 (오전/오후 분리, 시/분 드롭다운, 종일 토글, 퀵 칩) -->
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; font-weight:700; color:var(--text-secondary);" id="catModalSchedLabelTime">일정 시간</span>
+                    <label style="display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text-secondary); cursor:pointer;">
+                      <input type="checkbox" id="catSchedCheckAllDay" onchange="toggleCatSchedAllDay(this.checked)" style="accent-color:#2563eb; width:14px; height:14px;">
+                      <span>종일 일정</span>
+                    </label>
+                  </div>
+                  
+                  <div id="catSchedTimePickerRow" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                    <!-- 오전 / 오후 세그먼트 버튼 -->
+                    <div class="cat-ampm-toggle">
+                      <button type="button" class="cat-ampm-btn active" id="catSchedBtnAm" onclick="setCatSchedAmPm('AM')">오전</button>
+                      <button type="button" class="cat-ampm-btn" id="catSchedBtnPm" onclick="setCatSchedAmPm('PM')">오후</button>
+                    </div>
+
+                    <!-- 시 드롭다운 (1시 ~ 12시) -->
+                    <select id="catSchedSelectHour" class="cat-todo-input" style="flex:1; min-width:75px; padding:6px 8px; font-weight:600;" onchange="updateCatSchedTimePreview()">
+                      <option value="1">01시</option>
+                      <option value="2">02시</option>
+                      <option value="3">03시</option>
+                      <option value="4">04시</option>
+                      <option value="5">05시</option>
+                      <option value="6">06시</option>
+                      <option value="7">07시</option>
+                      <option value="8">08시</option>
+                      <option value="9">09시</option>
+                      <option value="10" selected>10시</option>
+                      <option value="11">11시</option>
+                      <option value="12">12시</option>
+                    </select>
+
+                    <!-- 분 드롭다운 (00분 ~ 55분) -->
+                    <select id="catSchedSelectMinute" class="cat-todo-input" style="flex:1; min-width:75px; padding:6px 8px; font-weight:600;" onchange="updateCatSchedTimePreview()">
+                      <option value="00" selected>00분</option>
+                      <option value="05">05분</option>
+                      <option value="10">10분</option>
+                      <option value="15">15분</option>
+                      <option value="20">20분</option>
+                      <option value="25">25분</option>
+                      <option value="30">30분</option>
+                      <option value="35">35분</option>
+                      <option value="40">40분</option>
+                      <option value="45">45분</option>
+                      <option value="50">50분</option>
+                      <option value="55">55분</option>
+                    </select>
+                  </div>
+
+                  <!-- 퀵 시간 프리셋 & 실시간 텍스트 미리보기 -->
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                      <button type="button" class="cat-preset-chip" onclick="setCatSchedTimePreset('AM', 9, '00')">오전 9시</button>
+                      <button type="button" class="cat-preset-chip" onclick="setCatSchedTimePreset('AM', 10, '00')">오전 10시</button>
+                      <button type="button" class="cat-preset-chip" onclick="setCatSchedTimePreset('PM', 2, '00')">오후 2시</button>
+                      <button type="button" class="cat-preset-chip" onclick="setCatSchedTimePreset('PM', 4, '00')">오후 4시</button>
+                    </div>
+                    <span id="catSchedTimePreview" style="font-size:11px; font-weight:700; color:#60a5fa; background:rgba(59,130,246,0.15); padding:2px 8px; border-radius:4px; border:1px solid rgba(59,130,246,0.3);">오전 10:00</span>
+                  </div>
+                </div>
                 <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTitle">일정 제목</span>
                   <input type="text" id="catSchedInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 고객사 주간 화상 회의" onkeydown="if(event.key==='Enter') submitCatScheduleModal()">
                 </label>
@@ -3049,14 +3107,14 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="firebase_config.js?v=1.0.194"></script>
-  <script src="weekly_live_sync.js?v=1.0.194"></script>
+  <script src="firebase_config.js?v=1.0.195"></script>
+  <script src="weekly_live_sync.js?v=1.0.195"></script>
 
   <!-- 보안 인증 기반 동적 데이터 로더 (미인증 시 데이터 로드 차단) -->
-  <script src="xlsx.full.min.js?v=1.0.194"></script>
-  <script src="exceljs.min.js?v=1.0.194"></script>
-  <script src="updater.js?v=1.0.194"></script>
-  <script src="app.js?v=1.0.194"></script>
+  <script src="xlsx.full.min.js?v=1.0.195"></script>
+  <script src="exceljs.min.js?v=1.0.195"></script>
+  <script src="updater.js?v=1.0.195"></script>
+  <script src="app.js?v=1.0.195"></script>
   
   <!-- Service Worker Registration for PWA Offline Mode -->
   <script>
