@@ -16166,8 +16166,7 @@ function renderCatSalesProjects(filterText) {
   let allProjects = [];
   (db.members || []).forEach(m => {
     (m.projects || []).forEach(p => {
-      const cust = (p.customer || '').toLowerCase().replace(/\s+/g, '');
-      if (cust.includes('tonghsing')) {
+      if (p && p.customer) {
         allProjects.push({ ...p, memberName: m.name, memberId: m.id });
       }
     });
@@ -16186,7 +16185,7 @@ function renderCatSalesProjects(filterText) {
   }
 
   if (allProjects.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:#94a3b8;">등록된 TONGHSING 프로젝트가 없거나 검색 결과가 없습니다.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:#94a3b8;">등록된 프로젝트가 없거나 검색 결과가 없습니다.</td></tr>';
     return;
   }
 

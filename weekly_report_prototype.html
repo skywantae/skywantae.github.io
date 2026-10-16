@@ -2436,9 +2436,8 @@
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">고객사 (Customer) *</label>
-            <select id="modalPrjCustomer" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
-              <!-- 127개사 -->
-            </select>
+            <input type="text" id="modalPrjCustomer" list="modalPrjCustomerDatalist" placeholder="고객사명 직접 입력..." style="width:100%; box-sizing:border-box; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" autocomplete="off" />
+            <datalist id="modalPrjCustomerDatalist"></datalist>
           </div>
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">아이템 (Item) *</label>
@@ -3222,16 +3221,12 @@
       }
     } catch(e) {}
 
-    // 영업사항 프로젝트 고객사 Tong Hsing 전용 엄격 강제
+    // 영업사항 프로젝트 고객사 유효성 유지 (직접 타이핑된 고객사 포함 전사 프로젝트 보존)
     function enforceTongHsingProjectsOnly(db) {
       if (!db || !db.members) return;
       db.members.forEach(m => {
         if (Array.isArray(m.projects)) {
-          m.projects = m.projects.filter(p => {
-            if (!p || !p.customer) return false;
-            const c = p.customer.toLowerCase().replace(/\s+/g, '');
-            return c.includes('tonghsing');
-          });
+          m.projects = m.projects.filter(p => p && p.customer && p.customer.trim().length > 0);
         }
       });
     }
@@ -3351,7 +3346,7 @@
       }
 
       // 2. 고객사 드롭다운들 채우기 (127개사)
-      const custSelects = ['modalPrjCustomer', 'modalQualCustomer', 'modalIssueCustomer', 'salesReportCustSelect'];
+      const custSelects = ['modalQualCustomer', 'modalIssueCustomer', 'salesReportCustSelect'];
       custSelects.forEach(id => {
         const el = document.getElementById(id);
         if (el && typeof MASTER_CUSTOMERS !== 'undefined') {
@@ -3365,6 +3360,12 @@
           el.innerHTML = h;
         }
       });
+
+      // 프로젝트 등록용 고객사 자동완성 datalist 채우기
+      const prjCustDl = document.getElementById('modalPrjCustomerDatalist');
+      if (prjCustDl && typeof MASTER_CUSTOMERS !== 'undefined') {
+        prjCustDl.innerHTML = MASTER_CUSTOMERS.map(c => `<option value="${escapeAttr(c)}">`).join('');
+      }
 
       // 3. 아이템 드롭다운들 채우기 (9개)
       const itemSelects = ['modalPrjItem', 'modalQualItem', 'modalIssueItem'];
@@ -4093,32 +4094,28 @@
       if (isAll) {
         (dataContext.members || []).forEach(mem => {
           (mem.projects || []).forEach((p, idx) => {
-            const cust = (p.customer || '').toLowerCase().replace(/\s+/g, '');
-            if (cust.includes('tonghsing')) {
+            if (p && p.customer) {
               prjList.push({ ...p, memberId: mem.id, memberName: mem.name, prjIdx: idx });
             }
           });
         });
       } else if (member) {
         (member.projects || []).forEach((p, idx) => {
-          const cust = (p.customer || '').toLowerCase().replace(/\s+/g, '');
-          if (cust.includes('tonghsing')) {
+          if (p && p.customer) {
             prjList.push({ ...p, memberId: member.id, memberName: member.name, prjIdx: idx });
           }
         });
       }
 
       if (prjList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 TONGHSING 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = prjList.map(p => `
         <tr>
           <td>
-            <select class="select-dropdown-red" style="max-width:110px;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'customer', this.value)">
-              ${getCustomerOptionsHtml(p.customer)}
-            </select>
+            <input type="text" value="${escapeAttr(p.customer || '')}" placeholder="고객사명" list="modalPrjCustomerDatalist" style="width:105px; box-sizing:border-box; padding:4px 6px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'customer', this.value)" />
           </td>
           <td style="text-align:center;">
             <select class="select-dropdown-red" style="width:75px; text-align:center;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'country', this.value)">
@@ -4201,16 +4198,25 @@
       const ship = document.getElementById('modalPrjShipDate');
       const mem = document.getElementById('modalPrjMember');
 
-      if (cust) cust.value = 'TONGHSING';
+      if (cust) cust.value = '';
       if (ctry) ctry.value = 'TW';
       if (item) item.value = 'IC Tray';
-      if (pn) pn.value = 'KS-871591';
+      if (pn) pn.value = '';
       if (tt) tt.value = 'Close';
-      if (po) po.value = 'TH2026-001';
-      if (ship) ship.value = '09월 30일';
+      if (po) po.value = '';
+      if (ship) ship.value = '';
       if (mem) mem.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'kwt' : ACTIVE_MEMBER_ID;
 
+      // datalist 옵션 보강
+      const prjCustDl = document.getElementById('modalPrjCustomerDatalist');
+      if (prjCustDl && typeof MASTER_CUSTOMERS !== 'undefined' && prjCustDl.children.length === 0) {
+        prjCustDl.innerHTML = MASTER_CUSTOMERS.map(c => `<option value="${escapeAttr(c)}">`).join('');
+      }
+
       if (modal) modal.classList.add('active');
+      if (cust) {
+        setTimeout(() => cust.focus(), 80);
+      }
     }
 
     function closeAddProjectModal() {
@@ -4219,14 +4225,20 @@
     }
 
     function submitAddProjectModal() {
-      const cust = document.getElementById('modalPrjCustomer').value || 'TONGHSING';
+      const custInput = document.getElementById('modalPrjCustomer');
+      const cust = custInput ? custInput.value.trim() : '';
+      if (!cust) {
+        alert('고객사명을 직접 입력해 주세요.');
+        if (custInput) custInput.focus();
+        return;
+      }
       const country = (document.getElementById('modalPrjCountry') ? document.getElementById('modalPrjCountry').value : 'TW') || 'TW';
-      const item = document.getElementById('modalPrjItem').value || 'IC Tray';
-      const pn = document.getElementById('modalPrjPn').value.trim() || 'KS-871591';
-      const tt = document.getElementById('modalPrjToolType').value || 'Close';
-      const po = document.getElementById('modalPrjPoNo').value.trim() || '';
-      const ship = document.getElementById('modalPrjShipDate').value.trim() || '';
-      const targetMemId = document.getElementById('modalPrjMember').value || 'kwt';
+      const item = (document.getElementById('modalPrjItem') ? document.getElementById('modalPrjItem').value : 'IC Tray') || 'IC Tray';
+      const pn = (document.getElementById('modalPrjPn') ? document.getElementById('modalPrjPn').value.trim() : '');
+      const tt = (document.getElementById('modalPrjToolType') ? document.getElementById('modalPrjToolType').value : 'Close') || 'Close';
+      const po = (document.getElementById('modalPrjPoNo') ? document.getElementById('modalPrjPoNo').value.trim() : '');
+      const ship = (document.getElementById('modalPrjShipDate') ? document.getElementById('modalPrjShipDate').value.trim() : '');
+      const targetMemId = (document.getElementById('modalPrjMember') ? document.getElementById('modalPrjMember').value : 'kwt') || 'kwt';
 
       const currentData = getActiveDataset();
       const mem = (currentData.members || []).find(x => x.id === targetMemId);
@@ -4245,7 +4257,6 @@
         status: tt
       });
 
-      enforceTongHsingProjectsOnly(LIVE_DB);
       LIVE_DB.last_updated_at = new Date().toISOString().replace('T', ' ').slice(0, 19);
       LIVE_DB.last_updated_by = CURRENT_USER_NAME;
       localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(LIVE_DB));
