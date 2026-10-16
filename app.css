@@ -6191,31 +6191,34 @@ html, body {
 
 .notion-columns-container {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   overflow-x: auto;
   padding: 4px 2px 14px 2px;
   flex: 1;
-  align-items: flex-start;
+  width: 100%;
+  align-items: stretch;
 }
 
 .notion-column {
   background: rgba(15, 23, 42, 0.45);
   border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
   border-radius: 10px;
-  min-width: 250px;
-  width: 250px;
-  max-width: 320px;
+  flex: 1 1 0;
+  min-width: 180px;
+  width: auto;
+  max-width: none;
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex-shrink: 0;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, flex 0.2s ease;
 }
 
 .flowboard-compact .notion-column {
-  min-width: 210px;
-  width: 210px;
+  flex: 1 1 0;
+  min-width: 140px;
+  width: auto;
+  max-width: none;
   padding: 8px;
 }
 
@@ -6402,8 +6405,29 @@ html, body {
 }
 
 .notion-card.is-done .notion-card-title {
-  text-decoration: line-through;
-  color: var(--text-muted, #64748b);
+  color: var(--text-secondary, #94a3b8);
+}
+
+.notion-scheduled-item {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.notion-schedule-pill {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
 }
 
 .notion-card-top {

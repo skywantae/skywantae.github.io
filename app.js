@@ -14465,6 +14465,224 @@ function applyNotionAutomations(card, targetLaneTitle) {
   }
 }
 
+// -------------------------------------------------------------
+// 노션 스타일 데이터베이스 자동화 엔진 (Scheduled Recurring Automations)
+// -------------------------------------------------------------
+function getFlowboardScheduledAutomations() {
+  try {
+    const raw = localStorage.getItem('kostat_flowboard_scheduled_automations');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error('Failed to parse kostat_flowboard_scheduled_automations', e);
+  }
+  // 기본 엔터프라이즈 정기 자동화 템플릿 2건
+  return [
+    {
+      id: 'auto_daily_ship',
+      title: '일일 출하 계획 및 특이사항 점검',
+      targetLaneId: 'lane_not_started',
+      schedule: 'weekdays',
+      priority: 'P2',
+      active: true,
+      lastRunDate: ''
+    },
+    {
+      id: 'auto_weekly_stock',
+      title: '주간 4대 공장 재고 실사 점검',
+      targetLaneId: 'lane_not_started',
+      schedule: 'weekly_mon',
+      priority: 'P1',
+      active: true,
+      lastRunDate: ''
+    }
+  ];
+}
+window.getFlowboardScheduledAutomations = getFlowboardScheduledAutomations;
+
+function saveFlowboardScheduledAutomations(rules) {
+  try {
+    localStorage.setItem('kostat_flowboard_scheduled_automations', JSON.stringify(rules));
+  } catch (e) {
+    console.error('Failed to save kostat_flowboard_scheduled_automations', e);
+  }
+}
+window.saveFlowboardScheduledAutomations = saveFlowboardScheduledAutomations;
+
+function renderFlowboardAutomationsList() {
+  const container = document.getElementById('flowboardScheduledRulesList');
+  if (!container) return;
+
+  const rules = getFlowboardScheduledAutomations();
+  const board = getFlowboardData();
+
+  if (rules.length === 0) {
+    container.innerHTML = '<div class="cat-item-empty" style="padding:10px; font-size:12px;">등록된 주기적 자동화 규칙이 없습니다. 위에서 새 규칙을 추가해 보세요.</div>';
+    return;
+  }
+
+  const scheduleLabels = {
+    'daily': '매일',
+    'weekdays': '평일 매일',
+    'weekly_mon': '매주 월요일',
+    'weekly_fri': '매주 금요일',
+    'every_4h': '4시간마다',
+    'hourly': '1시간마다'
+  };
+
+  container.innerHTML = rules.map(r => {
+    const lane = board.lanes.find(l => l.id === r.targetLaneId) || board.lanes[0];
+    const laneTitle = lane ? lane.title : r.targetLaneId;
+    const schedLabel = scheduleLabels[r.schedule] || r.schedule;
+    const lastRun = r.lastRunDate ? `(최근 실행: ${r.lastRunDate})` : '(실행 대기중)';
+
+    return `
+      <div class="notion-scheduled-item" style="opacity:${r.active ? '1' : '0.6'};">
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <strong style="font-size:12.5px; color:var(--text-primary);">${escapeHtml(r.title)}</strong>
+            <span class="notion-schedule-pill">${schedLabel}</span>
+            <span class="notion-status-pill not-started" style="font-size:10.5px; padding:2px 6px;">${escapeHtml(laneTitle)}</span>
+            ${r.priority ? `<span class="flowboard-priority-badge ${r.priority.toLowerCase()}">${escapeHtml(r.priority)}</span>` : ''}
+          </div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">
+            ${r.active ? '활성 상태' : '일시정지됨'} &middot; ${lastRun}
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button class="cat-btn-outline" style="padding:4px 8px; font-size:11px;" onclick="toggleScheduledAutomation('${escapeHtml(r.id)}')">
+            ${r.active ? '일시정지' : '활성화'}
+          </button>
+          <button class="flowboard-card-btn delete" style="padding:4px 6px; font-size:14px;" onclick="deleteScheduledAutomation('${escapeHtml(r.id)}')" title="규칙 삭제">&times;</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+window.renderFlowboardAutomationsList = renderFlowboardAutomationsList;
+
+function submitNewScheduledAutomation() {
+  const titleInp = document.getElementById('autoRuleTitleInput');
+  const laneSel = document.getElementById('autoRuleLaneSelect');
+  const schedSel = document.getElementById('autoRuleScheduleSelect');
+  const prioSel = document.getElementById('autoRulePrioritySelect');
+
+  if (!titleInp || !titleInp.value.trim()) {
+    alert('자동 생성할 페이지 제목을 입력하세요.');
+    return;
+  }
+
+  const rules = getFlowboardScheduledAutomations();
+  const newRule = {
+    id: 'auto_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+    title: titleInp.value.trim(),
+    targetLaneId: laneSel ? laneSel.value : 'lane_not_started',
+    schedule: schedSel ? schedSel.value : 'daily',
+    priority: prioSel ? prioSel.value : '',
+    active: true,
+    lastRunDate: ''
+  };
+
+  rules.push(newRule);
+  saveFlowboardScheduledAutomations(rules);
+  titleInp.value = '';
+  renderFlowboardAutomationsList();
+
+  // 즉시 실행 검증
+  checkAndRunScheduledAutomations();
+}
+window.submitNewScheduledAutomation = submitNewScheduledAutomation;
+
+function deleteScheduledAutomation(ruleId) {
+  let rules = getFlowboardScheduledAutomations();
+  rules = rules.filter(r => r.id !== ruleId);
+  saveFlowboardScheduledAutomations(rules);
+  renderFlowboardAutomationsList();
+}
+window.deleteScheduledAutomation = deleteScheduledAutomation;
+
+function toggleScheduledAutomation(ruleId) {
+  const rules = getFlowboardScheduledAutomations();
+  const rule = rules.find(r => r.id === ruleId);
+  if (rule) {
+    rule.active = !rule.active;
+    saveFlowboardScheduledAutomations(rules);
+    renderFlowboardAutomationsList();
+  }
+}
+window.toggleScheduledAutomation = toggleScheduledAutomation;
+
+function checkAndRunScheduledAutomations(forceAll = false) {
+  const rules = getFlowboardScheduledAutomations();
+  if (!rules || rules.length === 0) return 0;
+
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  const dayOfWeek = now.getDay(); // 0: Sun, 1: Mon, ... 5: Fri, 6: Sat
+  const currentHour = now.getHours();
+
+  const board = getFlowboardData();
+  let createdCount = 0;
+
+  for (const rule of rules) {
+    if (!rule.active && !forceAll) continue;
+
+    let shouldRun = false;
+
+    if (forceAll) {
+      shouldRun = true;
+    } else {
+      const lastRun = rule.lastRunDate || '';
+      if (rule.schedule === 'daily') {
+        shouldRun = (lastRun !== todayStr);
+      } else if (rule.schedule === 'weekdays') {
+        const isWeekday = (dayOfWeek >= 1 && dayOfWeek <= 5);
+        shouldRun = isWeekday && (lastRun !== todayStr);
+      } else if (rule.schedule === 'weekly_mon') {
+        shouldRun = (dayOfWeek === 1) && (lastRun !== todayStr);
+      } else if (rule.schedule === 'weekly_fri') {
+        shouldRun = (dayOfWeek === 5) && (lastRun !== todayStr);
+      } else if (rule.schedule === 'hourly') {
+        const lastRunHour = rule.lastRunHour !== undefined ? rule.lastRunHour : -1;
+        shouldRun = (lastRun !== todayStr || lastRunHour !== currentHour);
+      } else if (rule.schedule === 'every_4h') {
+        const lastRunTime = rule.lastRunTimestamp || 0;
+        shouldRun = (Date.now() - lastRunTime >= 4 * 60 * 60 * 1000);
+      }
+    }
+
+    if (shouldRun) {
+      const targetLane = board.lanes.find(l => l.id === rule.targetLaneId) || board.lanes[0];
+      if (targetLane) {
+        const newCard = {
+          id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+          content: rule.title,
+          date: todayStr,
+          priority: rule.priority || '',
+          done: (targetLane.id === 'lane_done' || targetLane.title.toLowerCase().includes('done')),
+          notes: `[자동화 생성] 주기: ${rule.schedule} | 생성일시: ${now.toLocaleString()}`
+        };
+        applyNotionAutomations(newCard, targetLane.title);
+        if (!targetLane.cards) targetLane.cards = [];
+        targetLane.cards.unshift(newCard);
+        createdCount++;
+      }
+      rule.lastRunDate = todayStr;
+      rule.lastRunHour = currentHour;
+      rule.lastRunTimestamp = Date.now();
+    }
+  }
+
+  if (createdCount > 0) {
+    saveFlowboardData(board);
+    saveFlowboardScheduledAutomations(rules);
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
+
+  return createdCount;
+}
+window.checkAndRunScheduledAutomations = checkAndRunScheduledAutomations;
+
 function runFlowboardAutomationsNow() {
   const board = getFlowboardData();
   let affected = 0;
@@ -14480,17 +14698,35 @@ function runFlowboardAutomationsNow() {
     }
   }
   saveFlowboardData(board);
+
+  // 주기적 자동화 규칙도 지금 1회 일괄 생성 실행
+  const createdPages = checkAndRunScheduledAutomations(true);
+
   renderCatTodos();
   renderCatManageTodosList();
+  renderFlowboardAutomationsList();
   closeFlowboardAutomationModal();
+
   const isEn = (AppState && AppState.currentLang === 'en');
-  alert(isEn ? `Automations applied to ${affected} cards.` : `자동화 규칙이 실행되었습니다. 점검/갱신된 카드 수: ${affected}건`);
+  alert(isEn 
+    ? `Automations executed. Updated cards: ${affected}, New pages created: ${createdPages}.` 
+    : `데이터베이스 자동화가 실행되었습니다.\n- 규칙 점검 및 갱신: ${affected}건\n- 주기별 신규 자동 생성 페이지: ${createdPages}건`);
 }
 window.runFlowboardAutomationsNow = runFlowboardAutomationsNow;
 
 function openFlowboardAutomationModal() {
   const m = document.getElementById('modalFlowboardAutomation');
-  if (m) m.classList.add('active');
+  if (m) {
+    const laneSel = document.getElementById('autoRuleLaneSelect');
+    if (laneSel) {
+      const board = getFlowboardData();
+      laneSel.innerHTML = board.lanes.map(l => `
+        <option value="${escapeHtml(l.id)}">${escapeHtml(l.title)}</option>
+      `).join('');
+    }
+    m.classList.add('active');
+    renderFlowboardAutomationsList();
+  }
 }
 window.openFlowboardAutomationModal = openFlowboardAutomationModal;
 
@@ -14749,8 +14985,6 @@ function renderFlowboard(containerId, isCompact) {
              data-lane-id="${escapeHtml(lane.id)}" 
              data-index="${idx}">
           <div class="notion-card-top flowboard-card-top">
-            <input type="checkbox" class="notion-card-checkbox flowboard-card-checkbox" ${card.done ? 'checked' : ''} 
-                   onchange="toggleFlowboardCardDone('${escapeHtml(card.id)}', this.checked)">
             <div class="notion-card-title flowboard-card-text" onclick="openNotionPageDetail('${escapeHtml(card.id)}')">
               ${escapeHtml(card.content || (isEn ? 'Untitled' : '제목 없음'))}
             </div>
@@ -14819,11 +15053,9 @@ function renderFlowboardListView(container, board, isCompact, filterCard, isEn) 
         const pClass = card.priority ? card.priority.toLowerCase() : '';
         groupHtml += `
           <div class="flowboard-list-row">
-            <label style="display:flex; align-items:center; gap:8px; flex:1; cursor:pointer;">
-              <input type="checkbox" class="flowboard-card-checkbox" ${card.done ? 'checked' : ''} 
-                     onchange="toggleFlowboardCardDone('${escapeHtml(card.id)}', this.checked)">
-              <span class="flowboard-card-text" style="${card.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}">${escapeHtml(card.content)}</span>
-            </label>
+            <div style="display:flex; align-items:center; gap:8px; flex:1; cursor:pointer;" onclick="openNotionPageDetail('${escapeHtml(card.id)}')">
+              <span class="flowboard-card-text">${escapeHtml(card.content)}</span>
+            </div>
             <div style="display:flex; align-items:center; gap:6px;">
               ${card.priority ? `<span class="flowboard-priority-badge ${pClass}">${escapeHtml(card.priority)}</span>` : ''}
               <span style="font-size:11px; color:var(--text-muted);">${escapeHtml(card.date || '')}</span>
@@ -15119,6 +15351,9 @@ function renderCatTodos() {
     const parts = CatDashboardState.selectedDate.split('-');
     dateTag.textContent = isEn ? `${parseInt(parts[1])}/${parseInt(parts[2])}` : `${parseInt(parts[1])}월 ${parseInt(parts[2])}일`;
   }
+
+  const titleEl = document.getElementById('catWidgetTitleTodos');
+  if (titleEl) titleEl.textContent = 'To-do';
 
   const btnToggle = document.getElementById('catWidgetTodoViewToggle');
   if (btnToggle) {
@@ -16022,8 +16257,16 @@ window.renderCatSalesBriefing = renderCatSalesBriefing;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => { if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); }, 200);
+    setTimeout(() => { 
+      if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); 
+      if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations();
+      setInterval(() => { if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations(); }, 60000);
+    }, 200);
   });
 } else {
-  setTimeout(() => { if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); }, 200);
+  setTimeout(() => { 
+    if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); 
+    if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations();
+    setInterval(() => { if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations(); }, 60000);
+  }, 200);
 }
