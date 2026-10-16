@@ -14274,13 +14274,15 @@ function copyCatNoteText(txt) {
 window.copyCatNoteText = copyCatNoteText;
 
 // -------------------------------------------------------------
-// 10. 할일(Todos) 플로우보드 위젯 & 전용 스튜디오 (Flowboard Engine)
+// 10. 할일(Todos) 플로우보드 & 노션 보드 뷰 (Flowboard Engine & Notion Board View)
 // -------------------------------------------------------------
 let catCurrentTodoFilter = 'all';
 let catFlowboardViewMode = localStorage.getItem('kostat_flowboard_view_mode') || 'kanban';
 let catWidgetFlowboardViewMode = localStorage.getItem('kostat_widget_flowboard_view_mode') || 'kanban';
 let catFlowboardEditingCardId = null;
 let catFlowboardEditingLaneId = null;
+let catNotionActiveCardId = null;
+let catNotionAddingLaneId = null;
 
 const FLOWBOARD_DEFAULT_PRIORITIES = [
   { name: 'P1', color: '#ef4444', label: '긴급' },
@@ -14298,11 +14300,17 @@ function getFlowboardData() {
     console.error('Failed to parse kostat_flowboard_data', e);
   }
 
+  // 노션 표준 3대 상태 컬럼: Not started, In progress, Done
+  const NOTION_DEFAULT_LANES = [
+    { id: 'lane_not_started', title: 'Not started', cards: [] },
+    { id: 'lane_in_progress', title: 'In progress', cards: [] },
+    { id: 'lane_done', title: 'Done', cards: [] }
+  ];
+
   if (!board || !board.lanes || !Array.isArray(board.lanes) || board.lanes.length === 0) {
     const legacy = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
-    const backlogCards = [];
-    const todoCards = [];
-    const activeCards = [];
+    const notStartedCards = [];
+    const inProgressCards = [];
     const doneCards = [];
 
     legacy.forEach(item => {
@@ -14311,48 +14319,68 @@ function getFlowboardData() {
         content: item.text || '',
         date: item.date || CatDashboardState.selectedDate || '2026-10-14',
         priority: item.priority || (item.text && item.text.includes('긴급') ? 'P1' : ''),
-        done: !!item.done
+        done: !!item.done,
+        notes: item.notes || ''
       };
-      if (item.done) {
+      if (item.done || item.laneId === 'lane_done') {
         doneCards.push(card);
-      } else if (item.laneId === 'lane_backlog' || item.laneId === 'backlog') {
-        backlogCards.push(card);
-      } else if (item.laneId === 'lane_active' || item.laneId === 'active') {
-        activeCards.push(card);
+      } else if (item.laneId === 'lane_inprogress' || item.laneId === 'lane_active' || item.laneId === 'active') {
+        inProgressCards.push(card);
       } else {
-        todoCards.push(card);
+        notStartedCards.push(card);
       }
     });
 
     board = {
-      title: '업무 플로우보드',
+      title: '업무 보드',
       settings: {
         priorities: FLOWBOARD_DEFAULT_PRIORITIES,
         laneWidth: 260,
         dateFormat: 'YYYY-MM-DD'
       },
       lanes: [
-        { id: 'lane_backlog', title: 'Backlog', cards: backlogCards },
-        { id: 'lane_todo', title: 'Todo', cards: todoCards },
-        {
-          id: 'lane_inprogress',
-          title: 'In Progress',
-          cards: [],
-          subLanes: [
-            { id: 'lane_active', title: 'Active', cards: activeCards },
-            { id: 'lane_slow', title: 'Slow', cards: [] }
-          ]
-        },
+        { id: 'lane_not_started', title: 'Not started', cards: notStartedCards },
+        { id: 'lane_in_progress', title: 'In progress', cards: inProgressCards },
         { id: 'lane_done', title: 'Done', cards: doneCards }
       ]
     };
     saveFlowboardData(board);
+  } else {
+    // 구버전 Backlog/Todo/In Progress 구조를 노션 3대 컬럼으로 깔끔히 정규화
+    const hasNotStarted = board.lanes.some(l => l.title.toLowerCase() === 'not started');
+    const hasBacklogOrTodo = board.lanes.some(l => l.id === 'lane_backlog' || l.id === 'lane_todo');
+    if (!hasNotStarted && hasBacklogOrTodo) {
+      const notStarted = { id: 'lane_not_started', title: 'Not started', cards: [] };
+      const inProgress = { id: 'lane_in_progress', title: 'In progress', cards: [] };
+      const done = { id: 'lane_done', title: 'Done', cards: [] };
+      const otherLanes = [];
+
+      board.lanes.forEach(l => {
+        const titleL = l.title.toLowerCase();
+        const cards = l.cards || [];
+        if (l.subLanes && l.subLanes.length > 0) {
+          l.subLanes.forEach(sub => cards.push(...(sub.cards || [])));
+        }
+        if (titleL === 'done' || l.id === 'lane_done') {
+          done.cards.push(...cards);
+        } else if (titleL === 'in progress' || l.id === 'lane_inprogress' || titleL === 'active' || l.id === 'lane_active' || titleL === 'slow') {
+          inProgress.cards.push(...cards);
+        } else if (titleL === 'backlog' || titleL === 'todo' || l.id === 'lane_backlog' || l.id === 'lane_todo') {
+          notStarted.cards.push(...cards);
+        } else {
+          otherLanes.push(l);
+        }
+      });
+      board.lanes = [notStarted, inProgress, done, ...otherLanes];
+      saveFlowboardData(board);
+    }
   }
 
   if (!board.settings) board.settings = {};
   if (!board.settings.priorities || board.settings.priorities.length === 0) {
     board.settings.priorities = FLOWBOARD_DEFAULT_PRIORITIES;
   }
+  if (!board.title) board.title = '업무 보드';
 
   return board;
 }
@@ -14372,6 +14400,7 @@ function saveFlowboardData(board) {
           text: card.content || '',
           done: !!card.done,
           priority: card.priority || '',
+          notes: card.notes || '',
           laneId: lane.id,
           laneTitle: lane.title
         });
@@ -14385,6 +14414,72 @@ function saveFlowboardData(board) {
   localStorage.setItem('kostat_cat_todos', JSON.stringify(flattened));
 }
 window.saveFlowboardData = saveFlowboardData;
+
+function saveNotionBoardTitle(newTitle) {
+  if (!newTitle || !newTitle.trim()) return;
+  const board = getFlowboardData();
+  board.title = newTitle.trim();
+  saveFlowboardData(board);
+}
+window.saveNotionBoardTitle = saveNotionBoardTitle;
+
+// -------------------------------------------------------------
+// 노션 데이터베이스 자동화 (Automations Engine)
+// -------------------------------------------------------------
+function applyNotionAutomations(card, targetLaneTitle) {
+  if (!card) return;
+  const laneLower = (targetLaneTitle || '').toLowerCase();
+
+  // 규칙 1: Done 컬럼 이동 시 완료 처리 및 마감일 오늘 자동 부여
+  if (laneLower.includes('done') || laneLower.includes('완료')) {
+    card.done = true;
+    if (!card.date) {
+      card.date = CatDashboardState.selectedDate || new Date().toISOString().split('T')[0];
+    }
+  } else if (laneLower.includes('not started') || laneLower.includes('시작 전') || laneLower.includes('in progress') || laneLower.includes('진행')) {
+    card.done = false;
+  }
+
+  // 규칙 2: [긴급] 또는 '급한' 키워드 감지 시 P1 자동 부여
+  if (card.content && (card.content.includes('[긴급]') || card.content.includes('급한') || card.content.includes('긴급'))) {
+    if (!card.priority) card.priority = 'P1';
+  }
+}
+
+function runFlowboardAutomationsNow() {
+  const board = getFlowboardData();
+  let affected = 0;
+  for (const lane of board.lanes) {
+    for (const card of (lane.cards || [])) {
+      const prevDone = card.done;
+      const prevP = card.priority;
+      const prevD = card.date;
+      applyNotionAutomations(card, lane.title);
+      if (card.done !== prevDone || card.priority !== prevP || card.date !== prevD) {
+        affected++;
+      }
+    }
+  }
+  saveFlowboardData(board);
+  renderCatTodos();
+  renderCatManageTodosList();
+  closeFlowboardAutomationModal();
+  const isEn = (AppState && AppState.currentLang === 'en');
+  alert(isEn ? `Automations applied to ${affected} cards.` : `자동화 규칙이 실행되었습니다. 점검/갱신된 카드 수: ${affected}건`);
+}
+window.runFlowboardAutomationsNow = runFlowboardAutomationsNow;
+
+function openFlowboardAutomationModal() {
+  const m = document.getElementById('modalFlowboardAutomation');
+  if (m) m.classList.add('active');
+}
+window.openFlowboardAutomationModal = openFlowboardAutomationModal;
+
+function closeFlowboardAutomationModal() {
+  const m = document.getElementById('modalFlowboardAutomation');
+  if (m) m.classList.remove('active');
+}
+window.closeFlowboardAutomationModal = closeFlowboardAutomationModal;
 
 function findLaneRecursively(lanes, laneId) {
   for (const lane of lanes) {
@@ -14427,15 +14522,8 @@ function moveCard(board, cardId, targetLaneId, targetIndex) {
       : targetLane.cards.length;
     targetLane.cards.splice(insertIdx, 0, card);
 
-    const isDoneLane = (targetLane.id === 'lane_done' || targetLane.title.toLowerCase() === 'done' || targetLane.title.includes('완료'));
-    if (isDoneLane) {
-      card.done = true;
-    } else {
-      const sourceIsDone = (sourceLane.id === 'lane_done' || sourceLane.title.toLowerCase() === 'done' || sourceLane.title.includes('완료'));
-      if (sourceIsDone) {
-        card.done = false;
-      }
-    }
+    // 노션 자동화 트리거 실행
+    applyNotionAutomations(card, targetLane.title);
   } else {
     sourceLane.cards.splice(cardIndex, 0, card);
   }
@@ -14449,6 +14537,7 @@ function updateCard(board, cardId, newContent) {
       const card = (lane.cards || []).find(c => c.id === cardId);
       if (card) {
         card.content = newContent;
+        applyNotionAutomations(card, lane.title);
         return true;
       }
       if (lane.subLanes && updateInLanes(lane.subLanes)) return true;
@@ -14492,7 +14581,7 @@ function removeCardRecursively(lanes, cardId) {
 window.removeCardRecursively = removeCardRecursively;
 
 function getFlowboardDragAfterElement(container, y) {
-  const draggableElements = [...container.querySelectorAll('.flowboard-card:not(.flowboard-card-dragging)')];
+  const draggableElements = [...container.querySelectorAll('.notion-card:not(.dragging), .flowboard-card:not(.flowboard-card-dragging)')];
   return draggableElements.reduce((closest, child) => {
     const box = child.getBoundingClientRect();
     const offset = y - box.top - box.height / 2;
@@ -14509,7 +14598,7 @@ function toggleFlowboardViewMode(target) {
     catWidgetFlowboardViewMode = (catWidgetFlowboardViewMode === 'kanban') ? 'list' : 'kanban';
     localStorage.setItem('kostat_widget_flowboard_view_mode', catWidgetFlowboardViewMode);
     const btn = document.getElementById('catWidgetTodoViewToggle');
-    if (btn) btn.textContent = (catWidgetFlowboardViewMode === 'kanban') ? '보기: 칸반' : '보기: 리스트';
+    if (btn) btn.textContent = (catWidgetFlowboardViewMode === 'kanban') ? '보기: 보드' : '보기: 리스트';
     renderCatTodos();
   } else {
     catFlowboardViewMode = (catFlowboardViewMode === 'kanban') ? 'list' : 'kanban';
@@ -14530,6 +14619,9 @@ function setFlowboardViewMode(mode) {
 }
 window.setFlowboardViewMode = setFlowboardViewMode;
 
+// -------------------------------------------------------------
+// 노션 스타일 보드 및 리스트 렌더링
+// -------------------------------------------------------------
 function renderFlowboard(containerId, isCompact) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -14564,70 +14656,97 @@ function renderFlowboard(containerId, isCompact) {
     return;
   }
 
-  // Kanban Board Rendering
-  let html = `<div class="flowboard-board-container ${isCompact ? 'flowboard-compact' : ''}">`;
-  html += `<div class="flowboard-board">`;
-  html += `<div class="flowboard-lanes">`;
+  // Notion Board View
+  let html = `<div class="notion-board-container flowboard-board-container ${isCompact ? 'flowboard-compact' : ''}">`;
+  html += `<div class="notion-columns-container flowboard-lanes">`;
 
-  function renderLaneRecursive(lane, depth) {
-    const isOverLimit = false;
+  board.lanes.forEach(lane => {
     const cards = (lane.cards || []).filter(filterCard);
     const count = cards.length;
-    const isDone = (lane.id === 'lane_done' || lane.title.toLowerCase() === 'done' || lane.title.includes('완료'));
+    const titleL = lane.title.toLowerCase();
 
-    let laneHtml = `
-      <div class="flowboard-lane depth-${depth}" data-lane-id="${escapeHtml(lane.id)}">
-        <div class="flowboard-lane-header">
-          <div class="flowboard-lane-title" onclick="editFlowboardLaneTitle('${escapeHtml(lane.id)}')">${escapeHtml(lane.title)}</div>
-          <div class="flowboard-lane-header-right">
-            <span class="flowboard-lane-count ${isOverLimit ? 'flowboard-wip-over' : ''}">${count}</span>
-            <button class="flowboard-lane-add-icon" onclick="addFlowboardQuickCard('${escapeHtml(lane.id)}')" title="카드 추가">+</button>
-            <button class="flowboard-lane-menu-btn" onclick="openFlowboardLaneMenu(event, '${escapeHtml(lane.id)}')" title="레인 메뉴">&vellip;</button>
+    let colType = 'not-started';
+    let displayTitle = lane.title;
+    if (titleL.includes('in progress') || titleL.includes('진행') || lane.id === 'lane_in_progress' || lane.id === 'lane_inprogress') {
+      colType = 'in-progress';
+      if (!isEn && lane.title === 'In progress') displayTitle = 'In progress';
+    } else if (titleL.includes('done') || titleL.includes('완료') || lane.id === 'lane_done') {
+      colType = 'done';
+      if (!isEn && lane.title === 'Done') displayTitle = 'Done';
+    } else if (titleL.includes('not started') || titleL.includes('시작 전') || lane.id === 'lane_not_started' || lane.id === 'lane_todo' || lane.id === 'lane_backlog') {
+      colType = 'not-started';
+      if (!isEn && lane.title === 'Not started') displayTitle = 'Not started';
+    } else {
+      colType = 'custom';
+    }
+
+    html += `
+      <div class="notion-column flowboard-lane depth-2" data-lane-id="${escapeHtml(lane.id)}">
+        <!-- 노션 상태 헤더 -->
+        <div class="notion-column-header flowboard-lane-header">
+          <div class="notion-status-group">
+            <span class="notion-status-pill ${colType}">
+              <span class="notion-status-dot"></span>
+              ${escapeHtml(displayTitle)}
+            </span>
+            <span class="notion-column-count flowboard-lane-count">${count}</span>
+          </div>
+          <div class="notion-column-header-right flowboard-lane-header-right">
+            <button class="notion-column-icon-btn flowboard-lane-menu-btn" onclick="openFlowboardLaneMenu(event, '${escapeHtml(lane.id)}')" title="컬럼 옵션">&bull;&bull;&bull;</button>
+            <button class="notion-column-icon-btn flowboard-lane-add-icon" onclick="addFlowboardQuickCard('${escapeHtml(lane.id)}')" title="신규 페이지">+</button>
           </div>
         </div>
-        <div class="flowboard-cards" data-lane-id="${escapeHtml(lane.id)}">
+
+        <!-- 노션 + New page 액션 버튼 (스크린샷 규격과 동일) -->
+        <button class="notion-btn-new-page ${colType} flowboard-add-card" onclick="addFlowboardQuickCard('${escapeHtml(lane.id)}')">
+          <span style="font-weight:700; font-size:14px; line-height:1;">+</span>
+          <span>New page</span>
+        </button>
+
+        <!-- 카드 리스트 컨테이너 -->
+        <div class="notion-cards-list flowboard-cards" data-lane-id="${escapeHtml(lane.id)}">
     `;
 
-    cards.forEach((card, idx) => {
-      const isEditing = (catFlowboardEditingCardId === card.id);
-      const pClass = card.priority ? card.priority.toLowerCase() : '';
-      const priorityLabel = card.priority || '';
+    // 인라인 신규 카드 입력 중인 경우
+    if (catNotionAddingLaneId === lane.id) {
+      html += `
+        <div class="notion-card flowboard-card" style="border-color:#3b82f6;">
+          <input type="text" class="notion-card-inline-input" id="notionInlineInput_${escapeHtml(lane.id)}" 
+                 placeholder="페이지 제목 입력 (Enter: 저장, Esc: 취소)" 
+                 onkeydown="handleNotionInlineKey(event, '${escapeHtml(lane.id)}')" 
+                 onblur="saveNotionInlineCard('${escapeHtml(lane.id)}')">
+        </div>
+      `;
+    }
 
-      laneHtml += `
-        <div class="flowboard-card ${isEditing ? 'flowboard-card-editing' : ''} ${card.done || isDone ? 'is-completed' : ''}" 
-             draggable="${!isEditing}" 
+    cards.forEach((card, idx) => {
+      const isCompleted = card.done || (colType === 'done');
+      const pClass = card.priority ? card.priority.toLowerCase() : '';
+
+      html += `
+        <div class="notion-card flowboard-card ${isCompleted ? 'is-done is-completed' : ''}" 
+             draggable="true" 
              data-card-id="${escapeHtml(card.id)}" 
              data-lane-id="${escapeHtml(lane.id)}" 
              data-index="${idx}">
-          <div class="flowboard-card-top">
-            <input type="checkbox" class="flowboard-card-checkbox" ${card.done ? 'checked' : ''} 
+          <div class="notion-card-top flowboard-card-top">
+            <input type="checkbox" class="notion-card-checkbox flowboard-card-checkbox" ${card.done ? 'checked' : ''} 
                    onchange="toggleFlowboardCardDone('${escapeHtml(card.id)}', this.checked)">
-            <div class="flowboard-card-content">
-              ${isEditing ? `
-                <textarea class="flowboard-card-textarea" id="flowboardTextarea_${escapeHtml(card.id)}" 
-                          onkeydown="handleFlowboardCardKey(event, '${escapeHtml(card.id)}')">${escapeHtml(card.content)}</textarea>
-                <div style="display:flex; justify-content:flex-end; gap:4px; margin-top:4px;">
-                  <button class="cat-link-btn" style="font-size:11px;" onclick="cancelFlowboardEditCard()">취소</button>
-                  <button class="cat-mini-add-btn" style="padding:2px 8px; font-size:11px;" onclick="saveFlowboardEditCard('${escapeHtml(card.id)}')">저장</button>
-                </div>
-              ` : `
-                <div class="flowboard-card-text" onclick="editFlowboardCard('${escapeHtml(card.id)}')">${escapeHtml(card.content || (isEn ? '(Empty Card)' : '(내용 없음)'))}</div>
-              `}
+            <div class="notion-card-title flowboard-card-text" onclick="openNotionPageDetail('${escapeHtml(card.id)}')">
+              ${escapeHtml(card.content || (isEn ? 'Untitled' : '제목 없음'))}
             </div>
           </div>
-          <div class="flowboard-card-meta-container">
+          <div class="notion-card-properties flowboard-card-meta-container">
             <div style="display:flex; align-items:center; gap:4px;">
-              ${priorityLabel ? `
-                <span class="flowboard-priority-badge ${pClass}" onclick="openFlowboardPriorityMenu(event, '${escapeHtml(card.id)}')">${priorityLabel}</span>
-              ` : `
-                <span class="flowboard-card-btn" style="opacity:0.6;" onclick="openFlowboardPriorityMenu(event, '${escapeHtml(card.id)}')">우선순위</span>
-              `}
+              ${card.priority ? `
+                <span class="flowboard-priority-badge ${pClass}" onclick="openFlowboardPriorityMenu(event, '${escapeHtml(card.id)}')">${escapeHtml(card.priority)}</span>
+              ` : ''}
               ${card.date ? `
-                <span class="flowboard-card-date" onclick="editFlowboardCardDate('${escapeHtml(card.id)}')">${escapeHtml(card.date)}</span>
+                <span class="flowboard-card-date" onclick="openNotionPageDetail('${escapeHtml(card.id)}')">${escapeHtml(card.date)}</span>
               ` : ''}
             </div>
             <div class="flowboard-card-actions">
-              <button class="flowboard-card-btn" onclick="duplicateFlowboardCard('${escapeHtml(card.id)}')" title="복제">복제</button>
+              <button class="flowboard-card-btn" onclick="openNotionPageDetail('${escapeHtml(card.id)}')" title="열기">열기</button>
               <button class="flowboard-card-btn delete" onclick="deleteFlowboardCard('${escapeHtml(card.id)}')" title="삭제">&times;</button>
             </div>
           </div>
@@ -14635,40 +14754,29 @@ function renderFlowboard(containerId, isCompact) {
       `;
     });
 
-    laneHtml += `</div>`; // .flowboard-cards
-
-    // Sub-swimlanes (depth-3 nested)
-    if (lane.subLanes && lane.subLanes.length > 0) {
-      laneHtml += `<div class="flowboard-sub-lanes">`;
-      for (const subLane of lane.subLanes) {
-        laneHtml += renderLaneRecursive(subLane, depth + 1);
-      }
-      laneHtml += `</div>`;
-    }
-
-    laneHtml += `
-      <div class="flowboard-add-card" onclick="addFlowboardQuickCard('${escapeHtml(lane.id)}')">+ 카드 추가</div>
-    </div>`; // .flowboard-lane
-
-    return laneHtml;
-  }
-
-  for (const lane of board.lanes) {
-    html += renderLaneRecursive(lane, 2);
-  }
+    html += `</div></div>`; // .notion-cards-list, .notion-column
+  });
 
   if (!isCompact) {
     html += `
       <div class="flowboard-add-lane" onclick="openFlowboardAddLaneModal()">
-        <span>+ 새 레인 추가</span>
+        <span>+ 컬럼 추가</span>
       </div>
     `;
   }
 
-  html += `</div></div></div>`; // .flowboard-lanes, .flowboard-board, .flowboard-board-container
+  html += `</div></div>`; // .notion-columns-container, .notion-board-container
   container.innerHTML = html;
 
   attachFlowboardDragDrop(container);
+
+  // 인라인 입력창 포커스
+  if (catNotionAddingLaneId) {
+    setTimeout(() => {
+      const inp = document.getElementById('notionInlineInput_' + catNotionAddingLaneId);
+      if (inp) inp.focus();
+    }, 50);
+  }
 }
 
 function renderFlowboardListView(container, board, isCompact, filterCard, isEn) {
@@ -14686,7 +14794,7 @@ function renderFlowboardListView(container, board, isCompact, filterCard, isEn) 
     `;
 
     if (cards.length === 0) {
-      groupHtml += `<div class="cat-item-empty" style="padding:8px 0; font-size:12px;">${isEn ? 'No cards in this lane' : '해당 레인에 카드가 없습니다'}</div>`;
+      groupHtml += `<div class="cat-item-empty" style="padding:8px 0; font-size:12px;">${isEn ? 'No pages in this column' : '해당 컬럼에 페이지가 없습니다'}</div>`;
     } else {
       cards.forEach(card => {
         const pClass = card.priority ? card.priority.toLowerCase() : '';
@@ -14700,6 +14808,7 @@ function renderFlowboardListView(container, board, isCompact, filterCard, isEn) 
             <div style="display:flex; align-items:center; gap:6px;">
               ${card.priority ? `<span class="flowboard-priority-badge ${pClass}">${escapeHtml(card.priority)}</span>` : ''}
               <span style="font-size:11px; color:var(--text-muted);">${escapeHtml(card.date || '')}</span>
+              <button class="flowboard-card-btn" onclick="openNotionPageDetail('${escapeHtml(card.id)}')">열기</button>
               <button class="flowboard-card-btn delete" onclick="deleteFlowboardCard('${escapeHtml(card.id)}')">&times;</button>
             </div>
           </div>
@@ -14708,12 +14817,6 @@ function renderFlowboardListView(container, board, isCompact, filterCard, isEn) 
     }
 
     groupHtml += `</div></div>`;
-
-    if (lane.subLanes && lane.subLanes.length > 0) {
-      for (const sub of lane.subLanes) {
-        groupHtml += renderGroup(sub);
-      }
-    }
     return groupHtml;
   }
 
@@ -14728,7 +14831,7 @@ function renderFlowboardListView(container, board, isCompact, filterCard, isEn) 
 function attachFlowboardDragDrop(container) {
   let draggedCardId = null;
 
-  const cards = container.querySelectorAll('.flowboard-card');
+  const cards = container.querySelectorAll('.notion-card, .flowboard-card');
   cards.forEach(cardEl => {
     cardEl.addEventListener('dragstart', (e) => {
       draggedCardId = cardEl.getAttribute('data-card-id');
@@ -14736,25 +14839,25 @@ function attachFlowboardDragDrop(container) {
         e.dataTransfer.setData('text/plain', draggedCardId);
         e.dataTransfer.effectAllowed = 'move';
       }
-      cardEl.classList.add('flowboard-card-dragging');
+      cardEl.classList.add('flowboard-card-dragging', 'dragging');
     });
 
     cardEl.addEventListener('dragend', () => {
-      cardEl.classList.remove('flowboard-card-dragging');
+      cardEl.classList.remove('flowboard-card-dragging', 'dragging');
       removeExistingPlaceholder();
-      container.querySelectorAll('.flowboard-lane').forEach(l => l.classList.remove('flowboard-lane-drag-over'));
+      container.querySelectorAll('.notion-column, .flowboard-lane').forEach(l => l.classList.remove('flowboard-lane-drag-over', 'drag-over'));
       draggedCardId = null;
     });
   });
 
-  const lanes = container.querySelectorAll('.flowboard-lane');
+  const lanes = container.querySelectorAll('.notion-column, .flowboard-lane');
   lanes.forEach(laneEl => {
     laneEl.addEventListener('dragover', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      laneEl.classList.add('flowboard-lane-drag-over');
+      laneEl.classList.add('flowboard-lane-drag-over', 'drag-over');
 
-      const cardsContainer = laneEl.querySelector('.flowboard-cards');
+      const cardsContainer = laneEl.querySelector('.notion-cards-list, .flowboard-cards');
       if (cardsContainer) {
         let placeholder = container.querySelector('.flowboard-card-placeholder');
         if (!placeholder) {
@@ -14773,17 +14876,17 @@ function attachFlowboardDragDrop(container) {
     laneEl.addEventListener('dragleave', (e) => {
       const rel = e.relatedTarget;
       if (rel && laneEl.contains(rel)) return;
-      laneEl.classList.remove('flowboard-lane-drag-over');
+      laneEl.classList.remove('flowboard-lane-drag-over', 'drag-over');
     });
 
     laneEl.addEventListener('drop', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      laneEl.classList.remove('flowboard-lane-drag-over');
+      laneEl.classList.remove('flowboard-lane-drag-over', 'drag-over');
 
       const cardId = e.dataTransfer ? e.dataTransfer.getData('text/plain') : draggedCardId;
       const targetLaneId = laneEl.getAttribute('data-lane-id');
-      const cardsContainer = laneEl.querySelector('.flowboard-cards');
+      const cardsContainer = laneEl.querySelector('.notion-cards-list, .flowboard-cards');
 
       if (cardId && targetLaneId && cardsContainer) {
         const afterElement = getFlowboardDragAfterElement(cardsContainer, e.clientY);
@@ -14808,6 +14911,185 @@ function attachFlowboardDragDrop(container) {
   }
 }
 
+// -------------------------------------------------------------
+// + New page 인라인 생성 핸들러
+// -------------------------------------------------------------
+function addFlowboardQuickCard(laneId) {
+  catNotionAddingLaneId = laneId;
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.addFlowboardQuickCard = addFlowboardQuickCard;
+
+function addNotionNewPageDefault() {
+  const board = getFlowboardData();
+  const firstLane = board.lanes[0];
+  if (firstLane) {
+    addFlowboardQuickCard(firstLane.id);
+  }
+}
+window.addNotionNewPageDefault = addNotionNewPageDefault;
+
+function handleNotionInlineKey(e, laneId) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    saveNotionInlineCard(laneId);
+  } else if (e.key === 'Escape') {
+    catNotionAddingLaneId = null;
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
+}
+window.handleNotionInlineKey = handleNotionInlineKey;
+
+function saveNotionInlineCard(laneId) {
+  const inp = document.getElementById('notionInlineInput_' + laneId);
+  if (!inp) {
+    catNotionAddingLaneId = null;
+    return;
+  }
+  const title = inp.value.trim();
+  catNotionAddingLaneId = null;
+
+  if (!title) {
+    renderCatTodos();
+    renderCatManageTodosList();
+    return;
+  }
+
+  const board = getFlowboardData();
+  const lane = findLaneRecursively(board.lanes, laneId);
+  if (lane) {
+    const newCard = {
+      id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+      content: title,
+      date: CatDashboardState.selectedDate || '2026-10-14',
+      priority: '',
+      done: false,
+      notes: ''
+    };
+    applyNotionAutomations(newCard, lane.title);
+    if (!lane.cards) lane.cards = [];
+    lane.cards.unshift(newCard);
+    saveFlowboardData(board);
+  }
+
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.saveNotionInlineCard = saveNotionInlineCard;
+
+// -------------------------------------------------------------
+// 노션 스타일 페이지 상세 (Page Detail Modal) 핸들러
+// -------------------------------------------------------------
+function openNotionPageDetail(cardId) {
+  const board = getFlowboardData();
+  let found = null;
+  for (const l of board.lanes) {
+    const c = (l.cards || []).find(it => it.id === cardId);
+    if (c) {
+      found = { card: c, lane: l };
+      break;
+    }
+  }
+  if (!found) return;
+
+  catNotionActiveCardId = cardId;
+  const { card, lane } = found;
+
+  const modal = document.getElementById('modalNotionPageDetail');
+  if (!modal) return;
+
+  const titleInp = document.getElementById('notionDetailTitleInput');
+  if (titleInp) titleInp.value = card.content || '';
+
+  const statusSel = document.getElementById('notionDetailStatusSelect');
+  if (statusSel) {
+    statusSel.innerHTML = board.lanes.map(l => `
+      <option value="${escapeHtml(l.id)}" ${l.id === lane.id ? 'selected' : ''}>${escapeHtml(l.title)}</option>
+    `).join('');
+  }
+
+  const prioritySel = document.getElementById('notionDetailPrioritySelect');
+  if (prioritySel) prioritySel.value = card.priority || '';
+
+  const dateInp = document.getElementById('notionDetailDateInput');
+  if (dateInp) dateInp.value = card.date || '';
+
+  const notesText = document.getElementById('notionDetailNotesText');
+  if (notesText) notesText.value = card.notes || '';
+
+  modal.classList.add('active');
+}
+window.openNotionPageDetail = openNotionPageDetail;
+
+function closeNotionPageDetailModal() {
+  const modal = document.getElementById('modalNotionPageDetail');
+  if (modal) modal.classList.remove('active');
+  catNotionActiveCardId = null;
+}
+window.closeNotionPageDetailModal = closeNotionPageDetailModal;
+
+function saveCurrentNotionPage() {
+  if (!catNotionActiveCardId) return;
+  const board = getFlowboardData();
+
+  let targetCard = null;
+  let sourceLane = null;
+  for (const l of board.lanes) {
+    const c = (l.cards || []).find(it => it.id === catNotionActiveCardId);
+    if (c) {
+      targetCard = c;
+      sourceLane = l;
+      break;
+    }
+  }
+  if (!targetCard) return;
+
+  const titleInp = document.getElementById('notionDetailTitleInput');
+  const statusSel = document.getElementById('notionDetailStatusSelect');
+  const prioritySel = document.getElementById('notionDetailPrioritySelect');
+  const dateInp = document.getElementById('notionDetailDateInput');
+  const notesText = document.getElementById('notionDetailNotesText');
+
+  if (titleInp && titleInp.value.trim()) {
+    targetCard.content = titleInp.value.trim();
+  }
+  if (prioritySel) targetCard.priority = prioritySel.value;
+  if (dateInp) targetCard.date = dateInp.value;
+  if (notesText) targetCard.notes = notesText.value;
+
+  const targetLaneId = statusSel ? statusSel.value : sourceLane.id;
+  if (targetLaneId !== sourceLane.id) {
+    moveCard(board, targetCard.id, targetLaneId, 0);
+  } else {
+    applyNotionAutomations(targetCard, sourceLane.title);
+  }
+
+  saveFlowboardData(board);
+  closeNotionPageDetailModal();
+  renderCatTodos();
+  renderCatManageTodosList();
+}
+window.saveCurrentNotionPage = saveCurrentNotionPage;
+
+function deleteCurrentNotionPage() {
+  if (!catNotionActiveCardId) return;
+  const choice = confirm('이 페이지를 삭제하시겠습니까?');
+  if (choice) {
+    const board = getFlowboardData();
+    removeCardRecursively(board.lanes, catNotionActiveCardId);
+    saveFlowboardData(board);
+    closeNotionPageDetailModal();
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
+}
+window.deleteCurrentNotionPage = deleteCurrentNotionPage;
+
+// -------------------------------------------------------------
+// 대시보드 위젯 및 관리 센터 동기화
+// -------------------------------------------------------------
 function renderCatTodos() {
   const container = document.getElementById('catTodoList');
   if (!container) return;
@@ -14821,7 +15103,7 @@ function renderCatTodos() {
 
   const btnToggle = document.getElementById('catWidgetTodoViewToggle');
   if (btnToggle) {
-    btnToggle.textContent = (catWidgetFlowboardViewMode === 'kanban') ? '보기: 칸반' : '보기: 리스트';
+    btnToggle.textContent = (catWidgetFlowboardViewMode === 'kanban') ? '보기: 보드' : '보기: 리스트';
   }
 
   const allTodos = JSON.parse(localStorage.getItem('kostat_cat_todos') || '[]');
@@ -14877,10 +15159,11 @@ function addCatTodo() {
     done: false
   };
 
-  const todoLane = findLaneRecursively(board.lanes, 'lane_todo') || board.lanes[0];
-  if (todoLane) {
-    if (!todoLane.cards) todoLane.cards = [];
-    todoLane.cards.unshift(newCard);
+  const targetLane = board.lanes[0];
+  if (targetLane) {
+    applyNotionAutomations(newCard, targetLane.title);
+    if (!targetLane.cards) targetLane.cards = [];
+    targetLane.cards.unshift(newCard);
     saveFlowboardData(board);
   }
 
@@ -14898,20 +15181,19 @@ function submitCatManageTodo() {
 
   if (!textInput || !textInput.value.trim()) return;
 
-  const targetLaneKey = laneSelect ? laneSelect.value : 'todo';
+  const targetLaneKey = laneSelect ? laneSelect.value : 'not_started';
   const targetPriority = prioritySelect ? prioritySelect.value : '';
   const targetDate = (dateInput && dateInput.value) || CatDashboardState.selectedDate || '2026-10-14';
 
   const board = getFlowboardData();
-  const laneIdMap = {
-    backlog: 'lane_backlog',
-    todo: 'lane_todo',
-    active: 'lane_active',
-    slow: 'lane_slow',
-    done: 'lane_done'
-  };
-  const targetLaneId = laneIdMap[targetLaneKey] || ('lane_' + targetLaneKey);
-  let targetLane = findLaneRecursively(board.lanes, targetLaneId);
+  let targetLane = null;
+  if (targetLaneKey === 'done') {
+    targetLane = board.lanes.find(l => l.id === 'lane_done' || l.title.toLowerCase() === 'done');
+  } else if (targetLaneKey === 'in_progress') {
+    targetLane = board.lanes.find(l => l.id === 'lane_in_progress' || l.title.toLowerCase().includes('in progress'));
+  } else if (targetLaneKey === 'not_started' || targetLaneKey === 'todo' || targetLaneKey === 'backlog') {
+    targetLane = board.lanes.find(l => l.id === 'lane_not_started' || l.title.toLowerCase().includes('not started') || l.id === 'lane_todo');
+  }
   if (!targetLane) targetLane = board.lanes[0];
 
   const newCard = {
@@ -14919,9 +15201,10 @@ function submitCatManageTodo() {
     content: textInput.value.trim(),
     date: targetDate,
     priority: targetPriority,
-    done: (targetLaneKey === 'done')
+    done: (targetLane && targetLane.title.toLowerCase().includes('done'))
   };
 
+  applyNotionAutomations(newCard, targetLane.title);
   if (!targetLane.cards) targetLane.cards = [];
   targetLane.cards.unshift(newCard);
 
@@ -14963,30 +15246,29 @@ window.setCatTodoFilter = setCatTodoFilter;
 
 function toggleFlowboardCardDone(cardId, isChecked) {
   const board = getFlowboardData();
-  let targetCard = null;
-
-  function findCard(lanes) {
-    for (const lane of lanes) {
-      const c = (lane.cards || []).find(it => it.id === cardId);
-      if (c) return { card: c, lane };
-      if (lane.subLanes) {
-        const found = findCard(lane.subLanes);
-        if (found) return found;
-      }
+  let found = null;
+  for (const lane of board.lanes) {
+    const c = (lane.cards || []).find(it => it.id === cardId);
+    if (c) {
+      found = { card: c, lane };
+      break;
     }
-    return null;
   }
 
-  const found = findCard(board.lanes);
   if (found) {
     const { card, lane } = found;
     card.done = (typeof isChecked === 'boolean') ? isChecked : !card.done;
 
-    // Flowboard automatic lane transit: if marked done, move to Done lane; if unmarked, move to Todo lane
-    if (card.done && lane.id !== 'lane_done') {
-      moveCard(board, card.id, 'lane_done', 0);
-    } else if (!card.done && lane.id === 'lane_done') {
-      moveCard(board, card.id, 'lane_todo', 0);
+    // 노션 자동화: 완료 체크 시 Done 컬럼으로 이동 / 해제 시 Not started로 이동
+    const doneLane = board.lanes.find(l => l.id === 'lane_done' || l.title.toLowerCase() === 'done');
+    const notStartedLane = board.lanes.find(l => l.id === 'lane_not_started' || l.title.toLowerCase() === 'not started') || board.lanes[0];
+
+    if (card.done && doneLane && lane.id !== doneLane.id) {
+      moveCard(board, card.id, doneLane.id, 0);
+    } else if (!card.done && doneLane && lane.id === doneLane.id && notStartedLane) {
+      moveCard(board, card.id, notStartedLane.id, 0);
+    } else {
+      applyNotionAutomations(card, lane.title);
     }
 
     saveFlowboardData(board);
@@ -14996,83 +15278,31 @@ function toggleFlowboardCardDone(cardId, isChecked) {
 }
 window.toggleFlowboardCardDone = toggleFlowboardCardDone;
 
-function addFlowboardQuickCard(laneId) {
-  const board = getFlowboardData();
-  const lane = findLaneRecursively(board.lanes, laneId);
-  if (!lane) return;
-
-  const newCard = {
-    id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
-    content: '',
-    date: CatDashboardState.selectedDate || '2026-10-14',
-    priority: '',
-    done: (lane.id === 'lane_done')
-  };
-
-  if (!lane.cards) lane.cards = [];
-  lane.cards.push(newCard);
-  catFlowboardEditingCardId = newCard.id;
-  saveFlowboardData(board);
-
-  renderCatTodos();
-  renderCatManageTodosList();
-
-  setTimeout(() => {
-    const ta = document.getElementById('flowboardTextarea_' + newCard.id);
-    if (ta) ta.focus();
-  }, 50);
-}
-window.addFlowboardQuickCard = addFlowboardQuickCard;
-
 function editFlowboardCard(cardId) {
-  catFlowboardEditingCardId = cardId;
-  renderCatTodos();
-  renderCatManageTodosList();
-  setTimeout(() => {
-    const ta = document.getElementById('flowboardTextarea_' + cardId);
-    if (ta) {
-      ta.focus();
-      ta.setSelectionRange(ta.value.length, ta.value.length);
-    }
-  }, 50);
+  openNotionPageDetail(cardId);
 }
 window.editFlowboardCard = editFlowboardCard;
 
-function saveFlowboardEditCard(cardId) {
-  const ta = document.getElementById('flowboardTextarea_' + cardId);
-  if (!ta) return;
-  const content = ta.value.trim();
-
+function saveFlowboardEditCard(cardId, content, priority, date) {
   const board = getFlowboardData();
-  if (!content) {
-    removeCardRecursively(board.lanes, cardId);
-  } else {
-    updateCard(board, cardId, content);
+  let target = null;
+  for (const lane of board.lanes) {
+    const c = (lane.cards || []).find(it => it.id === cardId);
+    if (c) {
+      target = c;
+      break;
+    }
   }
-  catFlowboardEditingCardId = null;
-  saveFlowboardData(board);
-
-  renderCatTodos();
-  renderCatManageTodosList();
+  if (target) {
+    if (content !== undefined) target.content = content;
+    if (priority !== undefined) target.priority = priority;
+    if (date !== undefined) target.date = date;
+    saveFlowboardData(board);
+    renderCatTodos();
+    renderCatManageTodosList();
+  }
 }
 window.saveFlowboardEditCard = saveFlowboardEditCard;
-
-function cancelFlowboardEditCard() {
-  catFlowboardEditingCardId = null;
-  renderCatTodos();
-  renderCatManageTodosList();
-}
-window.cancelFlowboardEditCard = cancelFlowboardEditCard;
-
-function handleFlowboardCardKey(e, cardId) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    saveFlowboardEditCard(cardId);
-  } else if (e.key === 'Escape') {
-    cancelFlowboardEditCard();
-  }
-}
-window.handleFlowboardCardKey = handleFlowboardCardKey;
 
 function deleteFlowboardCard(cardId) {
   const board = getFlowboardData();
@@ -15093,30 +15323,7 @@ function duplicateFlowboardCard(cardId) {
 window.duplicateFlowboardCard = duplicateFlowboardCard;
 
 function editFlowboardCardDate(cardId) {
-  const board = getFlowboardData();
-  let card = null;
-  function find(lanes) {
-    for (const l of lanes) {
-      const c = (l.cards || []).find(it => it.id === cardId);
-      if (c) return c;
-      if (l.subLanes) {
-        const found = find(l.subLanes);
-        if (found) return found;
-      }
-    }
-    return null;
-  }
-  card = find(board.lanes);
-  if (!card) return;
-
-  const current = card.date || CatDashboardState.selectedDate || '2026-10-14';
-  const newDate = prompt('카드 마감일자를 입력하세요 (YYYY-MM-DD):', current);
-  if (newDate !== null) {
-    card.date = newDate.trim();
-    saveFlowboardData(board);
-    renderCatTodos();
-    renderCatManageTodosList();
-  }
+  openNotionPageDetail(cardId);
 }
 window.editFlowboardCardDate = editFlowboardCardDate;
 
@@ -15125,7 +15332,7 @@ function editFlowboardLaneTitle(laneId) {
   const lane = findLaneRecursively(board.lanes, laneId);
   if (!lane) return;
 
-  const newTitle = prompt('레인 이름을 입력하세요:', lane.title);
+  const newTitle = prompt('컬럼 이름을 입력하세요:', lane.title);
   if (newTitle && newTitle.trim()) {
     lane.title = newTitle.trim();
     saveFlowboardData(board);
@@ -15207,7 +15414,7 @@ function openFlowboardLaneMenu(e, laneId) {
   const lane = findLaneRecursively(board.lanes, laneId);
   if (!lane) return;
 
-  const choice = confirm(`레인 '${lane.title}'을 삭제하시겠습니까?\n(레인 안에 카드가 있는 경우 카드가 함께 삭제됩니다)`);
+  const choice = confirm(`컬럼 '${lane.title}'을 삭제하시겠습니까?\n(컬럼 안의 페이지가 함께 삭제됩니다)`);
   if (choice) {
     function removeLane(lanes) {
       return lanes.filter(l => {
@@ -15234,9 +15441,9 @@ function openFlowboardAddLaneModal() {
   const parentSelect = document.getElementById('flowboardNewLaneParentSelect');
   if (parentSelect) {
     const board = getFlowboardData();
-    let optHtml = `<option value="">최상위 레인 (Root Lane)</option>`;
+    let optHtml = `<option value="">최상위 컬럼 (Root Column)</option>`;
     for (const lane of board.lanes) {
-      optHtml += `<option value="${escapeHtml(lane.id)}">${escapeHtml(lane.title)} (하위 서브 레인)</option>`;
+      optHtml += `<option value="${escapeHtml(lane.id)}">${escapeHtml(lane.title)} (하위)</option>`;
     }
     parentSelect.innerHTML = optHtml;
   }
@@ -15254,12 +15461,9 @@ window.closeFlowboardAddLaneModal = closeFlowboardAddLaneModal;
 
 function submitFlowboardAddLane() {
   const input = document.getElementById('flowboardNewLaneInput');
-  const parentSelect = document.getElementById('flowboardNewLaneParentSelect');
   if (!input || !input.value.trim()) return;
 
   const title = input.value.trim();
-  const parentId = parentSelect ? parentSelect.value : '';
-
   const board = getFlowboardData();
   const newLane = {
     id: 'lane_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
@@ -15267,20 +15471,12 @@ function submitFlowboardAddLane() {
     cards: []
   };
 
-  if (parentId) {
-    const parentLane = findLaneRecursively(board.lanes, parentId);
-    if (parentLane) {
-      if (!parentLane.subLanes) parentLane.subLanes = [];
-      parentLane.subLanes.push(newLane);
-    }
+  // Insert before Done column if exists
+  const doneIdx = board.lanes.findIndex(l => l.id === 'lane_done' || l.title.toLowerCase() === 'done');
+  if (doneIdx !== -1) {
+    board.lanes.splice(doneIdx, 0, newLane);
   } else {
-    // Insert before Done lane if it exists, otherwise append
-    const doneIdx = board.lanes.findIndex(l => l.id === 'lane_done' || l.title.toLowerCase() === 'done');
-    if (doneIdx !== -1) {
-      board.lanes.splice(doneIdx, 0, newLane);
-    } else {
-      board.lanes.push(newLane);
-    }
+    board.lanes.push(newLane);
   }
 
   saveFlowboardData(board);

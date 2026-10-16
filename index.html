@@ -653,15 +653,15 @@
                   </div>
                 </div>
 
-                <!-- 할일 신규 등록 바 -->
+                <!-- 할일 신규 등록 바 (Notion New Page Quick Bar) -->
                 <div class="cat-subview-toolbar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                   <input type="date" id="catManageTodoDate" class="cat-todo-input" style="max-width:140px;" value="2026-10-14">
-                  <select id="catManageTodoLaneSelect" class="cat-todo-input" style="max-width:140px;">
+                  <select id="catManageTodoLaneSelect" class="cat-todo-input" style="max-width:160px;">
+                    <option value="not_started">시작 전 (Not started)</option>
+                    <option value="in_progress">진행 중 (In progress)</option>
+                    <option value="done">완료 (Done)</option>
                     <option value="todo">할일 (Todo)</option>
                     <option value="backlog">백로그 (Backlog)</option>
-                    <option value="active">집중 진행 (Active)</option>
-                    <option value="slow">보류 (Slow)</option>
-                    <option value="done">완료 (Done)</option>
                   </select>
                   <select id="catManageTodoPrioritySelect" class="cat-todo-input" style="max-width:110px;">
                     <option value="">우선순위</option>
@@ -670,23 +670,29 @@
                     <option value="P3">P3 보통</option>
                     <option value="P4">P4 낮음</option>
                   </select>
-                  <input type="text" id="catManageTodoText" class="cat-todo-input" placeholder="새로운 카드 내용을 입력하세요..." onkeydown="if(event.key==='Enter') submitCatManageTodo()" style="flex:1; min-width:180px;">
-                  <button class="cat-mini-add-btn" style="padding:9px 18px;" onclick="submitCatManageTodo()" id="catManageTodoAddBtn">카드 등록</button>
+                  <input type="text" id="catManageTodoText" class="cat-todo-input" placeholder="+ New page 제목을 입력하세요..." onkeydown="if(event.key==='Enter') submitCatManageTodo()" style="flex:1; min-width:180px;">
+                  <button class="cat-mini-add-btn" style="padding:9px 18px;" onclick="submitCatManageTodo()" id="catManageTodoAddBtn">+ New page 등록</button>
                 </div>
 
-                <!-- 플로우보드 스튜디오 메인 카드 -->
+                <!-- 노션 스타일 보드 스튜디오 메인 카드 -->
                 <div class="cat-widget-card" style="padding:16px 20px; flex:1; display:flex; flex-direction:column;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                      <span style="font-size:14px; font-weight:700; color:var(--text-primary);" id="catManageTodoListTitle">업무 플로우보드</span>
-                      <div class="flowboard-controls-wrapper">
-                        <button class="flowboard-view-btn active" id="flowboardBtnKanban" onclick="setFlowboardViewMode('kanban')">칸반 보기</button>
-                        <button class="flowboard-view-btn" id="flowboardBtnList" onclick="setFlowboardViewMode('list')">리스트 보기</button>
-                        <button class="flowboard-view-btn" onclick="openFlowboardAddLaneModal()">+ 새 레인 추가</button>
-                      </div>
+                  <div class="notion-top-toolbar">
+                    <div class="notion-db-title-wrap">
+                      <span class="notion-drag-handle">+ ::</span>
+                      <span class="notion-db-title" id="catManageTodoListTitle" contenteditable="true" onblur="saveNotionBoardTitle(this.textContent)">업무 보드</span>
                     </div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                      <input type="text" id="catManageTodoSearch" class="flowboard-search-input" placeholder="카드 키워드 검색..." oninput="renderCatManageTodosList()">
+                    <div class="notion-toolbar-actions">
+                      <div class="flowboard-controls-wrapper">
+                        <button class="flowboard-view-btn active" id="flowboardBtnKanban" onclick="setFlowboardViewMode('kanban')">보드 보기</button>
+                        <button class="flowboard-view-btn" id="flowboardBtnList" onclick="setFlowboardViewMode('list')">리스트 보기</button>
+                      </div>
+                      <button class="notion-tool-btn" onclick="openFlowboardAutomationModal()" title="데이터베이스 자동화">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        <span>자동화</span>
+                      </button>
+                      <button class="notion-tool-btn" onclick="openFlowboardAddLaneModal()" title="컬럼 추가">+ 컬럼 추가</button>
+                      <input type="text" id="catManageTodoSearch" class="flowboard-search-input" style="width:150px;" placeholder="검색..." oninput="renderCatManageTodosList()">
+                      <button class="notion-new-btn-split" onclick="addNotionNewPageDefault()">+ New</button>
                     </div>
                   </div>
                   <div id="catManageTodosFullList" style="flex:1; overflow:hidden; min-height:480px; display:flex; flex-direction:column;">
@@ -2890,6 +2896,90 @@
               <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
                 <button class="cat-btn-outline" onclick="closeFlowboardAddLaneModal()">취소</button>
                 <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitFlowboardAddLane()">레인 생성</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 7: 데이터베이스 자동화 (Database Automations) 모달 -->
+          <div class="cat-modal-overlay" id="modalFlowboardAutomation" onclick="if(event.target===this) closeFlowboardAutomationModal()">
+            <div class="cat-modal-box" style="max-width:480px;">
+              <div class="cat-modal-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="notion-auto-icon">A</span>
+                  <h3 class="cat-modal-title">데이터베이스 자동화 (Automations)</h3>
+                </div>
+                <button class="cat-modal-close-btn" onclick="closeFlowboardAutomationModal()">&times;</button>
+              </div>
+              <p style="font-size:12px; color:var(--text-secondary); margin:0 0 10px 0;">노션 스타일 데이터베이스 자동화 규칙이 보드 변경 사항을 실시간 감지하여 자동 적용됩니다.</p>
+              <div style="display:flex; flex-direction:column; gap:8px;" id="flowboardAutomationsList">
+                <div class="notion-auto-item">
+                  <div class="notion-auto-icon">1</div>
+                  <div style="flex:1;">
+                    <div style="font-size:12.5px; font-weight:700; color:var(--text-primary);">완료 시 오늘 날짜 자동 기록 및 완료 처리</div>
+                    <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">카드가 'Done' 레인으로 이동되면 마감일을 오늘 날짜로 자동 기록하고 완료 체크 처리합니다.</div>
+                  </div>
+                </div>
+                <div class="notion-auto-item">
+                  <div class="notion-auto-icon">2</div>
+                  <div style="flex:1;">
+                    <div style="font-size:12.5px; font-weight:700; color:var(--text-primary);">긴급 키워드 감지 시 P1 우선순위 자동 승격</div>
+                    <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">카드 내용에 '[긴급]' 또는 '급한' 단어가 포함되면 우선순위를 'P1 긴급'으로 자동 지정합니다.</div>
+                  </div>
+                </div>
+                <div class="notion-auto-item">
+                  <div class="notion-auto-icon">3</div>
+                  <div style="flex:1;">
+                    <div style="font-size:12.5px; font-weight:700; color:var(--text-primary);">기한 지난 카드(Overdue) 실시간 상태 관리</div>
+                    <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">오늘 이전의 미완료 카드를 지속적으로 점검하여 기한 초과 상태를 관리합니다.</div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:8px;">
+                <button class="cat-mini-add-btn" style="padding:7px 14px; background:#2383e2;" onclick="runFlowboardAutomationsNow()">자동화 규칙 지금 실행</button>
+                <button class="cat-btn-outline" onclick="closeFlowboardAutomationModal()">닫기</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 모달 8: 노션 스타일 페이지 상세 (Page Detail) 모달 -->
+          <div class="cat-modal-overlay" id="modalNotionPageDetail" onclick="if(event.target===this) closeNotionPageDetailModal()">
+            <div class="cat-modal-box" style="max-width:520px;">
+              <div class="cat-modal-header">
+                <input type="text" id="notionDetailTitleInput" class="notion-db-title" style="font-size:16px; width:100%; border:1px solid rgba(255,255,255,0.1);" placeholder="페이지 제목 없음">
+                <button class="cat-modal-close-btn" onclick="closeNotionPageDetailModal()">&times;</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <span style="font-size:12px; color:var(--text-muted); width:90px;">상태 (Status)</span>
+                  <select id="notionDetailStatusSelect" class="cat-todo-input" style="flex:1; max-width:200px;">
+                    <!-- JS 생성 -->
+                  </select>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <span style="font-size:12px; color:var(--text-muted); width:90px;">우선순위</span>
+                  <select id="notionDetailPrioritySelect" class="cat-todo-input" style="flex:1; max-width:200px;">
+                    <option value="">없음</option>
+                    <option value="P1">P1 긴급</option>
+                    <option value="P2">P2 높음</option>
+                    <option value="P3">P3 보통</option>
+                    <option value="P4">P4 낮음</option>
+                  </select>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <span style="font-size:12px; color:var(--text-muted); width:90px;">마감일 (Date)</span>
+                  <input type="date" id="notionDetailDateInput" class="cat-todo-input" style="flex:1; max-width:200px;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px;">
+                  <span style="font-size:12px; color:var(--text-muted);">메모 및 본문</span>
+                  <textarea id="notionDetailNotesText" class="cat-quick-textarea" rows="4" placeholder="페이지에 대한 상세 메모나 체크리스트를 자유롭게 입력하세요."></textarea>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+                <button class="cat-link-btn" style="color:#ef4444;" onclick="deleteCurrentNotionPage()">페이지 삭제</button>
+                <div style="display:flex; gap:8px;">
+                  <button class="cat-btn-outline" onclick="closeNotionPageDetailModal()">취소</button>
+                  <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="saveCurrentNotionPage()">저장</button>
+                </div>
               </div>
             </div>
           </div>
