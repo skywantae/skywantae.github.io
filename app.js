@@ -14471,33 +14471,45 @@ function applyNotionAutomations(card, targetLaneTitle) {
 function getFlowboardScheduledAutomations() {
   try {
     const raw = localStorage.getItem('kostat_flowboard_scheduled_automations');
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        // 임의 삽입되었던 더미 템플릿 영구 정화
+        const cleaned = parsed.filter(r => r.id !== 'auto_daily_ship' && r.id !== 'auto_weekly_stock');
+        if (cleaned.length !== parsed.length) {
+          localStorage.setItem('kostat_flowboard_scheduled_automations', JSON.stringify(cleaned));
+        }
+        return cleaned;
+      }
+    }
   } catch (e) {
     console.error('Failed to parse kostat_flowboard_scheduled_automations', e);
   }
-  // 기본 엔터프라이즈 정기 자동화 템플릿 2건
-  return [
-    {
-      id: 'auto_daily_ship',
-      title: '일일 출하 계획 및 특이사항 점검',
-      targetLaneId: 'lane_not_started',
-      schedule: 'weekdays',
-      priority: 'P2',
-      active: true,
-      lastRunDate: ''
-    },
-    {
-      id: 'auto_weekly_stock',
-      title: '주간 4대 공장 재고 실사 점검',
-      targetLaneId: 'lane_not_started',
-      schedule: 'weekly_mon',
-      priority: 'P1',
-      active: true,
-      lastRunDate: ''
-    }
-  ];
+  return [];
 }
 window.getFlowboardScheduledAutomations = getFlowboardScheduledAutomations;
+
+function purgeDummyAutomationCards() {
+  try {
+    const board = getFlowboardData();
+    let changed = false;
+    for (const lane of board.lanes) {
+      if (lane.cards && lane.cards.length > 0) {
+        const prevLen = lane.cards.length;
+        lane.cards = lane.cards.filter(c => 
+          c.content !== '일일 출하 계획 및 특이사항 점검' && 
+          c.content !== '주간 4대 공장 재고 실사 점검'
+        );
+        if (lane.cards.length !== prevLen) changed = true;
+      }
+    }
+    if (changed) {
+      saveFlowboardData(board);
+    }
+  } catch (e) {
+    console.error('purgeDummyAutomationCards error', e);
+  }
+}
 
 function saveFlowboardScheduledAutomations(rules) {
   try {
@@ -14990,7 +15002,10 @@ function renderFlowboard(containerId, isCompact) {
             </div>
           </div>
           <div class="notion-card-properties flowboard-card-meta-container">
-            <div style="display:flex; align-items:center; gap:4px;">
+            <div style="display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+              ${card.automationSchedule ? `
+                <span class="notion-schedule-pill" style="font-size:10px; padding:1px 5px; cursor:pointer;" onclick="openNotionPageDetail('${escapeHtml(card.id)}')" title="자동화 주기: ${escapeHtml(card.automationSchedule)}">자동화</span>
+              ` : ''}
               ${card.priority ? `
                 <span class="flowboard-priority-badge ${pClass}" onclick="openFlowboardPriorityMenu(event, '${escapeHtml(card.id)}')">${escapeHtml(card.priority)}</span>
               ` : ''}
@@ -15267,6 +15282,11 @@ function openNotionPageDetail(cardId) {
   const dateInp = document.getElementById('notionDetailDateInput');
   if (dateInp) dateInp.value = card.date || '';
 
+  const autoSchedSel = document.getElementById('notionDetailAutomationSchedule');
+  if (autoSchedSel) {
+    autoSchedSel.value = card.automationSchedule || '';
+  }
+
   const notesText = document.getElementById('notionDetailNotesText');
   if (notesText) notesText.value = card.notes || '';
 
@@ -15301,6 +15321,7 @@ function saveCurrentNotionPage() {
   const statusSel = document.getElementById('notionDetailStatusSelect');
   const prioritySel = document.getElementById('notionDetailPrioritySelect');
   const dateInp = document.getElementById('notionDetailDateInput');
+  const autoSchedSel = document.getElementById('notionDetailAutomationSchedule');
   const notesText = document.getElementById('notionDetailNotesText');
 
   if (titleInp && titleInp.value.trim()) {
@@ -15317,6 +15338,41 @@ function saveCurrentNotionPage() {
     applyNotionAutomations(targetCard, sourceLane.title);
   }
 
+  // 홈에서 추가/수정한 카드의 자동화(Automation) 주기 연동
+  const schedVal = autoSchedSel ? autoSchedSel.value : '';
+  let autoRules = getFlowboardScheduledAutomations();
+
+  if (schedVal) {
+    targetCard.automationSchedule = schedVal;
+    const existingRule = autoRules.find(r => r.sourceCardId === targetCard.id || r.id === 'auto_card_' + targetCard.id);
+    if (existingRule) {
+      existingRule.title = targetCard.content;
+      existingRule.targetLaneId = targetLaneId;
+      existingRule.schedule = schedVal;
+      existingRule.priority = targetCard.priority || '';
+      existingRule.active = true;
+    } else {
+      autoRules.push({
+        id: 'auto_card_' + targetCard.id,
+        sourceCardId: targetCard.id,
+        title: targetCard.content,
+        targetLaneId: targetLaneId,
+        schedule: schedVal,
+        priority: targetCard.priority || '',
+        active: true,
+        lastRunDate: ''
+      });
+    }
+    saveFlowboardScheduledAutomations(autoRules);
+  } else {
+    delete targetCard.automationSchedule;
+    const prevLen = autoRules.length;
+    autoRules = autoRules.filter(r => r.sourceCardId !== targetCard.id && r.id !== 'auto_card_' + targetCard.id);
+    if (autoRules.length !== prevLen) {
+      saveFlowboardScheduledAutomations(autoRules);
+    }
+  }
+
   saveFlowboardData(board);
   closeNotionPageDetailModal();
   renderCatTodos();
@@ -15328,9 +15384,19 @@ function deleteCurrentNotionPage() {
   if (!catNotionActiveCardId) return;
   const choice = confirm('이 페이지를 삭제하시겠습니까?');
   if (choice) {
+    const cardId = catNotionActiveCardId;
     const board = getFlowboardData();
-    removeCardRecursively(board.lanes, catNotionActiveCardId);
+    removeCardRecursively(board.lanes, cardId);
     saveFlowboardData(board);
+
+    // 연동된 자동화 규칙도 함께 삭제
+    let autoRules = getFlowboardScheduledAutomations();
+    const prevLen = autoRules.length;
+    autoRules = autoRules.filter(r => r.sourceCardId !== cardId && r.id !== 'auto_card_' + cardId);
+    if (autoRules.length !== prevLen) {
+      saveFlowboardScheduledAutomations(autoRules);
+    }
+
     closeNotionPageDetailModal();
     renderCatTodos();
     renderCatManageTodosList();
@@ -16258,6 +16324,7 @@ window.renderCatSalesBriefing = renderCatSalesBriefing;
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { 
+      if (typeof purgeDummyAutomationCards === 'function') purgeDummyAutomationCards();
       if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); 
       if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations();
       setInterval(() => { if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations(); }, 60000);
@@ -16265,6 +16332,7 @@ if (document.readyState === 'loading') {
   });
 } else {
   setTimeout(() => { 
+    if (typeof purgeDummyAutomationCards === 'function') purgeDummyAutomationCards();
     if (typeof initCatlendarDashboard === 'function') initCatlendarDashboard(); 
     if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations();
     setInterval(() => { if (typeof checkAndRunScheduledAutomations === 'function') checkAndRunScheduledAutomations(); }, 60000);
