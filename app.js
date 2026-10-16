@@ -1226,6 +1226,7 @@ const APP_I18N = {
     th_qty: '수량',
     th_remain: '잔여',
     th_invoice_no: 'Invoice No',
+    th_shipped_qty: '선적수량',
 
     // Table Headers (Quotations)
     th_quot_no: '견적번호',
@@ -1696,6 +1697,7 @@ const APP_I18N = {
     th_qty: 'Qty',
     th_remain: 'Remain',
     th_invoice_no: 'Invoice No',
+    th_shipped_qty: 'Shipped Qty',
 
     // Table Headers (Quotations)
     th_quot_no: 'Quote No',
@@ -2220,7 +2222,7 @@ function applyAppLanguage(lang) {
   // 10. 테이블 헤더 열 제목 (Table Headers)
   const shipThs = document.querySelectorAll('#shipPlanTable thead th');
   if (shipThs && shipThs.length >= 8) {
-    const headers = [t.th_ship_date, t.th_loading_date, t.th_customer, t.th_po_no, t.th_part_no, t.th_qty, t.th_remain, t.th_invoice_no];
+    const headers = [t.th_ship_date, t.th_loading_date, t.th_customer, t.th_po_no, t.th_part_no, t.th_qty, t.th_remain, t.th_invoice_no, t.th_shipped_qty];
     shipThs.forEach((th, idx) => { if (headers[idx]) th.textContent = headers[idx]; });
   }
 
@@ -3281,7 +3283,7 @@ function renderShipPlanPage(page) {
   if (!DOM.shipPlanTbody) return;
 
   if (totalRows === 0) {
-    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">${isEn ? 'No matching shipment plan data found.' : '일치하는 출하 계획 데이터가 없습니다.'}</td></tr>`;
+    DOM.shipPlanTbody.innerHTML = `<tr><td colspan="9" class="text-center py-4">${isEn ? 'No matching shipment plan data found.' : '일치하는 출하 계획 데이터가 없습니다.'}</td></tr>`;
     if (DOM.shipPlanPageControls) DOM.shipPlanPageControls.innerHTML = '';
     return;
   }
@@ -3290,7 +3292,20 @@ function renderShipPlanPage(page) {
   const end = start + pageSize;
   const pageRows = rows.slice(start, end);
 
-  DOM.shipPlanTbody.innerHTML = pageRows.map(r => `
+  DOM.shipPlanTbody.innerHTML = pageRows.map(r => {
+    let sqVal = 0;
+    if (r.sq !== undefined && r.sq !== null && r.sq !== '') {
+      const parsed = Number(r.sq);
+      if (!isNaN(parsed) && parsed > 0) sqVal = parsed;
+    }
+    // Fallback: if sqVal is 0 but invoice exists and poqty > 0
+    if (sqVal === 0 && r.i && r.q) {
+      const diff = Number(r.q || 0) - Number(r.b || 0);
+      if (diff > 0) sqVal = diff;
+    }
+    const sqDisplay = sqVal > 0 ? sqVal.toLocaleString() : (r.i ? '0' : '-');
+
+    return `
     <tr class="erp-copyable-cell">
       <td>${formatDate(r.e)}</td>
       <td>${formatDate(r.s)}</td>
@@ -3300,8 +3315,10 @@ function renderShipPlanPage(page) {
       <td style="text-align:right;">${r.q ? Number(r.q).toLocaleString() : '0'}</td>
       <td style="text-align:right;color:#34d399;font-weight:600;">${r.b ? Number(r.b).toLocaleString() : '0'}</td>
       <td style="color:#a78bfa;font-family:monospace;font-weight:500;">${escapeHtml(r.i || '-')}</td>
+      <td style="text-align:right;color:#38bdf8;font-weight:600;font-variant-numeric:tabular-nums;">${sqDisplay}</td>
     </tr>
-  `).join('');
+    `;
+  }).join('');
 
   // 페이지네이션 컨트롤러 렌더링
   renderShipPlanPaginationControls(page, totalPages);
@@ -5802,6 +5819,7 @@ window.copyCellText = copyCellText;
         const candBal = ['balance', '잔여수량', '잔여'];
         const candInv = ['invoiceno', 'invoicenumber', 'invoice_no', 'invoice', '송장번호', '인보이스', '송장'];
         const candFwd = ['fowarder', 'forwarder', '포워더', '운송사'];
+        const candSq = ['shippedqty', 'shipped_qty', '선적수량', '출하수량'];
 
         const shipRows = [];
         const todayIso = new Date().toISOString().slice(0, 10);
@@ -5818,11 +5836,12 @@ window.copyCellText = copyCellText;
           const bal = parseInt(findVal(r, candBal), 10) || 0;
           const inv = findVal(r, candInv);
           const fwd = findVal(r, candFwd);
+          const sq = parseInt(findVal(r, candSq), 10) || 0;
 
           if (!cust && !pono && !pn) continue; // 빈 행 무시
 
           const compactShipItem = {
-            c: cust, p: pono, k: pn, e: ex, s: ship, q: qty, b: bal, i: inv, f: fwd
+            c: cust, p: pono, k: pn, e: ex, s: ship, q: qty, b: bal, i: inv, f: fwd, sq: sq
           };
           shipRows.push(compactShipItem);
 
