@@ -411,6 +411,11 @@
                       <div class="cat-cal-grid" id="catCalDaysGrid">
                         <!-- JS 동적 생성 -->
                       </div>
+
+                      <!-- 선택 일자 미니 일정 관리 패널 -->
+                      <div id="catCalSelectedDayPanel" class="cat-cal-selected-panel">
+                        <!-- JS 동적 렌더링 -->
+                      </div>
                     </div>
 
                     <!-- 위젯: 영업사항 - 프로젝트 개발 현황 -->
@@ -494,7 +499,7 @@
                         </div>
                       </div>
                       <div class="cat-quick-input-body">
-                        <textarea id="catQuickInputText" class="cat-quick-textarea" placeholder="「내일 3시 회의」처럼 말하듯 적어요" rows="2"></textarea>
+                        <textarea id="catQuickInputText" class="cat-quick-textarea" placeholder="예: 내일 15시 회의" rows="2" onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); saveCatQuickInput(); }"></textarea>
                         <div class="cat-quick-actions">
                           <span class="cat-quick-label">확인하고 저장</span>
                           <button class="cat-quick-save-btn" onclick="saveCatQuickInput()" title="저장">
@@ -606,7 +611,7 @@
                     <div class="cat-widget-card">
                       <div class="cat-widget-header">
                         <div style="display:flex; align-items:center; gap:8px;">
-                          <span class="cat-widget-title" id="catCalDetailDateTitle">2026-10-14 일정</span>
+                          <span class="cat-widget-title" id="catCalDetailDateTitle">선택 일자 일정</span>
                           <span class="cat-badge-pill" id="catCalDetailCountBadge">0건</span>
                         </div>
                         <button class="cat-mini-add-btn" onclick="openCatScheduleAddModal()" id="catCalAddSchedBtn">일정 추가</button>
@@ -652,7 +657,7 @@
 
                 <!-- 할일 신규 등록 바 (Notion New Page Quick Bar) -->
                 <div class="cat-subview-toolbar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                  <input type="date" id="catManageTodoDate" class="cat-todo-input" style="max-width:140px;" value="2026-10-14">
+                  <input type="date" id="catManageTodoDate" class="cat-todo-input" style="max-width:140px;">
                   <select id="catManageTodoLaneSelect" class="cat-todo-input" style="max-width:160px;">
                     <option value="not_started">시작 전 (Not started)</option>
                     <option value="in_progress">진행 중 (In progress)</option>
@@ -2022,8 +2027,8 @@
         <div class="setting-item">
           <label id="lblSettingEnv">동작 환경 (오프라인 지원):</label>
           <div id="boxSettingEnv" style="background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;font-size:12px;color:#cbd5e1;line-height:1.6;">
-            • <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>
-            • <strong>탑재 데이터</strong>: 출하 계획 110,000+건, 견적서 22,000+건, 계약검토서(Project) 2,300+건, 사내 FAQ 내장.
+            - <strong>독립 실행 모드</strong>: 사내 Wi-Fi나 PC 연결 없이 스마트폰 단독으로 작동합니다.<br>
+            - <strong>탑재 데이터</strong>: 출하 계획 110,000+건, 견적서 22,000+건, 계약검토서(Project) 2,300+건, 사내 FAQ 내장.
           </div>
         </div>
         <div class="setting-item">
@@ -2314,7 +2319,7 @@
           비밀번호가 일치하지 않습니다.
         </div>
         <div style="font-size:11px; color:#94a3b8; text-align:center;">
-          ※ 관리자는 마스터 PIN으로 언제든 처리할 수 있습니다.
+          [안내] 관리자는 마스터 PIN으로 언제든 처리할 수 있습니다.
         </div>
       </div>
       <div class="modal-footer">
@@ -2802,7 +2807,7 @@
                   <input type="text" id="catBmInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 해외법인 ERP Portal">
                 </label>
                 <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalBmLabelUrl">URL 링크</span>
-                  <input type="text" id="catBmInputUrl" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="https://example.com">
+                  <input type="text" id="catBmInputUrl" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="https://example.com" onkeydown="if(event.key==='Enter') submitCatBookmark()">
                 </label>
               </div>
               <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
@@ -2819,7 +2824,7 @@
                 <h3 class="cat-modal-title" id="catModalNoteTitle">새 기록 남기기</h3>
                 <button class="cat-modal-close-btn" onclick="closeCatNoteModal()">&times;</button>
               </div>
-              <textarea id="catNoteModalText" class="cat-quick-textarea" rows="4" placeholder="업무 메모나 중요 기록을 남겨보세요."></textarea>
+              <textarea id="catNoteModalText" class="cat-quick-textarea" rows="4" placeholder="업무 메모나 중요 기록을 남겨보세요." onkeydown="if(event.key==='Enter' && (event.ctrlKey || event.metaKey)){ event.preventDefault(); submitCatNoteModal(); }"></textarea>
               <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
                 <button class="cat-btn-outline" onclick="closeCatNoteModal()" id="catModalNoteBtnCancel">취소</button>
                 <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatNoteModal()" id="catModalNoteBtnSubmit">저장</button>
@@ -2840,7 +2845,7 @@
                 <button class="cat-quick-tab" id="catModalTabNote" onclick="setCatModalType('note')">기록</button>
                 <button class="cat-quick-tab" id="catModalTabBm" onclick="setCatModalType('bookmark')">북마크</button>
               </div>
-              <textarea id="catQuickModalInputText" class="cat-quick-textarea" rows="3" placeholder="내용을 입력하세요."></textarea>
+              <textarea id="catQuickModalInputText" class="cat-quick-textarea" rows="3" placeholder="내용을 입력하세요." onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); submitCatQuickModal(); }"></textarea>
               <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
                 <button class="cat-btn-outline" onclick="closeCatQuickAddModal()" id="catModalQuickBtnCancel">취소</button>
                 <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatQuickModal()" id="catModalQuickBtnSubmit">확인 저장</button>
@@ -2857,13 +2862,13 @@
               </div>
               <div style="display:flex; flex-direction:column; gap:10px;">
                 <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelDate">일정 일자</span>
-                  <input type="date" id="catSchedInputDate" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="2026-10-14">
+                  <input type="date" id="catSchedInputDate" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;">
                 </label>
                 <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTime">일정 시간</span>
                   <input type="time" id="catSchedInputTime" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" value="10:00">
                 </label>
                 <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalSchedLabelTitle">일정 제목</span>
-                  <input type="text" id="catSchedInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 고객사 주간 화상 회의">
+                  <input type="text" id="catSchedInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 고객사 주간 화상 회의" onkeydown="if(event.key==='Enter') submitCatScheduleModal()">
                 </label>
               </div>
               <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
