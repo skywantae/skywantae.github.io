@@ -43,6 +43,20 @@
           return;
         }
 
+        // 원격 데이터가 들어오면 전역 상태 및 로컬 스토리지 즉시 갱신
+        if (data.content && typeof data.content === 'object') {
+          window.LIVE_DB = data.content;
+          try {
+            localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(data.content));
+          } catch (_) {}
+          if (typeof window.renderCatSalesProjects === 'function') {
+            window.renderCatSalesProjects();
+          }
+          if (typeof window.renderCatSalesQuality === 'function') {
+            window.renderCatSalesQuality();
+          }
+        }
+
         // 원격 데이터가 들어오면 등록된 콜백들에게 통지
         self.notifyCallbacks(data);
       }, function (err) {

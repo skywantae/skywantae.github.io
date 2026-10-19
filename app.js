@@ -16281,6 +16281,16 @@ function renderCatSalesProjects(filterText) {
     });
   });
 
+  // 최신 등록 프로젝트 우선 정렬 (타임스탬프 역순)
+  allProjects.sort((a, b) => {
+    const aTime = (a.id && typeof a.id === 'string' && a.id.startsWith('prj_')) ? parseInt(a.id.replace('prj_', ''), 10) : 0;
+    const bTime = (b.id && typeof b.id === 'string' && b.id.startsWith('prj_')) ? parseInt(b.id.replace('prj_', ''), 10) : 0;
+    if (aTime && bTime) return bTime - aTime;
+    if (aTime && !bTime) return -1;
+    if (!aTime && bTime) return 1;
+    return 0;
+  });
+
   if (countBadge) countBadge.textContent = `${allProjects.length}건`;
 
   // 검색창의 현재 입력값 보존
@@ -16311,7 +16321,7 @@ function renderCatSalesProjects(filterText) {
     return 'new';
   };
 
-  tbody.innerHTML = allProjects.slice(0, 15).map(p => `
+  tbody.innerHTML = allProjects.map(p => `
     <tr onclick="goToSalesTab('project')" title="영업사항 프로젝트 탭으로 이동">
       <td style="font-weight:700; color:#60a5fa;">${p.customer || '-'}</td>
       <td style="color:#cbd5e1;">${p.country || 'TW'}</td>

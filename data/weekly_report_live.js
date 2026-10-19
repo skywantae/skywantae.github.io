@@ -1195,6 +1195,17 @@ window.LIVE_DB = {
           "ship_date": "-",
           "status": "검토대기",
           "remarks": "TH P/N: TBA | PKG: 8MM X 8MM X 1.4MM | Material: - | Mold: TBA"
+        },
+        {
+          "id": "prj_1792396431489",
+          "customer": "AMS ASIA",
+          "country": "PH",
+          "item": "Cover",
+          "pn": "KAH7_TA 093500",
+          "tool_type": "Open",
+          "po_no": "",
+          "ship_date": "10월 21일",
+          "status": "Open"
         }
       ],
       "quality_issues": []
