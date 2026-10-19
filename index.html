@@ -275,10 +275,6 @@
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                   <span id="catSidebarNoteText">기록</span>
                 </button>
-                <button class="cat-nav-item" id="catNavBtnBookmark" onclick="catNavFilter('bookmark', this)">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                  <span id="catSidebarBookmarkText">북마크</span>
-                </button>
                 <button class="cat-nav-item" id="catNavBtnSettings" onclick="catNavFilter('settings', this)">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                   <span id="catSidebarSettingsText">설정</span>
@@ -310,28 +306,6 @@
                     <span id="catBtnAddWidgetText">위젯 추가</span>
                   </button>
                 </div>
-              </div>
-
-              <!-- 대시보드 상단 빠른 서브뷰 전환 탭 (모바일 및 전 기기 호환) -->
-              <div class="cat-nav-tabs-bar" id="catNavTabsBar">
-                <button class="cat-nav-tab active" data-cat-tab="all" onclick="catNavFilter('all', this)">
-                  <span id="catTabHomeLabel">홈</span>
-                </button>
-                <button class="cat-nav-tab" data-cat-tab="calendar" onclick="catNavFilter('calendar', this)">
-                  <span id="catTabCalLabel">캘린더</span>
-                </button>
-                <button class="cat-nav-tab" data-cat-tab="todo" onclick="catNavFilter('todo', this)">
-                  <span id="catTabTodoLabel">할일</span>
-                </button>
-                <button class="cat-nav-tab" data-cat-tab="note" onclick="catNavFilter('note', this)">
-                  <span id="catTabNoteLabel">기록</span>
-                </button>
-                <button class="cat-nav-tab" data-cat-tab="bookmark" onclick="catNavFilter('bookmark', this)">
-                  <span id="catTabBookmarkLabel">북마크</span>
-                </button>
-                <button class="cat-nav-tab" data-cat-tab="settings" onclick="catNavFilter('settings', this)">
-                  <span id="catTabSettingsLabel">설정</span>
-                </button>
               </div>
 
               <!-- ========================================================= -->
@@ -493,7 +467,6 @@
                             <button class="cat-quick-tab active" data-type="schedule" onclick="selectCatQuickType('schedule', this)">일정</button>
                             <button class="cat-quick-tab" data-type="todo" onclick="selectCatQuickType('todo', this)">할일</button>
                             <button class="cat-quick-tab" data-type="note" onclick="selectCatQuickType('note', this)">기록</button>
-                            <button class="cat-quick-tab" data-type="bookmark" onclick="selectCatQuickType('bookmark', this)">북마크</button>
                           </div>
                           <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('quickInput', false)" title="위젯 숨기기">&times;</button>
                         </div>
@@ -559,21 +532,6 @@
                       </div>
                       <div class="cat-widget-content flowboard-compact" id="catTodoList">
                         <!-- JS 플로우보드 칸반/리스트 렌더링 -->
-                      </div>
-                    </div>
-
-                    <!-- 위젯 6: 북마크 -->
-                    <div class="cat-widget-card" id="widgetBookmarks" data-widget-id="bookmarks" draggable="true">
-                      <div class="cat-widget-header">
-                        <span class="cat-widget-title">북마크</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <button class="cat-link-btn" onclick="openCatBookmarkModal()">추가</button>
-                          <button class="cat-link-btn" onclick="catNavFilter('bookmark')">관리</button>
-                          <button class="cat-card-close-btn" onclick="toggleCatWidgetVisibility('bookmarks', false)" title="위젯 숨기기">&times;</button>
-                        </div>
-                      </div>
-                      <div class="cat-widget-content" id="catBookmarkList">
-                        <!-- JS 북마크 그리드 -->
                       </div>
                     </div>
                   </div>
@@ -726,33 +684,6 @@
 
                 <!-- 기록 카드 그리드 -->
                 <div id="catManageNotesGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:14px;">
-                  <!-- JS 동적 생성 -->
-                </div>
-              </div>
-
-              <!-- ========================================================= -->
-              <!-- 서브뷰 5: 북마크 (Bookmarks) 전용 관리 화면 -->
-              <!-- ========================================================= -->
-              <div class="cat-subview" id="catViewBookmarks">
-                <div class="cat-subview-header">
-                  <div class="cat-subview-title-group">
-                    <button class="cat-back-home-btn" onclick="catNavFilter('all')">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                      <span class="cat-back-home-text">홈 대시보드</span>
-                    </button>
-                    <h3 class="cat-subview-title" id="catSubTitleBookmarks">사내 북마크 보관함</h3>
-                  </div>
-                  <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="openCatBookmarkModal()" id="catSubBtnNewBm">+ 북마크 추가</button>
-                </div>
-
-                <!-- 검색 바 -->
-                <div class="cat-subview-toolbar">
-                  <input type="text" id="catManageBmSearch" class="cat-search-input" placeholder="북마크 제목 또는 URL 검색..." oninput="renderCatManageBookmarksList()">
-                  <span style="font-size:12px; color:var(--text-muted);"><span id="catBmCountPrefix">총</span> <span id="catBookmarksCount">0</span><span id="catBmCountSuffix">개</span></span>
-                </div>
-
-                <!-- 북마크 카드 그리드 -->
-                <div id="catManageBookmarksGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:14px;">
                   <!-- JS 동적 생성 -->
                 </div>
               </div>
@@ -2795,28 +2726,6 @@
             </div>
           </div>
 
-          <!-- 모달 2: 북마크 추가 모달 -->
-          <div class="cat-modal-overlay" id="modalCatBookmarkAdd" onclick="if(event.target===this) closeCatBookmarkModal()">
-            <div class="cat-modal-box">
-              <div class="cat-modal-header">
-                <h3 class="cat-modal-title" id="catModalBmTitle">북마크 추가</h3>
-                <button class="cat-modal-close-btn" onclick="closeCatBookmarkModal()">&times;</button>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:10px;">
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalBmLabelTitle">링크 제목</span>
-                  <input type="text" id="catBmInputTitle" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="예: 해외법인 ERP Portal">
-                </label>
-                <label style="font-size:12px; font-weight:700; color:var(--text-secondary);"><span id="catModalBmLabelUrl">URL 링크</span>
-                  <input type="text" id="catBmInputUrl" class="cat-todo-input" style="width:100%; box-sizing:border-box; margin-top:4px;" placeholder="https://example.com" onkeydown="if(event.key==='Enter') submitCatBookmark()">
-                </label>
-              </div>
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-                <button class="cat-btn-outline" onclick="closeCatBookmarkModal()" id="catModalBmBtnCancel">취소</button>
-                <button class="cat-mini-add-btn" style="padding:7px 16px;" onclick="submitCatBookmark()" id="catModalBmBtnSubmit">등록</button>
-              </div>
-            </div>
-          </div>
-
           <!-- 모달 3: 기록(노트) 작성 모달 -->
           <div class="cat-modal-overlay" id="modalCatNoteAdd" onclick="if(event.target===this) closeCatNoteModal()">
             <div class="cat-modal-box">
@@ -2843,7 +2752,6 @@
                 <button class="cat-quick-tab active" id="catModalTabSchedule" onclick="setCatModalType('schedule')">일정</button>
                 <button class="cat-quick-tab" id="catModalTabTodo" onclick="setCatModalType('todo')">할일</button>
                 <button class="cat-quick-tab" id="catModalTabNote" onclick="setCatModalType('note')">기록</button>
-                <button class="cat-quick-tab" id="catModalTabBm" onclick="setCatModalType('bookmark')">북마크</button>
               </div>
               <textarea id="catQuickModalInputText" class="cat-quick-textarea" rows="3" placeholder="내용을 입력하세요." onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); submitCatQuickModal(); }"></textarea>
               <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">

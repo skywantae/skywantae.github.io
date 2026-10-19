@@ -85,7 +85,7 @@ const AdminState = window.AdminState = {
 const DEFAULT_CAT_LAYOUT = window.DEFAULT_CAT_LAYOUT = {
   colFull: [],
   colLeft: ['calendar', 'widgetSalesProjects'],
-  colRight: ['weather', 'quickInput', 'upcoming', 'notes', 'todos', 'bookmarks']
+  colRight: ['weather', 'quickInput', 'upcoming', 'notes', 'todos']
 };
 
 const CAT_WIDGET_NAMES = window.CAT_WIDGET_NAMES = {
@@ -95,8 +95,7 @@ const CAT_WIDGET_NAMES = window.CAT_WIDGET_NAMES = {
   quickInput: '빠른 입력',
   upcoming: '앞으로의 일정',
   notes: '기록 (메모)',
-  todos: '할일 체크리스트',
-  bookmarks: '사내 북마크'
+  todos: '할일 체크리스트'
 };
 
 const CAT_WIDGET_NAMES_EN = window.CAT_WIDGET_NAMES_EN = {
@@ -106,8 +105,7 @@ const CAT_WIDGET_NAMES_EN = window.CAT_WIDGET_NAMES_EN = {
   quickInput: 'Quick Input',
   upcoming: 'Upcoming Schedules',
   notes: 'Notes & Journal',
-  todos: 'Todo Checklist',
-  bookmarks: 'Company Bookmarks'
+  todos: 'Todo Checklist'
 };
 
 function getCatTodayStr() {
@@ -139,8 +137,7 @@ let CatDashboardState = window.CatDashboardState = {
     quickInput: false,
     upcoming: false,
     notes: false,
-    todos: false,
-    bookmarks: false
+    todos: false
   },
   customSizes: {},
   widgetSizes: {}
@@ -1375,11 +1372,10 @@ const APP_I18N = {
     cat_nav_calendar: '캘린더',
     cat_nav_todo: '할일',
     cat_nav_note: '기록',
-    cat_nav_bookmark: '북마크',
     cat_nav_settings: '설정',
     cat_nav_collapse: '축소',
     cat_empty_title: '나만의 대시보드를 직접 구성해 보세요',
-    cat_empty_desc: '현재 활성화된 위젯이 없습니다. 우측 상단의 \'+ 위젯 추가\' 버튼을 클릭하여 원하는 업무 위젯(캘린더, 영업현황, 할일, 메모, 북마크 등)을 자유롭게 배치할 수 있습니다.',
+    cat_empty_desc: '현재 활성화된 위젯이 없습니다. 우측 상단의 \'+ 위젯 추가\' 버튼을 클릭하여 원하는 업무 위젯(캘린더, 영업현황, 할일, 메모 등)을 자유롭게 배치할 수 있습니다.',
     cat_empty_btn_add: '+ 위젯 추가하기',
     cat_empty_btn_preset: '추천 위젯 세트 불러오기',
     cat_btn_today: '오늘',
@@ -1397,7 +1393,6 @@ const APP_I18N = {
     cat_sub_cal_title: '캘린더 & 일정 상세 관리',
     cat_sub_todo_title: '할일 관리 센터',
     cat_sub_note_title: '업무 기록 및 메모 보드',
-    cat_sub_bm_title: '사내 북마크 보관함',
     cat_todo_all: '전체',
     cat_todo_today: '오늘',
     cat_todo_pending: '진행중',
@@ -1408,8 +1403,6 @@ const APP_I18N = {
     cat_cal_all_sched_title: '전체 등록 일정 목록',
     cat_notes_prefix: '총',
     cat_notes_suffix: '개의 기록',
-    cat_bm_prefix: '총',
-    cat_bm_suffix: '개',
     cat_modal_settings_title: '위젯 노출 설정',
     cat_modal_settings_desc: '대시보드에 표시할 위젯을 선택하여 원하는 업무 환경을 구성하세요.',
     cat_btn_select_all: '모두 선택',
@@ -1431,8 +1424,7 @@ const APP_I18N = {
     widget_quick_name: '빠른 입력',
     widget_upcoming_name: '앞으로의 일정',
     widget_notes_name: '기록 (메모)',
-    widget_todos_name: '할일 체크리스트',
-    widget_bookmarks_name: '사내 북마크'
+    widget_todos_name: '할일 체크리스트'
   },
   en: {
     lang_badge: 'KO',
@@ -1846,7 +1838,6 @@ const APP_I18N = {
     cat_nav_calendar: 'Calendar',
     cat_nav_todo: 'Todos',
     cat_nav_note: 'Notes',
-    cat_nav_bookmark: 'Bookmarks',
     cat_nav_settings: 'Settings',
     cat_nav_collapse: 'Collapse',
     cat_empty_title: 'Customize Your Dashboard',
@@ -1868,7 +1859,6 @@ const APP_I18N = {
     cat_sub_cal_title: 'Calendar & Schedule Management',
     cat_sub_todo_title: 'Todo Management Center',
     cat_sub_note_title: 'Notes & Work Journal Board',
-    cat_sub_bm_title: 'Company Bookmarks Library',
     cat_todo_all: 'All',
     cat_todo_today: 'Today',
     cat_todo_pending: 'In Progress',
@@ -1879,8 +1869,6 @@ const APP_I18N = {
     cat_cal_all_sched_title: 'All Registered Schedules',
     cat_notes_prefix: 'Total',
     cat_notes_suffix: ' notes',
-    cat_bm_prefix: 'Total',
-    cat_bm_suffix: ' bookmarks',
     cat_modal_settings_title: 'Widget Display Settings',
     cat_modal_settings_desc: 'Select widgets to display on your dashboard to customize your workspace.',
     cat_btn_select_all: 'Select All',
@@ -1902,8 +1890,7 @@ const APP_I18N = {
     widget_quick_name: 'Quick Input',
     widget_upcoming_name: 'Upcoming Schedules',
     widget_notes_name: 'Notes & Journal',
-    widget_todos_name: 'Todo Checklist',
-    widget_bookmarks_name: 'Company Bookmarks'
+    widget_todos_name: 'Todo Checklist'
   }
 };
 
@@ -12697,9 +12684,6 @@ function applyCatDashboardLanguage(lang) {
     } else if (cur === 'note') {
       titleEl.textContent = isEn ? 'Notes & Work Journal' : '기록 & 업무 저널';
       subEl.textContent = isEn ? 'Key meeting minutes & notes archive' : '주요 회의록 및 메모 보관함';
-    } else if (cur === 'bookmark') {
-      titleEl.textContent = isEn ? 'Bookmarks Library' : '북마크 보관함';
-      subEl.textContent = isEn ? 'Company portal and key customer links' : '사내 포털 및 주요 고객사 링크 모음';
     } else {
       titleEl.textContent = isEn ? 'Dashboard' : '대시보드';
       subEl.textContent = isEn ? 'Global Calendar & Smart Workspace' : '글로벌 캘린더 & 스마트 워크스페이스';
@@ -12711,20 +12695,11 @@ function applyCatDashboardLanguage(lang) {
   const btnAddWidget = document.getElementById('catBtnAddWidgetText');
   if (btnAddWidget) btnAddWidget.textContent = isEn ? 'Add Widget' : '위젯 추가';
 
-  // 상단 탭 라벨
-  const tabHome = document.getElementById('catTabHomeLabel'); if (tabHome) tabHome.textContent = isEn ? 'Home' : '홈';
-  const tabCal = document.getElementById('catTabCalLabel'); if (tabCal) tabCal.textContent = isEn ? 'Calendar' : '캘린더';
-  const tabTodo = document.getElementById('catTabTodoLabel'); if (tabTodo) tabTodo.textContent = isEn ? 'Todos' : '할일';
-  const tabNote = document.getElementById('catTabNoteLabel'); if (tabNote) tabNote.textContent = isEn ? 'Notes' : '기록';
-  const tabBm = document.getElementById('catTabBookmarkLabel'); if (tabBm) tabBm.textContent = isEn ? 'Bookmarks' : '북마크';
-  const tabSet = document.getElementById('catTabSettingsLabel'); if (tabSet) tabSet.textContent = isEn ? 'Settings' : '설정';
-
   // 사이드바 라벨
   const sbHome = document.getElementById('catSidebarHomeText'); if (sbHome) sbHome.textContent = isEn ? 'Home' : '홈';
   const sbCal = document.getElementById('catSidebarCalendarText'); if (sbCal) sbCal.textContent = isEn ? 'Calendar' : '캘린더';
   const sbTodo = document.getElementById('catSidebarTodoText'); if (sbTodo) sbTodo.textContent = isEn ? 'Todos' : '할일';
   const sbNote = document.getElementById('catSidebarNoteText'); if (sbNote) sbNote.textContent = isEn ? 'Notes' : '기록';
-  const sbBm = document.getElementById('catSidebarBookmarkText'); if (sbBm) sbBm.textContent = isEn ? 'Bookmarks' : '북마크';
   const sbSet = document.getElementById('catSidebarSettingsText'); if (sbSet) sbSet.textContent = isEn ? 'Settings' : '설정';
   const sbCol = document.getElementById('catSidebarCollapseText'); if (sbCol) sbCol.textContent = isEn ? 'Collapse' : '축소';
 
@@ -12734,7 +12709,7 @@ function applyCatDashboardLanguage(lang) {
   const emptyDesc = document.getElementById('catEmptyDesc');
   if (emptyDesc) emptyDesc.innerHTML = isEn
     ? 'No widgets are currently active. Click <strong>\'+ Add Widget\'</strong> at top right to place and organize your desired work widgets freely.'
-    : '현재 활성화된 위젯이 없습니다. 우측 상단의 <strong>\'+ 위젯 추가\'</strong> 버튼을 클릭하여 원하는 업무 위젯(캘린더, 영업현황, 할일, 메모, 북마크 등)을 자유롭게 배치할 수 있습니다.';
+    : '현재 활성화된 위젯이 없습니다. 우측 상단의 <strong>\'+ 위젯 추가\'</strong> 버튼을 클릭하여 원하는 업무 위젯(캘린더, 영업현황, 할일, 메모 등)을 자유롭게 배치할 수 있습니다.';
   const emptyBtnAdd = document.getElementById('catEmptyBtnAdd');
   if (emptyBtnAdd) emptyBtnAdd.textContent = isEn ? '+ Add Widget' : '+ 위젯 추가하기';
   const emptyBtnPreset = document.getElementById('catEmptyBtnPreset');
@@ -12748,8 +12723,7 @@ function applyCatDashboardLanguage(lang) {
     widgetQuickInput: { ko: '빠른 입력', en: 'Quick Input' },
     widgetUpcoming: { ko: '앞으로의 일정', en: 'Upcoming Schedules' },
     widgetNotes: { ko: '기록', en: 'Notes' },
-    widgetTodos: { ko: '할일', en: 'Todos' },
-    widgetBookmarks: { ko: '북마크', en: 'Bookmarks' }
+    widgetTodos: { ko: '할일', en: 'Todos' }
   };
   Object.keys(widgetTitleMap).forEach(wId => {
     const card = document.getElementById(wId);
@@ -12782,8 +12756,6 @@ function applyCatDashboardLanguage(lang) {
   if (quickTodoTab) quickTodoTab.textContent = isEn ? 'Todo' : '할일';
   const quickNoteTab = document.querySelector('#widgetQuickInput .cat-quick-tab[data-type="note"]');
   if (quickNoteTab) quickNoteTab.textContent = isEn ? 'Note' : '기록';
-  const quickBmTab = document.querySelector('#widgetQuickInput .cat-quick-tab[data-type="bookmark"]');
-  if (quickBmTab) quickBmTab.textContent = isEn ? 'Bookmark' : '북마크';
   const quickLabel = document.querySelector('.cat-quick-label');
   if (quickLabel) quickLabel.textContent = isEn ? 'Confirm & Save' : '확인하고 저장';
   const quickInput = document.getElementById('catQuickInputText');
@@ -12848,15 +12820,6 @@ function applyCatDashboardLanguage(lang) {
   const notesCountSuffix = document.getElementById('catNotesCountSuffix');
   if (notesCountSuffix) notesCountSuffix.textContent = isEn ? ' notes' : '개의 기록';
 
-  const subBmTitle = document.getElementById('catSubTitleBookmarks');
-  if (subBmTitle) subBmTitle.textContent = isEn ? 'Company Bookmarks Library' : '사내 북마크 보관함';
-  const subBtnNewBm = document.getElementById('catSubBtnNewBm');
-  if (subBtnNewBm) subBtnNewBm.textContent = isEn ? '+ Add Bookmark' : '+ 북마크 추가';
-  const bmCountPrefix = document.getElementById('catBmCountPrefix');
-  if (bmCountPrefix) bmCountPrefix.textContent = isEn ? 'Total' : '총';
-  const bmCountSuffix = document.getElementById('catBmCountSuffix');
-  if (bmCountSuffix) bmCountSuffix.textContent = isEn ? ' bookmarks' : '개';
-
   // 서브뷰 검색 입력창 플레이스홀더
   const schedSearch = document.getElementById('catCalScheduleSearchInput');
   if (schedSearch) schedSearch.placeholder = isEn ? 'Search schedules...' : '일정 검색...';
@@ -12864,24 +12827,8 @@ function applyCatDashboardLanguage(lang) {
   if (todoSearch) todoSearch.placeholder = isEn ? 'Search todos...' : '할일 키워드 검색...';
   const noteSearch = document.getElementById('catManageNoteSearch');
   if (noteSearch) noteSearch.placeholder = isEn ? 'Search notes and dates...' : '기록 내용 및 날짜 검색...';
-  const bmSearch = document.getElementById('catManageBmSearch');
-  if (bmSearch) bmSearch.placeholder = isEn ? 'Search bookmarks by title or URL...' : '북마크 제목 또는 URL 검색...';
   const todoTextInput = document.getElementById('catManageTodoText');
   if (todoTextInput) todoTextInput.placeholder = isEn ? 'Enter a new todo item...' : '새로운 할일을 입력하세요...';
-
-  // 6. 모달 2: 북마크 추가 모달
-  const modalBmTitle = document.getElementById('catModalBmTitle');
-  if (modalBmTitle) modalBmTitle.textContent = isEn ? 'Add Bookmark' : '북마크 추가';
-  const modalBmLabelTitle = document.getElementById('catModalBmLabelTitle');
-  if (modalBmLabelTitle) modalBmLabelTitle.textContent = isEn ? 'Link Title' : '링크 제목';
-  const bmInputTitle = document.getElementById('catBmInputTitle');
-  if (bmInputTitle) bmInputTitle.placeholder = isEn ? 'e.g. Overseas ERP Portal' : '예: 해외법인 ERP Portal';
-  const modalBmLabelUrl = document.getElementById('catModalBmLabelUrl');
-  if (modalBmLabelUrl) modalBmLabelUrl.textContent = isEn ? 'URL Link' : 'URL 링크';
-  const modalBmBtnCancel = document.getElementById('catModalBmBtnCancel');
-  if (modalBmBtnCancel) modalBmBtnCancel.textContent = isEn ? 'Cancel' : '취소';
-  const modalBmBtnSubmit = document.getElementById('catModalBmBtnSubmit');
-  if (modalBmBtnSubmit) modalBmBtnSubmit.textContent = isEn ? 'Add' : '등록';
 
   // 모달 3: 기록 작성 모달
   const modalNoteTitle = document.getElementById('catModalNoteTitle');
@@ -12902,8 +12849,6 @@ function applyCatDashboardLanguage(lang) {
   if (modalTabTodo) modalTabTodo.textContent = isEn ? 'Todo' : '할일';
   const modalTabNote = document.getElementById('catModalTabNote');
   if (modalTabNote) modalTabNote.textContent = isEn ? 'Note' : '기록';
-  const modalTabBm = document.getElementById('catModalTabBm');
-  if (modalTabBm) modalTabBm.textContent = isEn ? 'Bookmark' : '북마크';
   const quickModalInput = document.getElementById('catQuickModalInputText');
   if (quickModalInput) quickModalInput.placeholder = isEn ? 'Enter content...' : '내용을 입력하세요.';
   const modalQuickBtnCancel = document.getElementById('catModalQuickBtnCancel');
@@ -12942,13 +12887,10 @@ function applyCatDashboardLanguage(lang) {
     try { renderCatManageTodosList(); } catch (_) {}
   } else if (cur === 'note') {
     try { renderCatManageNotesList(); } catch (_) {}
-  } else if (cur === 'bookmark') {
-    try { renderCatManageBookmarksList(); } catch (_) {}
   } else {
     try { renderCatUpcoming(); } catch (_) {}
     try { renderCatNotes(); } catch (_) {}
     try { renderCatTodos(); } catch (_) {}
-    try { renderCatBookmarks(); } catch (_) {}
     try { renderCatCalendar(CatDashboardState.year, CatDashboardState.month); } catch (_) {}
   }
 }
@@ -13041,8 +12983,7 @@ function loadCatUserPreferences(user, profile) {
       quickInput: false,
       upcoming: false,
       notes: false,
-      todos: false,
-      bookmarks: false
+      todos: false
     };
   }
 
@@ -13129,7 +13070,6 @@ function initCatlendarDashboard() {
   renderCatUpcoming();
   renderCatNotes();
   renderCatTodos();
-  renderCatBookmarks();
   if (typeof renderCatSalesProjects === 'function') renderCatSalesProjects();
   applyCatWidgetVisibility();
 
@@ -13183,16 +13123,6 @@ function initCatDefaultStorage() {
     ];
     localStorage.setItem('kostat_cat_notes', JSON.stringify(defaultNotes));
   }
-
-  if (!localStorage.getItem('kostat_cat_bookmarks')) {
-    const defaultBookmarks = [
-      { id: 'b1', title: 'KOSTAT ERP 웹앱', url: 'https://skywantae.github.io/' },
-      { id: 'b2', title: '사내 그룹웨어', url: 'http://gw.kostat.com/' },
-      { id: 'b3', title: '메일플러그 웹메일', url: 'https://mailplug.co.kr/' },
-      { id: 'b4', title: '고객사 전용 포털', url: 'https://skywantae.github.io/#customer' }
-    ];
-    localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(defaultBookmarks));
-  }
 }
 
 // -------------------------------------------------------------
@@ -13202,11 +13132,8 @@ function catNavFilter(type, btn) {
   // 설정 요청 시 홈 활성화 상태에서 위젯 설정 모달 오픈
   if (type === 'settings') {
     document.querySelectorAll('.cat-nav-item').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.cat-nav-tab').forEach(b => b.classList.remove('active'));
     const homeBtn = document.getElementById('catNavBtnHome');
     if (homeBtn) homeBtn.classList.add('active');
-    const homeTab = document.querySelector('.cat-nav-tab[data-cat-tab="all"]');
-    if (homeTab) homeTab.classList.add('active');
     document.querySelectorAll('.cat-subview').forEach(v => v.classList.remove('active'));
     const homeView = document.getElementById('catViewHome');
     if (homeView) homeView.classList.add('active');
@@ -13223,16 +13150,10 @@ function catNavFilter(type, btn) {
     calendar: 'catNavBtnCalendar',
     todo: 'catNavBtnTodo',
     note: 'catNavBtnNote',
-    bookmark: 'catNavBtnBookmark',
     settings: 'catNavBtnSettings'
   };
   const targetBtn = btn || document.getElementById(btnMap[type] || 'catNavBtnHome');
   if (targetBtn) targetBtn.classList.add('active');
-
-  // 상단 탭 활성화 동기화
-  document.querySelectorAll('.cat-nav-tab').forEach(b => b.classList.remove('active'));
-  const targetTab = document.querySelector(`.cat-nav-tab[data-cat-tab="${type}"]`);
-  if (targetTab) targetTab.classList.add('active');
 
   // 모든 서브뷰 비활성화
   document.querySelectorAll('.cat-subview').forEach(v => v.classList.remove('active'));
@@ -13276,12 +13197,6 @@ function catNavFilter(type, btn) {
       if (titleEl) titleEl.textContent = isEn ? 'Notes & Work Journal' : '기록 & 업무 저널';
       if (subEl) subEl.textContent = isEn ? 'Key meeting minutes & notes archive' : '주요 회의록 및 메모 보관함';
       try { renderCatManageNotesList(); } catch (_) {}
-    } else if (type === 'bookmark') {
-      const v = document.getElementById('catViewBookmarks');
-      if (v) v.classList.add('active');
-      if (titleEl) titleEl.textContent = isEn ? 'Bookmarks Library' : '북마크 보관함';
-      if (subEl) subEl.textContent = isEn ? 'Company portal and key customer links' : '사내 포털 및 주요 고객사 링크 모음';
-      try { renderCatManageBookmarksList(); } catch (_) {}
     } else {
       const v = document.getElementById('catViewHome');
       if (v) v.classList.add('active');
@@ -13295,7 +13210,6 @@ function catNavFilter(type, btn) {
       try { renderCatUpcoming(); } catch (_) {}
       try { renderCatNotes(); } catch (_) {}
       try { renderCatTodos(); } catch (_) {}
-      try { renderCatBookmarks(); } catch (_) {}
       try { renderCatCalendar(CatDashboardState.year, CatDashboardState.month); } catch (_) {}
     }
   }
@@ -14112,19 +14026,6 @@ function saveCatQuickInput() {
     markCatOnboardingComplete('note');
     if (typeof showToast === 'function') {
       showToast('기록이 저장되었습니다.');
-    }
-  } else if (type === 'bookmark') {
-    const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
-    list.push({
-      id: 'b_' + Date.now(),
-      title: val.length > 20 ? val.slice(0, 20) + '...' : val,
-      url: val.startsWith('http') ? val : 'https://' + val
-    });
-    localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
-    renderCatBookmarks();
-    renderCatManageBookmarksList();
-    if (typeof showToast === 'function') {
-      showToast('북마크가 추가되었습니다.');
     }
   }
 
@@ -16087,116 +15988,19 @@ function submitFlowboardAddLane() {
 window.submitFlowboardAddLane = submitFlowboardAddLane;
 
 // -------------------------------------------------------------
-// 11. 북마크 위젯 & 전용 보관함
+// 11. 북마크 (완전 제거됨)
 // -------------------------------------------------------------
-function renderCatBookmarks() {
-  const container = document.getElementById('catBookmarkList');
-  if (!container) return;
-  const isEn = (AppState && AppState.currentLang === 'en');
-
-  const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
-  if (list.length === 0) {
-    container.innerHTML = `<div class="cat-item-empty">${isEn ? 'Add links to bookmark' : '보관할 링크를 추가해 보세요'}</div>`;
-    return;
-  }
-
-  let html = '<div class="cat-bookmark-grid">';
-  list.forEach(item => {
-    html += `
-      <div class="cat-bookmark-card" onclick="window.open('${item.url}', '_blank')">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span class="cat-bm-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</span>
-          <button onclick="event.stopPropagation(); deleteCatBookmark('${item.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:12px;">&times;</button>
-        </div>
-        <span class="cat-bm-url">${escapeHtml(item.url)}</span>
-      </div>
-    `;
-  });
-  html += '</div>';
-  container.innerHTML = html;
-}
+function renderCatBookmarks() {}
 window.renderCatBookmarks = renderCatBookmarks;
-
-function openCatBookmarkModal() {
-  const m = document.getElementById('modalCatBookmarkAdd');
-  if (m) m.classList.add('active');
-}
+function openCatBookmarkModal() {}
 window.openCatBookmarkModal = openCatBookmarkModal;
-
-function closeCatBookmarkModal() {
-  const m = document.getElementById('modalCatBookmarkAdd');
-  if (m) m.classList.remove('active');
-}
+function closeCatBookmarkModal() {}
 window.closeCatBookmarkModal = closeCatBookmarkModal;
-
-function submitCatBookmark() {
-  const t = document.getElementById('catBmInputTitle');
-  const u = document.getElementById('catBmInputUrl');
-  if (!t || !u || !t.value.trim() || !u.value.trim()) {
-    alert('제목과 URL을 모두 입력해주세요.');
-    return;
-  }
-  let url = u.value.trim();
-  if (!/^https?:\/\//i.test(url)) {
-    url = 'https://' + url;
-  }
-  const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
-  list.push({
-    id: 'b_' + Date.now(),
-    title: t.value.trim(),
-    url: url
-  });
-  localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
-  t.value = '';
-  u.value = '';
-  closeCatBookmarkModal();
-  renderCatBookmarks();
-  renderCatManageBookmarksList();
-}
+function submitCatBookmark() {}
 window.submitCatBookmark = submitCatBookmark;
-
-function deleteCatBookmark(id) {
-  let list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
-  list = list.filter(it => it.id !== id);
-  localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
-  renderCatBookmarks();
-  renderCatManageBookmarksList();
-}
+function deleteCatBookmark() {}
 window.deleteCatBookmark = deleteCatBookmark;
-
-function renderCatManageBookmarksList() {
-  const grid = document.getElementById('catManageBookmarksGrid');
-  if (!grid) return;
-  const isEn = (AppState && AppState.currentLang === 'en');
-  const searchInput = document.getElementById('catManageBmSearch');
-  const query = (searchInput && typeof searchInput.value === 'string') ? searchInput.value.trim().toLowerCase() : '';
-
-  let list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
-  const countEl = document.getElementById('catBookmarksCount');
-  if (countEl) countEl.textContent = list.length;
-
-  if (query) {
-    list = list.filter(b => (b.title && b.title.toLowerCase().includes(query)) || (b.url && b.url.toLowerCase().includes(query)));
-  }
-
-  if (list.length === 0) {
-    grid.innerHTML = `<div class="cat-item-empty" style="grid-column:1/-1;">${isEn ? 'No bookmarks registered.' : '등록된 북마크가 없습니다.'}</div>`;
-    return;
-  }
-
-  grid.innerHTML = list.map(item => `
-    <div class="cat-bookmark-card" style="padding:14px 16px;" onclick="window.open('${item.url}', '_blank')">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <span class="cat-bm-title" style="font-size:13px;">${escapeHtml(item.title)}</span>
-        <button onclick="event.stopPropagation(); deleteCatBookmark('${item.id}'); renderCatManageBookmarksList();" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:14px;">&times;</button>
-      </div>
-      <span class="cat-bm-url" style="margin-top:4px;">${escapeHtml(item.url)}</span>
-      <div style="margin-top:8px; display:flex; justify-content:flex-end;">
-        <span style="font-size:10.5px; color:#60a5fa;">${isEn ? 'Open in new tab &rarr;' : '새 탭 열기 &rarr;'}</span>
-      </div>
-    </div>
-  `).join('');
-}
+function renderCatManageBookmarksList() {}
 window.renderCatManageBookmarksList = renderCatManageBookmarksList;
 
 // -------------------------------------------------------------
@@ -16261,7 +16065,7 @@ function selectCatAllWidgets(selectAll) {
   const userKey = getCatUserKey();
   const keys = [
     'calendar', 'weather', 'widgetSalesProjects', 'quickInput',
-    'upcoming', 'notes', 'todos', 'bookmarks'
+    'upcoming', 'notes', 'todos'
   ];
   keys.forEach(k => {
     CatDashboardState.activeWidgets[k] = !!selectAll;
@@ -16283,7 +16087,6 @@ function selectCatDefaultWidgets() {
     widgetSalesProjects: true,
     todos: true,
     notes: true,
-    bookmarks: true,
     weather: false,
     quickInput: false,
     upcoming: false
@@ -16310,8 +16113,7 @@ function applyCatWidgetVisibility() {
     quickInput: 'widgetQuickInput',
     upcoming: 'widgetUpcoming',
     notes: 'widgetNotes',
-    todos: 'widgetTodos',
-    bookmarks: 'widgetBookmarks'
+    todos: 'widgetTodos'
   };
 
   let activeCount = 0;
@@ -16348,11 +16150,11 @@ function closeCatQuickAddModal() {
 window.closeCatQuickAddModal = closeCatQuickAddModal;
 
 function setCatModalType(type) {
-  ['Schedule', 'Todo', 'Note', 'Bm'].forEach(name => {
+  ['Schedule', 'Todo', 'Note'].forEach(name => {
     const b = document.getElementById('catModalTab' + name);
     if (b) b.classList.remove('active');
   });
-  const map = { schedule: 'Schedule', todo: 'Todo', note: 'Note', bookmark: 'Bm' };
+  const map = { schedule: 'Schedule', todo: 'Todo', note: 'Note' };
   const target = document.getElementById('catModalTab' + (map[type] || 'Schedule'));
   if (target) target.classList.add('active');
   CatDashboardState.modalQuickType = type;
@@ -16362,8 +16164,7 @@ function setCatModalType(type) {
   const phMap = {
     schedule: '일정 제목 및 시간 (예: 내일 오후 2시 고객사 미팅)',
     todo: '할일 내용을 입력하세요',
-    note: '기록할 업무 메모를 입력하세요',
-    bookmark: '북마크 링크 URL (예: https://example.com)'
+    note: '기록할 업무 메모를 입력하세요'
   };
   t.placeholder = phMap[type] || '내용을 입력하세요.';
 }
@@ -16395,12 +16196,6 @@ function submitCatQuickModal() {
     renderCatNotes();
     renderCatManageNotesList();
     markCatOnboardingComplete('note');
-  } else if (type === 'bookmark') {
-    const list = JSON.parse(localStorage.getItem('kostat_cat_bookmarks') || '[]');
-    list.push({ id: 'b_' + Date.now(), title: val.length > 20 ? val.slice(0, 20) + '...' : val, url: val.startsWith('http') ? val : 'https://' + val });
-    localStorage.setItem('kostat_cat_bookmarks', JSON.stringify(list));
-    renderCatBookmarks();
-    renderCatManageBookmarksList();
   }
 
   t.value = '';
