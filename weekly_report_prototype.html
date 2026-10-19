@@ -4150,12 +4150,29 @@
       `).join('');
     }
 
+    function notifyParentDashboardLive() {
+      try {
+        if (window.parent && window.parent !== window) {
+          if (typeof window.parent.renderCatSalesProjects === 'function') {
+            window.parent.renderCatSalesProjects();
+          }
+          if (typeof window.parent.renderCatSalesQuality === 'function') {
+            window.parent.renderCatSalesQuality();
+          }
+          window.parent.postMessage({ type: 'KOSTAT_WEEKLY_REPORT_UPDATED', liveDb: LIVE_DB }, '*');
+        }
+      } catch (_) {}
+    }
+    window.notifyParentDashboardLive = notifyParentDashboardLive;
+
     function updateProjectField(memId, prjIdx, field, val) {
       if (notifyLocked()) return;
       const currentData = getActiveDataset();
       const mem = (currentData.members || []).find(x => x.id === memId);
       if (!mem || !mem.projects || !mem.projects[prjIdx]) return;
       mem.projects[prjIdx][field] = val;
+
+      notifyParentDashboardLive();
 
       clearTimeout(DEBOUNCE_TIMER);
       DEBOUNCE_TIMER = setTimeout(() => {
@@ -4182,6 +4199,7 @@
       LIVE_DB.last_updated_by = CURRENT_USER_NAME;
       localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(LIVE_DB));
       renderMemberView();
+      notifyParentDashboardLive();
       triggerAutoSave(`${CURRENT_USER_NAME}님이 프로젝트 항목을 삭제했습니다.`);
     }
 
@@ -4263,6 +4281,7 @@
 
       closeAddProjectModal();
       renderMemberView();
+      notifyParentDashboardLive();
       showToast(`[${cust}] 신규 프로젝트가 성공적으로 등록되었습니다.`);
       triggerAutoSave(`${CURRENT_USER_NAME}님이 [${cust}] 신규 프로젝트를 등록했습니다.`);
     }
@@ -5927,6 +5946,8 @@
         localStorage.setItem('kostat_weekly_report_live_cache_v12', JSON.stringify(LIVE_DB));
       } catch (e) {}
 
+      notifyParentDashboardLive();
+
       // 2. Same browser broadcast
       try {
         if (window.BroadcastChannel) {
@@ -6005,6 +6026,7 @@
 
             recalculateTeamKpi();
             renderMemberView();
+            notifyParentDashboardLive();
 
             if (statusText) statusText.textContent = (typeof REPORT_LANG !== 'undefined' && REPORT_LANG === 'en') ? 'Cloud Synced' : '실시간 동기화 됨';
             
@@ -6087,6 +6109,7 @@
             ensureWeeklyForecasts(LIVE_DB);
             recalculateTeamKpi();
             renderMemberView();
+            notifyParentDashboardLive();
           }
         };
       }
@@ -6101,6 +6124,7 @@
           ensureWeeklyForecasts(LIVE_DB);
           recalculateTeamKpi();
           renderMemberView();
+          notifyParentDashboardLive();
         } catch (_) {}
       }
     });

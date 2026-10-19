@@ -5403,6 +5403,12 @@ function switchViewerCard(targetId) {
     if (typeof initCatlendarDashboard === 'function') {
       initCatlendarDashboard();
     }
+    if (typeof renderCatSalesProjects === 'function') {
+      renderCatSalesProjects();
+    }
+    if (typeof renderCatSalesQuality === 'function') {
+      renderCatSalesQuality();
+    }
   } else if (targetId === 'viewQuotations') {
     if (!AppState.quotFilteredRows || AppState.quotFilteredRows.length === 0) {
       AppState.quotFilteredRows = AppState.quotationsData || [];
@@ -13211,6 +13217,8 @@ function catNavFilter(type, btn) {
       try { renderCatNotes(); } catch (_) {}
       try { renderCatTodos(); } catch (_) {}
       try { renderCatCalendar(CatDashboardState.year, CatDashboardState.month); } catch (_) {}
+      try { renderCatSalesProjects(); } catch (_) {}
+      try { renderCatSalesQuality(); } catch (_) {}
     }
   }
 
@@ -16225,18 +16233,44 @@ function goToSalesTab(subtab) {
 }
 window.goToSalesTab = goToSalesTab;
 
+function getLatestSalesWeeklyDb() {
+  // 1. iframe contentWindow.LIVE_DB (가장 최신의 실시간 메모리 데이터)
+  try {
+    const iframe = document.getElementById('salesNotesIframe');
+    if (iframe && iframe.contentWindow && iframe.contentWindow.LIVE_DB && Array.isArray(iframe.contentWindow.LIVE_DB.members)) {
+      window.LIVE_DB = iframe.contentWindow.LIVE_DB;
+      return iframe.contentWindow.LIVE_DB;
+    }
+  } catch (_) {}
+
+  // 2. localStorage 최신 캐시 (다른 탭이나 이전 세션에서 저장된 최신 데이터)
+  try {
+    const c = localStorage.getItem('kostat_weekly_report_live_cache_v12');
+    if (c) {
+      const parsed = JSON.parse(c);
+      if (parsed && Array.isArray(parsed.members) && parsed.members.length > 0) {
+        window.LIVE_DB = parsed;
+        return parsed;
+      }
+    }
+  } catch (_) {}
+
+  // 3. window.LIVE_DB 인스턴스
+  if (window.LIVE_DB && Array.isArray(window.LIVE_DB.members)) {
+    return window.LIVE_DB;
+  }
+
+  // 4. KOSTAT_WEEKLY_REPORT_LIVE 원본 정적 데이터
+  return window.KOSTAT_WEEKLY_REPORT_LIVE || {};
+}
+window.getLatestSalesWeeklyDb = getLatestSalesWeeklyDb;
+
 function renderCatSalesProjects(filterText) {
   const tbody = document.getElementById('catSalesProjTbody');
   const countBadge = document.getElementById('catSalesProjCountBadge');
   if (!tbody) return;
 
-  const db = (window.LIVE_DB && window.LIVE_DB.members) ? window.LIVE_DB : (function() {
-    try {
-      const c = localStorage.getItem('kostat_weekly_report_live_cache_v12');
-      if (c) return JSON.parse(c);
-    } catch(e) {}
-    return window.KOSTAT_WEEKLY_REPORT_LIVE || {};
-  })();
+  const db = getLatestSalesWeeklyDb();
 
   let allProjects = [];
   (db.members || []).forEach(m => {
@@ -16249,8 +16283,12 @@ function renderCatSalesProjects(filterText) {
 
   if (countBadge) countBadge.textContent = `${allProjects.length}건`;
 
-  if (filterText) {
-    const q = filterText.toLowerCase().trim();
+  // 검색창의 현재 입력값 보존
+  const searchInput = document.getElementById('catSalesProjSearchInput');
+  const activeFilter = (typeof filterText === 'string') ? filterText : (searchInput ? searchInput.value : '');
+
+  if (activeFilter) {
+    const q = activeFilter.toLowerCase().trim();
     allProjects = allProjects.filter(p => 
       (p.customer && p.customer.toLowerCase().includes(q)) ||
       (p.pn && p.pn.toLowerCase().includes(q)) ||
@@ -16320,7 +16358,7 @@ function renderCatSalesQuality() {
   const countBadge = document.getElementById('catSalesQualityCountBadge');
   if (!container) return;
 
-  const db = window.LIVE_DB || {};
+  const db = getLatestSalesWeeklyDb();
   let issues = [];
   (db.members || []).forEach(m => {
     (m.quality_issues || []).forEach(q => {
@@ -16357,6 +16395,64 @@ function renderCatSalesQuality() {
   `).join('');
 }
 window.renderCatSalesQuality = renderCatSalesQuality;
+
+// 영업사항(Sales Matters) - 대시보드 실시간 양방향 동기화 엔진
+(function initCatSalesRealtimeSync() {
+  if (typeof window === 'undefined' || window._catSalesSyncInitialized) return;
+  window._catSalesSyncInitialized = true;
+
+  // 1. iframe postMessage 수신
+  window.addEventListener('message', (e) => {
+    if (e && e.data && e.data.type === 'KOSTAT_WEEKLY_REPORT_UPDATED') {
+      if (e.data.liveDb) {
+        window.LIVE_DB = e.data.liveDb;
+      }
+      if (typeof renderCatSalesProjects === 'function') renderCatSalesProjects();
+      if (typeof renderCatSalesQuality === 'function') renderCatSalesQuality();
+    }
+  });
+
+  // 2. 동일 브라우저 다중 탭/창 브로드캐스트 수신
+  try {
+    if (window.BroadcastChannel) {
+      const bc = new BroadcastChannel('kostat_weekly_sync');
+      bc.onmessage = (e) => {
+        if (e.data && (e.data.type === 'WEEKLY_LOCAL_UPDATE' || e.data.type === 'WEEKLY_TARGET_UPDATE') && (e.data.liveDb || e.data.data)) {
+          window.LIVE_DB = e.data.liveDb || e.data.data;
+          if (typeof renderCatSalesProjects === 'function') renderCatSalesProjects();
+          if (typeof renderCatSalesQuality === 'function') renderCatSalesQuality();
+        }
+      };
+    }
+  } catch (_) {}
+
+  // 3. Storage 이벤트 수신 (크로스 윈도우/탭)
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'kostat_weekly_report_live_cache_v12' && e.newValue) {
+      try {
+        window.LIVE_DB = JSON.parse(e.newValue);
+        if (typeof renderCatSalesProjects === 'function') renderCatSalesProjects();
+        if (typeof renderCatSalesQuality === 'function') renderCatSalesQuality();
+      } catch (_) {}
+    }
+  });
+
+  // 4. salesNotesIframe 로드 완료 시 대시보드 테이블 즉시 갱신
+  const bindIframeSync = () => {
+    const iframe = document.getElementById('salesNotesIframe');
+    if (iframe) {
+      iframe.addEventListener('load', () => {
+        if (typeof renderCatSalesProjects === 'function') renderCatSalesProjects();
+        if (typeof renderCatSalesQuality === 'function') renderCatSalesQuality();
+      });
+    }
+  };
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', bindIframeSync);
+  } else {
+    bindIframeSync();
+  }
+})();
 
 function renderCatSalesBriefing() {
   const container = document.getElementById('catSalesBriefingList');
