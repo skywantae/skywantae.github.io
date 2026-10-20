@@ -1,2275 +1,25 @@
 window.LIVE_DB = {
-  "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서",
-  "week_label": "9월 4주차 (0921-0925)",
-  "last_updated_at": "2026-10-19 07:53:51",
   "last_updated_by": "김완태 사원",
-  "kpi": {
-    "target": 2404602,
-    "current": 937933,
-    "additional": 925562,
-    "expected": 1863495,
-    "rate": 77.5
-  },
-  "trends": {
-    "annual": [
-      {
-        "year": "2022",
-        "amount": 18200000,
-        "growth": 0
-      },
-      {
-        "year": "2023",
-        "amount": 21450000,
-        "growth": 17.9
-      },
-      {
-        "year": "2024",
-        "amount": 24800000,
-        "growth": 15.6
-      },
-      {
-        "year": "2025 (실매출)",
-        "amount": 29270041,
-        "growth": 18
-      },
-      {
-        "year": "2026 (경영목표)",
-        "amount": 25766880,
-        "growth": -12
-      }
-    ],
-    "yoy": {
-      "last_year_month": "2025년 9월",
-      "last_year_actual": 2802301,
-      "this_year_target": 2404602,
-      "this_year_expected": 1863495,
-      "yoy_growth_rate": -14.2
-    },
-    "mom": {
-      "prev_month": "2026년 8월",
-      "prev_month_actual": 1692000,
-      "this_month_expected": 1863495,
-      "mom_growth_rate": 10.1,
-      "weekly_progress": [
-        {
-          "week": "1주차",
-          "actual": 310000,
-          "cum_rate": 16.6
-        },
-        {
-          "week": "2주차",
-          "actual": 540000,
-          "cum_rate": 29
-        },
-        {
-          "week": "3주차",
-          "actual": 788600,
-          "cum_rate": 42.3
-        },
-        {
-          "week": "4주차 (현재)",
-          "actual": 937933,
-          "cum_rate": 50.3
-        }
-      ]
-    }
-  },
-  "members": [
-    {
-      "id": "hjh",
-      "name": "한준희",
-      "role": "",
-      "short_name": "한준희",
-      "regions": "미국 (USA)",
-      "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
-      "sales": [
-        {
-          "site": "Skyworks US (미국)",
-          "country": "US",
-          "target": 300000,
-          "current": 270000,
-          "additional": 50000,
-          "expected": 320000,
-          "note": "NPI 34차 완료 및 미국 향 직수출",
-          "weekly_forecasts": {
-            "W1": {
-              "target": 300000,
-              "current": 100000,
-              "additional": 200000,
-              "expected": 300000
-            },
-            "W2": {
-              "target": 300000,
-              "current": 180000,
-              "additional": 130000,
-              "expected": 310000
-            },
-            "W3": {
-              "target": 300000,
-              "current": 250000,
-              "additional": 70000,
-              "expected": 320000
-            },
-            "W4": {
-              "target": 300000,
-              "current": 270000,
-              "additional": 50000,
-              "expected": 320000
-            },
-            "W38": {
-              "target": 300000,
-              "current": 270000,
-              "additional": 50000,
-              "expected": 320000
-            },
-            "W39": {
-              "target": 300000,
-              "current": 270000,
-              "additional": 50000,
-              "expected": 320000,
-              "note": "NPI 34차 완료 및 미국 향 직수출"
-            }
-          }
-        }
-      ],
-      "issues": [
-        {
-          "id": "iss_1790577010313",
-          "customer": "SKYWORKS",
-          "item": "IC Tray",
-          "tag": "진행중",
-          "topic": "3M Filter Project 유지 관련 Promotion 진행",
-          "bullets": [
-            "- 3M Filter Project 유지 관련 Promotion 진행",
-            ": 3M Filter SG 이전관련 Project 유지 작업 진행",
-            "> Skyworks SG, Skyworks Irvine에 3M 관련 독립적 진행 요청",
-            ">> 해영, Skyworks MX를 통한 당사 진행 Tool 사용 지속 압박",
-            "당사, MX뿐만 아니라 W/Wide Project Line Contact 진행",
-            "> Skyworks SG, Cost Saving 관련 MY 업체 추천 확인",
-            ">> 해영, Skyworks MX를 통해 MY 업체관련 구체적인 정보 파악 중"
-          ]
-        },
-        {
-          "id": "iss-hjh-1",
-          "title": "Skyworks NPI Project 진행 현황 (WLCSP 9종 및 Filter Conversion)",
-          "category": "PROJECT",
-          "priority": "HIGH",
-          "status": "IN_PROGRESS",
-          "content": "추가 Filter Conversion 43종 중 34모델 NPI 진행 완료. 당분간 FILTER PJT 중단 상태이며 SKYWORKS SG 상황 검토 중. WLCSP Project 9종은 차질 없이 정상 진행 중.",
-          "action_plan": "WLCSP 9종 양산 승인 스케줄 밀착 관리 및 SG 법인 수주 재개 시점 모니터링",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-hjh-2",
-          "title": "Reel 개발 및 HYBRID PC 공차/포켓홀 개선 공정 능력 향상",
-          "category": "QUALITY",
-          "priority": "HIGH",
-          "status": "IN_PROGRESS",
-          "content": "REEL 개발 완료(3/10), 3/25 FILTER용 REEL 공급 진행. HYBRID PC 현재 코스탯 공정능력 Ø0.2 pocket hole 가능 -> Ø0.15 신규 요청(164A, 165A). 코스탯 내부 공정능력 Ø0.11 확인 완료, 최종 고객 요청 Ø0.10 대응 연구소 협업 중.",
-          "action_plan": "공차 A0B0K0 ±0.20 및 Ø0.10 포켓홀 금형 정밀 가공 승인 추진",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-hjh-3",
-          "title": "2DID 신규 설비 도입 및 필리핀 공장 이전 스케줄",
-          "category": "EQUIPMENT",
-          "priority": "MEDIUM",
-          "status": "IN_PROGRESS",
-          "content": "2DID 2대 PH 셋업 완료 및 추가 3대 KR 공장 설비 도입 완료(총 7대 가동 중). 12월 초 PH 공장으로 설비 2대 이전 예정이며, 2027년 1월 초 PH 공장 고객사 AUDIT 준비 진행.",
-          "action_plan": "12월 설비 해외 이송 물류 및 2027년 1월 고객사 감사 체크리스트 수립",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-hjh-4",
-          "title": "Infineon 신규 SAP 적용 및 DENKA PS SHEET 공급 이슈 대응",
-          "category": "CUSTOMER",
-          "priority": "MEDIUM",
-          "status": "IN_PROGRESS",
-          "content": "신규 SAP 도입으로 현재고 소진 후 new PO/PN 적용(평균 2달에 1회 20FT 출하 안정화). DENKA PS SHEET 원재료 부족으로 베트남 공장에서 항공(AIR) 출하 진행(운송료 고객 부담). DENKA 외 대체 PS SHEET 원재료 전환 검토 필요.",
-          "action_plan": "대체 PS 원단 품질 테스트 샘플 발주 및 전환 타당성 검토",
-          "created_at": "2026-09-17"
-        }
-      ],
-      "samples": [
-        {
-          "id": "smp-hjh-1",
-          "part_no": "KS-0804-1669-PC",
-          "customer": "Skyworks (US)",
-          "spec": "HYBRID WLCSP Die MK1451 A01 (2DID)",
-          "qty": 50,
-          "status": "COMPLETED",
-          "due_date": "2026-09-10",
-          "note": "금형 제작 및 샘플 승인 완료"
-        },
-        {
-          "id": "smp-hjh-2",
-          "part_no": "KS-0802-112-PC",
-          "customer": "Skyworks (US)",
-          "spec": "HYBRID FILTER KB163NA2350D (2DID)",
-          "qty": 50,
-          "status": "COMPLETED",
-          "due_date": "2026-09-10",
-          "note": "금형 제작 완료"
-        },
-        {
-          "id": "smp-hjh-3",
-          "part_no": "KS-0804-1677-PC",
-          "customer": "Skyworks (US)",
-          "spec": "HYBRID WLCSP mk6450bg (2DID)",
-          "qty": 50,
-          "status": "SHIPPED",
-          "due_date": "2026-09-01",
-          "note": "09월 01일 발송 완료"
-        },
-        {
-          "id": "smp-hjh-4",
-          "part_no": "KS-0804-1678-PC",
-          "customer": "Skyworks (US)",
-          "spec": "HYBRID WLCSP MK6440B (2DID)",
-          "qty": 50,
-          "status": "SHIPPED",
-          "due_date": "2026-09-01",
-          "note": "09월 01일 발송 완료"
-        },
-        {
-          "id": "smp-hjh-5",
-          "part_no": "KS-0804-1672-PC",
-          "customer": "Skyworks (US)",
-          "spec": "HYBRID WLCSP MK6463 A/B (2DID)",
-          "qty": 50,
-          "status": "SHIPPED",
-          "due_date": "2026-09-03",
-          "note": "09월 03일 발송 완료"
-        },
-        {
-          "id": "smp-hjh-6",
-          "part_no": "KS-0804-1680-PC",
-          "customer": "Skyworks (US)",
-          "spec": "HYBRID WLCSP PK1351-A1 (2DID)",
-          "qty": 50,
-          "status": "SHIPPED",
-          "due_date": "2026-09-06",
-          "note": "09월 06일 발송 완료"
-        },
-        {
-          "id": "smp-hjh-7",
-          "part_no": "KS-0804-1682-PC",
-          "customer": "Skyworks (US)",
-          "spec": "HYBRID WLCSP MK6254-X1 (2DID)",
-          "qty": 50,
-          "status": "SHIPPED",
-          "due_date": "2026-09-06",
-          "note": "09월 06일 발송 완료"
-        },
-        {
-          "id": "smp-hjh-8",
-          "part_no": "KS-1208-1911",
-          "customer": "Skyworks (US)",
-          "spec": "PS KP 3.34x3.64x0.65mm SKY58604 FAI",
-          "qty": 30,
-          "status": "COMPLETED",
-          "due_date": "2026-09-10",
-          "note": "9/10 실제 출하 완료"
-        },
-        {
-          "id": "smp-hjh-9",
-          "part_no": "KS-1608-835",
-          "customer": "Skyworks (US)",
-          "spec": "PS Linear 5.0x7.0x0.634mm SKY58601 FAI",
-          "qty": 30,
-          "status": "OPEN",
-          "due_date": "2026-09-30",
-          "note": "9/30 출하 예정 (진행중)"
-        }
-      ],
-      "projects": [],
-      "quality_issues": [
-        {
-          "id": "qual_1790577091023",
-          "customer": "BROADCOM",
-          "item": "IC Tray",
-          "pn": "KS-881490",
-          "defect_type": "이물/오염",
-          "comment": "불량상황에 대한 설명 및 조치 대책"
-        },
-        {
-          "id": "qual_1790664375586",
-          "customer": "SKYWORKS",
-          "country": "US",
-          "item": "IC Tray",
-          "pn": "KS-880220",
-          "defect_type": "Close",
-          "comment": "불량상황에 대한 설명 및 조치 대책"
-        }
-      ]
-    },
-    {
-      "id": "ksm",
-      "name": "김샘물",
-      "role": "",
-      "short_name": "김샘물",
-      "regions": "말레이시아 (Malaysia)",
-      "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
-      "sales": [
-        {
-          "site": "Malaysia (MY) - Broadcom / Unisem / NXP",
-          "target": 340999,
-          "current": 92656,
-          "additional": 87344,
-          "expected": 180000,
-          "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)",
-          "weekly_forecasts": {
-            "W1": {
-              "target": 340999,
-              "current": 25000,
-              "additional": 155000,
-              "expected": 180000
-            },
-            "W2": {
-              "target": 340999,
-              "current": 55000,
-              "additional": 125000,
-              "expected": 180000
-            },
-            "W3": {
-              "target": 340999,
-              "current": 92656,
-              "additional": 87344,
-              "expected": 180000
-            },
-            "W4": {
-              "target": 340999,
-              "current": 92656,
-              "additional": 87344,
-              "expected": 180000
-            },
-            "W38": {
-              "target": 340999,
-              "current": 92656,
-              "additional": 87344,
-              "expected": 180000,
-              "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)"
-            },
-            "W39": {
-              "target": 340999,
-              "current": 92656,
-              "additional": 87344,
-              "expected": 180000,
-              "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)"
-            }
-          },
-          "country": "MY"
-        }
-      ],
-      "issues": [
-        {
-          "id": "iss-ksm-1",
-          "title": "Broadcom (Inari MY) BUY OFF 2종 검토 및 금형 증작",
-          "category": "CUSTOMER",
-          "priority": "HIGH",
-          "status": "IN_PROGRESS",
-          "content": "KS-881490-2 금형 증작 완료 후 베트남 이전 완료(26.08). FM 이슈로 공식 승인 지연되어 2차 샘플 추가 50장 베트남 공장 진행(9/16 완료, 현지 매니저 직접 Inari 전달 예정). KS-871382-2 금형 진행 시작(8/24), QUAL 샘플 9월말 제출 예정.",
-          "action_plan": "Inari 현지 매니저 방문 납품 결과 확인 및 9월말 871382-2 샘플 입고 추적",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-ksm-2",
-          "title": "UNISEM MY Skyworks 캐리어테이프 컨버전 승인 추진",
-          "category": "PROJECT",
-          "priority": "HIGH",
-          "status": "IN_PROGRESS",
-          "content": "SKYWORKS 캐리어테이프 12mm 2종(KS-1208-981, KS-1208-1089) 및 커버 1종(93500 DS) 샘플 발송 완료 후 고객사 최종 승인 대기 중. MACOM사 Dual Source 샘플 요청 완료(KS-1612-692, KS-2412-0586).",
-          "action_plan": "Unisem 구매팀과 주간 화상회의를 통해 승인 통보 일정 조율",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-ksm-3",
-          "title": "NXP MY TJ 컨버전 캐리어테이프 7종 승인",
-          "category": "PROJECT",
-          "priority": "MEDIUM",
-          "status": "IN_PROGRESS",
-          "content": "NXP TJ 컨버전 위해 제출한 캐리어테이프 샘플 7종 중 1종 승인 완료, 나머지 6종 QUAL 테스트 대기 중.",
-          "action_plan": "NXP 엔지니어링팀 QUAL 진행 상황 체크 및 리포트 회신 독려",
-          "created_at": "2026-09-17"
-        }
-      ],
-      "samples": [
-        {
-          "id": "smp-ksm-1",
-          "part_no": "KS-881490-2",
-          "customer": "Broadcom (Inari MY)",
-          "spec": "MPPO Tray 2차 샘플 (FM 개선품)",
-          "qty": 50,
-          "status": "SHIPPED",
-          "due_date": "2026-09-16",
-          "note": "베트남 공장 출하(9/16), 매니저 직접 전달"
-        },
-        {
-          "id": "smp-ksm-2",
-          "part_no": "KS-871382-2",
-          "customer": "Broadcom (Inari MY)",
-          "spec": "MPPO Tray QUAL 샘플",
-          "qty": 50,
-          "status": "OPEN",
-          "due_date": "2026-09-30",
-          "note": "9월 말 QUAL 샘플 제출 예정"
-        },
-        {
-          "id": "smp-ksm-3",
-          "part_no": "KS-871483",
-          "customer": "ADI (MY)",
-          "spec": "TR 43.5x22x4.0mm",
-          "qty": 30,
-          "status": "OPEN",
-          "due_date": "2026-10-10",
-          "note": "ONGOING 신규 샘플 진행"
-        }
-      ],
-      "projects": [],
-      "quality_issues": []
-    },
-    {
-      "id": "lgj",
-      "name": "이가진",
-      "role": "",
-      "short_name": "이가진",
-      "regions": "대만 (Taiwan)",
-      "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
-      "sales": [
-        {
-          "site": "Taiwan (TW) - ASE / SPIL / GREATEK / KYEC",
-          "target": 759000,
-          "current": 432443,
-          "additional": 187557,
-          "expected": 620000,
-          "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)",
-          "weekly_forecasts": {
-            "W1": {
-              "target": 759000,
-              "current": 120000,
-              "additional": 500000,
-              "expected": 620000
-            },
-            "W2": {
-              "target": 759000,
-              "current": 280000,
-              "additional": 340000,
-              "expected": 620000
-            },
-            "W3": {
-              "target": 759000,
-              "current": 432443,
-              "additional": 187557,
-              "expected": 620000
-            },
-            "W4": {
-              "target": 759000,
-              "current": 432443,
-              "additional": 187557,
-              "expected": 620000
-            },
-            "W38": {
-              "target": 759000,
-              "current": 432443,
-              "additional": 187557,
-              "expected": 620000,
-              "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)"
-            },
-            "W39": {
-              "target": 759000,
-              "current": 432443,
-              "additional": 187557,
-              "expected": 620000,
-              "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)"
-            }
-          },
-          "country": "TW"
-        },
-        {
-          "site": "Hong Kong (HK)",
-          "target": 1100,
-          "current": 0,
-          "additional": 1000,
-          "expected": 1000,
-          "note": "추가예상 1K (달성율 90.9%)",
-          "weekly_forecasts": {
-            "W4": {
-              "target": 1100,
-              "current": 0,
-              "additional": 1000,
-              "expected": 1000
-            },
-            "W38": {
-              "target": 1100,
-              "current": 270000,
-              "additional": 1000,
-              "expected": 1000,
-              "note": "추가예상 1K (달성율 90.9%)"
-            },
-            "W39": {
-              "target": 1100,
-              "current": 270000,
-              "additional": 1000,
-              "expected": 1000,
-              "note": "추가예상 1K (달성율 90.9%)"
-            }
-          },
-          "country": "TW"
-        }
-      ],
-      "issues": [
-        {
-          "id": "iss-lgj-1",
-          "title": "ASECL PCN 잠정 중단 (Length/Warpage OOS 이슈 종결 시까지)",
-          "category": "QUALITY",
-          "priority": "HIGH",
-          "status": "HOLD",
-          "content": "SPIL GIS 측의 ASECL 압박으로 PCN 진행 중이었으나, ASECL PCN SAMPLE FAIL 발생 (Length OOS, Warpage OOS). 관련 이슈 완전 종결 전까지 PCN 잠정 중단.",
-          "action_plan": "품질팀 원인 분석 결과 확인 후 치수/평탄도 개선 금형 보정 작업 협의",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-lgj-2",
-          "title": "단가 인상 공지 (TnR 부문: SPIL, ASE 9/21 PO 기반 적용)",
-          "category": "PRICE",
-          "priority": "HIGH",
-          "status": "IN_PROGRESS",
-          "content": "TnR 부문 단가 인상 공지 완료. SPIL 및 ASE 대상 9/21 접수 신규 PO부터 인상된 단가 기준 적용 예정.",
-          "action_plan": "9/21 이후 입고되는 PO 단가 확인 및 영업 시스템 단가 테이블 갱신",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-lgj-3",
-          "title": "ASE Particle 이슈 대응 MPPO LP 금형 신규 제작 (KS-881825)",
-          "category": "PROJECT",
-          "priority": "MEDIUM",
-          "status": "IN_PROGRESS",
-          "content": "ASE KS-880514 Particle 이슈를 End User에서 제기함에 따라, MPPO Low Particle(LP) 신규 금형 KS-881825 제작 중. KYEC 및 ASE 공용 승인 검토.",
-          "action_plan": "금형 가공 완료 후 1차 시험 사출 샘플 즉각 송부",
-          "created_at": "2026-09-17"
-        }
-      ],
-      "samples": [
-        {
-          "id": "smp-lgj-1",
-          "part_no": "KS-881825",
-          "customer": "ASE / KYEC (TW)",
-          "spec": "MPPO LP 신규 Particle 대응 금형",
-          "qty": 100,
-          "status": "IN_PROGRESS",
-          "due_date": "2026-09-28",
-          "note": "금형 제작 중 (OPEN TOOL)"
-        },
-        {
-          "id": "smp-lgj-2",
-          "part_no": "KS-870247",
-          "customer": "GREATEK (TW)",
-          "spec": "VN Site PCN 승인 샘플",
-          "qty": 50,
-          "status": "COMPLETED",
-          "due_date": "2026-09-12",
-          "note": "VN SITE PCN 최종 승인 완료"
-        },
-        {
-          "id": "smp-lgj-3",
-          "part_no": "KS-881535",
-          "customer": "ASE / SPIL (TW)",
-          "spec": "TR 14.50x14.50mm",
-          "qty": 50,
-          "status": "OPEN",
-          "due_date": "2026-10-05",
-          "note": "ONGOING 샘플 진행"
-        }
-      ],
-      "projects": [],
-      "quality_issues": []
-    },
-    {
-      "id": "lsc",
-      "name": "이상철",
-      "role": "",
-      "short_name": "이상철",
-      "regions": "싱가포르 & 태국 (Singapore & Thailand)",
-      "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
-      "sales": [
-        {
-          "site": "Singapore (SG) - Skyworks / Micron",
-          "target": 330000,
-          "current": 59292,
-          "additional": 140708,
-          "expected": 200000,
-          "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)",
-          "weekly_forecasts": {
-            "W1": {
-              "target": 330000,
-              "current": 20000,
-              "additional": 180000,
-              "expected": 200000
-            },
-            "W2": {
-              "target": 330000,
-              "current": 40000,
-              "additional": 160000,
-              "expected": 200000
-            },
-            "W3": {
-              "target": 330000,
-              "current": 59292,
-              "additional": 140708,
-              "expected": 200000
-            },
-            "W4": {
-              "target": 330000,
-              "current": 59292,
-              "additional": 140708,
-              "expected": 200000
-            },
-            "W38": {
-              "target": 330000,
-              "current": 59292,
-              "additional": 140708,
-              "expected": 200000,
-              "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)"
-            },
-            "W39": {
-              "target": 330000,
-              "current": 59292,
-              "additional": 140708,
-              "expected": 200000,
-              "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)"
-            }
-          },
-          "country": "SG"
-        },
-        {
-          "site": "Thailand (TH) - Hanwha NxMD / Hana",
-          "target": 44001,
-          "current": 1200,
-          "additional": 18800,
-          "expected": 20000,
-          "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)",
-          "weekly_forecasts": {
-            "W4": {
-              "target": 44001,
-              "current": 1200,
-              "additional": 18800,
-              "expected": 20000
-            },
-            "W38": {
-              "target": 44001,
-              "current": 1200,
-              "additional": 18800,
-              "expected": 20000,
-              "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)"
-            },
-            "W39": {
-              "target": 44001,
-              "current": 1200,
-              "additional": 18800,
-              "expected": 20000,
-              "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)"
-            }
-          },
-          "country": "SG"
-        },
-        {
-          "site": "Vietnam (VN) - 직납 및 임가공",
-          "target": 0,
-          "current": 0,
-          "additional": 21000,
-          "expected": 21000,
-          "note": "추가예상 $21,000 마감 예상",
-          "weekly_forecasts": {
-            "W4": {
-              "target": 0,
-              "current": 0,
-              "additional": 21000,
-              "expected": 21000
-            },
-            "W38": {
-              "target": 300000,
-              "current": 270000,
-              "additional": 21000,
-              "expected": 21000,
-              "note": "추가예상 $21,000 마감 예상"
-            },
-            "W39": {
-              "target": 300000,
-              "current": 270000,
-              "additional": 21000,
-              "expected": 21000,
-              "note": "추가예상 $21,000 마감 예상"
-            }
-          },
-          "country": "SG"
-        }
-      ],
-      "issues": [
-        {
-          "id": "iss-lsc-1",
-          "title": "Hanwha NxMD 신규 Tray 금형 3벌 제작 완료 (혜주공장)",
-          "category": "PROJECT",
-          "priority": "HIGH",
-          "status": "COMPLETED",
-          "content": "HANWHA NxMD 향 신규 Tray 금형 3벌(KS-871649, KS-871650, KS-871651) 혜주 공장에서 제작 완료. 내부 Test용으로 월 1K 수량 사용 시작 예정.",
-          "action_plan": "초도 물량 사출 일정 확정 및 고객사 전달 후 양산 발주 일정 확보",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-lsc-2",
-          "title": "Micron DDR5용 트레이(KS-881163, KS-881465) 수요 급증 대응",
-          "category": "CUSTOMER",
-          "priority": "HIGH",
-          "status": "IN_PROGRESS",
-          "content": "Micron DDR5용 트레이 수요 급증으로 현 PO 잔량 KS-881465(110K), KS-881163(60K) 총 170K 확보됨. 생산 캐파 최우선 배정 필요.",
-          "action_plan": "공장별 생산 계획 긴급 조율 및 안전 재고 2주분 비축 협의",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-lsc-3",
-          "title": "ASEM 베트남 PCN 승인 및 IFX KKB 시트 전환",
-          "category": "QUALITY",
-          "priority": "MEDIUM",
-          "status": "IN_PROGRESS",
-          "content": "ASEM 베트남 PCN 서류 제출 완료되어 최종 승인 단계 진입. IFX Carrier & Cover 말레이시아 외주사(Plascycle) 공정능력 검토 결과 중동 KKB 시트가 더 적합한 것으로 판정.",
-          "action_plan": "KKB 시트 발주 스펙 확정 및 ASEM 승인 통보 수령",
-          "created_at": "2026-09-17"
-        }
-      ],
-      "samples": [
-        {
-          "id": "smp-lsc-1",
-          "part_no": "KS-871649",
-          "customer": "Hanwha NxMD (TH)",
-          "spec": "Tray 신규 금형 혜주 제작품",
-          "qty": 50,
-          "status": "COMPLETED",
-          "due_date": "2026-09-15",
-          "note": "금형 완료, 내부 Test용"
-        },
-        {
-          "id": "smp-lsc-2",
-          "part_no": "KS-871650",
-          "customer": "Hanwha NxMD (TH)",
-          "spec": "Tray 신규 금형 혜주 제작품",
-          "qty": 50,
-          "status": "COMPLETED",
-          "due_date": "2026-09-15",
-          "note": "금형 완료, 내부 Test용"
-        },
-        {
-          "id": "smp-lsc-3",
-          "part_no": "KS-871651",
-          "customer": "Hanwha NxMD (TH)",
-          "spec": "Tray 신규 금형 혜주 제작품",
-          "qty": 50,
-          "status": "COMPLETED",
-          "due_date": "2026-09-15",
-          "note": "금형 완료, 내부 Test용"
-        }
-      ],
-      "projects": [],
-      "quality_issues": []
-    },
-    {
-      "id": "kwt",
-      "name": "김완태",
-      "role": "",
-      "short_name": "김완태",
-      "regions": "일본 & 필리핀 (Japan & Philippines)",
-      "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
-      "sales": [
-        {
-          "site": "Philippines (PH) - ATP / SSPC / TongHsing",
-          "target": 297001,
-          "current": 225708,
-          "additional": 74292,
-          "expected": 300000,
-          "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K",
-          "weekly_forecasts": {
-            "W1": {
-              "target": 297001,
-              "current": 80000,
-              "additional": 217000,
-              "expected": 297000
-            },
-            "W2": {
-              "target": 297001,
-              "current": 160000,
-              "additional": 140000,
-              "expected": 300000
-            },
-            "W3": {
-              "target": 297001,
-              "current": 225708,
-              "additional": 74292,
-              "expected": 300000
-            },
-            "W4": {
-              "target": 297001,
-              "current": 225708,
-              "additional": 74292,
-              "expected": 300000
-            },
-            "W38": {
-              "target": 297001,
-              "current": 225708,
-              "additional": 74292,
-              "expected": 300000,
-              "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K"
-            },
-            "W39": {
-              "target": 297001,
-              "current": 225708,
-              "additional": 74292,
-              "expected": 300000,
-              "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K"
-            }
-          },
-          "country": "PH"
-        },
-        {
-          "site": "Japan (JP) - ATJ / Tomoe / Sony",
-          "target": 22000,
-          "current": 20857,
-          "additional": 25143,
-          "expected": 46000,
-          "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)",
-          "weekly_forecasts": {
-            "W4": {
-              "target": 22000,
-              "current": 20857,
-              "additional": 25143,
-              "expected": 46000
-            },
-            "W38": {
-              "target": 22000,
-              "current": 20857,
-              "additional": 25143,
-              "expected": 46000,
-              "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)"
-            },
-            "W39": {
-              "target": 22000,
-              "current": 20857,
-              "additional": 25143,
-              "expected": 46000,
-              "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)"
-            }
-          },
-          "country": "PH"
-        },
-        {
-          "site": "Korea (KR) - 국내 로컬",
-          "target": 231000,
-          "current": 495,
-          "additional": 0,
-          "expected": 495,
-          "note": "실적 $495 (달성율 0.2%)",
-          "weekly_forecasts": {
-            "W4": {
-              "target": 231000,
-              "current": 495,
-              "additional": 0,
-              "expected": 495
-            },
-            "W38": {
-              "target": 231000,
-              "current": 495,
-              "additional": 230505,
-              "expected": 495,
-              "note": "실적 $495 (달성율 0.2%)"
-            },
-            "W39": {
-              "target": 231000,
-              "current": 495,
-              "additional": 230505,
-              "expected": 495,
-              "note": "실적 $495 (달성율 0.2%)"
-            }
-          },
-          "country": "PH"
-        }
-      ],
-      "issues": [
-        {
-          "id": "iss-kwt-1",
-          "title": "필리핀 지사 9월 매출 순항: $225,708 달성 (목표 $300K 달성 확실시)",
-          "category": "SALES",
-          "priority": "HIGH",
-          "status": "COMPLETED",
-          "content": "ATP, CYPRESS 등 $143.25K(TR $89.66K, CT $34.91K, V&P&P $18.68K), SSPC $82.46K(Forming Tray $81.79K, Blister $0.68K). 9월 마감 300K 목표 초과 달성 가시권.",
-          "action_plan": "월말 잔여 수주 출하 스케줄 및 인보이스 발행 실시간 점검",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-kwt-2",
-          "title": "TongHsing 向 캐리어 테이프 KS-2416-797, KS-3216-131 개발 진행",
-          "category": "PROJECT",
-          "priority": "HIGH",
-          "status": "IN_PROGRESS",
-          "content": "TongHsing 신규 고객사 캐리어 테이프 2개 모델 금형 및 테이프 샘플 개발 진행 중(26'09).",
-          "action_plan": "샘플 제작 일정 및 1차 측정 성적서(FAI) 승인 추진",
-          "created_at": "2026-09-17"
-        },
-        {
-          "id": "iss-kwt-3",
-          "title": "일본 지역 신규 아이템 판매 개시 (ATJ, TOMOE)",
-          "category": "MARKET",
-          "priority": "MEDIUM",
-          "status": "COMPLETED",
-          "content": "ATJ 향 32, 44MM P-BAND 첫 판매 완료(26.07), TOMOE 향 KS-880910(TR354759) 첫 판매 성공(26.09).",
-          "action_plan": "초도 물량 안착 확인 및 정기 반복 오더화 추진",
-          "created_at": "2026-09-17"
-        }
-      ],
-      "samples": [
-        {
-          "id": "smp-kwt-1",
-          "part_no": "KS-881800",
-          "customer": "TI-PH (PH)",
-          "spec": "MPPO Tray (OPEN TOOL)",
-          "qty": 100,
-          "status": "IN_PROGRESS",
-          "due_date": "2026-09-25",
-          "note": "TI-PH 평가용 샘플 진행"
-        },
-        {
-          "id": "smp-kwt-2",
-          "part_no": "KS-881570",
-          "customer": "NXP (JP)",
-          "spec": "MPPO Tray (CLOSE TOOL)",
-          "qty": 50,
-          "status": "IN_PROGRESS",
-          "due_date": "2026-09-28",
-          "note": "NXP JP 평가 샘플"
-        },
-        {
-          "id": "smp-kwt-3",
-          "part_no": "KAH7-TA 093500",
-          "customer": "AMS (PH)",
-          "spec": "COVER TAPE (OPEN TOOL)",
-          "qty": 5,
-          "status": "OPEN",
-          "due_date": "2026-10-02",
-          "note": "AMS PH 커버테이프 샘플"
-        }
-      ],
-      "projects": [
-        {
-          "id": "prj_kwt_th_1",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "KS-871591",
-          "tool_type": "Close",
-          "po_no": "KSY250714-01",
-          "ship_date": "2025-09-17",
-          "status": "2025-11-14 승인",
-          "remarks": "TH P/N: DSMC-TXRX25-047 | PKG: LGA 8X8 | Material: MPPO BK | Mold: O"
-        },
-        {
-          "id": "prj_kwt_th_2",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "DSSP-V3RX25-028",
-          "tool_type": "Hold",
-          "po_no": "KSY-250806-01",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: DSSP-V3RX25-028 | PKG: BGA 5.559MM X 5.602MM | Material: MPPO BK | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_3",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "TF Tray",
-          "pn": "KS-M8376",
-          "tool_type": "In-Progress",
-          "po_no": "KSY250811-02",
-          "ship_date": "-",
-          "status": "진행중",
-          "remarks": "TH P/N: DSSP KURS25 082 | PKG: - | Material: - | Mold: O"
-        },
-        {
-          "id": "prj_kwt_th_4",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "PS Carrier",
-          "pn": "KS-1612-817",
-          "tool_type": "Hold",
-          "po_no": "KSY250901-01",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 6.786MM X 6.84MM | Material: - | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_5",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "PS Carrier",
-          "pn": "KS-1612-818",
-          "tool_type": "Hold",
-          "po_no": "KSY250901-01",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 5.559MM X 5.602MM | Material: - | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_6",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "TF Tray",
-          "pn": "KS-M8385",
-          "tool_type": "Hold",
-          "po_no": "KSZ260304-01",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: FMGM Blister Bottom PP C/B | Material: - | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_7",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "TF Tray",
-          "pn": "KS-M8385",
-          "tool_type": "Hold",
-          "po_no": "KSZ260304-01",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: FMGM Blister Bottom PS C/B | Material: - | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_8",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "TF Tray",
-          "pn": "KS-M8386",
-          "tool_type": "Hold",
-          "po_no": "KSZ260304-01",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: FMGM Blister Cover PP C/B | Material: - | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_9",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "TF Tray",
-          "pn": "KS-M8386",
-          "tool_type": "Hold",
-          "po_no": "KSZ260304-01",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: FMGM Blister Cover PS C/B | Material: - | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_10",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "KS-1612-845",
-          "tool_type": "Close",
-          "po_no": "KSZ260527-04",
-          "ship_date": "2026-07-13 승인",
-          "status": "2026-07-13 승인",
-          "remarks": "TH P/N: TBA | PKG: 7MM X 7MM X 2.56MM | Material: - | Mold: O"
-        },
-        {
-          "id": "prj_kwt_th_11",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "KS-2416-792",
-          "tool_type": "Close",
-          "po_no": "KSZ260527-03",
-          "ship_date": "07월 10일",
-          "status": "2026-06-18 승인",
-          "remarks": "TH P/N: TBA | PKG: 10.019MM X 6.019MM | Material: - | Mold: O"
-        },
-        {
-          "id": "prj_kwt_th_12",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "KS-2412-266",
-          "tool_type": "Close",
-          "po_no": "KSZ260527-05",
-          "ship_date": "07월 10일",
-          "status": "2026-06-18 승인",
-          "remarks": "TH P/N: TBA | PKG: 8MM X 10MM X 1MM | Material: - | Mold: O"
-        },
-        {
-          "id": "prj_kwt_th_13",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "TBA (6.739MM X 6.793MM)",
-          "tool_type": "Hold",
-          "po_no": "KSZ260608-04",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 6.739MM X 6.793MM | Material: MPPO BK | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_14",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "TBA (5.559MM X 5.602MM)",
-          "tool_type": "Hold",
-          "po_no": "KSZ260608-03",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 5.559MM X 5.602MM | Material: MPPO BK | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_15",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "TBA (10.019MM X 6.019MM)",
-          "tool_type": "Hold",
-          "po_no": "KSZ260608-02",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 10.019MM X 6.019MM | Material: MPPO BK | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_16",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "KS-881817",
-          "tool_type": "Hold",
-          "po_no": "KSZ260707-05",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 7X7X2.65MM | Material: MPPO BK | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_17",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "IC Tray",
-          "pn": "KS-871667",
-          "tool_type": "Hold",
-          "po_no": "KSZ260707-06",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 8MM X 10 MM | Material: MPPO BK | Mold: X"
-        },
-        {
-          "id": "prj_kwt_th_18",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "PS Carrier",
-          "pn": "KS-2416-797",
-          "tool_type": "Close",
-          "po_no": "KSZ260814-02",
-          "ship_date": "09월 17일",
-          "status": "2026-09-18 승인",
-          "remarks": "TH P/N: TBA | PKG: 12MM X 12MM X 1.8MM | Material: - | Mold: O"
-        },
-        {
-          "id": "prj_kwt_th_19",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "PS Carrier",
-          "pn": "KS-3216-131",
-          "tool_type": "Close",
-          "po_no": "KSZ260814-02",
-          "ship_date": "09월 17일",
-          "status": "2026-09-18 승인",
-          "remarks": "TH P/N: TBA | PKG: 9.8MM X 17.2MM X 1.7MM | Material: - | Mold: O"
-        },
-        {
-          "id": "prj_kwt_th_20",
-          "customer": "TONGHSING",
-          "country": "PH",
-          "item": "PS Carrier",
-          "pn": "KS-1612-292",
-          "tool_type": "New",
-          "po_no": "KSZ261013-03",
-          "ship_date": "-",
-          "status": "검토대기",
-          "remarks": "TH P/N: TBA | PKG: 8MM X 8MM X 1.4MM | Material: - | Mold: TBA"
-        },
-        {
-          "id": "prj_1792396431489",
-          "customer": "AMS ASIA",
-          "country": "PH",
-          "item": "Cover",
-          "pn": "KAH7_TA 093500",
-          "tool_type": "Open",
-          "po_no": "",
-          "ship_date": "10월 21일",
-          "status": "Open"
-        }
-      ],
-      "quality_issues": []
-    }
-  ],
-  "current_system_week": "2026-09-W4",
-  "active_period": {
-    "month": "2026-09",
-    "week": "W4"
-  },
-  "history_archives": {
-    "2026-08": {
-      "title": "2026년 8월 해외영업부 월간보고서 (마감 실적)",
-      "month_label": "2026년 8월 마감",
-      "kpi": {
-        "target": 2050000,
-        "current": 1692000,
-        "expected": 1692000,
-        "rate": 82.5
-      },
-      "members": [
-        {
-          "id": "hjh",
-          "name": "한준희 책임",
-          "role": "책임",
-          "regions": "미국 (USA)",
-          "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
-          "sales": [
-            {
-              "site": "Skyworks US - Hybrid PC",
-              "target": 400000,
-              "current": 380000,
-              "additional": 0,
-              "expected": 380000,
-              "note": "8월 최종 마감 공급 완료"
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_hjh_aug_1",
-              "topic": "미국 사이트 C/T Hybrid NPI 초기 승인 통과",
-              "tag": "완료",
-              "bullets": [
-                "1단계 모델 20종 승인 완료 후 선적 진행"
-              ]
-            }
-          ],
-          "samples": [
-            {
-              "id": "smp_hjh_aug_1",
-              "customer": "Skyworks US",
-              "pn": "KS-0804-1650",
-              "item": "C/T Hybrid",
-              "qty": 5,
-              "status": "CLOSE",
-              "date": "2026-08-15",
-              "note": "승인 완료"
-            }
-          ]
-        },
-        {
-          "id": "ksm",
-          "name": "김샘물 선임",
-          "role": "선임",
-          "regions": "말레이시아 (Malaysia)",
-          "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
-          "sales": [
-            {
-              "site": "Broadcom / Inari MY",
-              "target": 390000,
-              "current": 375000,
-              "additional": 0,
-              "expected": 375000,
-              "note": "LPAO 테이프 공급 완료"
-            },
-            {
-              "site": "Infineon MY",
-              "target": 170000,
-              "current": 142000,
-              "additional": 0,
-              "expected": 142000,
-              "note": "SAP 전환 전 최종 선적"
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_ksm_aug_1",
-              "topic": "Inari 금형 이전 1차 협의",
-              "tag": "완료",
-              "bullets": [
-                "금형 이관 일정 수립 및 고객사 확인 완료"
-              ]
-            }
-          ],
-          "samples": []
-        },
-        {
-          "id": "lgj",
-          "name": "이가진 선임",
-          "role": "선임",
-          "regions": "대만 (Taiwan)",
-          "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
-          "sales": [
-            {
-              "site": "Amkor Taiwan",
-              "target": 260000,
-              "current": 248000,
-              "additional": 0,
-              "expected": 248000,
-              "note": "WLCSP Tray 공급"
-            },
-            {
-              "site": "SPIL Taiwan",
-              "target": 150000,
-              "current": 125000,
-              "additional": 0,
-              "expected": 125000,
-              "note": "BGA Tray 납품 완료"
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_lgj_aug_1",
-              "topic": "SPIL 8월 정기 납품 완료",
-              "tag": "완료",
-              "bullets": [
-                "품질 이슈 없이 전량 인수 완료"
-              ]
-            }
-          ],
-          "samples": []
-        },
-        {
-          "id": "lsc",
-          "name": "이상철 선임",
-          "role": "선임",
-          "regions": "싱가포르 & 태국 (Singapore & Thailand)",
-          "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
-          "sales": [
-            {
-              "site": "Skyworks SG",
-              "target": 210000,
-              "current": 186000,
-              "additional": 0,
-              "expected": 186000,
-              "note": "싱가포르 직수출 마감"
-            },
-            {
-              "site": "UTAC TH",
-              "target": 180000,
-              "current": 148000,
-              "additional": 0,
-              "expected": 148000,
-              "note": "태국 공장 납품"
-            }
-          ],
-          "issues": [],
-          "samples": []
-        },
-        {
-          "id": "kwt",
-          "name": "김완태 사원",
-          "role": "사원",
-          "regions": "일본 & 필리핀 (Japan & Philippines)",
-          "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
-          "sales": [
-            {
-              "site": "Amkor PH",
-              "target": 110000,
-              "current": 88000,
-              "additional": 0,
-              "expected": 88000,
-              "note": "필리핀 8월 마감 실적"
-            }
-          ],
-          "issues": [],
-          "samples": []
-        }
-      ]
-    },
-    "2026-07": {
-      "title": "2026년 7월 해외영업부 월간보고서 (마감 실적)",
-      "month_label": "2026년 7월 마감",
-      "kpi": {
-        "target": 1900000,
-        "current": 1580000,
-        "expected": 1580000,
-        "rate": 83.2
-      },
-      "members": [
-        {
-          "id": "hjh",
-          "name": "한준희 책임",
-          "role": "책임",
-          "regions": "미국 (USA)",
-          "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
-          "sales": [
-            {
-              "site": "Skyworks US - Hybrid PC",
-              "target": 380000,
-              "current": 350000,
-              "additional": 0,
-              "expected": 350000,
-              "note": "7월 공급 완료"
-            }
-          ],
-          "issues": [],
-          "samples": []
-        },
-        {
-          "id": "ksm",
-          "name": "김샘물 선임",
-          "role": "선임",
-          "regions": "말레이시아 (Malaysia)",
-          "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
-          "sales": [
-            {
-              "site": "Broadcom / Inari MY",
-              "target": 360000,
-              "current": 340000,
-              "additional": 0,
-              "expected": 340000,
-              "note": "7월 공급 완료"
-            }
-          ],
-          "issues": [],
-          "samples": []
-        },
-        {
-          "id": "lgj",
-          "name": "이가진 선임",
-          "role": "선임",
-          "regions": "대만 (Taiwan)",
-          "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
-          "sales": [
-            {
-              "site": "Amkor Taiwan",
-              "target": 250000,
-              "current": 230000,
-              "additional": 0,
-              "expected": 230000,
-              "note": "7월 마감"
-            }
-          ],
-          "issues": [],
-          "samples": []
-        },
-        {
-          "id": "lsc",
-          "name": "이상철 선임",
-          "role": "선임",
-          "regions": "싱가포르 & 태국 (Singapore & Thailand)",
-          "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
-          "sales": [
-            {
-              "site": "Skyworks SG",
-              "target": 200000,
-              "current": 175000,
-              "additional": 0,
-              "expected": 175000,
-              "note": "7월 마감"
-            }
-          ],
-          "issues": [],
-          "samples": []
-        },
-        {
-          "id": "kwt",
-          "name": "김완태 사원",
-          "role": "사원",
-          "regions": "일본 & 필리핀 (Japan & Philippines)",
-          "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
-          "sales": [
-            {
-              "site": "Amkor PH",
-              "target": 100000,
-              "current": 82000,
-              "additional": 0,
-              "expected": 82000,
-              "note": "7월 마감"
-            }
-          ],
-          "issues": [],
-          "samples": []
-        }
-      ]
-    },
-    "2026-09-W3": {
-      "title": "2026년 9월 3주차 (0914-0918) 해외영업부 주간보고서",
-      "week_label": "9월 3주차 (0914-0918)",
-      "kpi": {
-        "target": 2404602,
-        "current": 788600,
-        "expected": 1836000,
-        "rate": 76.4
-      },
-      "members": [
-        {
-          "id": "hjh",
-          "name": "한준희 책임",
-          "role": "책임",
-          "short_name": "한준희",
-          "regions": "미국 (USA)",
-          "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
-          "sales": [
-            {
-              "site": "Skyworks (미국 US) - NPI C/T Hybrid",
-              "target": 450000,
-              "current": 154200,
-              "additional": 295800,
-              "expected": 450000,
-              "note": "NPI 34종 완료 후 미국 양산 공급",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 450000,
-                  "current": 61680,
-                  "additional": 388320,
-                  "expected": 450000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 450000,
-                  "current": 115650,
-                  "additional": 334350,
-                  "expected": 450000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 450000,
-                  "current": 154200,
-                  "additional": 295800,
-                  "expected": 450000,
-                  "note": "NPI 34종 완료 후 미국 양산 공급"
-                },
-                "W4": {
-                  "target": 450000,
-                  "current": 154200,
-                  "additional": 295800,
-                  "expected": 450000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_hjh_1",
-              "topic": "Skyworks US C/T Hybrid PC NPI Project",
-              "tag": "NPI 전환",
-              "bullets": [
-                "추가 Filter Conversion 43종 중 34모델 NPI 진행 완료, 미국 공장 상황 검토",
-                "WLCSP Project: 9종 진행 중 (2종 FAI 샘플 평가 중)"
-              ]
-            },
-            {
-              "id": "iss_hjh_2",
-              "topic": "2DID 신규 설비 글로벌 셋업 및 공장 배치",
-              "tag": "설비 셋업",
-              "bullets": [
-                "필리핀 공장 2대 셋업 완료, 한국 공장 3대 도입 완료 (총 7대 가동)",
-                "12월 초 2대 추가 이동 계획 수립"
-              ]
-            },
-            {
-              "id": "iss_hjh_3",
-              "topic": "미국 고객사 차세대 고내열 REEL 개발 완료",
-              "tag": "양산 대기",
-              "bullets": [
-                "REEL 개발 완료에 따라 Hybrid PC 추가 접수 예정 (32종 Filter PJT 접수 완료)"
-              ]
-            }
-          ],
-          "samples": [
-            {
-              "id": "smp_hjh_1",
-              "customer": "Skyworks US",
-              "pn": "KS-0804-1661-PC",
-              "item": "C/T Hybrid",
-              "qty": 2,
-              "status": "CLOSE",
-              "date": "2026-09-08",
-              "note": "고객 승인 대기"
-            },
-            {
-              "id": "smp_hjh_2",
-              "customer": "Skyworks US",
-              "pn": "KS-0804-1662-PC",
-              "item": "C/T Hybrid",
-              "qty": 2,
-              "status": "OPEN",
-              "date": "2026-09-08",
-              "note": "고객 승인 대기"
-            },
-            {
-              "id": "smp_hjh_3",
-              "customer": "Skyworks US",
-              "pn": "KS-1208-1895",
-              "item": "C/T Reel",
-              "qty": 10,
-              "status": "OPEN",
-              "date": "2026-09-02",
-              "note": "샘플 출하 완료"
-            },
-            {
-              "id": "smp_hjh_4",
-              "customer": "Skyworks US",
-              "pn": "KS-0804-1680-PC",
-              "item": "C/T 2DID",
-              "qty": 2,
-              "status": "OPEN",
-              "date": "2026-09-09",
-              "note": "라인 평가 중"
-            }
-          ]
-        },
-        {
-          "id": "ksm",
-          "name": "김샘물 선임",
-          "role": "선임",
-          "short_name": "김샘물",
-          "regions": "말레이시아 (Malaysia)",
-          "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
-          "sales": [
-            {
-              "site": "Broadcom / Inari (말레이시아 Penang)",
-              "target": 420000,
-              "current": 88400,
-              "additional": 331600,
-              "expected": 420000,
-              "note": "LPAO 단가 .6 협의 완료",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 420000,
-                  "current": 35360,
-                  "additional": 384640,
-                  "expected": 420000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 420000,
-                  "current": 66300,
-                  "additional": 353700,
-                  "expected": 420000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 420000,
-                  "current": 88400,
-                  "additional": 331600,
-                  "expected": 420000,
-                  "note": "LPAO 단가 .6 협의 완료"
-                },
-                "W4": {
-                  "target": 420000,
-                  "current": 88400,
-                  "additional": 331600,
-                  "expected": 420000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            },
-            {
-              "site": "Infineon (말레이시아 Melaka/Kulim)",
-              "target": 180000,
-              "current": 52900,
-              "additional": 127100,
-              "expected": 180000,
-              "note": "신규 SAP 전환 후 정상화",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 180000,
-                  "current": 21160,
-                  "additional": 158840,
-                  "expected": 180000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 180000,
-                  "current": 39675,
-                  "additional": 140325,
-                  "expected": 180000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 180000,
-                  "current": 52900,
-                  "additional": 127100,
-                  "expected": 180000,
-                  "note": "신규 SAP 전환 후 정상화"
-                },
-                "W4": {
-                  "target": 180000,
-                  "current": 52900,
-                  "additional": 127100,
-                  "expected": 180000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            },
-            {
-              "site": "Unisem / ASE (말레이시아)",
-              "target": 150000,
-              "current": 41200,
-              "additional": 88800,
-              "expected": 130000,
-              "note": "C/T 신규 테이프 승인",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 150000,
-                  "current": 16480,
-                  "additional": 133520,
-                  "expected": 150000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 150000,
-                  "current": 30900,
-                  "additional": 119100,
-                  "expected": 150000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 150000,
-                  "current": 41200,
-                  "additional": 88800,
-                  "expected": 130000,
-                  "note": "C/T 신규 테이프 승인"
-                },
-                "W4": {
-                  "target": 150000,
-                  "current": 41200,
-                  "additional": 88800,
-                  "expected": 130000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_ksm_1",
-              "topic": "Broadcom / Inari MY Buy-Off 및 금형 증작 대응",
-              "tag": "금형 증작",
-              "bullets": [
-                "KS-881490-2 금형 증작 완료 및 베트남 이전 완료 (단가 .6 조정)",
-                "Inari MY 측에서 LPAO 품목 Particle test 요청에 따른 공정 검증"
-              ]
-            },
-            {
-              "id": "iss_ksm_2",
-              "topic": "Infineon 말레이시아 신규 SAP 체제 전환 및 원재료 수급",
-              "tag": "SAP 전환",
-              "bullets": [
-                "기존 재고 소진 후 new PO/PN 적용 체제로 전환 완료",
-                "Denka PS Sheet 수급 불균형에 따른 대체 원재료 검토 병행"
-              ]
-            },
-            {
-              "id": "iss_ksm_3",
-              "topic": "Unisem 말레이시아 C/T 신규 테이프 승인",
-              "tag": "샘플 평가",
-              "bullets": [
-                "KS-1612-692 C/T 515K 발송분 현지 품질 승인 대기",
-                "10월부터 말레이시아 라인 정기 발주 전환 협의"
-              ]
-            }
-          ],
-          "samples": [
-            {
-              "id": "smp_ksm_1",
-              "customer": "Broadcom (Inari)",
-              "pn": "KS-871382-2",
-              "item": "TRAY MPPO",
-              "qty": 50,
-              "status": "OPEN",
-              "date": "2026-08-24",
-              "note": "9월말 QUAL 제출 예정"
-            },
-            {
-              "id": "smp_ksm_2",
-              "customer": "UNISEM MY",
-              "pn": "KS-1612-692",
-              "item": "C/T",
-              "qty": 515,
-              "status": "OPEN",
-              "date": "2026-09-05",
-              "note": "고객 승인 대기"
-            },
-            {
-              "id": "smp_ksm_3",
-              "customer": "ASE-MY",
-              "pn": "PBCK13724",
-              "item": "REEL",
-              "qty": 20,
-              "status": "CLOSE",
-              "date": "2026-08-15",
-              "note": "승인 완료"
-            }
-          ]
-        },
-        {
-          "id": "lgj",
-          "name": "이가진 선임",
-          "role": "선임",
-          "short_name": "이가진",
-          "regions": "대만 (Taiwan)",
-          "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
-          "sales": [
-            {
-              "site": "Amkor / SPIL (대만 Hsinchu/Taichung)",
-              "target": 550000,
-              "current": 195000,
-              "additional": 355000,
-              "expected": 550000,
-              "note": "9/21 TnR 단가 인상 PO 반영",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 550000,
-                  "current": 78000,
-                  "additional": 472000,
-                  "expected": 550000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 550000,
-                  "current": 146250,
-                  "additional": 403750,
-                  "expected": 550000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 550000,
-                  "current": 195000,
-                  "additional": 355000,
-                  "expected": 550000,
-                  "note": "9/21 TnR 단가 인상 PO 반영"
-                },
-                "W4": {
-                  "target": 550000,
-                  "current": 195000,
-                  "additional": 355000,
-                  "expected": 550000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            },
-            {
-              "site": "KYEC / Sigurd (대만)",
-              "target": 150000,
-              "current": 53000,
-              "additional": 97000,
-              "expected": 150000,
-              "note": "정기 오더 및 C/T 300M 규격 승인",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 150000,
-                  "current": 21200,
-                  "additional": 128800,
-                  "expected": 150000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 150000,
-                  "current": 39750,
-                  "additional": 110250,
-                  "expected": 150000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 150000,
-                  "current": 53000,
-                  "additional": 97000,
-                  "expected": 150000,
-                  "note": "정기 오더 및 C/T 300M 규격 승인"
-                },
-                "W4": {
-                  "target": 150000,
-                  "current": 53000,
-                  "additional": 97000,
-                  "expected": 150000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_lgj_1",
-              "topic": "대만 ASECL / SPIL PCN 이슈 및 TnR 단가 인상",
-              "tag": "PCN 검토",
-              "bullets": [
-                "SPIL GIS 측의 ASECL 압박으로 PCN 진행 중단 및 샘플 규격(Warpage OOS) 재점검",
-                "9/21부터 SPIL, ASE 대상 TnR 제품군 단가 인상 PO 적용"
-              ]
-            },
-            {
-              "id": "iss_lgj_2",
-              "topic": "Amkor TW 신규 MPPO LP 트레이 금형 제작",
-              "tag": "금형 개발",
-              "bullets": [
-                "Amkor TW: KS-890280 (MPPO LP) 신규 트레이 금형 제작 진행",
-                "SPIL TW: C/T 300M 규격(KS-2416-786, KS-2420-188, KS-2412-664) 신규 승인 진행",
-                "KYEC / Sigurd: KS-871587, KS-880546 정기 오더 관리"
-              ]
-            }
-          ],
-          "samples": [
-            {
-              "id": "smp_lgj_1",
-              "customer": "Amkor TW",
-              "pn": "KS-890280",
-              "item": "TRAY MPPO LP",
-              "qty": 50,
-              "status": "OPEN",
-              "date": "2026-09-10",
-              "note": "샘플 제출 완료"
-            },
-            {
-              "id": "smp_lgj_2",
-              "customer": "SPIL TW",
-              "pn": "KS-2416-786",
-              "item": "C/T 300M",
-              "qty": 10,
-              "status": "OPEN",
-              "date": "2026-09-05",
-              "note": "고객 승인 대기"
-            },
-            {
-              "id": "smp_lgj_3",
-              "customer": "KYEC",
-              "pn": "KS-871587",
-              "item": "TRAY 125/150",
-              "qty": 50,
-              "status": "OPEN",
-              "date": "2026-09-04",
-              "note": "진행중"
-            }
-          ]
-        },
-        {
-          "id": "lsc",
-          "name": "이상철 선임",
-          "role": "선임",
-          "short_name": "이상철",
-          "regions": "싱가포르 & 태국 (Singapore & Thailand)",
-          "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
-          "sales": [
-            {
-              "site": "Skyworks (싱가포르 SG)",
-              "target": 200000,
-              "current": 75000,
-              "additional": 125000,
-              "expected": 200000,
-              "note": "싱가포르 법인 필터 공정 NPI 연계",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 200000,
-                  "current": 30000,
-                  "additional": 170000,
-                  "expected": 200000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 200000,
-                  "current": 56250,
-                  "additional": 143750,
-                  "expected": 200000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 200000,
-                  "current": 75000,
-                  "additional": 125000,
-                  "expected": 200000,
-                  "note": "싱가포르 법인 필터 공정 NPI 연계"
-                },
-                "W4": {
-                  "target": 200000,
-                  "current": 75000,
-                  "additional": 125000,
-                  "expected": 200000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            },
-            {
-              "site": "UTAC / Hanwha NxMD (태국)",
-              "target": 120000,
-              "current": 36000,
-              "additional": 84000,
-              "expected": 120000,
-              "note": "신규 Tray 금형 3벌 양산 오더 진행",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 120000,
-                  "current": 14400,
-                  "additional": 105600,
-                  "expected": 120000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 120000,
-                  "current": 27000,
-                  "additional": 93000,
-                  "expected": 120000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 120000,
-                  "current": 36000,
-                  "additional": 84000,
-                  "expected": 120000,
-                  "note": "신규 Tray 금형 3벌 양산 오더 진행"
-                },
-                "W4": {
-                  "target": 120000,
-                  "current": 36000,
-                  "additional": 84000,
-                  "expected": 120000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_lsc_1",
-              "topic": "싱가포르 Skyworks SG 필터 공정 NPI 검토",
-              "tag": "NPI 전환",
-              "bullets": [
-                "싱가포르 라인 신규 필터 전환 수주 협의 및 일정 조율",
-                "현지 C/T 테이프 릴 샘플 공급 및 테스트 진행"
-              ]
-            },
-            {
-              "id": "iss_lsc_2",
-              "topic": "태국 Hanwha NxMD 신규 금형 3벌 제작 완료",
-              "tag": "금형 제작",
-              "bullets": [
-                "신규 Tray 금형 3벌 혜주에서 제작 완료 (KS-871649, KS-871650, KS-871651)",
-                "내부 Test용 월 1K 사용 예상에 따른 추가 양산 협의"
-              ]
-            },
-            {
-              "id": "iss_lsc_3",
-              "topic": "태국 UTAC-TH 정기 납기 관리 및 단가 협상",
-              "tag": "정기 납품",
-              "bullets": [
-                "UTAC-TH 정기 Tray 납품 건 품질 승인 후 차기 오더 확보"
-              ]
-            }
-          ],
-          "samples": [
-            {
-              "id": "smp_lsc_1",
-              "customer": "Skyworks SG",
-              "pn": "KS-0804-1690-SG",
-              "item": "C/T Hybrid",
-              "qty": 5,
-              "status": "OPEN",
-              "date": "2026-09-12",
-              "note": "SG 현지 평가 중"
-            },
-            {
-              "id": "smp_lsc_2",
-              "customer": "UTAC-TH",
-              "pn": "KS-870752",
-              "item": "TRAY",
-              "qty": 50,
-              "status": "OPEN",
-              "date": "2026-09-05",
-              "note": "승인 대기"
-            },
-            {
-              "id": "smp_lsc_3",
-              "customer": "Hanwha NxMD",
-              "pn": "KS-871649",
-              "item": "TRAY NxMD",
-              "qty": 20,
-              "status": "CLOSE",
-              "date": "2026-09-01",
-              "note": "금형 제작 완료"
-            }
-          ]
-        },
-        {
-          "id": "kwt",
-          "name": "김완태 사원",
-          "role": "사원",
-          "short_name": "김완태",
-          "regions": "일본 & 필리핀 (Japan & Philippines)",
-          "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
-          "sales": [
-            {
-              "site": "Amkor / ATP / SSPC (필리핀 Clark/Laguna)",
-              "target": 280000,
-              "current": 114800,
-              "additional": 165200,
-              "expected": 280000,
-              "note": "ATP, SSPC 주간 납품 목표 달성 순항",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 280000,
-                  "current": 45920,
-                  "additional": 234080,
-                  "expected": 280000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 280000,
-                  "current": 86100,
-                  "additional": 193900,
-                  "expected": 280000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 280000,
-                  "current": 114800,
-                  "additional": 165200,
-                  "expected": 280000,
-                  "note": "ATP, SSPC 주간 납품 목표 달성 순항"
-                },
-                "W4": {
-                  "target": 280000,
-                  "current": 114800,
-                  "additional": 165200,
-                  "expected": 280000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            },
-            {
-              "site": "일본 고객사 (Sony, Renesas, Kaga 등)",
-              "target": 120000,
-              "current": 38500,
-              "additional": 71500,
-              "expected": 110000,
-              "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가",
-              "weekly_forecasts": {
-                "W1": {
-                  "target": 120000,
-                  "current": 15400,
-                  "additional": 104600,
-                  "expected": 120000,
-                  "note": "1주차 초기 예상치"
-                },
-                "W2": {
-                  "target": 120000,
-                  "current": 28875,
-                  "additional": 91125,
-                  "expected": 120000,
-                  "note": "2주차 실적 집계 및 고객사 PO 협의"
-                },
-                "W3": {
-                  "target": 120000,
-                  "current": 38500,
-                  "additional": 71500,
-                  "expected": 110000,
-                  "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가"
-                },
-                "W4": {
-                  "target": 120000,
-                  "current": 38500,
-                  "additional": 71500,
-                  "expected": 110000,
-                  "note": "4주차 마감 목표 달성 전망"
-                }
-              }
-            }
-          ],
-          "issues": [
-            {
-              "id": "iss_kwt_1",
-              "topic": "필리핀 법인 신규 2DID 설비 셋업 및 이전",
-              "tag": "설비 셋업",
-              "bullets": [
-                "필리핀 법인 2DID 신규 설비 2대 가동 안정화",
-                "12월 초 한국 2대 추가 필리핀 이동 계획 확정"
-              ]
-            },
-            {
-              "id": "iss_kwt_2",
-              "topic": "필리핀 Amkor/ATP 대상 KS-870849 신규 IC Tray 도면 배포",
-              "tag": "도면 배포",
-              "bullets": [
-                "KS-870849(00) 최신 도면 배포 및 금형 제작 품질 승인 완료",
-                "고객사 FAI 샘플 평가 및 양산 오더 준비"
-              ]
-            },
-            {
-              "id": "iss_kwt_3",
-              "topic": "일본 고객사 친환경 ESD 신소재 Tray 제안",
-              "tag": "신규 제안",
-              "bullets": [
-                "소니 및 르네사스 재팬 대상 리사이클 원료 배합 트레이 기술 자료 송부",
-                "10월 1차 평가용 시제품 제작 협의"
-              ]
-            }
-          ],
-          "samples": [
-            {
-              "id": "smp_kwt_1",
-              "customer": "Amkor PH",
-              "pn": "KS-870849",
-              "item": "IC TRAY",
-              "qty": 50,
-              "status": "OPEN",
-              "date": "2026-09-15",
-              "note": "도면 배포 및 FAI 샘플 준비"
-            },
-            {
-              "id": "smp_kwt_2",
-              "customer": "ATP PH",
-              "pn": "KS-870632",
-              "item": "TRAY",
-              "qty": 100,
-              "status": "CLOSE",
-              "date": "2026-09-10",
-              "note": "양산 승인 완료"
-            },
-            {
-              "id": "smp_kwt_3",
-              "customer": "Sony JP",
-              "pn": "KS-880921-ECO",
-              "item": "ESD TRAY",
-              "qty": 30,
-              "status": "OPEN",
-              "date": "2026-09-14",
-              "note": "신소재 시제품 평가"
-            }
-          ]
-        }
-      ]
-    }
-  },
   "revisions": [
     {
-      "id": "rev-20260925-181500",
+      "action": "2025 실매출 및 2026 경영목표 데이터화 연동",
+      "summary": "2026목표 시트 기준 2025년 국가별 실매출(.27M, 9월 ,802,301) 및 2026년 신소재포함 달별 경영목표(.77M, 9월 ,404,602) 완벽 데이터화 및 주간보고서 연동 완료",
       "timestamp": "2026-09-25 18:15:00",
       "user": "시스템 (자동 최신화)",
-      "action": "2025 실매출 및 2026 경영목표 데이터화 연동",
-      "summary": "2026목표 시트 기준 2025년 국가별 실매출(.27M, 9월 ,802,301) 및 2026년 신소재포함 달별 경영목표(.77M, 9월 ,404,602) 완벽 데이터화 및 주간보고서 연동 완료"
+      "id": "rev-20260925-181500"
     },
     {
-      "id": "rev-20260917-193849",
-      "timestamp": "2026-09-17 19:38:49",
       "user": "시스템 (자동 최신화)",
+      "summary": "2026년 해외영업 9월 예상 매출(C18 경영목표 $2,404,602, 총예상 $1,863,495), 주간보고서 PPT 9월 4주차, 해영 샘플 리스트 0917 기반 최신 동기화 완료",
+      "timestamp": "2026-09-17 19:38:49",
       "action": "최신 데이터 갱신 (9월 4주차)",
-      "summary": "2026년 해외영업 9월 예상 매출(C18 경영목표 $2,404,602, 총예상 $1,863,495), 주간보고서 PPT 9월 4주차, 해영 샘플 리스트 0917 기반 최신 동기화 완료"
+      "id": "rev-20260917-193849"
     }
   ],
   "overseas_targets_2026": {
     "source_file": "2026년 해외영업 9월 예상 매출 0923 김샘물 김완태 이상철.xlsx",
     "sheet_name": "2026목표",
-    "extracted_at": "2026-09-25T18:00:00Z",
-    "summary": {
-      "target_2026_annual_total": 25766880,
-      "target_2026_sep_target": 2404602,
-      "actual_2025_annual_total": 29270041.35,
-      "actual_2025_sep_actual": 2802301.32,
-      "countries_count": 11
-    },
-    "management_targets_2026": {
-      "title": "2026년 해외영업 신소재포함 예상 매출 (달별 경영목표치)",
+    "actual_sales_2025": {
       "months": [
         1,
         2,
@@ -2284,40 +34,231 @@ window.LIVE_DB = {
         11,
         12
       ],
+      "title": "2025년 해외영업 국가별 실매출 및 총 매출",
+      "annual_total": 29270041.35,
       "by_country": {
-        "EU": {
+        "JP": {
+          "total": 302882.93,
           "months": {
-            "1": 11185,
-            "2": 4257,
-            "3": 10419,
-            "4": 7809,
-            "5": 31349,
-            "6": 28178,
-            "7": 104954,
-            "8": 44986,
-            "9": 16500,
-            "10": 29048,
-            "11": 28698,
-            "12": 28174
+            "1": 21372.09,
+            "2": 13386.56,
+            "3": 20937.94,
+            "4": 13722.13,
+            "5": 17430.04,
+            "6": 5958.23,
+            "7": 32379.91,
+            "8": 29274.55,
+            "9": 23289.9,
+            "10": 58608.2,
+            "11": 30943.54,
+            "12": 35579.84
+          }
+        },
+        "TH": {
+          "total": 472190.94,
+          "months": {
+            "1": 45815.88,
+            "2": 37566.9,
+            "3": 17659.95,
+            "4": 44034.4,
+            "5": 41820,
+            "6": 26980.44,
+            "7": 48798.23,
+            "8": 70177.94,
+            "9": 49581.43,
+            "10": 43936.9,
+            "11": 14156.57,
+            "12": 31662.3
+          }
+        },
+        "KR": {
+          "total": 1816927.24,
+          "months": {
+            "1": 9820.77,
+            "2": 508.08,
+            "3": 107408.59,
+            "4": 432932.09,
+            "5": 299790,
+            "6": 83888.47,
+            "7": 242201.6,
+            "8": 228469.39,
+            "9": 304440.85,
+            "10": 7126.2,
+            "11": 44275.16,
+            "12": 56066.04
+          }
+        },
+        "PH": {
+          "total": 2914824.86,
+          "months": {
+            "1": 212993.27,
+            "2": 261043.09,
+            "3": 278524.39,
+            "4": 215213.02,
+            "5": 203042.96,
+            "6": 239537.41,
+            "7": 195311.11,
+            "8": 184438.8,
+            "9": 296688.08,
+            "10": 254481.76,
+            "11": 249828.84,
+            "12": 323722.13
+          }
+        },
+        "VN": {
+          "total": 5766141.73,
+          "months": {
+            "1": 492446.7,
+            "2": 383462.84,
+            "3": 379059.08,
+            "4": 395417.66,
+            "5": 476947.43,
+            "6": 472622.22,
+            "7": 460035.3,
+            "8": 598111.46,
+            "9": 604474.04,
+            "10": 404023.97,
+            "11": 530698.53,
+            "12": 568842.5
+          }
+        },
+        "MY": {
+          "total": 2575851.67,
+          "months": {
+            "1": 253937.5,
+            "2": 228849.4,
+            "3": 213843.16,
+            "4": 130164.7,
+            "5": 146569.16,
+            "6": 182039.2,
+            "7": 258021.65,
+            "8": 229407.6,
+            "9": 311166.8,
+            "10": 191175.6,
+            "11": 264866.4,
+            "12": 165810.5
+          }
+        },
+        "TW": {
+          "months": {
+            "1": 680074.93,
+            "2": 648763.46,
+            "3": 808322.16,
+            "4": 726089.08,
+            "5": 799739.66,
+            "6": 732016.32,
+            "7": 651758.31,
+            "8": 688214.96,
+            "9": 637729.13,
+            "10": 609465.98,
+            "11": 816118.35,
+            "12": 636557.36
           },
-          "total": 345557
+          "total": 8434849.7
+        },
+        "EU": {
+          "total": 300419.55,
+          "months": {
+            "1": 10168.5,
+            "2": 3869.95,
+            "3": 9471.3,
+            "4": 7099.2,
+            "5": 28500,
+            "6": 25616,
+            "7": 95412,
+            "8": 40896.3,
+            "9": 11041.8,
+            "10": 22147.5,
+            "11": 42096,
+            "12": 4101
+          }
+        },
+        "SG": {
+          "total": 3426867.88,
+          "months": {
+            "1": 340804.66,
+            "2": 422285.68,
+            "3": 266231.24,
+            "4": 270601.54,
+            "5": 232757.07,
+            "6": 382240.72,
+            "7": 246541.39,
+            "8": 295215.11,
+            "9": 218720.26,
+            "10": 259238.96,
+            "11": 264771.18,
+            "12": 227460.07
+          }
+        },
+        "USA": {
+          "months": {
+            "1": 179430.75,
+            "2": 193092.8,
+            "3": 380586.11,
+            "4": 82517.12,
+            "5": 185458.87,
+            "6": 285605.38,
+            "7": 144289.76,
+            "8": 220302.3,
+            "9": 343479.03,
+            "10": 660380.37,
+            "11": 303011.62,
+            "12": 257312.79
+          },
+          "total": 3235466.9
         },
         "HK": {
+          "total": 23617.95,
           "months": {
-            "1": 4279,
-            "2": 3355,
-            "3": 1738,
-            "4": 252,
-            "5": 3657,
-            "6": 1430,
-            "7": 2040,
-            "8": 2453,
-            "9": 1100,
-            "10": 2272,
-            "11": 2244,
-            "12": 2206
-          },
-          "total": 27026
+            "1": 3890,
+            "2": 3050,
+            "3": 1580,
+            "4": 229.5,
+            "5": 3324.2,
+            "6": 1300,
+            "7": 1854.25,
+            "8": 2230,
+            "9": 1690,
+            "10": 0,
+            "11": 3820,
+            "12": 650
+          }
+        }
+      },
+      "monthly_total": {
+        "1": 2250755.05,
+        "2": 2195878.76,
+        "3": 2483623.92,
+        "4": 2318020.44,
+        "5": 2435379.39,
+        "6": 2437804.39,
+        "7": 2376603.51,
+        "8": 2586738.41,
+        "9": 2802301.32,
+        "10": 2510585.44,
+        "11": 2564586.19,
+        "12": 2307764.53
+      }
+    },
+    "management_targets_2026": {
+      "title": "2026년 해외영업 신소재포함 예상 매출 (달별 경영목표치)",
+      "by_country": {
+        "USA": {
+          "total": 2944801,
+          "months": {
+            "1": 197374,
+            "2": 212403,
+            "3": 430762,
+            "4": 102887,
+            "5": 204004,
+            "6": 314165,
+            "7": 159431,
+            "8": 242333,
+            "9": 363001,
+            "10": 242893,
+            "11": 239962,
+            "12": 235586
+          }
         },
         "JP": {
           "months": {
@@ -2336,7 +277,25 @@ window.LIVE_DB = {
           },
           "total": 255415
         },
+        "TH": {
+          "months": {
+            "1": 50398,
+            "2": 41324,
+            "3": 19426,
+            "4": 48438,
+            "5": 46002,
+            "6": 29679,
+            "7": 53677,
+            "8": 77195,
+            "9": 44001,
+            "10": 45886,
+            "11": 45332,
+            "12": 44504
+          },
+          "total": 545862
+        },
         "KR": {
+          "total": 2364404,
           "months": {
             "1": 10803,
             "2": 559,
@@ -2350,10 +309,10 @@ window.LIVE_DB = {
             "10": 198754,
             "11": 196356,
             "12": 192775
-          },
-          "total": 2364404
+          }
         },
         "MY": {
+          "total": 2858963,
           "months": {
             "1": 279331,
             "2": 251734,
@@ -2367,25 +326,41 @@ window.LIVE_DB = {
             "10": 240326,
             "11": 237427,
             "12": 233098
-          },
-          "total": 2858963
+          }
         },
-        "PH": {
+        "TW": {
+          "total": 9373032,
           "months": {
-            "1": 234293,
-            "2": 287147,
-            "3": 306377,
-            "4": 236734,
-            "5": 223347,
-            "6": 263490,
-            "7": 214842,
-            "8": 202883,
-            "9": 297001,
-            "10": 253529,
-            "11": 250469,
-            "12": 245902
-          },
-          "total": 3016014
+            "1": 748083,
+            "2": 713640,
+            "3": 877037,
+            "4": 786581,
+            "5": 879714,
+            "6": 805218,
+            "7": 716221,
+            "8": 757037,
+            "9": 759000,
+            "10": 787903,
+            "11": 778397,
+            "12": 764201
+          }
+        },
+        "EU": {
+          "total": 345557,
+          "months": {
+            "1": 11185,
+            "2": 4257,
+            "3": 10419,
+            "4": 7809,
+            "5": 31349,
+            "6": 28178,
+            "7": 104954,
+            "8": 44986,
+            "9": 16500,
+            "10": 29048,
+            "11": 28698,
+            "12": 28174
+          }
         },
         "SG": {
           "months": {
@@ -2404,56 +379,39 @@ window.LIVE_DB = {
           },
           "total": 4035806
         },
-        "TH": {
+        "HK": {
+          "total": 27026,
           "months": {
-            "1": 50398,
-            "2": 41324,
-            "3": 19426,
-            "4": 48438,
-            "5": 46002,
-            "6": 29679,
-            "7": 53677,
-            "8": 77195,
-            "9": 44001,
-            "10": 45886,
-            "11": 45332,
-            "12": 44504
-          },
-          "total": 545862
+            "1": 4279,
+            "2": 3355,
+            "3": 1738,
+            "4": 252,
+            "5": 3657,
+            "6": 1430,
+            "7": 2040,
+            "8": 2453,
+            "9": 1100,
+            "10": 2272,
+            "11": 2244,
+            "12": 2206
+          }
         },
-        "TW": {
+        "PH": {
+          "total": 3016014,
           "months": {
-            "1": 748083,
-            "2": 713640,
-            "3": 877037,
-            "4": 786581,
-            "5": 879714,
-            "6": 805218,
-            "7": 716221,
-            "8": 757037,
-            "9": 759000,
-            "10": 787903,
-            "11": 778397,
-            "12": 764201
-          },
-          "total": 9373032
-        },
-        "USA": {
-          "months": {
-            "1": 197374,
-            "2": 212403,
-            "3": 430762,
-            "4": 102887,
-            "5": 204004,
-            "6": 314165,
-            "7": 159431,
-            "8": 242333,
-            "9": 363001,
-            "10": 242893,
-            "11": 239962,
-            "12": 235586
-          },
-          "total": 2944801
+            "1": 234293,
+            "2": 287147,
+            "3": 306377,
+            "4": 236734,
+            "5": 223347,
+            "6": 263490,
+            "7": 214842,
+            "8": 202883,
+            "9": 297001,
+            "10": 253529,
+            "11": 250469,
+            "12": 245902
+          }
         },
         "VN": {
           "months": {
@@ -2473,24 +431,6 @@ window.LIVE_DB = {
           "total": 0
         }
       },
-      "monthly_total": {
-        "1": 1934141,
-        "2": 1993658,
-        "3": 2315023,
-        "4": 2114863,
-        "5": 2154272,
-        "6": 2161699,
-        "7": 2108225,
-        "8": 2187488,
-        "9": 2404602,
-        "10": 2161334,
-        "11": 2135256,
-        "12": 2096319
-      },
-      "annual_total": 25766880
-    },
-    "actual_sales_2025": {
-      "title": "2025년 해외영업 국가별 실매출 및 총 매출",
       "months": [
         1,
         2,
@@ -2505,211 +445,2272 @@ window.LIVE_DB = {
         11,
         12
       ],
-      "by_country": {
-        "USA": {
-          "months": {
-            "1": 179430.75,
-            "2": 193092.8,
-            "3": 380586.11,
-            "4": 82517.12,
-            "5": 185458.87,
-            "6": 285605.38,
-            "7": 144289.76,
-            "8": 220302.3,
-            "9": 343479.03,
-            "10": 660380.37,
-            "11": 303011.62,
-            "12": 257312.79
-          },
-          "total": 3235466.9
-        },
-        "EU": {
-          "months": {
-            "1": 10168.5,
-            "2": 3869.95,
-            "3": 9471.3,
-            "4": 7099.2,
-            "5": 28500,
-            "6": 25616,
-            "7": 95412,
-            "8": 40896.3,
-            "9": 11041.8,
-            "10": 22147.5,
-            "11": 42096,
-            "12": 4101
-          },
-          "total": 300419.55
-        },
-        "JP": {
-          "months": {
-            "1": 21372.09,
-            "2": 13386.56,
-            "3": 20937.94,
-            "4": 13722.13,
-            "5": 17430.04,
-            "6": 5958.23,
-            "7": 32379.91,
-            "8": 29274.55,
-            "9": 23289.9,
-            "10": 58608.2,
-            "11": 30943.54,
-            "12": 35579.84
-          },
-          "total": 302882.93
-        },
-        "TW": {
-          "months": {
-            "1": 680074.93,
-            "2": 648763.46,
-            "3": 808322.16,
-            "4": 726089.08,
-            "5": 799739.66,
-            "6": 732016.32,
-            "7": 651758.31,
-            "8": 688214.96,
-            "9": 637729.13,
-            "10": 609465.98,
-            "11": 816118.35,
-            "12": 636557.36
-          },
-          "total": 8434849.7
-        },
-        "HK": {
-          "months": {
-            "1": 3890,
-            "2": 3050,
-            "3": 1580,
-            "4": 229.5,
-            "5": 3324.2,
-            "6": 1300,
-            "7": 1854.25,
-            "8": 2230,
-            "9": 1690,
-            "10": 0,
-            "11": 3820,
-            "12": 650
-          },
-          "total": 23617.95
-        },
-        "MY": {
-          "months": {
-            "1": 253937.5,
-            "2": 228849.4,
-            "3": 213843.16,
-            "4": 130164.7,
-            "5": 146569.16,
-            "6": 182039.2,
-            "7": 258021.65,
-            "8": 229407.6,
-            "9": 311166.8,
-            "10": 191175.6,
-            "11": 264866.4,
-            "12": 165810.5
-          },
-          "total": 2575851.67
-        },
-        "PH": {
-          "months": {
-            "1": 212993.27,
-            "2": 261043.09,
-            "3": 278524.39,
-            "4": 215213.02,
-            "5": 203042.96,
-            "6": 239537.41,
-            "7": 195311.11,
-            "8": 184438.8,
-            "9": 296688.08,
-            "10": 254481.76,
-            "11": 249828.84,
-            "12": 323722.13
-          },
-          "total": 2914824.86
-        },
-        "SG": {
-          "months": {
-            "1": 340804.66,
-            "2": 422285.68,
-            "3": 266231.24,
-            "4": 270601.54,
-            "5": 232757.07,
-            "6": 382240.72,
-            "7": 246541.39,
-            "8": 295215.11,
-            "9": 218720.26,
-            "10": 259238.96,
-            "11": 264771.18,
-            "12": 227460.07
-          },
-          "total": 3426867.88
-        },
-        "TH": {
-          "months": {
-            "1": 45815.88,
-            "2": 37566.9,
-            "3": 17659.95,
-            "4": 44034.4,
-            "5": 41820,
-            "6": 26980.44,
-            "7": 48798.23,
-            "8": 70177.94,
-            "9": 49581.43,
-            "10": 43936.9,
-            "11": 14156.57,
-            "12": 31662.3
-          },
-          "total": 472190.94
-        },
-        "VN": {
-          "months": {
-            "1": 492446.7,
-            "2": 383462.84,
-            "3": 379059.08,
-            "4": 395417.66,
-            "5": 476947.43,
-            "6": 472622.22,
-            "7": 460035.3,
-            "8": 598111.46,
-            "9": 604474.04,
-            "10": 404023.97,
-            "11": 530698.53,
-            "12": 568842.5
-          },
-          "total": 5766141.73
-        },
-        "KR": {
-          "months": {
-            "1": 9820.77,
-            "2": 508.08,
-            "3": 107408.59,
-            "4": 432932.09,
-            "5": 299790,
-            "6": 83888.47,
-            "7": 242201.6,
-            "8": 228469.39,
-            "9": 304440.85,
-            "10": 7126.2,
-            "11": 44275.16,
-            "12": 56066.04
-          },
-          "total": 1816927.24
-        }
-      },
+      "annual_total": 25766880,
       "monthly_total": {
-        "1": 2250755.05,
-        "2": 2195878.76,
-        "3": 2483623.92,
-        "4": 2318020.44,
-        "5": 2435379.39,
-        "6": 2437804.39,
-        "7": 2376603.51,
-        "8": 2586738.41,
-        "9": 2802301.32,
-        "10": 2510585.44,
-        "11": 2564586.19,
-        "12": 2307764.53
+        "1": 1934141,
+        "2": 1993658,
+        "3": 2315023,
+        "4": 2114863,
+        "5": 2154272,
+        "6": 2161699,
+        "7": 2108225,
+        "8": 2187488,
+        "9": 2404602,
+        "10": 2161334,
+        "11": 2135256,
+        "12": 2096319
+      }
+    },
+    "summary": {
+      "actual_2025_sep_actual": 2802301.32,
+      "target_2026_sep_target": 2404602,
+      "actual_2025_annual_total": 29270041.35,
+      "countries_count": 11,
+      "target_2026_annual_total": 25766880
+    },
+    "extracted_at": "2026-09-25T18:00:00Z"
+  },
+  "current_system_week": "2026-09-W4",
+  "trends": {
+    "yoy": {
+      "last_year_month": "2025년 9월",
+      "yoy_growth_rate": -14.2,
+      "last_year_actual": 2802301,
+      "this_year_target": 2404602,
+      "this_year_expected": 1863495
+    },
+    "annual": [
+      {
+        "year": "2022",
+        "amount": 18200000,
+        "growth": 0
       },
-      "annual_total": 29270041.35
+      {
+        "year": "2023",
+        "amount": 21450000,
+        "growth": 17.9
+      },
+      {
+        "growth": 15.6,
+        "year": "2024",
+        "amount": 24800000
+      },
+      {
+        "amount": 29270041,
+        "year": "2025 (실매출)",
+        "growth": 18
+      },
+      {
+        "growth": -12,
+        "year": "2026 (경영목표)",
+        "amount": 25766880
+      }
+    ],
+    "mom": {
+      "this_month_expected": 1863495,
+      "mom_growth_rate": 10.1,
+      "prev_month_actual": 1692000,
+      "prev_month": "2026년 8월",
+      "weekly_progress": [
+        {
+          "week": "1주차",
+          "cum_rate": 16.6,
+          "actual": 310000
+        },
+        {
+          "cum_rate": 29,
+          "week": "2주차",
+          "actual": 540000
+        },
+        {
+          "week": "3주차",
+          "cum_rate": 42.3,
+          "actual": 788600
+        },
+        {
+          "cum_rate": 50.3,
+          "week": "4주차 (현재)",
+          "actual": 937933
+        }
+      ]
     }
-  }
+  },
+  "active_period": {
+    "week": "W4",
+    "month": "2026-09"
+  },
+  "history_archives": {
+    "2026-07": {
+      "month_label": "2026년 7월 마감",
+      "kpi": {
+        "target": 1900000,
+        "expected": 1580000,
+        "rate": 83.2,
+        "current": 1580000
+      },
+      "members": [
+        {
+          "role": "책임",
+          "regions": "미국 (USA)",
+          "name": "한준희 책임",
+          "sales": [
+            {
+              "additional": 0,
+              "target": 380000,
+              "site": "Skyworks US - Hybrid PC",
+              "note": "7월 공급 완료",
+              "expected": 350000,
+              "current": 350000
+            }
+          ],
+          "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
+          "samples": [],
+          "issues": [],
+          "id": "hjh"
+        },
+        {
+          "id": "ksm",
+          "issues": [],
+          "sales": [
+            {
+              "additional": 0,
+              "note": "7월 공급 완료",
+              "site": "Broadcom / Inari MY",
+              "target": 360000,
+              "expected": 340000,
+              "current": 340000
+            }
+          ],
+          "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
+          "role": "선임",
+          "regions": "말레이시아 (Malaysia)",
+          "name": "김샘물 선임",
+          "samples": []
+        },
+        {
+          "role": "선임",
+          "name": "이가진 선임",
+          "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
+          "samples": [],
+          "sales": [
+            {
+              "additional": 0,
+              "current": 230000,
+              "target": 250000,
+              "site": "Amkor Taiwan",
+              "expected": 230000,
+              "note": "7월 마감"
+            }
+          ],
+          "issues": [],
+          "regions": "대만 (Taiwan)",
+          "id": "lgj"
+        },
+        {
+          "samples": [],
+          "regions": "싱가포르 & 태국 (Singapore & Thailand)",
+          "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
+          "issues": [],
+          "id": "lsc",
+          "sales": [
+            {
+              "target": 200000,
+              "additional": 0,
+              "current": 175000,
+              "expected": 175000,
+              "site": "Skyworks SG",
+              "note": "7월 마감"
+            }
+          ],
+          "role": "선임",
+          "name": "이상철 선임"
+        },
+        {
+          "sales": [
+            {
+              "expected": 82000,
+              "additional": 0,
+              "site": "Amkor PH",
+              "current": 82000,
+              "target": 100000,
+              "note": "7월 마감"
+            }
+          ],
+          "id": "kwt",
+          "issues": [],
+          "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
+          "role": "사원",
+          "name": "김완태 사원",
+          "samples": [],
+          "regions": "일본 & 필리핀 (Japan & Philippines)"
+        }
+      ],
+      "title": "2026년 7월 해외영업부 월간보고서 (마감 실적)"
+    },
+    "2026-08": {
+      "month_label": "2026년 8월 마감",
+      "kpi": {
+        "target": 2050000,
+        "current": 1692000,
+        "rate": 82.5,
+        "expected": 1692000
+      },
+      "title": "2026년 8월 해외영업부 월간보고서 (마감 실적)",
+      "members": [
+        {
+          "sales": [
+            {
+              "note": "8월 최종 마감 공급 완료",
+              "site": "Skyworks US - Hybrid PC",
+              "additional": 0,
+              "current": 380000,
+              "target": 400000,
+              "expected": 380000
+            }
+          ],
+          "issues": [
+            {
+              "bullets": [
+                "1단계 모델 20종 승인 완료 후 선적 진행"
+              ],
+              "id": "iss_hjh_aug_1",
+              "topic": "미국 사이트 C/T Hybrid NPI 초기 승인 통과",
+              "tag": "완료"
+            }
+          ],
+          "samples": [
+            {
+              "qty": 5,
+              "pn": "KS-0804-1650",
+              "date": "2026-08-15",
+              "status": "CLOSE",
+              "item": "C/T Hybrid",
+              "note": "승인 완료",
+              "customer": "Skyworks US",
+              "id": "smp_hjh_aug_1"
+            }
+          ],
+          "id": "hjh",
+          "regions": "미국 (USA)",
+          "role": "책임",
+          "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
+          "name": "한준희 책임"
+        },
+        {
+          "id": "ksm",
+          "samples": [],
+          "issues": [
+            {
+              "id": "iss_ksm_aug_1",
+              "bullets": [
+                "금형 이관 일정 수립 및 고객사 확인 완료"
+              ],
+              "topic": "Inari 금형 이전 1차 협의",
+              "tag": "완료"
+            }
+          ],
+          "regions": "말레이시아 (Malaysia)",
+          "sales": [
+            {
+              "additional": 0,
+              "current": 375000,
+              "note": "LPAO 테이프 공급 완료",
+              "expected": 375000,
+              "site": "Broadcom / Inari MY",
+              "target": 390000
+            },
+            {
+              "site": "Infineon MY",
+              "additional": 0,
+              "current": 142000,
+              "target": 170000,
+              "note": "SAP 전환 전 최종 선적",
+              "expected": 142000
+            }
+          ],
+          "role": "선임",
+          "name": "김샘물 선임",
+          "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)"
+        },
+        {
+          "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
+          "issues": [
+            {
+              "id": "iss_lgj_aug_1",
+              "topic": "SPIL 8월 정기 납품 완료",
+              "tag": "완료",
+              "bullets": [
+                "품질 이슈 없이 전량 인수 완료"
+              ]
+            }
+          ],
+          "id": "lgj",
+          "samples": [],
+          "sales": [
+            {
+              "target": 260000,
+              "expected": 248000,
+              "note": "WLCSP Tray 공급",
+              "current": 248000,
+              "site": "Amkor Taiwan",
+              "additional": 0
+            },
+            {
+              "additional": 0,
+              "expected": 125000,
+              "target": 150000,
+              "site": "SPIL Taiwan",
+              "current": 125000,
+              "note": "BGA Tray 납품 완료"
+            }
+          ],
+          "role": "선임",
+          "name": "이가진 선임",
+          "regions": "대만 (Taiwan)"
+        },
+        {
+          "samples": [],
+          "role": "선임",
+          "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
+          "name": "이상철 선임",
+          "regions": "싱가포르 & 태국 (Singapore & Thailand)",
+          "sales": [
+            {
+              "expected": 186000,
+              "target": 210000,
+              "site": "Skyworks SG",
+              "current": 186000,
+              "additional": 0,
+              "note": "싱가포르 직수출 마감"
+            },
+            {
+              "additional": 0,
+              "target": 180000,
+              "current": 148000,
+              "note": "태국 공장 납품",
+              "site": "UTAC TH",
+              "expected": 148000
+            }
+          ],
+          "id": "lsc",
+          "issues": []
+        },
+        {
+          "regions": "일본 & 필리핀 (Japan & Philippines)",
+          "id": "kwt",
+          "samples": [],
+          "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
+          "issues": [],
+          "sales": [
+            {
+              "current": 88000,
+              "site": "Amkor PH",
+              "note": "필리핀 8월 마감 실적",
+              "additional": 0,
+              "expected": 88000,
+              "target": 110000
+            }
+          ],
+          "role": "사원",
+          "name": "김완태 사원"
+        }
+      ]
+    },
+    "2026-09-W3": {
+      "week_label": "9월 3주차 (0914-0918)",
+      "title": "2026년 9월 3주차 (0914-0918) 해외영업부 주간보고서",
+      "members": [
+        {
+          "samples": [
+            {
+              "status": "CLOSE",
+              "id": "smp_hjh_1",
+              "item": "C/T Hybrid",
+              "date": "2026-09-08",
+              "customer": "Skyworks US",
+              "qty": 2,
+              "pn": "KS-0804-1661-PC",
+              "note": "고객 승인 대기"
+            },
+            {
+              "status": "OPEN",
+              "date": "2026-09-08",
+              "customer": "Skyworks US",
+              "qty": 2,
+              "item": "C/T Hybrid",
+              "id": "smp_hjh_2",
+              "pn": "KS-0804-1662-PC",
+              "note": "고객 승인 대기"
+            },
+            {
+              "item": "C/T Reel",
+              "date": "2026-09-02",
+              "id": "smp_hjh_3",
+              "status": "OPEN",
+              "pn": "KS-1208-1895",
+              "qty": 10,
+              "note": "샘플 출하 완료",
+              "customer": "Skyworks US"
+            },
+            {
+              "item": "C/T 2DID",
+              "id": "smp_hjh_4",
+              "status": "OPEN",
+              "date": "2026-09-09",
+              "customer": "Skyworks US",
+              "pn": "KS-0804-1680-PC",
+              "qty": 2,
+              "note": "라인 평가 중"
+            }
+          ],
+          "short_name": "한준희",
+          "name": "한준희 책임",
+          "role": "책임",
+          "sales": [
+            {
+              "current": 154200,
+              "additional": 295800,
+              "expected": 450000,
+              "weekly_forecasts": {
+                "W2": {
+                  "additional": 334350,
+                  "current": 115650,
+                  "expected": 450000,
+                  "target": 450000,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의"
+                },
+                "W4": {
+                  "target": 450000,
+                  "current": 154200,
+                  "expected": 450000,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "additional": 295800
+                },
+                "W3": {
+                  "current": 154200,
+                  "expected": 450000,
+                  "note": "NPI 34종 완료 후 미국 양산 공급",
+                  "target": 450000,
+                  "additional": 295800
+                },
+                "W1": {
+                  "expected": 450000,
+                  "current": 61680,
+                  "additional": 388320,
+                  "note": "1주차 초기 예상치",
+                  "target": 450000
+                }
+              },
+              "target": 450000,
+              "note": "NPI 34종 완료 후 미국 양산 공급",
+              "site": "Skyworks (미국 US) - NPI C/T Hybrid"
+            }
+          ],
+          "id": "hjh",
+          "issues": [
+            {
+              "tag": "NPI 전환",
+              "bullets": [
+                "추가 Filter Conversion 43종 중 34모델 NPI 진행 완료, 미국 공장 상황 검토",
+                "WLCSP Project: 9종 진행 중 (2종 FAI 샘플 평가 중)"
+              ],
+              "id": "iss_hjh_1",
+              "topic": "Skyworks US C/T Hybrid PC NPI Project"
+            },
+            {
+              "topic": "2DID 신규 설비 글로벌 셋업 및 공장 배치",
+              "bullets": [
+                "필리핀 공장 2대 셋업 완료, 한국 공장 3대 도입 완료 (총 7대 가동)",
+                "12월 초 2대 추가 이동 계획 수립"
+              ],
+              "tag": "설비 셋업",
+              "id": "iss_hjh_2"
+            },
+            {
+              "topic": "미국 고객사 차세대 고내열 REEL 개발 완료",
+              "tag": "양산 대기",
+              "bullets": [
+                "REEL 개발 완료에 따라 Hybrid PC 추가 접수 예정 (32종 Filter PJT 접수 완료)"
+              ],
+              "id": "iss_hjh_3"
+            }
+          ],
+          "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
+          "regions": "미국 (USA)"
+        },
+        {
+          "regions": "말레이시아 (Malaysia)",
+          "issues": [
+            {
+              "tag": "금형 증작",
+              "bullets": [
+                "KS-881490-2 금형 증작 완료 및 베트남 이전 완료 (단가 .6 조정)",
+                "Inari MY 측에서 LPAO 품목 Particle test 요청에 따른 공정 검증"
+              ],
+              "id": "iss_ksm_1",
+              "topic": "Broadcom / Inari MY Buy-Off 및 금형 증작 대응"
+            },
+            {
+              "tag": "SAP 전환",
+              "bullets": [
+                "기존 재고 소진 후 new PO/PN 적용 체제로 전환 완료",
+                "Denka PS Sheet 수급 불균형에 따른 대체 원재료 검토 병행"
+              ],
+              "topic": "Infineon 말레이시아 신규 SAP 체제 전환 및 원재료 수급",
+              "id": "iss_ksm_2"
+            },
+            {
+              "bullets": [
+                "KS-1612-692 C/T 515K 발송분 현지 품질 승인 대기",
+                "10월부터 말레이시아 라인 정기 발주 전환 협의"
+              ],
+              "tag": "샘플 평가",
+              "topic": "Unisem 말레이시아 C/T 신규 테이프 승인",
+              "id": "iss_ksm_3"
+            }
+          ],
+          "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
+          "name": "김샘물 선임",
+          "role": "선임",
+          "short_name": "김샘물",
+          "sales": [
+            {
+              "weekly_forecasts": {
+                "W2": {
+                  "current": 66300,
+                  "expected": 420000,
+                  "additional": 353700,
+                  "target": 420000,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의"
+                },
+                "W3": {
+                  "additional": 331600,
+                  "current": 88400,
+                  "note": "LPAO 단가 .6 협의 완료",
+                  "target": 420000,
+                  "expected": 420000
+                },
+                "W1": {
+                  "note": "1주차 초기 예상치",
+                  "target": 420000,
+                  "expected": 420000,
+                  "additional": 384640,
+                  "current": 35360
+                },
+                "W4": {
+                  "additional": 331600,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "target": 420000,
+                  "current": 88400,
+                  "expected": 420000
+                }
+              },
+              "site": "Broadcom / Inari (말레이시아 Penang)",
+              "current": 88400,
+              "expected": 420000,
+              "additional": 331600,
+              "target": 420000,
+              "note": "LPAO 단가 .6 협의 완료"
+            },
+            {
+              "additional": 127100,
+              "target": 180000,
+              "expected": 180000,
+              "weekly_forecasts": {
+                "W2": {
+                  "note": "2주차 실적 집계 및 고객사 PO 협의",
+                  "expected": 180000,
+                  "target": 180000,
+                  "current": 39675,
+                  "additional": 140325
+                },
+                "W4": {
+                  "expected": 180000,
+                  "additional": 127100,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "target": 180000,
+                  "current": 52900
+                },
+                "W3": {
+                  "additional": 127100,
+                  "note": "신규 SAP 전환 후 정상화",
+                  "target": 180000,
+                  "expected": 180000,
+                  "current": 52900
+                },
+                "W1": {
+                  "target": 180000,
+                  "current": 21160,
+                  "additional": 158840,
+                  "note": "1주차 초기 예상치",
+                  "expected": 180000
+                }
+              },
+              "site": "Infineon (말레이시아 Melaka/Kulim)",
+              "current": 52900,
+              "note": "신규 SAP 전환 후 정상화"
+            },
+            {
+              "additional": 88800,
+              "expected": 130000,
+              "weekly_forecasts": {
+                "W4": {
+                  "target": 150000,
+                  "additional": 88800,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "expected": 130000,
+                  "current": 41200
+                },
+                "W3": {
+                  "current": 41200,
+                  "additional": 88800,
+                  "note": "C/T 신규 테이프 승인",
+                  "target": 150000,
+                  "expected": 130000
+                },
+                "W1": {
+                  "additional": 133520,
+                  "target": 150000,
+                  "current": 16480,
+                  "note": "1주차 초기 예상치",
+                  "expected": 150000
+                },
+                "W2": {
+                  "additional": 119100,
+                  "expected": 150000,
+                  "target": 150000,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의",
+                  "current": 30900
+                }
+              },
+              "site": "Unisem / ASE (말레이시아)",
+              "current": 41200,
+              "target": 150000,
+              "note": "C/T 신규 테이프 승인"
+            }
+          ],
+          "samples": [
+            {
+              "qty": 50,
+              "date": "2026-08-24",
+              "status": "OPEN",
+              "customer": "Broadcom (Inari)",
+              "pn": "KS-871382-2",
+              "item": "TRAY MPPO",
+              "note": "9월말 QUAL 제출 예정",
+              "id": "smp_ksm_1"
+            },
+            {
+              "qty": 515,
+              "pn": "KS-1612-692",
+              "date": "2026-09-05",
+              "customer": "UNISEM MY",
+              "item": "C/T",
+              "note": "고객 승인 대기",
+              "status": "OPEN",
+              "id": "smp_ksm_2"
+            },
+            {
+              "note": "승인 완료",
+              "status": "CLOSE",
+              "qty": 20,
+              "pn": "PBCK13724",
+              "customer": "ASE-MY",
+              "id": "smp_ksm_3",
+              "date": "2026-08-15",
+              "item": "REEL"
+            }
+          ],
+          "id": "ksm"
+        },
+        {
+          "id": "lgj",
+          "regions": "대만 (Taiwan)",
+          "issues": [
+            {
+              "bullets": [
+                "SPIL GIS 측의 ASECL 압박으로 PCN 진행 중단 및 샘플 규격(Warpage OOS) 재점검",
+                "9/21부터 SPIL, ASE 대상 TnR 제품군 단가 인상 PO 적용"
+              ],
+              "id": "iss_lgj_1",
+              "topic": "대만 ASECL / SPIL PCN 이슈 및 TnR 단가 인상",
+              "tag": "PCN 검토"
+            },
+            {
+              "id": "iss_lgj_2",
+              "topic": "Amkor TW 신규 MPPO LP 트레이 금형 제작",
+              "tag": "금형 개발",
+              "bullets": [
+                "Amkor TW: KS-890280 (MPPO LP) 신규 트레이 금형 제작 진행",
+                "SPIL TW: C/T 300M 규격(KS-2416-786, KS-2420-188, KS-2412-664) 신규 승인 진행",
+                "KYEC / Sigurd: KS-871587, KS-880546 정기 오더 관리"
+              ]
+            }
+          ],
+          "short_name": "이가진",
+          "sales": [
+            {
+              "site": "Amkor / SPIL (대만 Hsinchu/Taichung)",
+              "current": 195000,
+              "note": "9/21 TnR 단가 인상 PO 반영",
+              "weekly_forecasts": {
+                "W3": {
+                  "expected": 550000,
+                  "target": 550000,
+                  "current": 195000,
+                  "additional": 355000,
+                  "note": "9/21 TnR 단가 인상 PO 반영"
+                },
+                "W1": {
+                  "target": 550000,
+                  "additional": 472000,
+                  "current": 78000,
+                  "note": "1주차 초기 예상치",
+                  "expected": 550000
+                },
+                "W4": {
+                  "expected": 550000,
+                  "current": 195000,
+                  "target": 550000,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "additional": 355000
+                },
+                "W2": {
+                  "target": 550000,
+                  "current": 146250,
+                  "expected": 550000,
+                  "additional": 403750,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의"
+                }
+              },
+              "target": 550000,
+              "additional": 355000,
+              "expected": 550000
+            },
+            {
+              "note": "정기 오더 및 C/T 300M 규격 승인",
+              "target": 150000,
+              "site": "KYEC / Sigurd (대만)",
+              "weekly_forecasts": {
+                "W3": {
+                  "note": "정기 오더 및 C/T 300M 규격 승인",
+                  "additional": 97000,
+                  "expected": 150000,
+                  "target": 150000,
+                  "current": 53000
+                },
+                "W1": {
+                  "expected": 150000,
+                  "target": 150000,
+                  "note": "1주차 초기 예상치",
+                  "current": 21200,
+                  "additional": 128800
+                },
+                "W4": {
+                  "additional": 97000,
+                  "target": 150000,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "expected": 150000,
+                  "current": 53000
+                },
+                "W2": {
+                  "current": 39750,
+                  "target": 150000,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의",
+                  "expected": 150000,
+                  "additional": 110250
+                }
+              },
+              "expected": 150000,
+              "current": 53000,
+              "additional": 97000
+            }
+          ],
+          "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
+          "name": "이가진 선임",
+          "role": "선임",
+          "samples": [
+            {
+              "status": "OPEN",
+              "item": "TRAY MPPO LP",
+              "customer": "Amkor TW",
+              "date": "2026-09-10",
+              "id": "smp_lgj_1",
+              "pn": "KS-890280",
+              "qty": 50,
+              "note": "샘플 제출 완료"
+            },
+            {
+              "note": "고객 승인 대기",
+              "id": "smp_lgj_2",
+              "pn": "KS-2416-786",
+              "item": "C/T 300M",
+              "qty": 10,
+              "date": "2026-09-05",
+              "status": "OPEN",
+              "customer": "SPIL TW"
+            },
+            {
+              "customer": "KYEC",
+              "item": "TRAY 125/150",
+              "status": "OPEN",
+              "pn": "KS-871587",
+              "date": "2026-09-04",
+              "id": "smp_lgj_3",
+              "qty": 50,
+              "note": "진행중"
+            }
+          ]
+        },
+        {
+          "name": "이상철 선임",
+          "role": "선임",
+          "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
+          "issues": [
+            {
+              "id": "iss_lsc_1",
+              "topic": "싱가포르 Skyworks SG 필터 공정 NPI 검토",
+              "bullets": [
+                "싱가포르 라인 신규 필터 전환 수주 협의 및 일정 조율",
+                "현지 C/T 테이프 릴 샘플 공급 및 테스트 진행"
+              ],
+              "tag": "NPI 전환"
+            },
+            {
+              "bullets": [
+                "신규 Tray 금형 3벌 혜주에서 제작 완료 (KS-871649, KS-871650, KS-871651)",
+                "내부 Test용 월 1K 사용 예상에 따른 추가 양산 협의"
+              ],
+              "tag": "금형 제작",
+              "id": "iss_lsc_2",
+              "topic": "태국 Hanwha NxMD 신규 금형 3벌 제작 완료"
+            },
+            {
+              "bullets": [
+                "UTAC-TH 정기 Tray 납품 건 품질 승인 후 차기 오더 확보"
+              ],
+              "topic": "태국 UTAC-TH 정기 납기 관리 및 단가 협상",
+              "id": "iss_lsc_3",
+              "tag": "정기 납품"
+            }
+          ],
+          "sales": [
+            {
+              "site": "Skyworks (싱가포르 SG)",
+              "weekly_forecasts": {
+                "W2": {
+                  "additional": 143750,
+                  "expected": 200000,
+                  "current": 56250,
+                  "target": 200000,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의"
+                },
+                "W3": {
+                  "note": "싱가포르 법인 필터 공정 NPI 연계",
+                  "current": 75000,
+                  "target": 200000,
+                  "expected": 200000,
+                  "additional": 125000
+                },
+                "W1": {
+                  "expected": 200000,
+                  "note": "1주차 초기 예상치",
+                  "target": 200000,
+                  "current": 30000,
+                  "additional": 170000
+                },
+                "W4": {
+                  "additional": 125000,
+                  "expected": 200000,
+                  "target": 200000,
+                  "current": 75000,
+                  "note": "4주차 마감 목표 달성 전망"
+                }
+              },
+              "target": 200000,
+              "additional": 125000,
+              "current": 75000,
+              "note": "싱가포르 법인 필터 공정 NPI 연계",
+              "expected": 200000
+            },
+            {
+              "target": 120000,
+              "expected": 120000,
+              "weekly_forecasts": {
+                "W2": {
+                  "note": "2주차 실적 집계 및 고객사 PO 협의",
+                  "current": 27000,
+                  "target": 120000,
+                  "additional": 93000,
+                  "expected": 120000
+                },
+                "W3": {
+                  "current": 36000,
+                  "expected": 120000,
+                  "note": "신규 Tray 금형 3벌 양산 오더 진행",
+                  "target": 120000,
+                  "additional": 84000
+                },
+                "W1": {
+                  "target": 120000,
+                  "expected": 120000,
+                  "note": "1주차 초기 예상치",
+                  "additional": 105600,
+                  "current": 14400
+                },
+                "W4": {
+                  "expected": 120000,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "current": 36000,
+                  "additional": 84000,
+                  "target": 120000
+                }
+              },
+              "site": "UTAC / Hanwha NxMD (태국)",
+              "additional": 84000,
+              "note": "신규 Tray 금형 3벌 양산 오더 진행",
+              "current": 36000
+            }
+          ],
+          "short_name": "이상철",
+          "regions": "싱가포르 & 태국 (Singapore & Thailand)",
+          "id": "lsc",
+          "samples": [
+            {
+              "item": "C/T Hybrid",
+              "pn": "KS-0804-1690-SG",
+              "date": "2026-09-12",
+              "status": "OPEN",
+              "qty": 5,
+              "id": "smp_lsc_1",
+              "note": "SG 현지 평가 중",
+              "customer": "Skyworks SG"
+            },
+            {
+              "id": "smp_lsc_2",
+              "note": "승인 대기",
+              "customer": "UTAC-TH",
+              "item": "TRAY",
+              "pn": "KS-870752",
+              "qty": 50,
+              "date": "2026-09-05",
+              "status": "OPEN"
+            },
+            {
+              "date": "2026-09-01",
+              "id": "smp_lsc_3",
+              "item": "TRAY NxMD",
+              "qty": 20,
+              "status": "CLOSE",
+              "customer": "Hanwha NxMD",
+              "note": "금형 제작 완료",
+              "pn": "KS-871649"
+            }
+          ]
+        },
+        {
+          "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
+          "issues": [
+            {
+              "tag": "설비 셋업",
+              "topic": "필리핀 법인 신규 2DID 설비 셋업 및 이전",
+              "bullets": [
+                "필리핀 법인 2DID 신규 설비 2대 가동 안정화",
+                "12월 초 한국 2대 추가 필리핀 이동 계획 확정"
+              ],
+              "id": "iss_kwt_1"
+            },
+            {
+              "bullets": [
+                "KS-870849(00) 최신 도면 배포 및 금형 제작 품질 승인 완료",
+                "고객사 FAI 샘플 평가 및 양산 오더 준비"
+              ],
+              "topic": "필리핀 Amkor/ATP 대상 KS-870849 신규 IC Tray 도면 배포",
+              "tag": "도면 배포",
+              "id": "iss_kwt_2"
+            },
+            {
+              "topic": "일본 고객사 친환경 ESD 신소재 Tray 제안",
+              "tag": "신규 제안",
+              "id": "iss_kwt_3",
+              "bullets": [
+                "소니 및 르네사스 재팬 대상 리사이클 원료 배합 트레이 기술 자료 송부",
+                "10월 1차 평가용 시제품 제작 협의"
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "date": "2026-09-15",
+              "qty": 50,
+              "item": "IC TRAY",
+              "id": "smp_kwt_1",
+              "pn": "KS-870849",
+              "customer": "Amkor PH",
+              "note": "도면 배포 및 FAI 샘플 준비",
+              "status": "OPEN"
+            },
+            {
+              "pn": "KS-870632",
+              "note": "양산 승인 완료",
+              "qty": 100,
+              "item": "TRAY",
+              "id": "smp_kwt_2",
+              "status": "CLOSE",
+              "date": "2026-09-10",
+              "customer": "ATP PH"
+            },
+            {
+              "item": "ESD TRAY",
+              "pn": "KS-880921-ECO",
+              "customer": "Sony JP",
+              "date": "2026-09-14",
+              "qty": 30,
+              "id": "smp_kwt_3",
+              "status": "OPEN",
+              "note": "신소재 시제품 평가"
+            }
+          ],
+          "short_name": "김완태",
+          "name": "김완태 사원",
+          "role": "사원",
+          "sales": [
+            {
+              "target": 280000,
+              "note": "ATP, SSPC 주간 납품 목표 달성 순항",
+              "site": "Amkor / ATP / SSPC (필리핀 Clark/Laguna)",
+              "additional": 165200,
+              "expected": 280000,
+              "weekly_forecasts": {
+                "W2": {
+                  "target": 280000,
+                  "current": 86100,
+                  "expected": 280000,
+                  "additional": 193900,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의"
+                },
+                "W3": {
+                  "target": 280000,
+                  "expected": 280000,
+                  "additional": 165200,
+                  "current": 114800,
+                  "note": "ATP, SSPC 주간 납품 목표 달성 순항"
+                },
+                "W1": {
+                  "note": "1주차 초기 예상치",
+                  "current": 45920,
+                  "target": 280000,
+                  "additional": 234080,
+                  "expected": 280000
+                },
+                "W4": {
+                  "target": 280000,
+                  "expected": 280000,
+                  "additional": 165200,
+                  "current": 114800,
+                  "note": "4주차 마감 목표 달성 전망"
+                }
+              },
+              "current": 114800
+            },
+            {
+              "weekly_forecasts": {
+                "W2": {
+                  "current": 28875,
+                  "expected": 120000,
+                  "additional": 91125,
+                  "note": "2주차 실적 집계 및 고객사 PO 협의",
+                  "target": 120000
+                },
+                "W4": {
+                  "expected": 110000,
+                  "note": "4주차 마감 목표 달성 전망",
+                  "current": 38500,
+                  "target": 120000,
+                  "additional": 71500
+                },
+                "W3": {
+                  "target": 120000,
+                  "expected": 110000,
+                  "current": 38500,
+                  "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가",
+                  "additional": 71500
+                },
+                "W1": {
+                  "target": 120000,
+                  "additional": 104600,
+                  "current": 15400,
+                  "note": "1주차 초기 예상치",
+                  "expected": 120000
+                }
+              },
+              "expected": 110000,
+              "target": 120000,
+              "note": "친환경 ESD 신소재 Tray 제안 및 샘플 평가",
+              "current": 38500,
+              "site": "일본 고객사 (Sony, Renesas, Kaga 등)",
+              "additional": 71500
+            }
+          ],
+          "regions": "일본 & 필리핀 (Japan & Philippines)",
+          "id": "kwt"
+        }
+      ],
+      "kpi": {
+        "rate": 76.4,
+        "expected": 1836000,
+        "current": 788600,
+        "target": 2404602
+      }
+    }
+  },
+  "last_updated_at": "2026-10-20 02:18:33",
+  "week_label": "9월 4주차 (0921-0925)",
+  "kpi": {
+    "target": 2404602,
+    "expected": 1863495,
+    "additional": 925562,
+    "rate": 77.5,
+    "current": 937933
+  },
+  "members": [
+    {
+      "short_name": "한준희",
+      "issues": [
+        {
+          "bullets": [
+            "- 3M Filter Project 유지 관련 Promotion 진행",
+            ": 3M Filter SG 이전관련 Project 유지 작업 진행",
+            "> Skyworks SG, Skyworks Irvine에 3M 관련 독립적 진행 요청",
+            ">> 해영, Skyworks MX를 통한 당사 진행 Tool 사용 지속 압박",
+            "당사, MX뿐만 아니라 W/Wide Project Line Contact 진행",
+            "> Skyworks SG, Cost Saving 관련 MY 업체 추천 확인",
+            ">> 해영, Skyworks MX를 통해 MY 업체관련 구체적인 정보 파악 중"
+          ],
+          "id": "iss_1790577010313",
+          "tag": "진행중",
+          "topic": "3M Filter Project 유지 관련 Promotion 진행",
+          "item": "IC Tray",
+          "customer": "SKYWORKS"
+        },
+        {
+          "status": "IN_PROGRESS",
+          "category": "PROJECT",
+          "content": "추가 Filter Conversion 43종 중 34모델 NPI 진행 완료. 당분간 FILTER PJT 중단 상태이며 SKYWORKS SG 상황 검토 중. WLCSP Project 9종은 차질 없이 정상 진행 중.",
+          "id": "iss-hjh-1",
+          "title": "Skyworks NPI Project 진행 현황 (WLCSP 9종 및 Filter Conversion)",
+          "action_plan": "WLCSP 9종 양산 승인 스케줄 밀착 관리 및 SG 법인 수주 재개 시점 모니터링",
+          "priority": "HIGH",
+          "created_at": "2026-09-17"
+        },
+        {
+          "priority": "HIGH",
+          "id": "iss-hjh-2",
+          "created_at": "2026-09-17",
+          "action_plan": "공차 A0B0K0 ±0.20 및 Ø0.10 포켓홀 금형 정밀 가공 승인 추진",
+          "content": "REEL 개발 완료(3/10), 3/25 FILTER용 REEL 공급 진행. HYBRID PC 현재 코스탯 공정능력 Ø0.2 pocket hole 가능 -> Ø0.15 신규 요청(164A, 165A). 코스탯 내부 공정능력 Ø0.11 확인 완료, 최종 고객 요청 Ø0.10 대응 연구소 협업 중.",
+          "title": "Reel 개발 및 HYBRID PC 공차/포켓홀 개선 공정 능력 향상",
+          "status": "IN_PROGRESS",
+          "category": "QUALITY"
+        },
+        {
+          "title": "2DID 신규 설비 도입 및 필리핀 공장 이전 스케줄",
+          "category": "EQUIPMENT",
+          "priority": "MEDIUM",
+          "status": "IN_PROGRESS",
+          "id": "iss-hjh-3",
+          "action_plan": "12월 설비 해외 이송 물류 및 2027년 1월 고객사 감사 체크리스트 수립",
+          "content": "2DID 2대 PH 셋업 완료 및 추가 3대 KR 공장 설비 도입 완료(총 7대 가동 중). 12월 초 PH 공장으로 설비 2대 이전 예정이며, 2027년 1월 초 PH 공장 고객사 AUDIT 준비 진행.",
+          "created_at": "2026-09-17"
+        },
+        {
+          "status": "IN_PROGRESS",
+          "id": "iss-hjh-4",
+          "created_at": "2026-09-17",
+          "content": "신규 SAP 도입으로 현재고 소진 후 new PO/PN 적용(평균 2달에 1회 20FT 출하 안정화). DENKA PS SHEET 원재료 부족으로 베트남 공장에서 항공(AIR) 출하 진행(운송료 고객 부담). DENKA 외 대체 PS SHEET 원재료 전환 검토 필요.",
+          "title": "Infineon 신규 SAP 적용 및 DENKA PS SHEET 공급 이슈 대응",
+          "priority": "MEDIUM",
+          "action_plan": "대체 PS 원단 품질 테스트 샘플 발주 및 전환 타당성 검토",
+          "category": "CUSTOMER"
+        }
+      ],
+      "id": "hjh",
+      "samples": [
+        {
+          "status": "COMPLETED",
+          "spec": "HYBRID WLCSP Die MK1451 A01 (2DID)",
+          "qty": 50,
+          "part_no": "KS-0804-1669-PC",
+          "note": "금형 제작 및 샘플 승인 완료",
+          "id": "smp-hjh-1",
+          "due_date": "2026-09-10",
+          "customer": "Skyworks (US)"
+        },
+        {
+          "status": "COMPLETED",
+          "part_no": "KS-0802-112-PC",
+          "spec": "HYBRID FILTER KB163NA2350D (2DID)",
+          "qty": 50,
+          "id": "smp-hjh-2",
+          "due_date": "2026-09-10",
+          "customer": "Skyworks (US)",
+          "note": "금형 제작 완료"
+        },
+        {
+          "spec": "HYBRID WLCSP mk6450bg (2DID)",
+          "id": "smp-hjh-3",
+          "note": "09월 01일 발송 완료",
+          "part_no": "KS-0804-1677-PC",
+          "due_date": "2026-09-01",
+          "customer": "Skyworks (US)",
+          "status": "SHIPPED",
+          "qty": 50
+        },
+        {
+          "due_date": "2026-09-01",
+          "customer": "Skyworks (US)",
+          "id": "smp-hjh-4",
+          "spec": "HYBRID WLCSP MK6440B (2DID)",
+          "status": "SHIPPED",
+          "qty": 50,
+          "part_no": "KS-0804-1678-PC",
+          "note": "09월 01일 발송 완료"
+        },
+        {
+          "qty": 50,
+          "part_no": "KS-0804-1672-PC",
+          "note": "09월 03일 발송 완료",
+          "status": "SHIPPED",
+          "spec": "HYBRID WLCSP MK6463 A/B (2DID)",
+          "due_date": "2026-09-03",
+          "customer": "Skyworks (US)",
+          "id": "smp-hjh-5"
+        },
+        {
+          "qty": 50,
+          "part_no": "KS-0804-1680-PC",
+          "note": "09월 06일 발송 완료",
+          "spec": "HYBRID WLCSP PK1351-A1 (2DID)",
+          "status": "SHIPPED",
+          "due_date": "2026-09-06",
+          "customer": "Skyworks (US)",
+          "id": "smp-hjh-6"
+        },
+        {
+          "spec": "HYBRID WLCSP MK6254-X1 (2DID)",
+          "note": "09월 06일 발송 완료",
+          "part_no": "KS-0804-1682-PC",
+          "due_date": "2026-09-06",
+          "customer": "Skyworks (US)",
+          "qty": 50,
+          "id": "smp-hjh-7",
+          "status": "SHIPPED"
+        },
+        {
+          "due_date": "2026-09-10",
+          "customer": "Skyworks (US)",
+          "status": "COMPLETED",
+          "qty": 30,
+          "id": "smp-hjh-8",
+          "note": "9/10 실제 출하 완료",
+          "part_no": "KS-1208-1911",
+          "spec": "PS KP 3.34x3.64x0.65mm SKY58604 FAI"
+        },
+        {
+          "status": "OPEN",
+          "note": "9/30 출하 예정 (진행중)",
+          "id": "smp-hjh-9",
+          "spec": "PS Linear 5.0x7.0x0.634mm SKY58601 FAI",
+          "qty": 30,
+          "due_date": "2026-09-30",
+          "customer": "Skyworks (US)",
+          "part_no": "KS-1608-835"
+        }
+      ],
+      "sales": [
+        {
+          "additional": 50000,
+          "target": 300000,
+          "country": "US",
+          "current": 270000,
+          "expected": 320000,
+          "weekly_forecasts": {
+            "W2": {
+              "current": 180000,
+              "target": 300000,
+              "expected": 310000,
+              "additional": 130000
+            },
+            "W4": {
+              "target": 300000,
+              "current": 270000,
+              "expected": 320000,
+              "additional": 50000
+            },
+            "W39": {
+              "target": 300000,
+              "current": 270000,
+              "additional": 50000,
+              "expected": 320000,
+              "note": "NPI 34차 완료 및 미국 향 직수출"
+            },
+            "W38": {
+              "target": 300000,
+              "additional": 50000,
+              "current": 270000,
+              "expected": 320000
+            },
+            "W1": {
+              "target": 300000,
+              "current": 100000,
+              "additional": 200000,
+              "expected": 300000
+            },
+            "W3": {
+              "expected": 320000,
+              "current": 250000,
+              "additional": 70000,
+              "target": 300000
+            }
+          },
+          "site": "Skyworks US (미국)",
+          "note": "NPI 34차 완료 및 미국 향 직수출"
+        }
+      ],
+      "projects": [],
+      "accounts": "Skyworks (US), Renesas (US), Broadcom (US)",
+      "regions": "미국 (USA)",
+      "name": "한준희",
+      "role": "",
+      "quality_issues": [
+        {
+          "item": "IC Tray",
+          "comment": "불량상황에 대한 설명 및 조치 대책",
+          "customer": "BROADCOM",
+          "id": "qual_1790577091023",
+          "pn": "KS-881490",
+          "defect_type": "이물/오염"
+        },
+        {
+          "item": "IC Tray",
+          "comment": "불량상황에 대한 설명 및 조치 대책",
+          "defect_type": "Close",
+          "pn": "KS-880220",
+          "id": "qual_1790664375586",
+          "customer": "SKYWORKS",
+          "country": "US"
+        }
+      ]
+    },
+    {
+      "samples": [
+        {
+          "note": "베트남 공장 출하(9/16), 매니저 직접 전달",
+          "qty": 50,
+          "spec": "MPPO Tray 2차 샘플 (FM 개선품)",
+          "status": "SHIPPED",
+          "due_date": "2026-09-16",
+          "customer": "Broadcom (Inari MY)",
+          "id": "smp-ksm-1",
+          "part_no": "KS-881490-2"
+        },
+        {
+          "qty": 50,
+          "note": "9월 말 QUAL 샘플 제출 예정",
+          "part_no": "KS-871382-2",
+          "spec": "MPPO Tray QUAL 샘플",
+          "status": "OPEN",
+          "due_date": "2026-09-30",
+          "customer": "Broadcom (Inari MY)",
+          "id": "smp-ksm-2"
+        },
+        {
+          "spec": "TR 43.5x22x4.0mm",
+          "status": "OPEN",
+          "part_no": "KS-871483",
+          "note": "ONGOING 신규 샘플 진행",
+          "qty": 30,
+          "id": "smp-ksm-3",
+          "due_date": "2026-10-10",
+          "customer": "ADI (MY)"
+        }
+      ],
+      "projects": [],
+      "id": "ksm",
+      "name": "김샘물",
+      "role": "",
+      "sales": [
+        {
+          "weekly_forecasts": {
+            "W38": {
+              "current": 92656,
+              "expected": 180000,
+              "target": 340999,
+              "additional": 87344,
+              "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)"
+            },
+            "W1": {
+              "expected": 180000,
+              "target": 340999,
+              "current": 25000,
+              "additional": 155000
+            },
+            "W3": {
+              "target": 340999,
+              "expected": 180000,
+              "current": 92656,
+              "additional": 87344
+            },
+            "W4": {
+              "target": 340999,
+              "expected": 180000,
+              "current": 92656,
+              "additional": 87344
+            },
+            "W39": {
+              "expected": 180000,
+              "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)",
+              "additional": 87344,
+              "target": 340999,
+              "current": 92656
+            },
+            "W2": {
+              "target": 340999,
+              "current": 55000,
+              "expected": 180000,
+              "additional": 125000
+            }
+          },
+          "target": 340999,
+          "additional": 87344,
+          "site": "Malaysia (MY) - Broadcom / Unisem / NXP",
+          "expected": 180000,
+          "note": "9월 실적 $92,656, 추가예상 $87,344 -> 마감예상 $180,000 (달성율 52.8%)",
+          "country": "MY",
+          "current": 92656
+        }
+      ],
+      "accounts": "Broadcom (Inari), Infineon (MY), ASE (MY), Unisem (MY)",
+      "short_name": "김샘물",
+      "issues": [
+        {
+          "status": "IN_PROGRESS",
+          "priority": "HIGH",
+          "action_plan": "Inari 현지 매니저 방문 납품 결과 확인 및 9월말 871382-2 샘플 입고 추적",
+          "created_at": "2026-09-17",
+          "title": "Broadcom (Inari MY) BUY OFF 2종 검토 및 금형 증작",
+          "id": "iss-ksm-1",
+          "content": "KS-881490-2 금형 증작 완료 후 베트남 이전 완료(26.08). FM 이슈로 공식 승인 지연되어 2차 샘플 추가 50장 베트남 공장 진행(9/16 완료, 현지 매니저 직접 Inari 전달 예정). KS-871382-2 금형 진행 시작(8/24), QUAL 샘플 9월말 제출 예정.",
+          "category": "CUSTOMER"
+        },
+        {
+          "id": "iss-ksm-2",
+          "action_plan": "Unisem 구매팀과 주간 화상회의를 통해 승인 통보 일정 조율",
+          "created_at": "2026-09-17",
+          "category": "PROJECT",
+          "priority": "HIGH",
+          "title": "UNISEM MY Skyworks 캐리어테이프 컨버전 승인 추진",
+          "status": "IN_PROGRESS",
+          "content": "SKYWORKS 캐리어테이프 12mm 2종(KS-1208-981, KS-1208-1089) 및 커버 1종(93500 DS) 샘플 발송 완료 후 고객사 최종 승인 대기 중. MACOM사 Dual Source 샘플 요청 완료(KS-1612-692, KS-2412-0586)."
+        },
+        {
+          "category": "PROJECT",
+          "title": "NXP MY TJ 컨버전 캐리어테이프 7종 승인",
+          "content": "NXP TJ 컨버전 위해 제출한 캐리어테이프 샘플 7종 중 1종 승인 완료, 나머지 6종 QUAL 테스트 대기 중.",
+          "status": "IN_PROGRESS",
+          "id": "iss-ksm-3",
+          "created_at": "2026-09-17",
+          "priority": "MEDIUM",
+          "action_plan": "NXP 엔지니어링팀 QUAL 진행 상황 체크 및 리포트 회신 독려"
+        }
+      ],
+      "regions": "말레이시아 (Malaysia)",
+      "quality_issues": []
+    },
+    {
+      "accounts": "Amkor (TW), SPIL (TW), KYEC, Sigurd",
+      "regions": "대만 (Taiwan)",
+      "short_name": "이가진",
+      "name": "이가진",
+      "role": "",
+      "projects": [],
+      "issues": [
+        {
+          "id": "iss-lgj-1",
+          "content": "SPIL GIS 측의 ASECL 압박으로 PCN 진행 중이었으나, ASECL PCN SAMPLE FAIL 발생 (Length OOS, Warpage OOS). 관련 이슈 완전 종결 전까지 PCN 잠정 중단.",
+          "action_plan": "품질팀 원인 분석 결과 확인 후 치수/평탄도 개선 금형 보정 작업 협의",
+          "status": "HOLD",
+          "priority": "HIGH",
+          "created_at": "2026-09-17",
+          "category": "QUALITY",
+          "title": "ASECL PCN 잠정 중단 (Length/Warpage OOS 이슈 종결 시까지)"
+        },
+        {
+          "category": "PRICE",
+          "title": "단가 인상 공지 (TnR 부문: SPIL, ASE 9/21 PO 기반 적용)",
+          "status": "IN_PROGRESS",
+          "content": "TnR 부문 단가 인상 공지 완료. SPIL 및 ASE 대상 9/21 접수 신규 PO부터 인상된 단가 기준 적용 예정.",
+          "created_at": "2026-09-17",
+          "action_plan": "9/21 이후 입고되는 PO 단가 확인 및 영업 시스템 단가 테이블 갱신",
+          "priority": "HIGH",
+          "id": "iss-lgj-2"
+        },
+        {
+          "action_plan": "금형 가공 완료 후 1차 시험 사출 샘플 즉각 송부",
+          "category": "PROJECT",
+          "created_at": "2026-09-17",
+          "content": "ASE KS-880514 Particle 이슈를 End User에서 제기함에 따라, MPPO Low Particle(LP) 신규 금형 KS-881825 제작 중. KYEC 및 ASE 공용 승인 검토.",
+          "priority": "MEDIUM",
+          "id": "iss-lgj-3",
+          "title": "ASE Particle 이슈 대응 MPPO LP 금형 신규 제작 (KS-881825)",
+          "status": "IN_PROGRESS"
+        }
+      ],
+      "id": "lgj",
+      "quality_issues": [],
+      "samples": [
+        {
+          "status": "IN_PROGRESS",
+          "part_no": "KS-881825",
+          "qty": 100,
+          "due_date": "2026-09-28",
+          "customer": "ASE / KYEC (TW)",
+          "id": "smp-lgj-1",
+          "note": "금형 제작 중 (OPEN TOOL)",
+          "spec": "MPPO LP 신규 Particle 대응 금형"
+        },
+        {
+          "qty": 50,
+          "part_no": "KS-870247",
+          "status": "COMPLETED",
+          "note": "VN SITE PCN 최종 승인 완료",
+          "id": "smp-lgj-2",
+          "spec": "VN Site PCN 승인 샘플",
+          "due_date": "2026-09-12",
+          "customer": "GREATEK (TW)"
+        },
+        {
+          "due_date": "2026-10-05",
+          "customer": "ASE / SPIL (TW)",
+          "status": "OPEN",
+          "id": "smp-lgj-3",
+          "spec": "TR 14.50x14.50mm",
+          "part_no": "KS-881535",
+          "qty": 50,
+          "note": "ONGOING 샘플 진행"
+        }
+      ],
+      "sales": [
+        {
+          "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)",
+          "additional": 187557,
+          "site": "Taiwan (TW) - ASE / SPIL / GREATEK / KYEC",
+          "weekly_forecasts": {
+            "W4": {
+              "expected": 620000,
+              "additional": 187557,
+              "target": 759000,
+              "current": 432443
+            },
+            "W1": {
+              "target": 759000,
+              "current": 120000,
+              "expected": 620000,
+              "additional": 500000
+            },
+            "W3": {
+              "expected": 620000,
+              "target": 759000,
+              "current": 432443,
+              "additional": 187557
+            },
+            "W39": {
+              "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)",
+              "expected": 620000,
+              "current": 432443,
+              "target": 759000,
+              "additional": 187557
+            },
+            "W38": {
+              "additional": 187557,
+              "target": 759000,
+              "note": "9월 실적 $432,443, 추가예상 $187,557 -> 마감예상 $620,000 (달성율 81.7%)",
+              "expected": 620000,
+              "current": 432443
+            },
+            "W2": {
+              "target": 759000,
+              "additional": 340000,
+              "expected": 620000,
+              "current": 280000
+            }
+          },
+          "expected": 620000,
+          "target": 759000,
+          "country": "TW",
+          "current": 432443
+        },
+        {
+          "target": 1100,
+          "weekly_forecasts": {
+            "W38": {
+              "note": "추가예상 1K (달성율 90.9%)",
+              "current": 270000,
+              "target": 1100,
+              "additional": 1000,
+              "expected": 1000
+            },
+            "W39": {
+              "target": 1100,
+              "expected": 1000,
+              "note": "추가예상 1K (달성율 90.9%)",
+              "additional": 1000,
+              "current": 270000
+            },
+            "W4": {
+              "target": 1100,
+              "current": 0,
+              "expected": 1000,
+              "additional": 1000
+            }
+          },
+          "country": "TW",
+          "current": 0,
+          "note": "추가예상 1K (달성율 90.9%)",
+          "site": "Hong Kong (HK)",
+          "additional": 1000,
+          "expected": 1000
+        }
+      ]
+    },
+    {
+      "id": "lsc",
+      "short_name": "이상철",
+      "samples": [
+        {
+          "part_no": "KS-871649",
+          "id": "smp-lsc-1",
+          "status": "COMPLETED",
+          "spec": "Tray 신규 금형 혜주 제작품",
+          "qty": 50,
+          "note": "금형 완료, 내부 Test용",
+          "due_date": "2026-09-15",
+          "customer": "Hanwha NxMD (TH)"
+        },
+        {
+          "note": "금형 완료, 내부 Test용",
+          "qty": 50,
+          "spec": "Tray 신규 금형 혜주 제작품",
+          "part_no": "KS-871650",
+          "id": "smp-lsc-2",
+          "status": "COMPLETED",
+          "due_date": "2026-09-15",
+          "customer": "Hanwha NxMD (TH)"
+        },
+        {
+          "status": "COMPLETED",
+          "part_no": "KS-871651",
+          "id": "smp-lsc-3",
+          "qty": 50,
+          "note": "금형 완료, 내부 Test용",
+          "due_date": "2026-09-15",
+          "customer": "Hanwha NxMD (TH)",
+          "spec": "Tray 신규 금형 혜주 제작품"
+        }
+      ],
+      "accounts": "Skyworks (SG), UTAC (TH), Hana Micron (TH), Hanwha (TH)",
+      "projects": [],
+      "quality_issues": [],
+      "sales": [
+        {
+          "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)",
+          "expected": 200000,
+          "additional": 140708,
+          "target": 330000,
+          "site": "Singapore (SG) - Skyworks / Micron",
+          "weekly_forecasts": {
+            "W4": {
+              "expected": 200000,
+              "current": 59292,
+              "additional": 140708,
+              "target": 330000
+            },
+            "W1": {
+              "target": 330000,
+              "current": 20000,
+              "expected": 200000,
+              "additional": 180000
+            },
+            "W3": {
+              "expected": 200000,
+              "current": 59292,
+              "additional": 140708,
+              "target": 330000
+            },
+            "W39": {
+              "additional": 140708,
+              "expected": 200000,
+              "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)",
+              "current": 59292,
+              "target": 330000
+            },
+            "W2": {
+              "target": 330000,
+              "expected": 200000,
+              "current": 40000,
+              "additional": 160000
+            },
+            "W38": {
+              "note": "9월 실적 $59,292, 추가예상 $140,708 -> 마감예상 $200,000 (달성율 60.6%)",
+              "additional": 140708,
+              "target": 330000,
+              "expected": 200000,
+              "current": 59292
+            }
+          },
+          "country": "SG",
+          "current": 59292
+        },
+        {
+          "additional": 18800,
+          "expected": 20000,
+          "weekly_forecasts": {
+            "W4": {
+              "target": 44001,
+              "additional": 18800,
+              "current": 1200,
+              "expected": 20000
+            },
+            "W39": {
+              "additional": 18800,
+              "expected": 20000,
+              "target": 44001,
+              "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)",
+              "current": 1200
+            },
+            "W38": {
+              "expected": 20000,
+              "additional": 18800,
+              "target": 44001,
+              "current": 1200,
+              "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)"
+            }
+          },
+          "country": "SG",
+          "current": 1200,
+          "note": "9월 실적 $1,200, 추가예상 $18,800 -> 마감예상 $20,000 (달성율 45.5%)",
+          "target": 44001,
+          "site": "Thailand (TH) - Hanwha NxMD / Hana"
+        },
+        {
+          "expected": 21000,
+          "target": 0,
+          "weekly_forecasts": {
+            "W39": {
+              "additional": 21000,
+              "target": 300000,
+              "expected": 21000,
+              "note": "추가예상 $21,000 마감 예상",
+              "current": 270000
+            },
+            "W4": {
+              "expected": 21000,
+              "target": 0,
+              "current": 0,
+              "additional": 21000
+            },
+            "W38": {
+              "current": 270000,
+              "additional": 21000,
+              "target": 300000,
+              "note": "추가예상 $21,000 마감 예상",
+              "expected": 21000
+            }
+          },
+          "note": "추가예상 $21,000 마감 예상",
+          "country": "SG",
+          "current": 0,
+          "site": "Vietnam (VN) - 직납 및 임가공",
+          "additional": 21000
+        }
+      ],
+      "regions": "싱가포르 & 태국 (Singapore & Thailand)",
+      "name": "이상철",
+      "role": "",
+      "issues": [
+        {
+          "id": "iss-lsc-1",
+          "title": "Hanwha NxMD 신규 Tray 금형 3벌 제작 완료 (혜주공장)",
+          "created_at": "2026-09-17",
+          "category": "PROJECT",
+          "priority": "HIGH",
+          "status": "COMPLETED",
+          "action_plan": "초도 물량 사출 일정 확정 및 고객사 전달 후 양산 발주 일정 확보",
+          "content": "HANWHA NxMD 향 신규 Tray 금형 3벌(KS-871649, KS-871650, KS-871651) 혜주 공장에서 제작 완료. 내부 Test용으로 월 1K 수량 사용 시작 예정."
+        },
+        {
+          "title": "Micron DDR5용 트레이(KS-881163, KS-881465) 수요 급증 대응",
+          "action_plan": "공장별 생산 계획 긴급 조율 및 안전 재고 2주분 비축 협의",
+          "created_at": "2026-09-17",
+          "status": "IN_PROGRESS",
+          "content": "Micron DDR5용 트레이 수요 급증으로 현 PO 잔량 KS-881465(110K), KS-881163(60K) 총 170K 확보됨. 생산 캐파 최우선 배정 필요.",
+          "id": "iss-lsc-2",
+          "priority": "HIGH",
+          "category": "CUSTOMER"
+        },
+        {
+          "title": "ASEM 베트남 PCN 승인 및 IFX KKB 시트 전환",
+          "priority": "MEDIUM",
+          "content": "ASEM 베트남 PCN 서류 제출 완료되어 최종 승인 단계 진입. IFX Carrier & Cover 말레이시아 외주사(Plascycle) 공정능력 검토 결과 중동 KKB 시트가 더 적합한 것으로 판정.",
+          "status": "IN_PROGRESS",
+          "id": "iss-lsc-3",
+          "category": "QUALITY",
+          "created_at": "2026-09-17",
+          "action_plan": "KKB 시트 발주 스펙 확정 및 ASEM 승인 통보 수령"
+        }
+      ]
+    },
+    {
+      "id": "kwt",
+      "short_name": "김완태",
+      "issues": [
+        {
+          "title": "필리핀 지사 9월 매출 순항: $225,708 달성 (목표 $300K 달성 확실시)",
+          "status": "COMPLETED",
+          "category": "SALES",
+          "id": "iss-kwt-1",
+          "action_plan": "월말 잔여 수주 출하 스케줄 및 인보이스 발행 실시간 점검",
+          "priority": "HIGH",
+          "content": "ATP, CYPRESS 등 $143.25K(TR $89.66K, CT $34.91K, V&P&P $18.68K), SSPC $82.46K(Forming Tray $81.79K, Blister $0.68K). 9월 마감 300K 목표 초과 달성 가시권.",
+          "created_at": "2026-09-17"
+        },
+        {
+          "category": "PROJECT",
+          "title": "TongHsing 向 캐리어 테이프 KS-2416-797, KS-3216-131 개발 진행",
+          "content": "TongHsing 신규 고객사 캐리어 테이프 2개 모델 금형 및 테이프 샘플 개발 진행 중(26'09).",
+          "status": "IN_PROGRESS",
+          "priority": "HIGH",
+          "id": "iss-kwt-2",
+          "created_at": "2026-09-17",
+          "action_plan": "샘플 제작 일정 및 1차 측정 성적서(FAI) 승인 추진"
+        },
+        {
+          "content": "ATJ 향 32, 44MM P-BAND 첫 판매 완료(26.07), TOMOE 향 KS-880910(TR354759) 첫 판매 성공(26.09).",
+          "priority": "MEDIUM",
+          "action_plan": "초도 물량 안착 확인 및 정기 반복 오더화 추진",
+          "created_at": "2026-09-17",
+          "status": "COMPLETED",
+          "id": "iss-kwt-3",
+          "title": "일본 지역 신규 아이템 판매 개시 (ATJ, TOMOE)",
+          "category": "MARKET"
+        }
+      ],
+      "sales": [
+        {
+          "site": "Philippines (PH) - ATP / SSPC / TongHsing",
+          "expected": 300000,
+          "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K",
+          "weekly_forecasts": {
+            "W1": {
+              "target": 297001,
+              "expected": 297000,
+              "current": 80000,
+              "additional": 217000
+            },
+            "W3": {
+              "expected": 300000,
+              "current": 225708,
+              "additional": 74292,
+              "target": 297001
+            },
+            "W4": {
+              "target": 297001,
+              "additional": 74292,
+              "expected": 300000,
+              "current": 225708
+            },
+            "W39": {
+              "current": 225708,
+              "expected": 300000,
+              "additional": 74292,
+              "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K",
+              "target": 297001
+            },
+            "W38": {
+              "current": 225708,
+              "target": 297001,
+              "additional": 74292,
+              "expected": 300000,
+              "note": "9월 실적 $225,708 (달성율 101.0% 조기 달성). ATP 등 $143.25K, SSPC $82.46K"
+            },
+            "W2": {
+              "target": 297001,
+              "additional": 140000,
+              "expected": 300000,
+              "current": 160000
+            }
+          },
+          "target": 297001,
+          "additional": 74292,
+          "country": "PH",
+          "current": 225708
+        },
+        {
+          "country": "PH",
+          "current": 20857,
+          "weekly_forecasts": {
+            "W38": {
+              "target": 22000,
+              "current": 20857,
+              "additional": 25143,
+              "expected": 46000,
+              "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)"
+            },
+            "W4": {
+              "expected": 46000,
+              "current": 20857,
+              "additional": 25143,
+              "target": 22000
+            },
+            "W39": {
+              "additional": 25143,
+              "expected": 46000,
+              "target": 22000,
+              "current": 20857,
+              "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)"
+            }
+          },
+          "note": "9월 실적 $20,857, 총예상 $46,000 (달성율 209.1% 초과 달성)",
+          "additional": 25143,
+          "target": 22000,
+          "site": "Japan (JP) - ATJ / Tomoe / Sony",
+          "expected": 46000
+        },
+        {
+          "weekly_forecasts": {
+            "W38": {
+              "target": 231000,
+              "additional": 230505,
+              "current": 495,
+              "expected": 495,
+              "note": "실적 $495 (달성율 0.2%)"
+            },
+            "W4": {
+              "current": 495,
+              "additional": 0,
+              "expected": 495,
+              "target": 231000
+            },
+            "W39": {
+              "current": 495,
+              "additional": 230505,
+              "note": "실적 $495 (달성율 0.2%)",
+              "target": 231000,
+              "expected": 495
+            }
+          },
+          "note": "실적 $495 (달성율 0.2%)",
+          "expected": 495,
+          "site": "Korea (KR) - 국내 로컬",
+          "country": "PH",
+          "current": 495,
+          "additional": 0,
+          "target": 231000
+        }
+      ],
+      "quality_issues": [],
+      "regions": "일본 & 필리핀 (Japan & Philippines)",
+      "name": "김완태",
+      "role": "",
+      "accounts": "Amkor (PH), ATP (PH), SSPC (PH), TI (PH), Sony (JP), Renesas (JP)",
+      "samples": [
+        {
+          "spec": "MPPO Tray (OPEN TOOL)",
+          "part_no": "KS-881800",
+          "status": "IN_PROGRESS",
+          "due_date": "2026-09-25",
+          "customer": "TI-PH (PH)",
+          "note": "TI-PH 평가용 샘플 진행",
+          "qty": 100,
+          "id": "smp-kwt-1"
+        },
+        {
+          "qty": 50,
+          "status": "IN_PROGRESS",
+          "note": "NXP JP 평가 샘플",
+          "id": "smp-kwt-2",
+          "due_date": "2026-09-28",
+          "customer": "NXP (JP)",
+          "part_no": "KS-881570",
+          "spec": "MPPO Tray (CLOSE TOOL)"
+        },
+        {
+          "status": "OPEN",
+          "part_no": "KAH7-TA 093500",
+          "qty": 5,
+          "id": "smp-kwt-3",
+          "note": "AMS PH 커버테이프 샘플",
+          "due_date": "2026-10-02",
+          "customer": "AMS (PH)",
+          "spec": "COVER TAPE (OPEN TOOL)"
+        }
+      ],
+      "projects": [
+        {
+          "pn": "KS-871591",
+          "ship_date": "2025-09-17",
+          "tool_type": "Close",
+          "remarks": "TH P/N: DSMC-TXRX25-047 | PKG: LGA 8X8 | Material: MPPO BK | Mold: O",
+          "item": "IC Tray",
+          "status": "2025-11-14 승인",
+          "country": "PH",
+          "customer": "TONGHSING",
+          "po_no": "KSY250714-01",
+          "id": "prj_kwt_th_1"
+        },
+        {
+          "pn": "DSSP-V3RX25-028",
+          "country": "PH",
+          "tool_type": "Hold",
+          "po_no": "KSY-250806-01",
+          "ship_date": "-",
+          "customer": "TONGHSING",
+          "item": "IC Tray",
+          "remarks": "TH P/N: DSSP-V3RX25-028 | PKG: BGA 5.559MM X 5.602MM | Material: MPPO BK | Mold: X",
+          "status": "검토대기",
+          "id": "prj_kwt_th_2"
+        },
+        {
+          "country": "PH",
+          "customer": "TONGHSING",
+          "ship_date": "-",
+          "id": "prj_kwt_th_3",
+          "tool_type": "In-Progress",
+          "pn": "KS-M8376",
+          "po_no": "KSY250811-02",
+          "remarks": "TH P/N: DSSP KURS25 082 | PKG: - | Material: - | Mold: O",
+          "status": "진행중",
+          "item": "TF Tray"
+        },
+        {
+          "item": "PS Carrier",
+          "remarks": "TH P/N: TBA | PKG: 6.786MM X 6.84MM | Material: - | Mold: X",
+          "id": "prj_kwt_th_4",
+          "ship_date": "-",
+          "tool_type": "Hold",
+          "status": "검토대기",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "pn": "KS-1612-817",
+          "po_no": "KSY250901-01"
+        },
+        {
+          "remarks": "TH P/N: TBA | PKG: 5.559MM X 5.602MM | Material: - | Mold: X",
+          "po_no": "KSY250901-01",
+          "tool_type": "Hold",
+          "ship_date": "-",
+          "customer": "TONGHSING",
+          "id": "prj_kwt_th_5",
+          "pn": "KS-1612-818",
+          "country": "PH",
+          "item": "PS Carrier",
+          "status": "검토대기"
+        },
+        {
+          "id": "prj_kwt_th_6",
+          "item": "TF Tray",
+          "status": "검토대기",
+          "country": "PH",
+          "po_no": "KSZ260304-01",
+          "tool_type": "Hold",
+          "ship_date": "-",
+          "customer": "TONGHSING",
+          "pn": "KS-M8385",
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Bottom PP C/B | Material: - | Mold: X"
+        },
+        {
+          "status": "검토대기",
+          "tool_type": "Hold",
+          "ship_date": "-",
+          "pn": "KS-M8385",
+          "item": "TF Tray",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "id": "prj_kwt_th_7",
+          "po_no": "KSZ260304-01",
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Bottom PS C/B | Material: - | Mold: X"
+        },
+        {
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Cover PP C/B | Material: - | Mold: X",
+          "po_no": "KSZ260304-01",
+          "pn": "KS-M8386",
+          "item": "TF Tray",
+          "customer": "TONGHSING",
+          "country": "PH",
+          "tool_type": "Hold",
+          "id": "prj_kwt_th_8",
+          "ship_date": "-",
+          "status": "검토대기"
+        },
+        {
+          "po_no": "KSZ260304-01",
+          "country": "PH",
+          "customer": "TONGHSING",
+          "pn": "KS-M8386",
+          "remarks": "TH P/N: TBA | PKG: FMGM Blister Cover PS C/B | Material: - | Mold: X",
+          "id": "prj_kwt_th_9",
+          "item": "TF Tray",
+          "ship_date": "-",
+          "tool_type": "Hold",
+          "status": "검토대기"
+        },
+        {
+          "status": "2026-07-13 승인",
+          "id": "prj_kwt_th_10",
+          "remarks": "TH P/N: TBA | PKG: 7MM X 7MM X 2.56MM | Material: - | Mold: O",
+          "customer": "TONGHSING",
+          "item": "IC Tray",
+          "ship_date": "2026-07-13 승인",
+          "tool_type": "Close",
+          "pn": "KS-1612-845",
+          "po_no": "KSZ260527-04",
+          "country": "PH"
+        },
+        {
+          "customer": "TONGHSING",
+          "pn": "KS-2416-792",
+          "tool_type": "Close",
+          "po_no": "KSZ260527-03",
+          "status": "2026-06-18 승인",
+          "remarks": "TH P/N: TBA | PKG: 10.019MM X 6.019MM | Material: - | Mold: O",
+          "ship_date": "07월 10일",
+          "item": "IC Tray",
+          "id": "prj_kwt_th_11",
+          "country": "PH"
+        },
+        {
+          "customer": "TONGHSING",
+          "remarks": "TH P/N: TBA | PKG: 8MM X 10MM X 1MM | Material: - | Mold: O",
+          "pn": "KS-2412-266",
+          "ship_date": "07월 10일",
+          "tool_type": "Close",
+          "status": "2026-06-18 승인",
+          "country": "PH",
+          "po_no": "KSZ260527-05",
+          "item": "IC Tray",
+          "id": "prj_kwt_th_12"
+        },
+        {
+          "remarks": "TH P/N: TBA | PKG: 6.739MM X 6.793MM | Material: MPPO BK | Mold: X",
+          "ship_date": "-",
+          "pn": "TBA (6.739MM X 6.793MM)",
+          "tool_type": "Hold",
+          "customer": "TONGHSING",
+          "status": "검토대기",
+          "country": "PH",
+          "po_no": "KSZ260608-04",
+          "item": "IC Tray",
+          "id": "prj_kwt_th_13"
+        },
+        {
+          "country": "PH",
+          "customer": "TONGHSING",
+          "id": "prj_kwt_th_14",
+          "item": "IC Tray",
+          "status": "검토대기",
+          "ship_date": "-",
+          "pn": "TBA (5.559MM X 5.602MM)",
+          "remarks": "TH P/N: TBA | PKG: 5.559MM X 5.602MM | Material: MPPO BK | Mold: X",
+          "tool_type": "Hold",
+          "po_no": "KSZ260608-03"
+        },
+        {
+          "po_no": "KSZ260608-02",
+          "tool_type": "Hold",
+          "country": "PH",
+          "ship_date": "-",
+          "pn": "TBA (10.019MM X 6.019MM)",
+          "status": "검토대기",
+          "id": "prj_kwt_th_15",
+          "customer": "TONGHSING",
+          "remarks": "TH P/N: TBA | PKG: 10.019MM X 6.019MM | Material: MPPO BK | Mold: X",
+          "item": "IC Tray"
+        },
+        {
+          "remarks": "TH P/N: TBA | PKG: 7X7X2.65MM | Material: MPPO BK | Mold: X",
+          "id": "prj_kwt_th_16",
+          "tool_type": "Hold",
+          "ship_date": "-",
+          "item": "IC Tray",
+          "customer": "TONGHSING",
+          "status": "검토대기",
+          "country": "PH",
+          "po_no": "KSZ260707-05",
+          "pn": "KS-881817"
+        },
+        {
+          "status": "검토대기",
+          "item": "IC Tray",
+          "country": "PH",
+          "po_no": "KSZ260707-06",
+          "id": "prj_kwt_th_17",
+          "tool_type": "Hold",
+          "ship_date": "-",
+          "pn": "KS-871667",
+          "customer": "TONGHSING",
+          "remarks": "TH P/N: TBA | PKG: 8MM X 10 MM | Material: MPPO BK | Mold: X"
+        },
+        {
+          "ship_date": "09월 17일",
+          "tool_type": "Close",
+          "remarks": "TH P/N: TBA | PKG: 12MM X 12MM X 1.8MM | Material: - | Mold: O",
+          "id": "prj_kwt_th_18",
+          "customer": "TONGHSING",
+          "pn": "KS-2416-797",
+          "item": "PS Carrier",
+          "status": "2026-09-18 승인",
+          "country": "PH",
+          "po_no": "KSZ260814-02"
+        },
+        {
+          "ship_date": "09월 17일",
+          "tool_type": "Close",
+          "country": "PH",
+          "pn": "KS-3216-131",
+          "item": "PS Carrier",
+          "customer": "TONGHSING",
+          "status": "2026-09-18 승인",
+          "id": "prj_kwt_th_19",
+          "remarks": "TH P/N: TBA | PKG: 9.8MM X 17.2MM X 1.7MM | Material: - | Mold: O",
+          "po_no": "KSZ260814-02"
+        },
+        {
+          "pn": "KS-1612-292",
+          "remarks": "TH P/N: TBA | PKG: 8MM X 8MM X 1.4MM | Material: - | Mold: TBA",
+          "customer": "TONGHSING",
+          "po_no": "KSZ261013-03",
+          "tool_type": "New",
+          "country": "PH",
+          "status": "검토대기",
+          "ship_date": "-",
+          "id": "prj_kwt_th_20",
+          "item": "PS Carrier"
+        },
+        {
+          "country": "PH",
+          "pn": "KAH7_TA 093500",
+          "tool_type": "Open",
+          "ship_date": "-",
+          "po_no": "",
+          "status": "Open",
+          "id": "prj_1792396431489",
+          "item": "Cover",
+          "customer": "AMS ASIA",
+          "sample_ship_date": "10월 21일"
+        }
+      ]
+    }
+  ],
+  "title": "2026년 9월 4주차 (0921-0925) 해외영업부 주간보고서"
 };
 window.KOSTAT_WEEKLY_REPORT_LIVE = window.LIVE_DB;

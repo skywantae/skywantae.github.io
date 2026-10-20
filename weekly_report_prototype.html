@@ -2019,8 +2019,7 @@
                   <th>Kostat PN</th>
                   <th style="color:#ffffff;">진행 상황</th>
                   <th>PO NO</th>
-                  <th>예상 출하일정</th>
-                  <th>샘플 출하 일정</th>
+                  <th>샘플 출하일정</th>
                   <th style="text-align:center;">관리</th>
                 </tr>
               </thead>
@@ -2464,18 +2463,14 @@
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">PO NO</label>
-            <input type="text" id="modalPrjPoNo" placeholder="예: SKY000000111" style="width:100%; padding:7px 8px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none; box-sizing:border-box;" />
+            <input type="text" id="modalPrjPoNo" placeholder="예: SKY000000111" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
           </div>
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">예상 출하일정</label>
-            <input type="text" id="modalPrjShipDate" placeholder="예: 09월 15일" style="width:100%; padding:7px 8px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none; box-sizing:border-box;" />
-          </div>
-          <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">샘플 출하 일정</label>
-            <input type="text" id="modalPrjSampleShipDate" placeholder="예: 09월 10일" style="width:100%; padding:7px 8px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none; box-sizing:border-box;" />
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">샘플 출하일정</label>
+            <input type="text" id="modalPrjShipDate" placeholder="예: 09월 15일" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
           </div>
         </div>
 
@@ -4125,7 +4120,7 @@
       }
 
       if (prjList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
         return;
       }
 
@@ -4156,10 +4151,7 @@
             <input type="text" value="${escapeAttr(p.po_no || '')}" placeholder="PO 번호" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'po_no', this.value)" />
           </td>
           <td>
-            <input type="text" value="${escapeAttr(p.ship_date || '')}" placeholder="09월 15일" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'ship_date', this.value)" />
-          </td>
-          <td>
-            <input type="text" value="${escapeAttr(p.sample_ship_date || '')}" placeholder="09월 10일" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'sample_ship_date', this.value)" />
+            <input type="text" value="${escapeAttr(p.ship_date || p.sample_ship_date || '')}" placeholder="09월 15일" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'ship_date', this.value)" />
           </td>
           <td style="text-align:center;">
             ${editable ? `
@@ -4234,7 +4226,6 @@
       const tt = document.getElementById('modalPrjToolType');
       const po = document.getElementById('modalPrjPoNo');
       const ship = document.getElementById('modalPrjShipDate');
-      const sampleShip = document.getElementById('modalPrjSampleShipDate');
       const mem = document.getElementById('modalPrjMember');
 
       if (cust) cust.value = '';
@@ -4244,7 +4235,6 @@
       if (tt) tt.value = 'In Progress';
       if (po) po.value = '';
       if (ship) ship.value = '';
-      if (sampleShip) sampleShip.value = '';
       if (mem) mem.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'kwt' : ACTIVE_MEMBER_ID;
 
       // datalist 옵션 보강
@@ -4278,7 +4268,6 @@
       const tt = (document.getElementById('modalPrjToolType') ? document.getElementById('modalPrjToolType').value : 'In Progress') || 'In Progress';
       const po = (document.getElementById('modalPrjPoNo') ? document.getElementById('modalPrjPoNo').value.trim() : '');
       const ship = (document.getElementById('modalPrjShipDate') ? document.getElementById('modalPrjShipDate').value.trim() : '');
-      const sampleShip = (document.getElementById('modalPrjSampleShipDate') ? document.getElementById('modalPrjSampleShipDate').value.trim() : '');
       const targetMemId = (document.getElementById('modalPrjMember') ? document.getElementById('modalPrjMember').value : 'kwt') || 'kwt';
 
       const currentData = getActiveDataset();
@@ -4295,7 +4284,6 @@
         tool_type: tt,
         po_no: po,
         ship_date: ship,
-        sample_ship_date: sampleShip,
         status: tt
       });
 
