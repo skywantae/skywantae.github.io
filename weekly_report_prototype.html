@@ -2017,9 +2017,10 @@
                   <th style="color:#ffffff; text-align:center;">국가</th>
                   <th style="color:#ffffff;">아이템</th>
                   <th>Kostat PN</th>
-                  <th style="color:#ffffff;">진행 Type</th>
+                  <th style="color:#ffffff;">진행 상황</th>
                   <th>PO NO</th>
                   <th>예상 출하일정</th>
+                  <th>샘플 출하 일정</th>
                   <th style="text-align:center;">관리</th>
                 </tr>
               </thead>
@@ -2453,23 +2454,28 @@
             <input type="text" id="modalPrjPn" placeholder="예: KS-880220" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
           </div>
           <div>
-            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">진행 Type (Tool Type) *</label>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:#ffffff; margin-bottom:4px;">진행 상황 *</label>
             <select id="modalPrjToolType" class="select-dropdown-red" style="width:100%; padding:7px 8px; font-size:12px;">
-              <option value="Close">Close</option>
-              <option value="Open">Open</option>
-              <option value="Amortization">Amortization</option>
+              <option value="close">close</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Hold">Hold</option>
+              <option value="Mass Prod">Mass Prod</option>
             </select>
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">PO NO</label>
-            <input type="text" id="modalPrjPoNo" placeholder="예: SKY000000111" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
+            <input type="text" id="modalPrjPoNo" placeholder="예: SKY000000111" style="width:100%; padding:7px 8px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none; box-sizing:border-box;" />
           </div>
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">예상 출하일정</label>
-            <input type="text" id="modalPrjShipDate" placeholder="예: 09월 15일" style="width:100%; padding:7px 10px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none;" />
+            <input type="text" id="modalPrjShipDate" placeholder="예: 09월 15일" style="width:100%; padding:7px 8px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none; box-sizing:border-box;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">샘플 출하 일정</label>
+            <input type="text" id="modalPrjSampleShipDate" placeholder="예: 09월 10일" style="width:100%; padding:7px 8px; background:var(--bg-card-sub); border:1px solid var(--border-light); border-radius:4px; color:#fff; font-size:12px; outline:none; box-sizing:border-box;" />
           </div>
         </div>
 
@@ -2935,8 +2941,8 @@
       { code: 'Others', name: '기타' }
     ];
 
-    // 금형/프로젝트 진행 Type 마스터 (image.png 규격)
-    const MASTER_TOOL_TYPES = ['Close', 'Open', 'Amortization', 'In-Progress', 'Hold', 'New', 'Sample', 'Mass Prod'];
+    // 금형/프로젝트 진행 상황 마스터 ('close', 'In Progress', 'Hold', 'Mass Prod')
+    const MASTER_TOOL_TYPES = ['close', 'In Progress', 'Hold', 'Mass Prod'];
 
     // 품질 불량 유형 마스터 (image.png 규격)
     const MASTER_DEFECT_TYPES = ['Close', '치수불량', '외관불량', '휨(Warpage)', '이물/오염', '정전기(ESD)', '파손', '크랙(Crack)', '변색', '기타'];
@@ -3380,7 +3386,7 @@
         }
       });
 
-      // 4. 금형진행 Type 드롭다운 채우기 (3개)
+      // 4. 프로젝트 진행 상황 드롭다운 채우기 (4개)
       const ttSelect = document.getElementById('modalPrjToolType');
       if (ttSelect && typeof MASTER_TOOL_TYPES !== 'undefined') {
         ttSelect.innerHTML = MASTER_TOOL_TYPES.map(tt => `<option value="${tt}">${tt}</option>`).join('');
@@ -4068,10 +4074,21 @@
       }).join('');
     }
 
+    function normalizeToolType(val) {
+      if (!val) return 'In Progress';
+      const v = String(val).trim().toLowerCase();
+      if (v === 'close') return 'close';
+      if (v === 'hold') return 'Hold';
+      if (v === 'mass prod' || v === 'massprod' || v === 'mass_prod') return 'Mass Prod';
+      if (v === 'in-progress' || v === 'in progress' || v === 'inprogress' || v === 'open' || v === 'new') return 'In Progress';
+      return 'In Progress';
+    }
+
     function getToolTypeOptionsHtml(selectedTt) {
       if (typeof MASTER_TOOL_TYPES === 'undefined') return '';
+      const norm = normalizeToolType(selectedTt);
       return MASTER_TOOL_TYPES.map(tt => {
-        const isSel = (tt === selectedTt);
+        const isSel = (tt === norm);
         return `<option value="${tt}" ${isSel ? 'selected' : ''}>${tt}</option>`;
       }).join('');
     }
@@ -4108,7 +4125,7 @@
       }
 
       if (prjList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--text-dim);">등록된 프로젝트가 없습니다. 우측 상단 '+ 프로젝트 등록'을 클릭하세요.</td></tr>`;
         return;
       }
 
@@ -4131,8 +4148,8 @@
             <input type="text" value="${escapeAttr(p.pn || '')}" placeholder="KS-XXXXXX" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'pn', this.value)" />
           </td>
           <td>
-            <select class="select-dropdown-red" style="max-width:85px;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'tool_type', this.value)">
-              ${getToolTypeOptionsHtml(p.tool_type || 'Close')}
+            <select class="select-dropdown-red" style="max-width:95px;" onchange="updateProjectField('${p.memberId}', ${p.prjIdx}, 'tool_type', this.value)">
+              ${getToolTypeOptionsHtml(p.tool_type || 'In Progress')}
             </select>
           </td>
           <td>
@@ -4140,6 +4157,9 @@
           </td>
           <td>
             <input type="text" value="${escapeAttr(p.ship_date || '')}" placeholder="09월 15일" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'ship_date', this.value)" />
+          </td>
+          <td>
+            <input type="text" value="${escapeAttr(p.sample_ship_date || '')}" placeholder="09월 10일" oninput="updateProjectField('${p.memberId}', ${p.prjIdx}, 'sample_ship_date', this.value)" />
           </td>
           <td style="text-align:center;">
             ${editable ? `
@@ -4214,15 +4234,17 @@
       const tt = document.getElementById('modalPrjToolType');
       const po = document.getElementById('modalPrjPoNo');
       const ship = document.getElementById('modalPrjShipDate');
+      const sampleShip = document.getElementById('modalPrjSampleShipDate');
       const mem = document.getElementById('modalPrjMember');
 
       if (cust) cust.value = '';
       if (ctry) ctry.value = 'TW';
       if (item) item.value = 'IC Tray';
       if (pn) pn.value = '';
-      if (tt) tt.value = 'Close';
+      if (tt) tt.value = 'In Progress';
       if (po) po.value = '';
       if (ship) ship.value = '';
+      if (sampleShip) sampleShip.value = '';
       if (mem) mem.value = (ACTIVE_MEMBER_ID === 'ALL') ? 'kwt' : ACTIVE_MEMBER_ID;
 
       // datalist 옵션 보강
@@ -4253,9 +4275,10 @@
       const country = (document.getElementById('modalPrjCountry') ? document.getElementById('modalPrjCountry').value : 'TW') || 'TW';
       const item = (document.getElementById('modalPrjItem') ? document.getElementById('modalPrjItem').value : 'IC Tray') || 'IC Tray';
       const pn = (document.getElementById('modalPrjPn') ? document.getElementById('modalPrjPn').value.trim() : '');
-      const tt = (document.getElementById('modalPrjToolType') ? document.getElementById('modalPrjToolType').value : 'Close') || 'Close';
+      const tt = (document.getElementById('modalPrjToolType') ? document.getElementById('modalPrjToolType').value : 'In Progress') || 'In Progress';
       const po = (document.getElementById('modalPrjPoNo') ? document.getElementById('modalPrjPoNo').value.trim() : '');
       const ship = (document.getElementById('modalPrjShipDate') ? document.getElementById('modalPrjShipDate').value.trim() : '');
+      const sampleShip = (document.getElementById('modalPrjSampleShipDate') ? document.getElementById('modalPrjSampleShipDate').value.trim() : '');
       const targetMemId = (document.getElementById('modalPrjMember') ? document.getElementById('modalPrjMember').value : 'kwt') || 'kwt';
 
       const currentData = getActiveDataset();
@@ -4272,6 +4295,7 @@
         tool_type: tt,
         po_no: po,
         ship_date: ship,
+        sample_ship_date: sampleShip,
         status: tt
       });
 

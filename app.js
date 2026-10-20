@@ -16313,12 +16313,13 @@ function renderCatSalesProjects(filterText) {
   }
 
   const pillClass = (tt) => {
-    if (!tt) return 'new';
+    if (!tt) return 'in-progress';
     const s = tt.toLowerCase();
     if (s.includes('close') || s.includes('완료')) return 'close';
     if (s.includes('progress') || s.includes('진행')) return 'in-progress';
     if (s.includes('hold') || s.includes('보류')) return 'hold';
-    return 'new';
+    if (s.includes('mass') || s.includes('양산')) return 'mass-prod';
+    return 'in-progress';
   };
 
   tbody.innerHTML = allProjects.map(p => `
@@ -16327,7 +16328,7 @@ function renderCatSalesProjects(filterText) {
       <td style="color:#cbd5e1;">${p.country || 'TW'}</td>
       <td style="color:#cbd5e1;">${p.item || '-'}</td>
       <td style="font-family:monospace; font-weight:600; color:#f8fafc;">${p.pn || '-'}</td>
-      <td><span class="cat-status-pill ${pillClass(p.tool_type)}">${p.tool_type || 'New'}</span></td>
+      <td><span class="cat-status-pill ${pillClass(p.tool_type)}">${p.tool_type || 'In Progress'}</span></td>
       <td style="color:#94a3b8;">${p.po_no || '-'}</td>
       <td style="color:#94a3b8;">${p.ship_date || '-'}</td>
     </tr>
