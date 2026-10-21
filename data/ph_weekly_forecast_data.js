@@ -1,6 +1,6 @@
 window.KOSTAT_PH_WEEKLY_FORECAST = {
   "metadata": {
-    "generated_at": "2026-10-20 11:22:38",
+    "generated_at": "2026-10-21 14:51:55",
     "data_as_of": "2026-09-18",
     "training_period": "2026-01 ~ 2026-08 (8 Months Actual Delivery)",
     "aug_final_actual_amt": 325360.75,

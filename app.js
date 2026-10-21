@@ -1533,7 +1533,7 @@ const APP_I18N = {
     th_vn_in: 'In',
     th_vn_out: 'Out',
     th_vn_wait: 'Wait Ship',
-    th_vn_goodstock: 'Good Stock',
+    th_vn_goodstock: 'Good Inventory',
 
     // Taichang Table Headers
     th_tc_syscode: 'System Code',
