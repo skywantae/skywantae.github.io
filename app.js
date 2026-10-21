@@ -2521,6 +2521,8 @@ function applyAppLanguage(lang) {
     const vhd = [t.th_vn_syscode, t.th_vn_partno, t.th_vn_customer, t.th_vn_temp, t.th_vn_boxunit, t.th_vn_rev, t.th_vn_prevstock, t.th_vn_in, t.th_vn_out, t.th_vn_wait, t.th_vn_goodstock];
     vnThs.forEach((th, idx) => { if (vhd[idx]) th.textContent = vhd[idx]; });
   }
+  const thVnGoodDirect = document.getElementById('thVnGoodStock');
+  if (thVnGoodDirect) thVnGoodDirect.textContent = t.th_vn_goodstock;
 
   const tcThs = document.querySelectorAll('#taichangStockTable thead th');
   if (tcThs && tcThs.length >= 10) {
@@ -9793,6 +9795,9 @@ function initVietnamStock() {
 
 function updateVietnamHeaderAndMetrics(data) {
   const isEn = AppState.currentLang === 'en';
+  const t = APP_I18N[AppState.currentLang] || APP_I18N.ko;
+  const thVnGoodDirect = document.getElementById('thVnGoodStock');
+  if (thVnGoodDirect) thVnGoodDirect.textContent = t.th_vn_goodstock;
   const asOfEl = document.getElementById('vietnamAsOfDate');
   if (asOfEl) {
     asOfEl.textContent = formatStockHeaderInfo(data, isEn);
