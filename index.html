@@ -603,7 +603,7 @@
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
                       <span class="cat-back-home-text">홈 대시보드</span>
                     </button>
-                    <h3 class="cat-subview-title" id="catSubTitleTodos">할일 플로우보드 센터</h3>
+                    <h3 class="cat-subview-title" id="catSubTitleTodos">할일 관리 센터</h3>
                   </div>
                   <div class="cat-filter-tabs">
                     <button class="cat-filter-tab active" data-todo-filter="all" onclick="setCatTodoFilter('all', this)"><span id="catTabTodoTextAll">전체</span> (<span id="catStatTodoAll">0</span>)</button>
@@ -613,8 +613,8 @@
                   </div>
                 </div>
 
-                <!-- 할일 신규 등록 바 (Notion New Page Quick Bar) -->
-                <div class="cat-subview-toolbar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <!-- 할일 신규 등록 바 (비노출 유지: 호환성 보장) -->
+                <div class="cat-subview-toolbar" id="catManageTodoToolbar" style="display:none;">
                   <input type="date" id="catManageTodoDate" class="cat-todo-input" style="max-width:140px;">
                   <select id="catManageTodoLaneSelect" class="cat-todo-input" style="max-width:160px;">
                     <option value="not_started">시작 전 (Not started)</option>
@@ -639,7 +639,7 @@
                   <div class="notion-top-toolbar">
                     <div class="notion-db-title-wrap">
                       <span class="notion-drag-handle">+ ::</span>
-                      <span class="notion-db-title" id="catManageTodoListTitle" contenteditable="true" onblur="saveNotionBoardTitle(this.textContent)">업무 보드</span>
+                      <span class="notion-db-title" id="catManageTodoListTitle" contenteditable="true" onblur="saveNotionBoardTitle(this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" title="이름 수정">할일 목록</span>
                     </div>
                     <div class="notion-toolbar-actions">
                       <div class="flowboard-controls-wrapper">
@@ -780,11 +780,11 @@
           </div>
         </div>
       </div>
-      <!-- 2-2. 영업사항 (Sales Matters) 뷰 -->
+      <!-- 2-2. 영업사항 (Sales Status) 뷰 -->
       <div class="viewer-content-card" id="viewSalesNotes" style="display:none; padding:0; height:100%; overflow:hidden;">
         <div class="viewer-card-header" style="padding:12px 16px 8px; margin-bottom:0; flex-shrink:0;">
           <div class="viewer-title-group">
-            <h3 id="salesNotesTitle">영업사항 (Sales Matters)</h3>
+            <h3 id="salesNotesTitle">영업사항 (Sales Status)</h3>
             <span class="count-badge" id="salesNotesStatusBadge">프로젝트 &middot; 샘플 &middot; 품질 이슈 &middot; 영업보고</span>
           </div>
           <div class="viewer-tools">

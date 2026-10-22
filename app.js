@@ -986,7 +986,7 @@ const APP_I18N = {
     shipplan_sub: '사내 ERP 출하 마스터 데이터 실시간 조회',
     dashboard_title: '글로벌 스마트 대시보드',
     dashboard_sub: '글로벌 캘린더 & 스마트 워크스페이스',
-    sales_notes_title: '영업사항 (Sales Matters)',
+    sales_notes_title: '영업사항 (Sales Status)',
     sales_notes_sub: '프로젝트, 샘플 리스트, Quality Issue, 영업현황보고 통합 워크스페이스',
     quotations_title: '견적서 관리 현황',
     quotations_sub: '견적 번호 및 고객사 검색',
@@ -1438,7 +1438,7 @@ const APP_I18N = {
     tab_dashboard: 'Dashboard',
     tab_quotations: 'Quotation',
     tab_contract: 'Project',
-    tab_sales_notes: 'Sales Matters',
+    tab_sales_notes: 'Sales Status',
     tab_drawings: 'Drawings',
     tab_stock: 'Stocklists',
     tab_feedback: 'Feature Request',
@@ -1452,7 +1452,7 @@ const APP_I18N = {
     shipplan_sub: 'Enterprise ERP Shipment Master Data Real-time View',
     dashboard_title: 'Global Smart Dashboard',
     dashboard_sub: 'Global Calendar & Smart Workspace',
-    sales_notes_title: 'Sales Matters',
+    sales_notes_title: 'Sales Status',
     sales_notes_sub: 'Projects, Sample List, Quality Issues, Sales Status Reports',
     quotations_title: 'Quotation Management',
     quotations_sub: 'Search Quotations by Number & Customer',
@@ -2094,7 +2094,8 @@ function applyAppLanguage(lang) {
     { selector: '#viewChatbot .viewer-title-group h3', title: t.chatbot_title, subSel: '#chatbotStatusBadge', sub: t.chatbot_status_live },
     { selector: '#viewFaq .viewer-title-group h3', title: t.faq_title, subSel: '#viewFaq .viewer-tools span', sub: t.faq_sub },
     { selector: '#viewArchive .viewer-title-group h3', title: t.archive_title, subSel: '#viewArchive .viewer-tools span', sub: t.archive_sub },
-    { selector: '#viewLab .viewer-title-group h3', title: t.lab_title, subSel: '#viewLab .viewer-tools span', sub: t.lab_sub }
+    { selector: '#viewLab .viewer-title-group h3', title: t.lab_title, subSel: '#viewLab .viewer-tools span', sub: t.lab_sub },
+    { selector: '#salesNotesTitle', title: t.sales_notes_title, subSel: '#salesNotesStatusBadge', sub: t.sales_notes_sub }
   ];
   cardTitleMap.forEach(item => {
     const h3El = document.querySelector(item.selector);
@@ -12740,7 +12741,21 @@ function applyCatDashboardLanguage(lang) {
     const card = document.getElementById(wId);
     if (card) {
       const t = card.querySelector('.cat-widget-title');
-      if (t) t.textContent = isEn ? widgetTitleMap[wId].en : widgetTitleMap[wId].ko;
+      if (t) {
+        if (wId === 'widgetTodos') {
+          const board = (typeof getFlowboardData === 'function') ? getFlowboardData() : null;
+          const customTitle = (board && board.title && board.title !== '업무 보드' && board.title !== 'To-do' && board.title !== '할일' && board.title !== 'Todos')
+            ? board.title
+            : localStorage.getItem('kostat_cat_todos_widget_title');
+          if (customTitle) {
+            t.textContent = customTitle;
+          } else {
+            t.textContent = isEn ? widgetTitleMap[wId].en : widgetTitleMap[wId].ko;
+          }
+        } else {
+          t.textContent = isEn ? widgetTitleMap[wId].en : widgetTitleMap[wId].ko;
+        }
+      }
     }
   });
 
@@ -12820,7 +12835,18 @@ function applyCatDashboardLanguage(lang) {
   const tabTodoPending = document.getElementById('catTabTodoTextPending'); if (tabTodoPending) tabTodoPending.textContent = isEn ? 'In Progress' : '진행중';
   const tabTodoDone = document.getElementById('catTabTodoTextDone'); if (tabTodoDone) tabTodoDone.textContent = isEn ? 'Completed' : '완료';
   const todoAddBtn = document.getElementById('catManageTodoAddBtn'); if (todoAddBtn) todoAddBtn.textContent = isEn ? 'Add Todo' : '할일 등록';
-  const todoListTitle = document.getElementById('catManageTodoListTitle'); if (todoListTitle) todoListTitle.textContent = isEn ? 'Todo List' : '할일 목록';
+  const todoListTitle = document.getElementById('catManageTodoListTitle');
+  if (todoListTitle) {
+    const board = (typeof getFlowboardData === 'function') ? getFlowboardData() : null;
+    const customTitle = (board && board.title && board.title !== '업무 보드' && board.title !== '할일 목록' && board.title !== 'To-do' && board.title !== '할일' && board.title !== 'Todos')
+      ? board.title
+      : localStorage.getItem('kostat_cat_todos_widget_title');
+    if (customTitle) {
+      todoListTitle.textContent = customTitle;
+    } else {
+      todoListTitle.textContent = isEn ? 'Todo List' : '할일 목록';
+    }
+  }
 
   const subNotesTitle = document.getElementById('catSubTitleNotes');
   if (subNotesTitle) subNotesTitle.textContent = isEn ? 'Notes & Work Journal Board' : '업무 기록 및 메모 보드';
@@ -14630,9 +14656,26 @@ window.saveFlowboardData = saveFlowboardData;
 
 function saveNotionBoardTitle(newTitle) {
   if (!newTitle || !newTitle.trim()) return;
+  const trimmed = newTitle.trim();
   const board = getFlowboardData();
-  board.title = newTitle.trim();
+  board.title = trimmed;
   saveFlowboardData(board);
+
+  try {
+    localStorage.setItem('kostat_cat_todos_widget_title', trimmed);
+  } catch (_) {}
+
+  // 홈 대시보드 위젯 이름 동기화
+  const widgetTitle = document.getElementById('catWidgetTitleTodos');
+  if (widgetTitle && widgetTitle.textContent !== trimmed) {
+    widgetTitle.textContent = trimmed;
+  }
+
+  // 할일 관리 센터 보드 타이틀 동기화
+  const manageTitle = document.getElementById('catManageTodoListTitle');
+  if (manageTitle && manageTitle !== document.activeElement && manageTitle.textContent !== trimmed) {
+    manageTitle.textContent = trimmed;
+  }
 }
 window.saveNotionBoardTitle = saveNotionBoardTitle;
 
@@ -15612,8 +15655,28 @@ function renderCatTodos() {
     dateTag.textContent = isEn ? `${parseInt(parts[1])}/${parseInt(parts[2])}` : `${parseInt(parts[1])}월 ${parseInt(parts[2])}일`;
   }
 
+  const board = (typeof getFlowboardData === 'function') ? getFlowboardData() : null;
+  const savedWidgetTitle = localStorage.getItem('kostat_cat_todos_widget_title');
+  const displayTitle = (board && board.title) || savedWidgetTitle || 'To-do';
+
   const titleEl = document.getElementById('catWidgetTitleTodos');
-  if (titleEl) titleEl.textContent = 'To-do';
+  if (titleEl) {
+    if (!titleEl._hasEditHandler) {
+      titleEl._hasEditHandler = true;
+      titleEl.setAttribute('contenteditable', 'true');
+      titleEl.setAttribute('title', '이름 수정');
+      titleEl.addEventListener('blur', () => saveNotionBoardTitle(titleEl.textContent));
+      titleEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          titleEl.blur();
+        }
+      });
+    }
+    if (titleEl !== document.activeElement) {
+      titleEl.textContent = displayTitle;
+    }
+  }
 
   const btnToggle = document.getElementById('catWidgetTodoViewToggle');
   if (btnToggle) {
@@ -15634,6 +15697,15 @@ window.renderCatTodos = renderCatTodos;
 function renderCatManageTodosList() {
   const container = document.getElementById('catManageTodosFullList');
   if (!container) return;
+
+  const board = (typeof getFlowboardData === 'function') ? getFlowboardData() : null;
+  const savedWidgetTitle = localStorage.getItem('kostat_cat_todos_widget_title');
+  const isEn = (AppState && AppState.currentLang === 'en');
+  const displayTitle = (board && board.title) || savedWidgetTitle || (isEn ? 'Todo List' : '할일 목록');
+  const todoListTitle = document.getElementById('catManageTodoListTitle');
+  if (todoListTitle && todoListTitle !== document.activeElement) {
+    todoListTitle.textContent = displayTitle;
+  }
 
   const searchInput = document.getElementById('catManageTodoSearch');
   const query = (searchInput && typeof searchInput.value === 'string') ? searchInput.value.trim().toLowerCase() : '';
@@ -16412,7 +16484,7 @@ function renderCatSalesQuality() {
 }
 window.renderCatSalesQuality = renderCatSalesQuality;
 
-// 영업사항(Sales Matters) - 대시보드 실시간 양방향 동기화 엔진
+// 영업사항(Sales Status) - 대시보드 실시간 양방향 동기화 엔진
 (function initCatSalesRealtimeSync() {
   if (typeof window === 'undefined' || window._catSalesSyncInitialized) return;
   window._catSalesSyncInitialized = true;

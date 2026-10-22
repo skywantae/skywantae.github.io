@@ -7063,7 +7063,7 @@
         if (urlParams.get('mode') === 'sales' || urlParams.get('focus') === 'sales') {
           document.body.classList.add('mode-sales');
           const appTitleEl = document.querySelector('.app-title');
-          if (appTitleEl) appTitleEl.textContent = '영업사항 (Sales Matters)';
+          if (appTitleEl) appTitleEl.textContent = '영업사항 (Sales Status)';
           const btnProj = document.getElementById('btnSubtabProject');
           if (btnProj && typeof switchBizSubtab === 'function') {
             switchBizSubtab('project', btnProj);
