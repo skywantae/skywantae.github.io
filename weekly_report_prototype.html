@@ -5823,8 +5823,7 @@
     // 실시간 클라우드 동기화 (GitHub API & 브로드캐스트) 엔진     //
     // ==================================================== //
     function getCloudSyncToken() {
-      const parts = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"];
-      return localStorage.getItem('kostat_github_token') || parts.join('');
+      return (window.localStorage && localStorage.getItem('kostat_github_token')) || '';
     }
 
     function encodeBase64Utf8(str) {

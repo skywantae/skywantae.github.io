@@ -147,6 +147,9 @@ let CatDashboardState = window.CatDashboardState = {
 const ADMIN_PIN_HASH = 'e76033e8f5cf30a84e2de53819d0ca58e66a854394cd7c251c88819eaa70af0b';
 
 async function checkAdminPinHash(inputPin) {
+  if (window.KostatAuth && typeof window.KostatAuth.isAdmin === 'function' && window.KostatAuth.isAdmin()) {
+    return true;
+  }
   if (!inputPin) return false;
   const str = String(inputPin).trim();
   try {
@@ -157,7 +160,7 @@ async function checkAdminPinHash(inputPin) {
       return hex === ADMIN_PIN_HASH;
     }
   } catch (_) {}
-  // Web Crypto 미지원(HTTP IP 접속 등) 환경 안전 fallback (8805의 듀얼 해시)
+  // Web Crypto 미지원 환경 안전 fallback
   let h1 = 5381, h2 = 0;
   for (let i = 0; i < str.length; i++) {
     const c = str.charCodeAt(i);
@@ -4678,31 +4681,16 @@ function copyDrawingPath(relPath) {
 }
 window.copyDrawingPath = copyDrawingPath;
 
-const DRAWING_AUTH_CIPHER = 'PfDlQ4CqhAesc39QyDrWqHU5yAi39qawYW7ymLTIEkKi+Gkj8sBdW9omUkrMr+3C84UbQ+nDVbL/lR0osbgj+sYpjj8=';
-const DRAWING_AUTH_SALT = 'kostat_drawing_auth_salt_2026';
-
-async function getDrawingAuthToken(pin) {
+async function getDrawingAuthToken() {
   if (AppState.drawingAuthToken) return AppState.drawingAuthToken;
   try {
-    const rawBytes = Uint8Array.from(atob(DRAWING_AUTH_CIPHER), c => c.charCodeAt(0));
-    const nonce = rawBytes.subarray(0, 12);
-    const ct = rawBytes.subarray(12);
-    const enc = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin || '0404'), { name: 'PBKDF2' }, false, ['deriveKey']);
-    const key = await crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt: enc.encode(DRAWING_AUTH_SALT), iterations: 50000, hash: 'SHA-256' },
-      keyMaterial,
-      { name: 'AES-GCM', length: 256 },
-      false,
-      ['decrypt']
-    );
-    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, ct);
-    AppState.drawingAuthToken = new TextDecoder().decode(decrypted);
-    return AppState.drawingAuthToken;
-  } catch (e) {
-    console.warn('[DrawingAuth] 토큰 복호화 실패:', e);
-    return null;
-  }
+    const sessionToken = window.sessionStorage ? sessionStorage.getItem('KOSTAT_DRAWING_TOKEN') : null;
+    if (sessionToken) {
+      AppState.drawingAuthToken = sessionToken.trim();
+      return AppState.drawingAuthToken;
+    }
+  } catch (_) {}
+  return null;
 }
 
 async function downloadDrawingFile(model, filename, relPath, btnEl) {
@@ -4713,6 +4701,13 @@ async function downloadDrawingFile(model, filename, relPath, btnEl) {
     navigator.clipboard.writeText(fullPath).catch(() => {});
   }
 
+  const token = await getDrawingAuthToken();
+  if (!token) {
+    // 보안 패치: 하드코딩된 토큰을 제거하고 사내 네트워크 탐색기 경로를 안전하게 복사
+    showToast(isEn ? `Internal path copied: ${fullPath} (Paste into File Explorer on company PC)` : `사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창에 붙여넣어 열람하세요)`, 'info');
+    return;
+  }
+
   showToast((isEn ? 'Requesting drawing download: ' : '도면 다운로드 요청 중: ') + filename, 'info');
   const originalText = btnEl ? btnEl.textContent : (isEn ? 'Download' : '다운로드');
   if (btnEl) {
@@ -4721,9 +4716,6 @@ async function downloadDrawingFile(model, filename, relPath, btnEl) {
   }
 
   try {
-    const token = await getDrawingAuthToken(AppState.drawingPin || '0404');
-    if (!token) throw new Error('인증 토큰 획득 실패');
-
     const encodedPath = (relPath || '').split('/').map(encodeURIComponent).join('/');
     const apiUrl = `https://api.github.com/repos/skywantae/kostat-drawings/contents/${encodedPath}`;
 
@@ -4751,7 +4743,7 @@ async function downloadDrawingFile(model, filename, relPath, btnEl) {
     showToast((isEn ? 'Drawing downloaded: ' : '도면 다운로드 완료: ') + filename, 'success');
   } catch (err) {
     console.warn('[DrawingDownload] 다운로드 안내:', err);
-    showToast(isEn ? `Internal path copied: ${fullPath}` : `사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창에 붙여넣어 열어보실 수 있습니다)`, 'info');
+    showToast(isEn ? `Internal path copied: ${fullPath}` : `사내 경로 복사 완료: ${fullPath} (사내 PC 탐색기 주소창에 붙여넣어 열람하세요)`, 'info');
   } finally {
     if (btnEl) {
       btnEl.disabled = false;
@@ -5626,8 +5618,7 @@ window.copyCellText = copyCellText;
 // ==========================================================================
 (function initAdminDbModule() {
   function getAdminAuthToken() {
-    const parts = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"];
-    return parts.join('');
+    return (window.sessionStorage && sessionStorage.getItem('KOSTAT_GITHUB_ADMIN_TOKEN')) || '';
   }
 
   // DOM Elements
@@ -5911,9 +5902,16 @@ window.copyCellText = copyCellText;
       return;
     }
 
-    const token = getAdminAuthToken();
+    let token = getAdminAuthToken();
+    if (!token && AdminState.isAuthenticated) {
+      const inputToken = prompt('GitHub 자동 배포를 위한 Personal Access Token을 입력하세요 (세션 동안만 메모리에 유지됩니다):');
+      if (inputToken && inputToken.trim()) {
+        token = inputToken.trim();
+        try { sessionStorage.setItem('KOSTAT_GITHUB_ADMIN_TOKEN', token); } catch (_) {}
+      }
+    }
     if (!token || !AdminState.isAuthenticated) {
-      showToast('관리자 인증이 만료되었습니다. 다시 로그인해 주세요.', 'error');
+      showToast('배포를 위한 관리자 인증 토큰이 필요합니다. 사내 터미널에서 python build_mobile.py 배포를 권장합니다.', 'warning');
       return;
     }
 
@@ -6696,7 +6694,12 @@ function saveFeedbackStorage() {
 // [Cloud Sync] 기능 요청 게시판 GitHub 클라우드 무인 실시간 동기화 모듈 (PC↔모바일 연동)
 // --------------------------------------------------------------------------
 async function syncFeedbackToCloud() {
-  const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+  const token = (window.sessionStorage && sessionStorage.getItem('KOSTAT_GITHUB_ADMIN_TOKEN')) || '';
+  if (!token) {
+    // 보안 패치: 클라이언트 소스코드 내 하드코딩 토큰 노출 차단
+    // 작성된 글은 로컬에 안전하게 보존되며, build_mobile.py 배포 시 양방향 타임스탬프 안전 병합됩니다.
+    return true;
+  }
   const OWNER = 'skywantae';
   const REPO = 'skywantae.github.io';
   const API_BASE = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
@@ -6767,41 +6770,22 @@ async function syncFeedbackToCloud() {
 async function fetchRemoteFeedback(silent = true) {
   try {
     const timestamp = Date.now();
-    const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
     const OWNER = 'skywantae';
     const REPO = 'skywantae.github.io';
-    const API_URL = `https://api.github.com/repos/${OWNER}/${REPO}/contents/data/feedback_board.json?t=${timestamp}`;
+    const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/data`;
 
     let remoteData = null;
-    // 1) GitHub API로 캐시 제로 실시간 최신 파일 직접 조회 (CDN 캐시 지연 원천 차단)
+    // 1) GitHub Raw 무캐시 실시간 직접 조회 (인증 토큰 불필요)
     try {
-      const apiRes = await fetch(API_URL, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      }).catch(() => null);
-      if (apiRes && apiRes.ok) {
-        const apiJson = await apiRes.json();
-        if (apiJson.content) {
-          const binaryStr = atob(apiJson.content.replace(/\n/g, ''));
-          const bytes = new Uint8Array(binaryStr.length);
-          for (let i = 0; i < binaryStr.length; i++) {
-            bytes[i] = binaryStr.charCodeAt(i);
-          }
-          const decoded = new TextDecoder('utf-8').decode(bytes);
-          remoteData = JSON.parse(decoded);
-        }
+      const res = await fetch(`${GITHUB_RAW_BASE}/feedback_board.json?t=${timestamp}`).catch(() => null);
+      if (res && res.ok) {
+        remoteData = await res.json().catch(() => null);
       }
     } catch (_) {}
 
-    // 2) API 실패 시 Raw URL fallback
+    // 2) 로컬 번들 fallback
     if (!remoteData) {
-      const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/data';
-      let res = await fetch(`${GITHUB_RAW_BASE}/feedback_board.json?t=${timestamp}`).catch(() => null);
-      if (!res || !res.ok) {
-        res = await fetch(`data/feedback_board.json?t=${timestamp}`).catch(() => null);
-      }
+      const res = await fetch(`data/feedback_board.json?t=${timestamp}`).catch(() => null);
       if (res && res.ok) {
         remoteData = await res.json().catch(() => null);
       }
@@ -7706,7 +7690,18 @@ async function applyFaqDeploy() {
     return;
   }
 
-  const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+  let token = (window.sessionStorage && sessionStorage.getItem('KOSTAT_GITHUB_ADMIN_TOKEN')) || '';
+  if (!token) {
+    const inputToken = prompt('FAQ 클라우드 배포를 위한 Personal Access Token을 입력하세요 (세션 메모리에만 유지됩니다):');
+    if (inputToken && inputToken.trim()) {
+      token = inputToken.trim();
+      try { sessionStorage.setItem('KOSTAT_GITHUB_ADMIN_TOKEN', token); } catch (_) {}
+    }
+  }
+  if (!token) {
+    showToast('FAQ 배포를 위한 인증 토큰이 제공되지 않았습니다. 사내 터미널에서 배포를 권장합니다.', 'warning');
+    return;
+  }
   
   if (DOM.btnDeployFaq) DOM.btnDeployFaq.disabled = true;
   showToast('GitHub 클라우드에 FAQ 실시간 배포를 시작합니다...');
@@ -9038,15 +9033,20 @@ async function saveArchivePost() {
   const summary = desc.slice(0, 120);
   const attachments = [...(AppState.currentArchiveAttachments || [])];
 
+  const inputPinHash = await computeSha256Hex(pin);
+
   if (isEdit) {
     const existing = (AppState.archiveData || []).find(it => it.id === editId);
     if (!existing) {
       alert(isEn ? 'Target archive item could not be found.' : '수정 대상 자료를 찾을 수 없습니다.');
       return;
     }
-    // PIN 검증 (기존 등록 PIN 또는 마스터 PIN)
+    // PIN 검증 (기존 등록 PIN 해시 또는 마스터 PIN)
     const isAdmin = await checkAdminPinHash(pin);
-    if (existing.pin && existing.pin !== pin && !isAdmin) {
+    const isPinMatch = isAdmin ||
+      (existing.pin_hash && existing.pin_hash === inputPinHash) ||
+      (existing.pin && (existing.pin === pin || existing.pin === inputPinHash));
+    if (!isPinMatch) {
       alert(isEn ? 'Incorrect PIN. Please enter the 4-digit PIN set during registration.' : '비밀번호가 일치하지 않습니다. 등록 시 설정한 4자리 PIN을 입력하세요.');
       if (DOM.archiveInputPin) DOM.archiveInputPin.focus();
       return;
@@ -9055,6 +9055,8 @@ async function saveArchivePost() {
     existing.title = title;
     existing.version = version;
     existing.author = author;
+    existing.pin_hash = inputPinHash;
+    delete existing.pin;
     existing.summary = summary;
     existing.description = desc;
     existing.download_url = downloadUrl;
@@ -9069,7 +9071,7 @@ async function saveArchivePost() {
       title,
       version,
       author,
-      pin,
+      pin_hash: inputPinHash,
       date: today,
       summary,
       description: desc,
@@ -9091,6 +9093,18 @@ async function saveArchivePost() {
 
   // 클라우드 자동 동기화
   syncArchiveToCloud();
+}
+
+async function computeSha256Hex(str) {
+  if (!str) return '';
+  try {
+    if (window.crypto && crypto.subtle) {
+      const enc = new TextEncoder().encode(String(str).trim());
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (_) {}
+  return String(str).trim();
 }
 
 // 삭제 모달 열기
@@ -9133,7 +9147,11 @@ async function confirmDeleteArchivePost() {
   }
 
   const isAdmin = await checkAdminPinHash(pin);
-  if (item.pin && item.pin !== pin && !isAdmin) {
+  const inputPinHash = await computeSha256Hex(pin);
+  const isPinMatch = isAdmin ||
+    (item.pin_hash && item.pin_hash === inputPinHash) ||
+    (item.pin && (item.pin === pin || item.pin === inputPinHash));
+  if (!isPinMatch) {
     if (DOM.archiveDeleteError) {
       DOM.archiveDeleteError.textContent = isEn ? 'Incorrect password.' : '비밀번호가 일치하지 않습니다.';
       DOM.archiveDeleteError.style.display = 'block';
@@ -9213,7 +9231,11 @@ function toggleArchiveAdminMode() {
 
 // 자료실 클라우드 자동 동기화 (GitHub Contents API)
 async function syncArchiveToCloud() {
-  const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
+  const token = (window.sessionStorage && sessionStorage.getItem('KOSTAT_GITHUB_ADMIN_TOKEN')) || '';
+  if (!token) {
+    // 보안 패치: 하드코딩 토큰 노출 차단, 로컬 저장소 보존 (build_mobile.py 배포 시 자동 병합)
+    return;
+  }
   const OWNER = 'skywantae';
   const REPO = 'skywantae.github.io';
   const API_BASE = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
@@ -9275,41 +9297,22 @@ async function syncArchiveToCloud() {
 async function fetchRemoteArchive(silent = true) {
   try {
     const timestamp = Date.now();
-    const token = ["ghp_", "dvVKEPMRtpnHdzZ", "IBHtIlPyz8tRxiN2y6Oyo"].join('');
     const OWNER = 'skywantae';
     const REPO = 'skywantae.github.io';
-    const API_URL = `https://api.github.com/repos/${OWNER}/${REPO}/contents/data/archive_data.json?t=${timestamp}`;
+    const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/data`;
 
     let remoteData = null;
-    // 1) GitHub API 무캐시 실시간 조회
+    // 1) GitHub Raw 무캐시 실시간 직접 조회 (인증 토큰 불필요)
     try {
-      const apiRes = await fetch(API_URL, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      }).catch(() => null);
-      if (apiRes && apiRes.ok) {
-        const apiJson = await apiRes.json();
-        if (apiJson.content) {
-          const binaryStr = atob(apiJson.content.replace(/\n/g, ''));
-          const bytes = new Uint8Array(binaryStr.length);
-          for (let i = 0; i < binaryStr.length; i++) {
-            bytes[i] = binaryStr.charCodeAt(i);
-          }
-          const decoded = new TextDecoder('utf-8').decode(bytes);
-          remoteData = JSON.parse(decoded);
-        }
+      const res = await fetch(`${GITHUB_RAW_BASE}/archive_data.json?t=${timestamp}`).catch(() => null);
+      if (res && res.ok) {
+        remoteData = await res.json().catch(() => null);
       }
     } catch (_) {}
 
-    // 2) Raw URL fallback
+    // 2) 로컬 번들 fallback
     if (!remoteData) {
-      const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/skywantae/skywantae.github.io/main/data';
-      let res = await fetch(`${GITHUB_RAW_BASE}/archive_data.json?t=${timestamp}`).catch(() => null);
-      if (!res || !res.ok) {
-        res = await fetch(`data/archive_data.json?t=${timestamp}`).catch(() => null);
-      }
+      const res = await fetch(`data/archive_data.json?t=${timestamp}`).catch(() => null);
       if (res && res.ok) {
         remoteData = await res.json().catch(() => null);
       }
@@ -12308,7 +12311,7 @@ if (window.KostatAuth) {
 // 실험실 (Lab) - 스마트 캘린더 대시보드 (Catlendar 글로벌 워크스페이스)
 // ==========================================================================
 
-const CAT_HOLIDAYS_DB = {
+var CAT_HOLIDAYS_DB = {
   // 1. 대한민국 (KR)
   KR: {
     name: '한국',

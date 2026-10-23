@@ -229,7 +229,7 @@
       });
     },
 
-    // 로그아웃 실행
+    // 로그아웃 실행 (캐시 및 민감 세션 즉시 소각)
     logout: function () {
       if (!auth) return Promise.resolve();
       const self = this;
@@ -237,6 +237,25 @@
         self.currentUser = null;
         self.userProfile = null;
         self.notifyListeners();
+
+        // 보안 패치: 로그아웃 시 브라우저 캐시 및 민감 세션 소각
+        try {
+          if ('caches' in window) {
+            caches.keys().then(function (names) {
+              names.forEach(function (name) {
+                if (name && name.startsWith('kostat-pwa-')) {
+                  caches.delete(name);
+                }
+              });
+            });
+          }
+        } catch (_) {}
+
+        try {
+          if (window.sessionStorage) {
+            sessionStorage.clear();
+          }
+        } catch (_) {}
       });
     },
 
